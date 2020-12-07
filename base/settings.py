@@ -24,7 +24,7 @@ STATICFILES_DIRS = (
 # Extra places for collectstatic to find static files.
 
 
-
+AUTH_USER_MODEL = 'planit.User'
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'phonenumber_field',
     'planit'
 ]
 
