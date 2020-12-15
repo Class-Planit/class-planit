@@ -41,7 +41,7 @@ joblib==0.17.0
 Keras-Preprocessing==1.1.2
 lxml==4.6.2
 Markdown==3.3.3
-mesh-tensorflow==0.1.17
+
 nltk==3.5
 numpy==1.19.4
 oauthlib==3.1.0
@@ -86,7 +86,7 @@ tfds-nightly==4.1.0.dev202012020108
 threadpoolctl==2.1.0
 tinycss2==1.1.0
 tokenizers==0.9.4
-torch==1.7.0
+
 tqdm==4.54.0
 transformers==4.0.0
 typing-extensions==3.7.4.3
