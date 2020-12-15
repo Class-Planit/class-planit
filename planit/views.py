@@ -153,6 +153,10 @@ def ClassroomSettings(request, user_id=None, class_id=None, edit=None):
     if 'New' in class_id:
         classroom_profile = []
         grade_summary = []
+        class_subjects = []
+        class_subjects_list = []
+        standards_subjects = []
+
         if request.method == "POST":
             
             form2 = ClassroomForm(request.POST, request.FILES)
@@ -167,6 +171,8 @@ def ClassroomSettings(request, user_id=None, class_id=None, edit=None):
 
             form2_data = {'main_teacher': user_profile}
             form2 = ClassroomForm(initial=form2_data)
+        
+
     else:
         edit = int(edit)
         classroom_profile = classroom.objects.get(id=class_id)
