@@ -20,4 +20,5 @@ from planit import views as planit_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('planit.urls')),
+    path('accounts/', include('allauth.urls')),
 ]

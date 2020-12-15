@@ -254,30 +254,31 @@
 							</ol>
 						</div>
 					</div>
-					<a href="{% url 'classroom_settings' user_id=user_profile.id class_id='New' %}#heading" class="btn btn-primary btn-has-icon"><i class="fa fa-plus"></i>Add New Classroom</a>
+					<a href="{% url 'classroom_settings' user_id=user_profile.id class_id='New' edit=0 %}#heading" class="btn btn-primary btn-has-icon"><i class="fa fa-plus"></i>Add New Classroom</a>
 					
 					<div class="gap-10"></div>
 					<div class="row">
 
 						<!-- Posts -->
 						<main class="col-md-9">
-							
+						
 							<!-- Post (Standard Format) -->
+							{% for classroom in classrooms_matches %}
 							<article class="entry">
 								<figure class="entry-thumbnail">
 									<a href="#"><img  src="{% static 'images/samples/first_grade_sm.png' %}"  alt=""></a>
 								</figure>
 								<ul class="entry-cats">
-									<li><a href="{% url 'classroom_planbook' user_id=user_profile.id class_id='New' subject='All' %}#heading"><span>Planbook</span></a></li>
-									<li><a href="{% url 'classroom_students' user_id=user_profile.id class_id='New' student_id='All' %}#heading"><span>Students</span></a></li>
-									<li><a href="{% url 'classroom_analytics' user_id=user_profile.id class_id='New' subject='All' %}#heading"><span>Analytics</span></a></li>
-									<li><a href="{% url 'classroom_assignments' user_id=user_profile.id class_id='New' subject='All' %}#heading"><span>Assignments</span></a></li>
+									<li><a href="{% url 'classroom_planbook' user_id=user_profile.id class_id=classroom.id subject='All' %}#heading"><span>Planbook</span></a></li>
+									<li><a href="{% url 'classroom_students' user_id=user_profile.id class_id=classroom.id student_id='All' %}#heading"><span>Students</span></a></li>
+									<li><a href="{% url 'classroom_analytics' user_id=user_profile.id class_id=classroom.id subject='All' %}#heading"><span>Analytics</span></a></li>
+									<li><a href="{% url 'classroom_assignments' user_id=user_profile.id class_id=classroom.id subject='All' %}#heading"><span>Assignments</span></a></li>
 								</ul>
 								<div class="entry-body">
 								
 									<header class="entry-header">
 										<div class="title-bordered border__solid">
-											<h4><a href="#">KG3 Classroom</a></h4>
+											<h4><a href="{% url 'classroom_settings' user_id=user_profile.id class_id=classroom.id edit=0 %}#heading">{{ classroom.classroom_title }}</a></h4>
 										</div>
 									</header>
 									<div class="entry-excerpt">
@@ -286,13 +287,14 @@
 								</div>
 								<footer class="entry-footer">
 									<div class="pull-left">
-										Planning Period: <a href="#" class="dotted-link1">Jan 1st - Mar 30th, 2021</a>
+										Main Teacher: <a href="#" class="dotted-link1">{{ classroom.main_teacher }}</a>
 									</div>
 									<div class="pull-right">
 										<a href="#" class="dotted-link2"><span>View Summary</span> <i class="fa fa-chevron-right"></i></a>
 									</div>
 								</footer>
 							</article>
+							{% endfor %}
 							<!-- Post (Standard Format) / End -->
 
 

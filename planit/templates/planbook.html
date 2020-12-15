@@ -1,7 +1,26 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block content %}
 
+{% block content %}
+<style>
+/* HIDE RADIO */
+[type=radio] { 
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* IMAGE STYLES */
+[type=radio] + img {
+  cursor: pointer;
+}
+
+/* CHECKED STYLES */
+[type=radio]:checked + img {
+  outline: 4px solid #f00;
+}
+</style>
 		<div class="top-wrapper top-wrapper__bg1" id="top">
 			<!-- Header -->
 			<header class="header header__fixed">
@@ -238,11 +257,19 @@
 			<!-- Header / End -->
 		</div>
 		
+		<!-- Page Section -->
 		
+			
+		
+		<!-- Page Section / End -->
 		<div class="content-wrapper">
+			<!-- Post Nav -->
+			
+			<!-- Post Nav / End -->
 			<a name="heading"></a>
 			<!-- Page Section -->
 			<section class="page-section">
+				
 				<div class="container">
 
 					<div class="section-title-wrapper">
@@ -254,109 +281,359 @@
 							</ol>
 						</div>
 					</div>
-					<a href="{% url 'classroom_settings' user_id=user_profile.id class_id='New' %}#heading" class="btn btn-primary btn-has-icon"><i class="fa fa-plus"></i>Add New Classroom</a>
 					
 					<div class="gap-10"></div>
-					<div class="row">
+					<nav class="post-nav">
+						<ul class="pager-custom">
+							<li class="previous">
+								<!-- For mobile device -->
+								<a href="blog-right-sidebar.html" class="btn btn-default btn-single-icon visible-xs-inline-block"><i class="fa fa-long-arrow-left"></i></a>
+								<!-- For desktop -->
+								<a href="blog-right-sidebar.html" class="btn btn-default btn-has-icon hidden-xs"><i class="fa fa-long-arrow-left"></i> Back to Profile</a>
+							</li>
+							<li class="next">
+								<a href="#" class="btn btn-primary btn-has-icon icon-right"><i class="fa fa-chevron-right"></i><span>Next Week</span></a>
+								<a href="#" class="btn btn-primary btn-has-icon"><i class="fa fa-calendar"></i><span>Today</span></a>
+								<a href="#" class="btn btn-primary btn-has-icon"><i class="fa fa-chevron-left"></i><span>Last Week</span></a>
+							</li>
+						</ul>
+					</nav>
+					<!-- Filter Trigger -->
+					<button class="btn btn-link filter-trigger" id="filterTrigger" data-toggle="collapse" data-target="#filterWrapper" aria-expanded="false" aria-controls="filterWrapper">
+						<i class="fa fa-toggle-off"></i><span>Filter Planbook</span>
+					</button>
+					
+					<!-- Filter Trigger / End -->
 
-						<!-- Posts -->
-						<main class="col-md-9">
-							
-							<!-- Post (Standard Format) -->
-							<article class="entry">
-								<figure class="entry-thumbnail">
-									<a href="#"><img  src="{% static 'images/samples/first_grade_sm.png' %}"  alt=""></a>
-								</figure>
-								<ul class="entry-cats">
-									<li><a href="{% url 'classroom_planbook' user_id=user_profile.id class_id='New' subject='All' %}#heading"><span>Planbook</span></a></li>
-									<li><a href="{% url 'classroom_students' user_id=user_profile.id class_id='New' student_id='All' %}#heading"><span>Students</span></a></li>
-									<li><a href="{% url 'classroom_analytics' user_id=user_profile.id class_id='New' subject='All' %}#heading"><span>Analytics</span></a></li>
-									<li><a href="{% url 'classroom_assignments' user_id=user_profile.id class_id='New' subject='All' %}#heading"><span>Assignments</span></a></li>
-								</ul>
-								<div class="entry-body">
-								
-									<header class="entry-header">
-										<div class="title-bordered border__solid">
-											<h4><a href="#">KG3 Classroom</a></h4>
+					<!-- Filter -->
+					<div class="filter-wrapper collapse" id="filterWrapper">
+						<div class="gap-30"></div>
+							<div class="row">
+								<div class="col-md-3">
+									<div class="btn-group">
+										<button type="button" class="btn btn-default btn-has-icon icon-right dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+											<i class="fa fa-chevron-down"></i> Month
+										</button>
+										<div class="dropdown-menu">
+										<li><a class="dropdown-item" href="#">Jan</a></li>
+										<li><a class="dropdown-item" href="#">Feb</a></li>
+										<li><a class="dropdown-item" href="#">Mar</a></li>
+										
 										</div>
-									</header>
-									<div class="entry-excerpt">
-										This planning period, You have created lessons for 20 Objectives in <a href="#">5 subjects</a> which matched to <a href="#">15 standards</a>, 50% of your lessons were on the <a href="#">Blooms Level: Define</a>, and the your major learning styles were: <a href="#">1. Visual/Spatial; 2. Verbal.</a><br>You created <a href="#">0 assignments</a> and there is <a href="#"> 0 student performance</a> data for this period.
+									</div>
+								
+								</div>
+								<div class="col-md-9 col-bordered__left">
+									<div class="row">
+										<div class="col-md-2">
+											<strong class="filter-label">Grade:</strong>
+										</div>
+										<div class="col-md-10">
+											<!-- Tags Filter -->
+											<ul class="tags-filter tags-filter__with-label filter-group list-unstyled list-inline" data-filter-group="tags">
+												<li><a href="#" class="btn btn-default btn-primary" data-filter="*">All</a></li>
+												{% for grade in grade_list %}
+												<li><a href="#" class="btn btn-default btn-primary" data-filter="*">{{ grade }}</a></li>
+												{% endfor %}
+											</ul>
+											<!-- Tags Filter / End -->
+										</div>
 									</div>
 								</div>
-								<footer class="entry-footer">
-									<div class="pull-left">
-										Planning Period: <a href="#" class="dotted-link1">Jan 1st - Mar 30th, 2021</a>
+							</div>
+								<br>
+							<div class="col-md-12">
+								<div class="row">
+									<div class="col-md-1">
+										<strong class="filter-label">Subject:</strong>
 									</div>
-									<div class="pull-right">
-										<a href="#" class="dotted-link2"><span>View Summary</span> <i class="fa fa-chevron-right"></i></a>
+									<div class="col-md-11">
+										<!-- Tags Filter -->
+										<ul class="tags-filter tags-filter__with-label filter-group list-unstyled list-inline" data-filter-group="tags">
+											<li><a href="#" class="btn btn-default btn-primary" data-filter="*">All</a></li>
+											{% for subject in subjects_list %}
+											<li><a href="#" class="btn btn-default btn-primary" data-filter="*">{{ subject }}</a></li>
+											{% endfor %}
+										</ul>
+										<!-- Tags Filter / End -->
 									</div>
-								</footer>
-							</article>
-							<!-- Post (Standard Format) / End -->
+								</div>
+							</div>
+						
+					</div>
+					
+					<!-- Filter / End -->
+					
+					
+					<!----| We still need to edit add your own subject |-->
+					<button type="button" class="btn btn-default btn-has-icon" style="float: right;" data-toggle="modal" data-target="#exampleModalCenter">
+						<i class="fa fa-plus"></i> Create New Objective
+					</button>
+					
+					<!-- Modal -->
+					<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLongTitle">What are you planning this week?</h5>
+						
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+							</div>
+							<div class="modal-body">
+								<form method="POST">
+									{% csrf_token %}
+									<div class="form-group">
+										<label for="subject">Select Subject</label>
+										<select class="form-control" name='subject' id="subject">
+											{% for item in subject_matches %}
+										  <option value='{{ item.id }}'>{{ item }}</option>
+											{% endfor %}
+										</select>
+									  </div>
+										<div class="form-group">
+											
+										  <textarea class="form-control" name='teacher_objective' id="teacher_objective" rows="4" placeholder='This week the students will learn .....'></textarea>
+										</div>
+										<label>Is this Objective teaching a Skill or a Topic</label>
+										<br>
+										<label>
+											<input type="radio" name="is_skill" value=True checked>
+											<img src="{% static 'images/skill.png' %}">
+										  </label>
+										  
+										  <label>
+											<input type="radio" name="is_skill" value=False>
+											<img src="{% static 'images/topic.png' %}">
+										  </label>
+										<br>
+									<input type="submit" value="Let's PlanIt!" class="btn btn-info">
+								</form>
 
+							</div>
+							<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+							</div>
+						</div>
+						</div>
+					</div>
+					<div class="gap-20"></div>
 
+						<!-- Posts -->
+						<main class="col-md-">
 
-							<!-- Pagination -->
-							<ul class="pagination__custom list-unstyled list-inline">
-								<li><a href="#" class="btn btn-default"><i class="fa fa-angle-left"></i></a></li>
-								<li><a href="#" class="btn btn-primary">1</a></li>
-								<li><a href="#" class="btn btn-default">2</a></li>
-								<li><a href="#" class="btn btn-default">3</a></li>
-								<li><a href="#" class="btn btn-default">4</a></li>
-								<li><a href="#" class="btn btn-default"><i class="fa fa-angle-right"></i></a></li>
-							</ul>
-							<!-- Pagination / End -->
+					
+							<br>
+							<!-- Tabs -->
+							{% for objective in class_objectives %}
+							
+							<div role="tabpanel">
+								<!-- Nav tabs -->
+								<ul class="nav nav-tabs" role="tablist">
+									<li role="presentation" class="active"><a href="#tab1-1{{ objective.id}}" aria-controls="tab1-1" role="tab" data-toggle="tab">Objectives</a></li>
+									<li role="presentation" ><a href="#tab1-2{{ objective.id}}" aria-controls="tab1-2{{ objective.id}}" role="tab" data-toggle="tab">Lessons</a></li>
+									<li role="presentation"><a href="#tab1-3{{ objective.id}}" aria-controls="tab1-3{{ objective.id}}" role="tab" data-toggle="tab">Resources</a></li>
+									<li role="presentation"><a href="#tab1-4{{ objective.id}}" aria-controls="tab1-4{{ objective.id}}" role="tab" data-toggle="tab">Reports</a></li>
+								</ul>
+								<!-- Tab panes -->
+								
+								<div class="tab-content">
+									<div role="tabpanel" class="tab-pane fade in active" id="tab1-1{{ objective.id}}">
+										<div class="title-bordered border__solid">
+											<h5>{{ objective.subject }} - Week: {{ current_week }}</h5>
+										</div>
+										<ol>
+											
+											<li><a href="#" style="color:black;">{{objective.teacher_objective }}</a>
+												<ul class="children">
+													{% for standard in objective.objectives_standards.all %}
+														{% ifchanged standard.standard_objective%}
+														<h6>{{ standard.grade_level }}. {{standard.standard_objective }} </h6>
+														{% endifchanged %}
+													<p> - {{standard.competency }}</p>
+													
+													{% endfor %}
+															
+												</ul>
+											</li>
+											
+											
+										
+										</ol>
+									
+									
+										<div class='row'>
+											<div class="col-sm-4">
+												<h6>Grade Level(s): 
+													<span class="badge badge-secondary">6th Grade</span>
+													<span class="badge badge-secondary">7th Grade</span>
+													<span class="badge badge-secondary">8th Grade</span>
+												</h6>
+											</div>
+											<div class="col-sm-4">
+												<h5>Blooms Level: 
+													<span class="badge" style="background-color:#360167;">Remember</span>
+													<span class="badge" style="background-color:#6B0772;">Understand</span>
+													<span class="badge" style="background-color:#AF1281;">Apply</span>
+													<span class="badge" style="background-color:#CF268A;">Analyze</span>
+													<span class="badge" style="background-color:#E65C9C;">Evaluate</span>
+													<span class="badge" style="background-color:#FB8CAB;">Create</span>
+												</h5>
+											</div>
+											<div class="col-sm-4">
+												<h5>Learning Styles: 
+													<span class="badge btn-success"><i class="fa fa-leaf" title="Nature"></i></span>
+													<span class="badge btn-success"><i class="fa fa-music" title="Musical"></i></span>
+													<span class="badge btn-success"><i class="fa fa-child" title="Movement"></i></span>
+													<span class="badge btn-success"><i class="fa fa-users" title="Groups"></i></span>
+													<span class="badge btn-success"><i class="fa fa-user" title="Independent"></i></span>
+													<span class="badge btn-success"><i class="fa fa-puzzle-piece" title="Logical"></i></span>
+													<span class="badge btn-success"><i class="fa fa-paint-brush" title="Visual"></i></span>
+												
+												</h5>
+											</div>
+			
+			
+										</div>
+										
+								
+										
+									</div>
+									<div role="tabpanel" class="tab-pane fade" id="tab1-2{{ objective.id}}">
+										<div class="title-bordered border__solid">
+											<h5><a href="{% url 'classroom_lesson' user_id=user_profile.id class_id=classroom_profile.id lesson_id=objective.id %}#heading">Lesson Overview</a></h5>
+											
+										</div>
+									
+										<div class='row'>
 
+										
+										<div class="col-sm-8">
 
-							<!-- Loading -->
-							<!-- <div class="text-center">
-								<button type="button" id="loading-btn" data-loading-text="Loading..." class="btn btn-link loading-btn" autocomplete="off">
-									<span><i class="fa fa-refresh"></i> Load more</span>
-								</button>
-							</div> -->
-							<!-- Loading / End -->
+										
+										<div class="products-holder row">
+										{% for lesson in lesson_activities %}
+										{% if lesson.lesson_overview_id == objective.id %}
+											<!-- Product -->
+											<div class="product-item col-md-6 col-lg-6">
+												
+												<div class="product-info">
+													<h3 class="product-name">{{ lesson.subject }} </h3>
+													<span class="product-brand">{{ lesson.title }}</span>
+													<a href="{% url 'classroom_lesson' user_id=user_profile.id class_id=classroom_profile.id lesson_id=objective.id %}#heading" class="btn btn-primary btn-has-icon icon-right btn-shopping-cart">
+														<i class="fa fa-edit"></i>
+														<span>View Activity</span>
+													</a>
+												</div>
+												<footer class="product-footer">
+													<div>
+														<span class="badge" style="background-color:#360167;">Remember</span>
+														<span class="badge" style="background-color:#6B0772;">Understand</span>
+														<span class="badge btn-success"><i class="fa fa-leaf" title="Nature"></i></span>
+														<span class="badge btn-success"><i class="fa fa-music" title="Musical"></i></span>
+													</div>
+												
+												</footer>
+											</div>
+											<!-- Product / End -->
+										{% endif %}
+										{% endfor %}
+										</div>
+										</div>
+										<div class="col-sm-4">
+											<h5><a href="{% url 'classroom_vocabulary' user_id=user_profile.id class_id=classroom_profile.id lesson_id=objective.id %}#heading" style="color:black;">Vocabulary Words:</a></h5>
+										
+											
+											
+											<ul>
+												{% for v_list in vocab_list %}
+													{% if v_list.lesson_plan_id == objective.id %}
+														{% for word in v_list.vocab_words.all %}
+														<li><a href="#" style="color:black;">{{ word.word }}</a><br>
+															{{ word.definition }}<br>
+															{% if word.sentence %}
+																
+																{{ word.sentence }}
+															
+															{% endif %}
+														</li>
+														{% endfor %}
+													{% endif %}
+												{% endfor %}
+											</ul>
+											<h5>Main Questions:</h5>
+											<ul>
+												<li><a href="#" style="color:black;">What is a House</a><br>
+													A dwelling</li>
+												<li><a href="#" style="color:black;">Home</a></li>
+											</ul>
+									
+											
 
+										</div>
+									</div>
+									
+										<br>
+										<div class="title-bordered border__solid">
+											<h5>Reccomended Activities</h5>
+										</div>
+										<!-- Products List -->
+										<div class="products-holder row">
+										
+											<!-- Product -->
+											<div class="product-item col-md-6 col-lg-6" style="background-color: lightgrey">
+												
+												<div class="product-info">
+													<h3 class="product-name">English </h3>
+													<span class="product-brand">This is teh activity for this oen </span>
+													<a href="#" class="btn btn-primary btn-has-icon icon-right btn-shopping-cart">
+														<i class="fa fa-plus"></i>
+														<span>Add to My Planbook</span>
+													</a>
+												</div>
+												<footer class="product-footer">
+													<div>
+														<span class="badge" style="background-color:#360167;">Remember</span>
+														<span class="badge" style="background-color:#6B0772;">Understand</span>
+														<span class="badge btn-success"><i class="fa fa-leaf" title="Nature"></i></span>
+														<span class="badge btn-success"><i class="fa fa-music" title="Musical"></i></span>
+													</div>
+												
+												</footer>
+											</div>
+											<!-- Product / End -->
+											
+										</div>
+										<!-- Products List / End -->
+									</div>
+									<div role="tabpanel" class="tab-pane fade" id="tab1-3{{ objective.id}}">
+										<div class="title-bordered border__solid">
+											<h5>Item Characteristics #3</h5>
+										</div>
+										Phasellus dolor. Maecenas vestibulum mollis diam. Pellentesque ut neque. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In dui magna, posuere eget, vestibulum et, tempor auctor, justo. Proin sapien ipsum, porta a, auctor quis, euismod ut, mi. Aenean viverra rhoncus pede. 
+									</div>
+									<div role="tabpanel" class="tab-pane fade" id="tab1-4{{ objective.id}}">
+										<div class="title-bordered border__solid">
+											<h5>Item Characteristics #4</h5>
+										</div>
+										Phasellus dolor. Maecenas vestibulum mollis diam. Pellentesque ut neque. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In dui magna, posuere eget, vestibulum et, tempor auctor, justo. Proin sapien ipsum, porta a, auctor quis, euismod ut, mi. Aenean viverra rhoncus pede. 
+									</div>
+								</div>
+								
+								
+								
+							</div>
+							<br>
+						
+								{% endfor %}
+							<!-- Tabs / End -->
 						</main>
 						<!-- Posts / End -->
 
 
-						<!-- Sidebar -->
-						<div class="sidebar col-md-3">
-
-							<!-- Widget :: Search -->
-							<aside class="widget widget_search widget__sidebar">
-								<form method="get" class="search-form clearfix" action="#">
-									<div class="form-group">
-										<input type="text" class="form-control" value="" placeholder="Search...">
-										<button class="btn"><i class="fa fa-search"></i></button>
-									</div>
-								</form>
-								
-							</aside>
-							<!-- /Widget :: Search -->
-
-							<!-- Widget :: Categories -->
-							<div class="widget_categories widget widget__sidebar">
-								<ul>
-									<li><a href="#">Planbook</a>
-										<ul class="children">
-											<li><a href="#">First Grade</a></li>
-											<li><a href="#">Second Grade</a></li>
-											<li><a href="#">Third Grade</a></li>		
-										</ul>
-									</li>
-									<li><a href="#">Students</a></li>
-									<li><a href="#">Assignments</a></li>
-									<li><a href="#">Resource Library</a></li>
-									<li><a href="#">Settings</a></li>
-								</ul>
-							</div>
-					
-							
-						</div>
-						<!-- Sidebar / End-->
-					</div>
+						
+	
 
 				</div>
 			</section>

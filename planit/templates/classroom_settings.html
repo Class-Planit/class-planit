@@ -248,7 +248,7 @@
 					
 					<div class="section-title-wrapper">
 						<div class="section-title-inner">
-							<h1 class="section-title section-title__lg">Classroom Settings</h1>
+							<h1 class="section-title section-title">Classroom Settings</h1>
 							<ol class="breadcrumb">
 								<li><a href="index.html">Home</a></li>
 								<li><a href="#">My Profile</a></li>
@@ -259,217 +259,304 @@
 					<a href="{% url 'my_profile' user_id=user_profile.id %}#heading" class="btn btn-primary btn-has-icon"><i class="fa fa-long-arrow-left"></i> Back to My Profile</a>
 					<div class="gap-10"></div>
 					
+					{% if form1 %}
+					<form method="POST">
+						{% csrf_token %}
+						{{ form1.as_p }}
+						<input type="submit" value="Submit" class="btn btn-info">
+					</form>
+					{% endif %}
 					<div class="row">
 
 						<!-- Posts -->
 						<main class="col-md-9">
 							
 							<div class="title-bordered border__dashed">
-								{% if classroom %}
-								<h3>{{ classroom }} Settings</h3>
+								{% if classroom_profile %}
+								<h3><center>{{ classroom_profile }} Settings</center></h3>
 								{% else %}
-								<h3>Create New Classroom</h3>
+								<h3><center>Create New Classroom</center></h3>
 								{% endif %}
 							</div>
-							<form method="post">
-								{% csrf_token %}
-							<div class="row">
-								<div class="col-md-4">
-									<h4>Classroom Title:</h4>
-									<div class="form-group">
-									
-										<input type="text" class="form-control" id="inputText">
-									</div>
-		
-								</div>
-								<div class="col-md-4">
-									<h4>Standards Set:</h4>
-									<div class="form-group">
-										<select class="form-control selectpicker" id="select-default" data-style="btn-default">
-											<option>TEKS</option>
-											<option>Common Core</option>
-											<option>Use My Own Objectives</option>
-		
-										</select>
-									</div>
-							
-								</div>
-								<div class="col-md-4">
-									<h4>Grade Levels:</h4>
-		
-									<div class="row">
-										<div class="col-md-6">
-											<div class="checkbox checkbox__custom checkbox__style1">
-												<label>
-													<input type="checkbox" value="" >
-													<span>Kindergarten</span>
-												</label>
+							<!-- Tabs Pills -->
+							<div role="tabpanel">
+								<!-- Nav tabs -->
+								<ul class="nav nav-pills nav-justified" role="tablist">
+									<li role="presentation" class="active"><a href="#tab3-1" aria-controls="tab3-1" role="tab" data-toggle="tab">Classroom Info</a></li>
+									<li role="presentation"><a href="#tab3-2" aria-controls="tab3-2" role="tab" data-toggle="tab">Students</a></li>
+									<li role="presentation"><a href="#tab3-3" aria-controls="tab3-3" role="tab" data-toggle="tab">Teaching Team</a></li>
+								</ul>
+								<!-- Tab panes -->
+								<div class="tab-content">
+									<div role="tabpanel" class="tab-pane fade in active" id="tab3-1">
+										<div class="title-bordered border__solid">
+											<div class="row">
+												<div class="col-md-4">
+													<h5>Classroom Info</h5>
+												</div>
+												
+												<div class="col-md-8">
+													{% if edit == 0 %}
+													<a href="{% url 'classroom_settings' user_id=user_profile.id class_id=classroom_profile.id edit=1 %}#heading" class="btn btn-info " title="Edit Class Info"><i class="fa fa-cog"></i></a>
+													{% else %}
+													<a href="{% url 'classroom_settings' user_id=user_profile.id class_id=classroom_profile.id edit=0 %}#heading" class="btn btn-info " title="Edit Class Info">Go Back</a>
+													{% endif %}
+												</div>
 											</div>
-											<div class="checkbox checkbox__custom checkbox__style1">
-												<label>
-													<input type="checkbox" value="">
-													<span>First</span>
-												</label>
-											</div>
-											<div class="checkbox checkbox__custom checkbox__style1">
-												<label>
-													<input type="checkbox" value="">
-													<span>Second</span>
-												</label>
-											</div>
-											<div class="checkbox checkbox__custom checkbox__style1">
-												<label>
-													<input type="checkbox" value="" >
-													<span>Third</span>
-												</label>
-											</div>
-											<div class="checkbox checkbox__custom checkbox__style1">
-												<label>
-													<input type="checkbox" value="">
-													<span>Fourth</span>
-												</label>
-											</div>
-											<div class="checkbox checkbox__custom checkbox__style1">
-												<label>
-													<input type="checkbox" value="">
-													<span>Fifth</span>
-												</label>
-											</div>
+											
 										</div>
-										<div class="col-md-6">
-											<div class="checkbox checkbox__custom checkbox__style1">
-												<label>
-													<input type="checkbox" value="" >
-													<span>Sixth</span>
-												</label>
-											</div>
-											<div class="checkbox checkbox__custom checkbox__style1">
-												<label>
-													<input type="checkbox" value="">
-													<span>Seventh</span>
-												</label>
-											</div>
-											<div class="checkbox checkbox__custom checkbox__style1">
-												<label>
-													<input type="checkbox" value="">
-													<span>Eighth</span>
-												</label>
-											</div>
-											<div class="checkbox checkbox__custom checkbox__style1">
-												<label>
-													<input type="checkbox" value="">
-													<span>Nineth</span>
-												</label>
-											</div>
-											<div class="checkbox checkbox__custom checkbox__style1">
-												<label>
-													<input type="checkbox" value="">
-													<span>Tenth</span>
-												</label>
-											</div>
-											<div class="checkbox checkbox__custom checkbox__style1">
-												<label>
-													<input type="checkbox" value="">
-													<span>Eleventh</span>
-												</label>
-											</div>
-											<div class="checkbox checkbox__custom checkbox__style1">
-												<label>
-													<input type="checkbox" value="">
-													<span>Twelfth</span>
-												</label>
-											</div>
-										</div>
-									</div>
-		
-								</div>
-							</div>
-							<input type="submit" value="Save Classroom Data" class="btn btn-info btn-block">
-						</form>
-		
-							<div class="gap-50"></div>
-		
-							<div class="title-bordered border__dashed">
-								<h3>Students:</h3>
-							</div>
-							<div class="row">
-								<div class="col-md-8">
-		
-									<div class="title-bordered border__dashed">
-										<h5>Current Students:</h5>
-									</div>
-									<ul>
-										<li>Athena Akwenye</li>
-										<li>Nanyu Akwenye</li>
-									</ul>
+										{% if classroom_profile %}
+											{% if edit == 0 %}
+											<div class="row">
+												<div class="col-md-4">
+													<h4>Class Name:</h4>
+													<div class="form-group">
+													
+														<h5>{{ classroom_profile }}</h5>
+													</div>
 						
-							</div>
-								<div class="col-md-4">
-									<h5>Invite New Students:</h5>
-									<form method="post">
-										{% csrf_token %}
-									<div class="form-group">
-										<div class="input-group">
-											<div class="input-group-addon"><i class="fa fa-user"></i></div>
-											<input type="text" class="form-control" placeholder="Student's Name">
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="input-group">
-											<div class="input-group-addon"><i class="fa fa-envelope"></i></div>
-											<input type="email" class="form-control" placeholder="Student's Email Address">
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="input-group">
-											<div class="input-group-addon"><i class="fa fa-phone"></i></div>
-											<input type="email" class="form-control" placeholder="Student's Phone Number">
-										</div>
-									</div>
-									<input type="submit" value="Send Invite" class="btn btn-info btn-block">
-									</form>
-								</div>
+												</div>
+												<div class="col-md-4">
+													<h4>Standards Set:</h4>
+													<div class="form-group">
+														<h5>{{ classroom_profile.standards_set }}</h5>
+													</div>
+											
+												</div>
+												
+											</div>
+											<div class="gap-20"></div>
+											<a name="grade_level"></a>
+											<div class="title-bordered border__dashed">
+												<h5>Grade Level: <small>(you can select multiple grade levels)</small></h5>
+											</div>
+											<ul>
+												{% for grade in grade_summary %}
+											
+												{% if grade.1 %}
+												<h5><a href="{% url 'update_gradelevel' user_id=user_profile.id class_id=classroom_profile.id grade_id=grade.0.id action=1 %}#heading" style="color:#4d306e;"><i class="fa fa-check"></i> {{ grade.0.grade_labels }}</a></h5>
+												{% else %}
+												<li><a href="{% url 'update_gradelevel' user_id=user_profile.id class_id=classroom_profile.id grade_id=grade.0.id action=0 %}#heading">{{ grade.0.grade_labels }}</a></li>
+												{% endif %}
 								
-							</div>
+												{% endfor %}
+											</ul>
+											<div class="gap-20"></div>
+											<a name="subjects"></a>
+	
+											<div class='row'>
+												<div class='col-md-8'>
+													<div class="title-bordered border__dashed">
+														<h5>Active Subjects:</h5>
+													</div>
+													<ul>
+														
+														{% for subject in class_subjects_list %}
+														<h5><a href="{% url 'update_class_subject' user_id=user_profile.id class_id=classroom_profile.id subject_id=subject.id action=1 %}#heading" style="color:#4d306e;"><i class="fa fa-check"></i> {{ subject }}</a></h5>
+														
+														{% endfor %}
+														
+													</ul>
+												</div>
+												<div class='col-md-4'>
+													<div class="title-bordered border__dashed">
+														<h5>Inactive Subjects:</h5>
+													</div>
+		
+														<ul  >
+															{% for subject in standards_subjects %}
+															<li><a href="{% url 'update_class_subject' user_id=user_profile.id class_id=classroom_profile.id subject_id=subject.id action=0 %}#heading">{{ subject }}</a></li>
+															{% endfor %}
+																								
+																
+														</ul>
 
-							<div class="gap-50"></div>
-		
-							<div class="title-bordered border__dashed">
-								<h3>Invite Teaching Team Members:</h3>
-							</div>
-							<div class="row">
-								<div class="col-md-8">
-		
-									<div class="title-bordered border__dashed">
-										<h5>Already Invited:</h5>
-									</div>
-									<ul>
-										<li>Mrs Taylor</li>
-								<li>Mrs Akwenye</li>
-									</ul>
+														<!----| We still need to edit add your own subject |-->
+														<button type="button" class="btn btn-default btn" data-toggle="modal" data-target="#exampleModalCenter">
+															Add My Own Subject
+														</button>
+														
+														<!-- Modal -->
+														<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+															<div class="modal-dialog modal-dialog-centered" role="document">
+															<div class="modal-content">
+																<div class="modal-header">
+																<h5 class="modal-title" id="exampleModalLongTitle">Create a New Subject</h5>
+																<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+																	<span aria-hidden="true">&times;</span>
+																</button>
+																</div>
+																<div class="modal-body">
+																Subject Name:
+
+																</div>
+																<div class="modal-footer">
+																<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+																<button type="button" class="btn btn-primary">Save changes</button>
+																</div>
+															</div>
+															</div>
+														</div>
+												
+													
+												</div>
+											</div>
+											
+
+											
+											{% else %}
+											<form method="POST">
+												{% csrf_token %}
+											<div class="row">
+												<div class="col-md-4">
+													<h4>Classroom Title:</h4>
+													<div class="form-group">
+													
+														<input type="text" name='classroom_title' value='{{classroom_profile.classroom_title}}' class="form-control" id="classroom_title">
+													</div>
 						
-							</div>
-								<div class="col-md-4">
-									<h5>Invite New Teacher:</h5>
-									<form method="post">
-										{% csrf_token %}
-									<div class="form-group">
-										<div class="input-group">
-											<div class="input-group-addon"><i class="fa fa-user"></i></div>
-											<input type="text" class="form-control" placeholder="Teacher's Name">
+												</div>
+												<div class="col-md-4">
+													<h4>Standards Set:</h4>
+													<div class="form-group">
+														<select class="form-control selectpicker" name='standards_set' id="standards_set" data-style="btn-default">
+															
+															<option value='{{classroom_profile.standards_set_id }}' >{{classroom_profile.standards_set }}</option>
+															<option value=None >-------------</option>
+															{% for item in standards_sets %}
+															<option value="{{ item.id }}">{{ item }}</option>
+															{% endfor %}
+															<option value=None >Use My Own</option>
+						
+														</select>
+													</div>
+											
+												</div>
+											
+											</div>
+											<input type="submit" value="Save Classroom Data" class="btn btn-info btn-block">
+											</form>
+											{% endif %}
+											{% else %}
+											<form method="POST">
+												{% csrf_token %}
+											<div class="row">
+												<div class="col-md-4">
+													<h4>Classroom Title:</h4>
+													<div class="form-group">
+													
+														<input type="text" name='classroom_title' class="form-control" id="classroom_title">
+													</div>
+						
+												</div>
+												<div class="col-md-4">
+													<h4>Standards Set:</h4>
+													<div class="form-group">
+														<select class="form-control selectpicker" name='standards_set' id="standards_set" data-style="btn-default">
+															{% for item in standards_sets %}
+															<option value="{{ item.id }}">{{ item }}</option>
+															{% endfor %}
+															<option value=None >Use My Own</option>
+						
+														</select>
+													</div>
+											
+												</div>
+											
+											</div>
+											<input type="submit" value="Save Classroom Data" class="btn btn-info btn-block">
+											</form>
+										{% endif %}
+									</div>
+									<div role="tabpanel" class="tab-pane fade" id="tab3-2">
+										<div class="title-bordered border__solid">
+											<h5>Students:</h5>
+										</div>
+									
+										<div class="row">
+											<div class="col-md-8">
+					
+												<div class="title-bordered border__dashed">
+													<h5>Current Students:</h5>
+												</div>
+												<ul>
+													<li>Athena Akwenye</li>
+													<li>Nanyu Akwenye</li>
+												</ul>
+									
+										</div>
+											<div class="col-md-4">
+												<h5>Invite New Students:</h5>
+												<form method="post">
+													{% csrf_token %}
+												<div class="form-group">
+													<div class="input-group">
+														<div class="input-group-addon"><i class="fa fa-user"></i></div>
+														<input type="text" class="form-control" placeholder="Student's Name">
+													</div>
+												</div>
+												<div class="form-group">
+													<div class="input-group">
+														<div class="input-group-addon"><i class="fa fa-envelope"></i></div>
+														<input type="email" class="form-control" placeholder="Email Address">
+													</div>
+												</div>
+												<div class="form-group">
+													<div class="input-group">
+														<div class="input-group-addon"><i class="fa fa-phone"></i></div>
+														<input type="email" class="form-control" placeholder="Phone Number">
+													</div>
+												</div>
+												<input type="submit" value="Send Invite" class="btn btn-info btn-block">
+												</form>
+											</div>
+											
 										</div>
 									</div>
-									<div class="form-group">
-										<div class="input-group">
-											<div class="input-group-addon"><i class="fa fa-envelope"></i></div>
-											<input type="email" class="form-control" placeholder="Teacher's Email Address">
+									<div role="tabpanel" class="tab-pane fade" id="tab3-3">
+										<div class="title-bordered border__solid">
+											<h5>Teaching Team</h5>
+										</div>
+										<div class="title-bordered border__dashed">
+											<h3>Invite Teaching Team Members:</h3>
+										</div>
+										<div class="row">
+											<div class="col-md-8">
+					
+												<div class="title-bordered border__dashed">
+													<h5>Already Invited:</h5>
+												</div>
+												<ul>
+													<li>Mrs Taylor</li>
+											<li>Mrs Akwenye</li>
+												</ul>
+									
+										</div>
+											<div class="col-md-4">
+												<h5>Invite New Teacher:</h5>
+												<form method="post">
+													{% csrf_token %}
+												<div class="form-group">
+													<div class="input-group">
+														<div class="input-group-addon"><i class="fa fa-user"></i></div>
+														<input type="text" class="form-control" placeholder="Teacher's Name">
+													</div>
+												</div>
+												<div class="form-group">
+													<div class="input-group">
+														<div class="input-group-addon"><i class="fa fa-envelope"></i></div>
+														<input type="email" class="form-control" placeholder="Email Address">
+													</div>
+												</div>
+												<input type="submit" value="Send Invite" class="btn btn-info btn-block">
+											</form>
+											</div>
+											
 										</div>
 									</div>
-									<input type="submit" value="Send Invite" class="btn btn-info btn-block">
-								</form>
 								</div>
-								
 							</div>
+						
 						</main>
 						<!-- Posts / End -->
 

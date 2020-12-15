@@ -1,6 +1,6 @@
 
 {% extends 'base.html' %}
-
+{% load socialaccount %}
 {% load static %}
 {% block content %}
 
@@ -288,6 +288,9 @@
 						{% endif %}
 						<button type="submit">Next</button>
 					  </form>
+
+					  <h1>My Google Login Project</h1>
+  					<a href="{% provider_login_url 'google' %}">Login with Google</a>
 					<div class="title-bordered border__dashed">
 						<h3>Form Elements</h3>
 					</div>
