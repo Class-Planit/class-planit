@@ -16,7 +16,7 @@ import wikipedia
 from youtube_search import YoutubeSearch
 nltk.download('stopwords')
 nltk.download('wordnet')
-nltk.download('averaged_perceptron_tagger')
+
 from decouple import config, Csv
 from rake_nltk import Rake
 #test comment 
@@ -145,9 +145,15 @@ def google_results(text, lesson_id):
         client = GoogleSearch(params)
         results = client.get_json()
 
-        
-        search_results = results['organic_results']
-        related_results = results["related_questions"]
+        try:
+                search_results = results['organic_results']
+        except:
+                search_results = []
+
+        try:
+                related_results = results["related_questions"]
+        except:
+                related_results = []
 
         if search_results:
                 for item in search_results[:10]:
