@@ -20,6 +20,11 @@
 [type=radio]:checked + img {
   outline: 4px solid #f00;
 }
+.border1
+    {
+      border: 2px solid black;
+
+    }
 </style>
 		<div class="top-wrapper top-wrapper__bg1" id="top">
 			<!-- Header -->
@@ -309,6 +314,7 @@
 							<article class="entry single-post">
 								{% if step <= 1 %} 
 								<div class="entry-body">
+									
 								
 
 									<header class="entry-header">
@@ -353,43 +359,95 @@
 								</div>
 									{% elif step <= 2 %}
 									<div class="entry-body">
-								
 										<a name="keywords"></a>
 										<header class="entry-header">
 											<div class="title-bordered border__solid">
 												<h4>Objective: {{ lesson_match.teacher_objective }}</h4>
 												<h6>{{ lesson_match.subject }} | {{ lesson_match.lesson_classroom }}</h6>
 												<br>
+												<h4>Related Topics</h4>
 												{% for item in lesson_standards %}
 												<h6><li>{{ item }}</li></h6>
 												{% endfor %}
+												{% for item in topics_selected %}
+												<h6><li>{{ item.snippet }}</li></h6>
+												{% endfor %}
+												{% for item in questions_selected %}
+												<h6><li>{{ item.question }}</li></h6>
+												{% endfor %}
+
+												{% for item in selected_wiki %}
+												<h6><li>{{ item.topic }}</li></h6>
+												{% endfor %}
+												
+												<a href="{% url 'select_keywords_two' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id %}#heading" >Next: Select Keywords </a>
 											</div>
 										</header>
-										
-										<div class="entry-content">
-											<h5>Select Key Terms </h5>
-											<div class="tagcloud">
-											{% for item in keywords %}
-											
-												
-												<li>{{ item.word }}</li>
-											   {% endfor %}
-											</div>
-											<hr>
-											<div class="tagcloud">
-											{% for item in not_keywords|slice:"10" %}
-											
-												
-												<a href="{% url 'select_keywords' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id keyword_id=item.id action=0 %}#keyword">{{ item.word }}</a>
-											   {% endfor %}
-											</div>
 
+
+									
+
+										<div class="table-responsive">
+											<table class="table table-bordered table-bordered__solid table-striped table-small">
+											
+												<tbody>
+													{% for item in related_topics|slice:"5" %}
+													
+													<tr>
+														
+														<td><a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=2 item_id=item.id action=0 %}#heading" class="btn btn-success btn-sm btn-has-icon"><i class="fa fa-check"></i> Relevant</a> </td>
+														<td><a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=2 item_id=item.id action=2 %}#heading" class="btn btn-danger btn-sm btn-has-icon icon-right"><i class="fa fa-times"></i> Not Relevant</a></td>
+													<td>{{ item.snippet }}</td>
+													</tr>
+													{% endfor %}
+													{% for item in related_question|slice:"5" %}
+									
+										
+													<tr>
+														
+														<td><a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=3 item_id=item.id action=0 %}#heading" class="btn btn-success btn-sm btn-has-icon"><i class="fa fa-check"></i> Relevant</a> </td>
+														<td><a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=3 item_id=item.id action=2 %}#heading" class="btn btn-danger btn-sm btn-has-icon icon-right"><i class="fa fa-times"></i> Not Relevant</a></td>
+													<td>{{ item.question }}</td>
+													</tr>
+													{% endfor %}
+												</tbody>
+											</table>
+										</div>
+										
+									
+										<hr>
+										<h5>Topics</h5>
+											
+											<div class='row'>
+
+											
+											{% for item in wiki_topics|slice:"5" %}
+
+									
+											<div class="col-sm-6 ">
+												
+											<div class="card">
+												
+
+												
+												<td><a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=5 item_id=item.id action=0 %}#heading" class="btn btn-success btn-sm btn-has-icon"><i class="fa fa-check"></i> Relevant</a> </td>
+														<td><a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=5 item_id=item.id action=2 %}#heading" class="btn btn-danger btn-sm btn-has-icon icon-right"><i class="fa fa-times"></i> Not Relevant</a></td>
+												<br>
+												<div class="card-body">
+											
+												  <p class="card-text">{{ item.topic }}</p>
+												 
+												
+												</div>
+											  </div>
+											
+											</div>	
+											
+										   {% endfor %}
+											</div>
 										
 											<hr>
-											
 										
-										</div>
-									
 									
 										<footer class="entry-footer">
 											<h5>Select Resources</h5>
@@ -398,9 +456,54 @@
 											<h5>Identify Big Idea</h5>
 										</footer>
 									</div>
-	
+								</div>
 									{% endif %}
-                                   
+									<div class="entry-body">
+										<a name="keywords"></a>
+										<header class="entry-header">
+											<div class="title-bordered border__solid">
+												<h4>Objective: {{ lesson_match.teacher_objective }}</h4>
+												<h6>{{ lesson_match.subject }} | {{ lesson_match.lesson_classroom }}</h6>
+												<br>
+												<h4>Related Topics</h4>
+												{% for item in lesson_standards %}
+												<h6><li>{{ item }}</li></h6>
+												{% endfor %}
+												{% for item in topics_selected %}
+												<h6><li>{{ item.snippet }}</li></h6>
+												{% endfor %}
+												{% for item in questions_selected %}
+												<h6><li>{{ item.question }}</li></h6>
+												{% endfor %}
+
+												{% for item in selected_wiki %}
+												<h6><li>{{ item.topic }}</li></h6>
+												{% endfor %}
+												
+												<a href="{% url 'select_keywords_two' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id %}#heading" >Next: Select Keywords </a>
+											</div>
+										</header>
+
+
+								
+										
+									
+										<hr>
+										<h5>Keywords</h5>
+											{% for item in keywords_matched %}
+										<li>{{ item.word }} - 
+										{{ item.definition }}</li>
+										{% endfor %}
+								
+									
+										<footer class="entry-footer">
+											<h5>Select Resources</h5>
+										</footer>
+										<footer class="entry-footer">
+											<h5>Identify Big Idea</h5>
+										</footer>
+									</div>
+								</div>
 								
 								
 

@@ -31,4 +31,50 @@ from django.test import TestCase
                 pix = None
         return render(request, 'index.html', {})
 
-    
+
+        result_text = ' '.join(summary_list)
+        keyword_results = get_keywords(result_text)
+
+
+        topic_keywords = []        
+        for item in keyword_results:
+                 
+                keyword_results_num = check_topic_relevance(item, lesson_id)
+                if keyword_results_num >= .20:
+                        
+                        try:
+                                wiki_search = wikipedia.search(item)
+                                
+                                
+                                for item in wiki_search:
+                                        try:
+                                                topic_result = wikipedia.summary(item, sentences = 3, auto_suggest=False, redirect=True)
+                                                
+                                                result = check_topic_relevance(topic_result, lesson_id)
+                                        
+                                                if result >= .15:
+                                                        new_result = result * 100 
+                                                        
+                                                        new_wiki, created = wikiTopic.objects.get_or_create(lesson_plan=class_objectives , topic=topic_result, relevance=new_result)
+                                                
+                                                        keyword_results_two = get_keywords(topic_result)
+                                                        
+                                                        for item in keyword_results_two:
+                                                                if item not in topic_keywords:
+                                                                        topic_keywords.append(item) 
+                                                                        
+                                                                        
+                                        except wikipedia.DisambiguationError as e:
+                                                pass
+
+                        
+                        except:
+                                pass
+        
+        for item in topic_keywords:
+                
+                definitions = get_vocab_context(item)       
+                if definitions:
+                        keyword_result = check_topic_relevance(definitions , lesson_id)  
+                        if keyword_result >= .30:
+                                print(definitions, keyword_result)   

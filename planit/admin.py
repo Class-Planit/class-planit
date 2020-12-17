@@ -18,5 +18,9 @@ admin.site.register(lessonFull)
 admin.site.register(teacherLessonTemplates)
 admin.site.register(lessonSectionTemplate)
 admin.site.register(lessonSection)
+admin.site.register(googleSearchResult)
+admin.site.register(keywordResults)
+admin.site.register(wikiTopic)
+admin.site.register(googleRelatedQuestions)
 
 

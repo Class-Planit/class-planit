@@ -16,7 +16,8 @@ import wikipedia
 from youtube_search import YoutubeSearch
 nltk.download('stopwords')
 nltk.download('wordnet')
-
+import bs4
+import requests
 from decouple import config, Csv
 from rake_nltk import Rake
 #test comment 
@@ -111,16 +112,34 @@ def modify(inputStr):
         return ' '.join([t[0] for t in tagged])
 
 def check_topic_relevance(text, lesson_id):
+
         class_objectives = lessonObjective.objects.get(id=lesson_id)
-        objective = class_objectives.teacher_objective
-        standards = class_objectives.objectives_standards.all()
-        standards_text = []
-        for standard in standards:
-                 result = standard.standard_objective, standard.competency
-                 standards_text.append(result)
+        class_objectives_list = str(class_objectives.teacher_objective)
+
+
+        topics = googleSearchResult.objects.filter(lesson_plan=lesson_id)
+        topic_results = []
+        if topics: 
+                for item in topics:
+                        result = item.snippet
+                        topic_results.append(result)
+
+        questions = googleRelatedQuestions.objects.filter(lesson_plan=lesson_id)
+        question_results = []
+        if questions: 
+                for item in questions:
+                        result = item.question
+                        question_results.append(result)
+
+
+
+        class_topics = ' '.join([str(i) for i in topic_results])
+        related_questions = ' '.join([str(i) for i in question_results])
+
+        combined = class_objectives_list + str(topic_results) + str(question_results)
         
         text = ''.join([str(i) for i in text])
-        planned_objective = str(class_objectives.teacher_objective)
+        planned_objective = str(combined)
         planned_objective = ''.join([str(i) for i in planned_objective])
         Document1 = planned_objective
         Document2 = text
@@ -135,10 +154,79 @@ def check_topic_relevance(text, lesson_id):
 
 
 def google_results(text, lesson_id):
-        class_objectives = lessonObjective.objects.get(id=lesson_id)
+        class_objectives = ' '.join([str(i) for i in lessonObjective.objects.get(id=lesson_id)])
+
+        class_topics = ' '.join([str(i) for i in googleSearchResult.objects.filter(lesson_plan=lesson_id)])
+        related_questions = ' '.join([str(i) for i in googleRelatedQuestions.objects.filter(lesson_plan=lesson_id)])
+
+        combined = class_objectives + class_topics + related_questions
         params = {
         'engine': "google",
-        'q': text,
+        'q': combined,
+        'api_key': config('api_key')
+        }
+
+        client = GoogleSearch(params)
+        results = client.get_json()
+
+        try:
+                search_results = results['organic_results']
+        except:
+                search_results = []
+
+        try:
+                related_results = results["related_questions"]
+        except:
+                related_results = []
+
+        if search_results:
+                for item in search_results[:10]:
+                        title = item['title']
+                        link = item['link']
+                        snippet = item['snippet']
+                        new_result, created = googleSearchResult.objects.get_or_create(lesson_plan=class_objectives , title=title, link=link, snippet=snippet)
+
+        if related_results:
+                for item in related_results[:10]:
+                        question = item['question']
+                        link = item['link']
+                        snippet = item['snippet']
+                        new_result, created = googleRelatedQuestions.objects.get_or_create(lesson_plan=class_objectives , question=question, link=link, snippet=snippet)
+
+
+
+        return('Success')
+
+
+
+def wiki_google_results(text, lesson_id):
+        class_objectives = lessonObjective.objects.get(id=lesson_id)
+        class_objectives_list = str(class_objectives.teacher_objective)
+
+
+        topics = googleSearchResult.objects.filter(lesson_plan=lesson_id)
+        topic_results = []
+        if topics: 
+                for item in topics:
+                        result = item.snippet
+                        topic_results.append(result)
+
+        questions = googleRelatedQuestions.objects.filter(lesson_plan=lesson_id)
+        question_results = []
+        if questions: 
+                for item in questions:
+                        result = item.question
+                        question_results.append(result)
+
+
+
+        class_topics = ' '.join([str(i) for i in topic_results])
+        related_questions = ' '.join([str(i) for i in question_results])
+
+        combined = class_objectives_list + str(topic_results) + str(question_results)
+        params = {
+        'engine': "google",
+        'q': combined,
         'api_key': config('api_key')
         }
 
@@ -173,17 +261,109 @@ def google_results(text, lesson_id):
         result_list = list(chain(related_results, search_results))
         
         summary_list = []
-        for item in search_results:
+        for item in result_list:
                 summary = item['snippet']
                 summary_list.append(summary)
 
         result_text = ' '.join(summary_list)
         keyword_results = get_keywords(result_text)
-        print(keyword_results)
+
         for item in keyword_results:
-                new_result, created = keywordResults.objects.get_or_create(lesson_plan=class_objectives , word=item)
-        
+                keyword_results_num = check_topic_relevance(item, lesson_id)
+                
+                if keyword_results_num >= .20:
+                      
+                        try:
+                                wiki_search = wikipedia.search(item)
+                              
+                                
+                                for item in wiki_search:
+                                        try:
+                                                topic_result = wikipedia.summary(item, sentences = 3, auto_suggest=False, redirect=True)
+                                                
+                                                result = check_topic_relevance(topic_result, lesson_id)
+                                        
+                                                if result >= .15:
+                                                        new_result = result * 100 
+                                                        
+                                                        new_wiki, created = wikiTopic.objects.get_or_create(lesson_plan=class_objectives , topic=topic_result, relevance=new_result)
+                         
+                                        except wikipedia.DisambiguationError as e:
+                                                pass
+
+                        
+                        except:
+                                pass
+                
         return('Success')
+
+def get_website_info(item_id):
+        topic = googleSearchResult.objects.get(id=item_id)
+        url = topic.link
+        result = requests.get(url)
+        soup = bs4.BeautifulSoup(result.text)
+        paragraph = []
+        for tag in soup.select('li'):
+                p = tag.text.strip()
+                paragraph.append(p)
+
+        return(paragraph)
+
+
+def get_lesson_keywords(lesson_id):
+        class_objectives = lessonObjective.objects.get(id=lesson_id)
+        class_objectives_list = str(class_objectives.teacher_objective)
+
+
+        topics = googleSearchResult.objects.filter(lesson_plan=lesson_id, is_selected=True)
+        topic_results = []
+        if topics: 
+                for item in topics:
+                        full_results = get_website_info(item.id)
+                        topic_results.append(full_results)
+
+
+        questions = googleRelatedQuestions.objects.filter(lesson_plan=lesson_id, is_selected=True)
+        question_results = []
+        if questions: 
+                for item in questions:
+                        result = item.question
+                        question_results.append(result)
+
+        wiki = wikiTopic.objects.filter(lesson_plan=lesson_id, is_selected=True)
+        wiki_results = []
+        if wiki: 
+                for item in wiki:
+                        wiki_search = wikipedia.summary(item, sentences = 10, auto_suggest=False, redirect=True)
+                        question_results.append(wiki_search)
+
+        class_topics = ' '.join([str(i) for i in topic_results])
+        related_questions = ' '.join([str(i) for i in question_results])
+
+        combined = class_objectives_list + str(class_topics) + str(related_questions) + str(wiki_results)
+        
+        keyword_results = get_keywords(combined)
+
+
+        topic_keywords = []    
+     
+        for item in keyword_results:
+
+                 
+                keyword_results_num = check_topic_relevance(item, lesson_id)
+              
+                if keyword_results_num >= .05:
+              
+                        definitions = get_vocab_context(item)  
+                    
+                        if definitions:     
+                                new_keyword, created = keywordResults.objects.get_or_create(lesson_plan=class_objectives, word=item, definition=definitions[1], sentence=definitions[2], p_o_s=definitions[3], relevance=keyword_results_num )
+                        else:
+                                new_keyword, created = keywordResults.objects.get_or_create(lesson_plan=class_objectives, word=item, relevance=keyword_results_num )
+        return('success')
+
+
+
 def get_questions(lesson_id):
         class_objectives = lessonObjective.objects.get(id=lesson_id)
         lesson_match = lessonFull.objects.filter(lesson_overview=class_objectives).first()

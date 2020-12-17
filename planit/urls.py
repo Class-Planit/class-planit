@@ -72,13 +72,17 @@ urlpatterns = [
         view=SelectKeywords,
         name='select_keywords'),
 
+     url(r'^classroom-planbook-keywords-two/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<lesson_id>[\w-]+)/$',
+        view=SelectKeywordsTwo,
+        name='select_keywords_two'),
+
     url(r'^classroom-planbook-edit-standard/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<lesson_id>[\w-]+)/(?P<standard_id>[\w-]+)/(?P<action>[\w-]+)/$',
         view=EditObjectiveStandards,
         name='edit_objective_standards'),   
 
-    url(r'^classroom-planbook-select-keyword/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<lesson_id>[\w-]+)/(?P<keyword_id>[\w-]+)/(?P<action>[\w-]+)/$',
-        view=addKeywords,
-        name='select_keywords'), 
+    url(r'^classroom-planbook-select-related/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<lesson_id>[\w-]+)/(?P<type_id>[\w-]+)/(?P<item_id>[\w-]+)/(?P<action>[\w-]+)/$',
+        view=SelectRelatedInformation,
+        name='select_related'), 
     #########| end classroom settings and edit urls |#########
 
 

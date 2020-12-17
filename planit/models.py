@@ -290,7 +290,36 @@ class keywordResults(models.Model):
                                on_delete=models.SET_NULL,
                                blank=True,
                                null=True)
-    word = models.CharField(max_length=100)
+    word = models.CharField(max_length=100,
+                               blank=True,
+                               null=True)
+    p_o_s = models.CharField(max_length=50,
+                                       blank=True,
+                                       null=True)
+    definition = models.CharField(max_length=600,
+                               blank=True,
+                               null=True)
+    sentence = models.CharField(max_length=600,
+                               blank=True,
+                               null=True)
+    relevance = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
+
+
+    def __str__(self):
+        return "%s" % (self.id)
+
+class wikiTopic(models.Model):
+    is_selected = models.BooleanField(default=False)
+    lesson_plan = models.ForeignKey(lessonObjective,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    topic = models.CharField(max_length=1000)
+    relevance = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
 
 
     def __str__(self):

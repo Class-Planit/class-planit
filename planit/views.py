@@ -334,31 +334,115 @@ def SelectKeywords(request, user_id=None, class_id=None, subject=None, lesson_id
     lesson_standards = singleStandard.objects.filter(id__in=lesson_match.objectives_standards.all())
     teacher_objective = lesson_match.teacher_objective
 
-    keywords = keywordResults.objects.filter(lesson_plan=lesson_match).exclude(is_selected=False)
-    not_keywords = keywordResults.objects.filter(lesson_plan=lesson_match).exclude(is_selected=True)
+    related_question = googleRelatedQuestions.objects.filter(lesson_plan=lesson_match, is_selected=False)
+    related_topics = googleSearchResult.objects.filter(lesson_plan=lesson_match, is_selected=False)
+   
+    questions_selected = googleRelatedQuestions.objects.filter(lesson_plan=lesson_match, is_selected=True)
+    topics_selected = googleSearchResult.objects.filter(lesson_plan=lesson_match, is_selected=True)
+    selected_wiki = wikiTopic.objects.filter(lesson_plan=lesson_match, is_selected=True)
 
-    if keywords:
-        pass
-    else:
+    wiki_topics = wikiTopic.objects.filter(lesson_plan=lesson_match).exclude(is_selected=True).order_by('-relevance')
+
+    
+    if lesson_match.is_skill:
         results = google_results(teacher_objective, lesson_id)
+    else:
+        results = wiki_google_results(teacher_objective, lesson_id)
     
     
     
   
     step = 2
-    return render(request, 'create_objective.html', {'user_profile': user_profile, 'keywords': keywords, 'not_keywords': not_keywords,  'step': step, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
+    return render(request, 'create_objective.html', {'user_profile': user_profile, 'selected_wiki': selected_wiki, 'questions_selected': questions_selected, 'topics_selected': topics_selected,  'related_question': related_question, 'related_topics': related_topics, 'wiki_topics': wiki_topics, 'step': step, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
 
-def addKeywords(request, user_id=None, class_id=None, subject=None, lesson_id=None, keyword_id=None, action=None):
+
+
+def SelectKeywordsTwo(request, user_id=None, class_id=None, subject=None, lesson_id=None):
+    current_week = date.today().isocalendar()[1] 
+    user_profile = User.objects.get(id=user_id)
+
+    classroom_profile = classroom.objects.get(id=class_id)
+    grade_list = classroom_profile.grade_level.all()
+
+    standard_match = standardSet.objects.get(id=classroom_profile.standards_set_id)
+    classroom_subjects = classroomSubjects.objects.filter(subject_classroom=classroom_profile).first()
+    subjects_list = classroom_subjects.subjects.all()
+    subject_matches = standardSubjects.objects.filter(id__in=classroom_subjects.subjects.all())
+    
+    
+    class_objectives = lessonObjective.objects.all().order_by('subject')
+    vocab_list = vocabularyList.objects.filter(lesson_plan__in=class_objectives)
+    lesson_activities = lessonFull.objects.filter(lesson_overview__in=class_objectives)
+    lesson_match = lessonObjective.objects.get(id=lesson_id)
+    lesson_standards = singleStandard.objects.filter(id__in=lesson_match.objectives_standards.all())
+    teacher_objective = lesson_match.teacher_objective
+
+
+
+    questions_selected = googleRelatedQuestions.objects.filter(lesson_plan=lesson_match, is_selected=True)
+    topics_selected = googleSearchResult.objects.filter(lesson_plan=lesson_match, is_selected=True)
+
+
+    keywords_matched = keywordResults.objects.filter(lesson_plan=lesson_match).order_by('-relevance')
+
+    keywords = get_lesson_keywords(lesson_id)
+    
+    
+    
+  
+    step = 3
+    return render(request, 'create_objective.html', {'user_profile': user_profile, 'questions_selected': questions_selected, 'topics_selected': topics_selected, 'keywords_matched': keywords_matched, 'step': step, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
+
+
+def SelectRelatedInformation(request, user_id=None, class_id=None, subject=None, lesson_id=None, type_id=None, item_id=None, action=None):
     user_profile = User.objects.get(id=user_id)
     classroom_profile = classroom.objects.get(id=class_id)
-    keyword_match = keywordResults.objects.get(id=keyword_id)
-    action = int(action)
-    if action == 0:
-        keyword_match.is_selected = True
-        keyword_match.save()
+    #Keyword = 1 , Google Topic = 2, Question = 3, Wiki Topic = 5  
+    type_id = int(type_id)
+    if type_id == 1: 
+        keyword_match = keywordResults.objects.get(id=item_id)
+        action = int(action)
+        if action == 0:
+            keyword_match.is_selected = True
+            keyword_match.save()
+        elif action == 2:
+            keyword_match.delete()
+        else:
+            keyword_match.is_selected = False
+            keyword_match.save()
+    elif type_id == 2:
+        keyword_match = googleSearchResult.objects.get(id=item_id)
+        action = int(action)
+        if action == 0:
+            keyword_match.is_selected = True
+            keyword_match.save()
+        elif action == 2:
+            keyword_match.delete()
+        else:
+            keyword_match.is_selected = False
+            keyword_match.save()
+    elif type_id == 3:
+        keyword_match = googleRelatedQuestions.objects.get(id=item_id)
+        action = int(action)
+        if action == 0:
+            keyword_match.is_selected = True
+            keyword_match.save()
+        elif action == 2:
+            keyword_match.delete()
+        else:
+            keyword_match.is_selected = False
+            keyword_match.save()
     else:
-        keyword_match.is_selected = False
-        keyword_match.save()
+        keyword_match = wikiTopic.objects.get(id=item_id)
+        action = int(action)
+        if action == 0:
+            keyword_match.is_selected = True
+            keyword_match.save()
+        elif action == 2:
+            keyword_match.delete()
+        else:
+            keyword_match.is_selected = False
+            keyword_match.save()
     return redirect('{}#keywords'.format(reverse('select_keywords', kwargs={'user_id':user_profile.id, 'class_id':classroom_profile.id, 'subject':subject, 'lesson_id':lesson_id})))
 
 
