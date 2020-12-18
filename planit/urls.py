@@ -24,9 +24,9 @@ urlpatterns = [
         view=GetStarted.as_view(),
         name='get_started'),
     
-    url(r'^print/$',
-        view=generate_pdf,
-        name='generate_pdf'),
+    # url(r'^print/$',
+    #     view=generate_pdf,
+    #     name='generate_pdf'),
 
     url(r'^sign-up/$',
         view=Signup,

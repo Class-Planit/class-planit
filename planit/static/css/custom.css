@@ -1,1 +1,4 @@
 /* Add your CSS here */
+.signup-form input::placeholder {
+  color: white;
+}

@@ -2,6 +2,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 	<!-- Basic Page Needs
@@ -28,7 +29,7 @@
 		
 	================================================== -->
 	<!-- Base + Vendors CSS -->
-	
+
 	<link rel="stylesheet" href="{% static 'vendor/bootstrap/bootstrap.min.css' %}">
 	<link rel="stylesheet" href="{% static 'css/animate.min.css' %}">
 
@@ -43,27 +44,28 @@
 
 	<!-- Skin CSS -->
 	<!-- <link rel="stylesheet" href="css/skins/red.css"> -->
-	
+
 	<!-- Custom CSS-->
 	<link rel="stylesheet" href="{% static 'css/custom.css' %}">
 
 	<!-- Head Libs -->
 	<script src="{% static 'vendor/modernizr.js' %}"></script>
-	
+
 </head>
+
 <body>
 
 	<!-- Page Loader -->
 	<div class="page-loader">
 		<div class="loader">
 			<div class="dot1"></div>
-  		<div class="dot2"></div>
+			<div class="dot2"></div>
 		</div>
 	</div>
-    <!-- End Page Loader -->
-    <div class="page-wrapper">
-{% block content %}
-{% endblock %}
+	<!-- End Page Loader -->
+	<div class="page-wrapper">
+		{% block content %}
+		{% endblock %}
 		<!-- Footer -->
 		<footer class="footer page-section">
 			<div class="container">
@@ -72,20 +74,24 @@
 					<!-- Footer Social Links -->
 					<ul class="footer-social-links footer-social-links__rounded list-inline text-center">
 						<li>
-							<a href="https://www.linkedin.com/company/class-planit" title="LinkedIn"><i class="fa fa-linkedin"></i></a>
+							<a href="https://www.linkedin.com/company/class-planit" title="LinkedIn" target="blank"><i
+									class="fa fa-linkedin"></i></a>
 						</li>
 						<li>
-							<a href="https://www.facebook.com/classplanit/" title="Facebook"><i class="fa fa-facebook"></i></a>
+							<a href="https://www.facebook.com/classplanit/" title="Facebook" target="blank"><i
+									class="fa fa-facebook"></i></a>
 						</li>
 						<li>
-							<a href="https://twitter.com/classplanit" title="Twitter"><i class="fa fa-twitter"></i></a>
+							<a href="https://twitter.com/classplanit" title="Twitter" target="blank"><i
+									class="fa fa-twitter"></i></a>
 						</li>
-						
+
 						<li>
-							<a href="https://www.instagram.com/classplanit/" title="Instagram"><i class="fa fa-instagram"></i></a>
+							<a href="https://www.instagram.com/classplanit/" title="Instagram" target="blank"><i
+									class="fa fa-instagram"></i></a>
 						</li>
-						
-					
+
+
 					</ul>
 					<!-- Footer Social Links / End -->
 
@@ -109,82 +115,84 @@
 			</div>
 		</footer>
 		<!-- Footer / End -->
-		
+
 
 	</div>
-<!-- Back to Top -->
-<div id="back-top">
-    <div class="link-holder scroll-local">
-        <a href="#top" class="top-link"><i class="fa fa-chevron-up"></i></a>
-    </div>
-    <div class="link-holder scroll-local">
-        <a href="#section-contacts" class="contacts-link" data-toggle="tooltip" data-placement="left" title="Contact Us"><i class="fa fa-envelope"></i></a>
-    </div>
-</div>
-<!-- Back to Top / End -->
+	<!-- Back to Top -->
+	<div id="back-top">
+		<div class="link-holder scroll-local">
+			<a href="#top" class="top-link"><i class="fa fa-chevron-up"></i></a>
+		</div>
+		<div class="link-holder scroll-local">
+			<a href="#section-contacts" class="contacts-link" data-toggle="tooltip" data-placement="left"
+				title="Contact Us"><i class="fa fa-envelope"></i></a>
+		</div>
+	</div>
+	<!-- Back to Top / End -->
 </body>
 <!-- Javascript Files
 	================================================== -->
-	<script src="{% static 'vendor/jquery/jquery-1.11.2.min.js' %}"></script>
-	<script src="{% static 'vendor/jquery/jquery-migrate-1.2.1.min.js' %}"></script>
-	<script src="{% static 'vendor/jquery.easing.1.3.js' %}"></script>
-	<script src="{% static 'vendor/bootstrap/bootstrap.min.js' %}"></script>
-	<script src="{% static 'vendor/bootstrap/bootstrap-scripts.js' %}"></script>
-	<script src="{% static 'vendor/bootstrap/fhmm.js' %}"></script>
-	<script src="{% static 'vendor/jquery.flickrfeed.js' %}"></script>
-	<script src="{% static 'vendor/owl-carousel/owl.carousel.min.js' %}"></script>
-	<script src="{% static 'vendor/isotope/isotope.pkgd.min.js' %}"></script>
-	<script src="{% static 'vendor/isotope/jquery.imagesloaded.min.js' %}"></script>
-	<script src="{% static 'vendor/magnific-popup/jquery.magnific-popup.min.js' %}"></script>
-	<script src="{% static 'vendor/nouislider/jquery.nouislider.all.min.js' %}"></script>
-	<script src="{% static 'vendor/royalslider/jquery.royalslider.min.js' %}"></script>
-	<script src="{% static 'vendor/jquery.parallax-1.1.3.js' %}"></script>
-	<script src="{% static 'vendor/jcountdown/jquery.jcountdown.js' %}"></script>
-	<script src="{% static 'vendor/wow.min.js' %}"></script>
-	<script src="{% static 'vendor/jquery.countTo.js' %}"></script>
-	<script src="{% static 'vendor/jquery.scrollTo.min.js' %}"></script>
-	<script src="{% static 'vendor/jquery.localScroll.min.js' %}"></script>
-	<script src="{% static 'vendor/jquery.viewport.mini.js' %}"></script>
+<script src="{% static 'vendor/jquery/jquery-1.11.2.min.js' %}"></script>
+<script src="{% static 'vendor/jquery/jquery-migrate-1.2.1.min.js' %}"></script>
+<script src="{% static 'vendor/jquery.easing.1.3.js' %}"></script>
+<script src="{% static 'vendor/bootstrap/bootstrap.min.js' %}"></script>
+<script src="{% static 'vendor/bootstrap/bootstrap-scripts.js' %}"></script>
+<script src="{% static 'vendor/bootstrap/fhmm.js' %}"></script>
+<script src="{% static 'vendor/jquery.flickrfeed.js' %}"></script>
+<script src="{% static 'vendor/owl-carousel/owl.carousel.min.js' %}"></script>
+<script src="{% static 'vendor/isotope/isotope.pkgd.min.js' %}"></script>
+<script src="{% static 'vendor/isotope/jquery.imagesloaded.min.js' %}"></script>
+<script src="{% static 'vendor/magnific-popup/jquery.magnific-popup.min.js' %}"></script>
+<script src="{% static 'vendor/nouislider/jquery.nouislider.all.min.js' %}"></script>
+<script src="{% static 'vendor/royalslider/jquery.royalslider.min.js' %}"></script>
+<script src="{% static 'vendor/jquery.parallax-1.1.3.js' %}"></script>
+<script src="{% static 'vendor/jcountdown/jquery.jcountdown.js' %}"></script>
+<script src="{% static 'vendor/wow.min.js' %}"></script>
+<script src="{% static 'vendor/jquery.countTo.js' %}"></script>
+<script src="{% static 'vendor/jquery.scrollTo.min.js' %}"></script>
+<script src="{% static 'vendor/jquery.localScroll.min.js' %}"></script>
+<script src="{% static 'vendor/jquery.viewport.mini.js' %}"></script>
 
-	<!-- Contact Form -->
-	<script src="{% static 'vendor/jquery.validate.js' %}"></script>
-	<script src="{% static 'js/contact.js' %}"></script>
+<!-- Contact Form -->
+<script src="{% static 'vendor/jquery.validate.js' %}"></script>
+<script src="{% static 'js/contact.js' %}"></script>
 
-	<!-- Google Map -->
+<!-- Google Map -->
 
-	<script src="{% static 'vendor/jquery.gmap3.min.js' %}"></script>
+<script src="{% static 'vendor/jquery.gmap3.min.js' %}"></script>
 
-	<!-- jQuery REVOLUTION Slider  -->
-	<script src="{% static 'vendor/rs-plugin/js/jquery.themepunch.tools.min.js' %}"></script>
-	<script src="{% static 'vendor/rs-plugin/js/jquery.themepunch.revolution.min.js' %}"></script>
+<!-- jQuery REVOLUTION Slider  -->
+<script src="{% static 'vendor/rs-plugin/js/jquery.themepunch.tools.min.js' %}"></script>
+<script src="{% static 'vendor/rs-plugin/js/jquery.themepunch.revolution.min.js' %}"></script>
 
-	<script>
-		jQuery(document).ready(function() {
-			jQuery('.tp-banner').revolution({
-				delay:6000,
-				startwidth:1140,
-				startheight:583,
-				hideThumbs:10,
-				hideTimerBar:"on",
-				fullWidth:"off",
-				forceFullWidth:"off",
-				hideCaptionAtLimit:480,
-				soloArrowLeftHOffset:-50,
-				soloArrowRightHOffset:-50,
-				soloArrowLeftValign:"center",
-				soloArrowRightValign:"center",
-				soloArrowLeftVOffset:-100,
-				soloArrowRightVOffset:-100,
-				navigationType:"bullet",
-				navigationArrows:"solo", // nexttobullets, solo (old name verticalcentered), none
-				navigationStyle:"round",  // round, square, navbar, round-old, square-old, navbar-old 
-				navigationVOffset:60
-			});
-	   });
-	</script>
+<script>
+	jQuery(document).ready(function () {
+		jQuery('.tp-banner').revolution({
+			delay: 6000,
+			startwidth: 1140,
+			startheight: 583,
+			hideThumbs: 10,
+			hideTimerBar: "on",
+			fullWidth: "off",
+			forceFullWidth: "off",
+			hideCaptionAtLimit: 480,
+			soloArrowLeftHOffset: -50,
+			soloArrowRightHOffset: -50,
+			soloArrowLeftValign: "center",
+			soloArrowRightValign: "center",
+			soloArrowLeftVOffset: -100,
+			soloArrowRightVOffset: -100,
+			navigationType: "bullet",
+			navigationArrows: "solo", // nexttobullets, solo (old name verticalcentered), none
+			navigationStyle: "round",  // round, square, navbar, round-old, square-old, navbar-old 
+			navigationVOffset: 60
+		});
+	});
+</script>
 
-	<script src="{% static 'js/custom.js' %}"></script>
+<script src="{% static 'js/custom.js' %}"></script>
 
-	
+
 </body>
+
 </html>
