@@ -13,7 +13,7 @@ import fitz
 import PyPDF2  
 
 from django.db.models import Q
-from weasyprint import HTML
+# from weasyprint import HTML
 from .generation import *
 import tempfile
 from .models import *
@@ -579,28 +579,28 @@ class GetStarted(TemplateView):
 
 
 
-def generate_pdf(request):
-    ## This is the text pdf generation that will be used for worksheets and reports 
-    """Generate pdf."""
-    # Model data
-    people = 'Audrey'
+# def generate_pdf(request):
+#     ## This is the text pdf generation that will be used for worksheets and reports 
+#     """Generate pdf."""
+#     # Model data
+#     people = 'Audrey'
 
-    # Rendered
-    html_string = render_to_string('pdf.html', {'people': people})
-    html = HTML(string=html_string, base_url=request.build_absolute_uri('/'))
-    result = html.write_pdf()
+#     # Rendered
+#     html_string = render_to_string('pdf.html', {'people': people})
+#     html = HTML(string=html_string, base_url=request.build_absolute_uri('/'))
+#     result = html.write_pdf()
 
-    # Creating http response
-    response = HttpResponse(content_type='application/pdf;')
-    response['Content-Disposition'] = 'inline; filename=list_people.pdf'
-    response['Content-Transfer-Encoding'] = 'binary'
-    with tempfile.NamedTemporaryFile(delete=True) as output:
-        output.write(result)
-        output.flush()
-        output = open(output.name, 'rb')
-        response.write(output.read())
+#     # Creating http response
+#     response = HttpResponse(content_type='application/pdf;')
+#     response['Content-Disposition'] = 'inline; filename=list_people.pdf'
+#     response['Content-Transfer-Encoding'] = 'binary'
+#     with tempfile.NamedTemporaryFile(delete=True) as output:
+#         output.write(result)
+#         output.flush()
+#         output = open(output.name, 'rb')
+#         response.write(output.read())
 
-    return response
+#     return response
 
 
 
