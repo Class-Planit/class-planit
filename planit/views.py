@@ -382,8 +382,8 @@ def SelectKeywordsTwo(request, user_id=None, class_id=None, subject=None, lesson
     questions_selected = googleRelatedQuestions.objects.filter(lesson_plan=lesson_match, is_selected=True)
     topics_selected = googleSearchResult.objects.filter(lesson_plan=lesson_match, is_selected=True)
 
-
-    keywords_matched = keywordResults.objects.filter(lesson_plan=lesson_match).order_by('-relevance')
+    keywords_selected = keywordResults.objects.filter(lesson_plan=lesson_match, is_selected=True).order_by('-relevance')
+    keywords_matched = keywordResults.objects.filter(lesson_plan=lesson_match, is_selected=False).order_by('-relevance')
 
     keywords = get_lesson_keywords(lesson_id)
     
@@ -391,7 +391,7 @@ def SelectKeywordsTwo(request, user_id=None, class_id=None, subject=None, lesson
     
   
     step = 3
-    return render(request, 'create_objective.html', {'user_profile': user_profile, 'questions_selected': questions_selected, 'topics_selected': topics_selected, 'keywords_matched': keywords_matched, 'step': step, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
+    return render(request, 'create_objective.html', {'user_profile': user_profile, 'keywords_selected': keywords_selected, 'questions_selected': questions_selected, 'topics_selected': topics_selected, 'keywords_matched': keywords_matched, 'step': step, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
 
 
 def SelectRelatedInformation(request, user_id=None, class_id=None, subject=None, lesson_id=None, type_id=None, item_id=None, action=None):
@@ -410,6 +410,7 @@ def SelectRelatedInformation(request, user_id=None, class_id=None, subject=None,
         else:
             keyword_match.is_selected = False
             keyword_match.save()
+        return redirect('{}#keywords'.format(reverse('select_keywords_two', kwargs={'user_id':user_profile.id, 'class_id':classroom_profile.id, 'subject':subject, 'lesson_id':lesson_id})))
     elif type_id == 2:
         keyword_match = googleSearchResult.objects.get(id=item_id)
         action = int(action)
@@ -421,6 +422,7 @@ def SelectRelatedInformation(request, user_id=None, class_id=None, subject=None,
         else:
             keyword_match.is_selected = False
             keyword_match.save()
+        return redirect('{}#keywords'.format(reverse('select_keywords', kwargs={'user_id':user_profile.id, 'class_id':classroom_profile.id, 'subject':subject, 'lesson_id':lesson_id})))
     elif type_id == 3:
         keyword_match = googleRelatedQuestions.objects.get(id=item_id)
         action = int(action)
@@ -432,6 +434,7 @@ def SelectRelatedInformation(request, user_id=None, class_id=None, subject=None,
         else:
             keyword_match.is_selected = False
             keyword_match.save()
+        return redirect('{}#keywords'.format(reverse('select_keywords', kwargs={'user_id':user_profile.id, 'class_id':classroom_profile.id, 'subject':subject, 'lesson_id':lesson_id})))
     else:
         keyword_match = wikiTopic.objects.get(id=item_id)
         action = int(action)
@@ -443,7 +446,7 @@ def SelectRelatedInformation(request, user_id=None, class_id=None, subject=None,
         else:
             keyword_match.is_selected = False
             keyword_match.save()
-    return redirect('{}#keywords'.format(reverse('select_keywords', kwargs={'user_id':user_profile.id, 'class_id':classroom_profile.id, 'subject':subject, 'lesson_id':lesson_id})))
+        return redirect('{}#keywords'.format(reverse('select_keywords', kwargs={'user_id':user_profile.id, 'class_id':classroom_profile.id, 'subject':subject, 'lesson_id':lesson_id})))
 
 
 def EditObjectiveStandards(request, user_id=None, class_id=None, subject=None, lesson_id=None, standard_id=None, action=None):

@@ -24,7 +24,7 @@ from rake_nltk import Rake
 
 count_vect = CountVectorizer()
 
-
+wikipedia.set_rate_limiting(True)
 
 
 def match_standard(teacher_input, subject, class_id):
@@ -322,7 +322,7 @@ def get_lesson_keywords(lesson_id):
                         full_results = get_website_info(item.id)
                         topic_results.append(full_results)
 
-
+        
         questions = googleRelatedQuestions.objects.filter(lesson_plan=lesson_id, is_selected=True)
         question_results = []
         if questions: 
@@ -331,16 +331,21 @@ def get_lesson_keywords(lesson_id):
                         question_results.append(result)
 
         wiki = wikiTopic.objects.filter(lesson_plan=lesson_id, is_selected=True)
+    
         wiki_results = []
+        
         if wiki: 
                 for item in wiki:
-                        wiki_search = wikipedia.summary(item, sentences = 10, auto_suggest=False, redirect=True)
-                        question_results.append(wiki_search)
+                        text = item.topic
+                        wiki_results.append(text)
+                             
 
+        
         class_topics = ' '.join([str(i) for i in topic_results])
         related_questions = ' '.join([str(i) for i in question_results])
+        related_wiki = ' '.join([str(i) for i in wiki_results])
 
-        combined = class_objectives_list + str(class_topics) + str(related_questions) + str(wiki_results)
+        combined = class_objectives_list + str(class_topics) + str(related_questions) + str(related_wiki)
         
         keyword_results = get_keywords(combined)
 
@@ -358,8 +363,7 @@ def get_lesson_keywords(lesson_id):
                     
                         if definitions:     
                                 new_keyword, created = keywordResults.objects.get_or_create(lesson_plan=class_objectives, word=item, definition=definitions[1], sentence=definitions[2], p_o_s=definitions[3], relevance=keyword_results_num )
-                        else:
-                                new_keyword, created = keywordResults.objects.get_or_create(lesson_plan=class_objectives, word=item, relevance=keyword_results_num )
+                        
         return('success')
 
 
