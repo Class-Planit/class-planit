@@ -25,7 +25,7 @@ from .ocr import *
 # Create your views here.
 # Create your views here.
 class Homepage(TemplateView):
-    template_name = 'homepage.html' 
+    template_name = 'homepage/index.html' 
 
 
 class Dashboard(TemplateView):
