@@ -15,10 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import re_path, path, include
-from Planit import views as Planit_views
+from planit import views as planit_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('Planit.urls')),
+    path('', include('planit.urls')),
     path('accounts/', include('allauth.urls')),
 ]

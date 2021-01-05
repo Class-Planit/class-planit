@@ -19,7 +19,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_ROOT = 'staticfiles'
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, '../Planit/static'),)
+    os.path.join(BASE_DIR, '../planit/static'),)
 
 # Extra places for collectstatic to find static files.
 
@@ -47,11 +47,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    'Planit',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    'planit',
     'phonenumber_field',
     
 ]
@@ -85,7 +85,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'base.wsgi.application'
-AUTH_USER_MODEL = 'Planit.User'
+AUTH_USER_MODEL = 'planit.User'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
