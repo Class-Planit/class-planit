@@ -88,7 +88,7 @@ def CreateObjective(request, user_id=None, week_of=None):
 
 
     step = 1
-    return render(request, 'dashboard/create_objective.html', {'form': form, 'step': step, 'results': results, 'user_profile': user_profile, 'user_classrooms': user_classrooms, 'subjects': subjects  })
+    return render(request, 'dashboard/create_objective.html', {'form': form, 'step': step, 'user_profile': user_profile, 'user_classrooms': user_classrooms, 'subjects': subjects  })
 
 
 def SelectStandards(request, user_id=None, class_id=None, subject=None, lesson_id=None):
