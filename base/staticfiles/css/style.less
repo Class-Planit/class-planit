@@ -13,11 +13,13 @@ Tags: blog, bootstrap, business, corporate, creative, landing-page, modern, mult
 // #Imports
 // --------------------------------------------------
 */
+{% load static %} 
+
 @import "variables.less";
 @import "mixins.less";
 @import "utilities.less";
 
-@import "../vendor/font-awesome/css/font-awesome.min.css";
+@import url({% static 'vendor/homepage/font-awesome/css/font-awesome.min.css' %});
 @import url(http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700);
 @import url(http://fonts.googleapis.com/css?family=Exo+2:400italic,200,300,400,600,700);
 
