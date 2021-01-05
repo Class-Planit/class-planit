@@ -85,7 +85,7 @@ def CreateObjective(request, user_id=None, week_of=None):
         form = lessonObjectiveForm()
   
 
-    results = ocr_core('Planit/static/images/image0.jpeg')
+
 
     step = 1
     return render(request, 'dashboard/create_objective.html', {'form': form, 'step': step, 'results': results, 'user_profile': user_profile, 'user_classrooms': user_classrooms, 'subjects': subjects  })
