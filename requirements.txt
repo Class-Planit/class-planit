@@ -10,6 +10,7 @@ CairoSVG==2.5.0
 certifi==2020.11.8
 cffi==1.14.4
 chardet==3.0.4
+chartjs==1.2
 click==7.1.2
 cryptography==3.2.1
 cssselect2==0.4.1
@@ -19,6 +20,7 @@ dill==0.3.3
 dj-database-url==0.5.0
 Django==3.1.4
 django-allauth==0.44.0
+django-chartjs==2.2.1
 django-on-heroku==1.1.2
 django-phonenumber-field==5.0.0
 filelock==3.0.12
@@ -41,10 +43,11 @@ joblib==0.17.0
 Keras-Preprocessing==1.1.2
 lxml==4.6.2
 Markdown==3.3.3
-mesh-tensorflow==0.1.17
+
 nltk==3.5
 numpy==1.19.4
 oauthlib==3.1.0
+opencv-python==4.5.1.48
 opt-einsum==3.3.0
 packaging==20.7
 pandas==1.1.4
@@ -62,6 +65,7 @@ PyMuPDF==1.18.4
 pyparsing==2.4.7
 PyPDF2==1.26.0
 Pyphen==0.10.0
+pytesseract==0.3.7
 python-dateutil==2.8.1
 python-decouple==3.3
 python3-openid==3.2.0
@@ -80,17 +84,11 @@ sentencepiece==0.1.94
 six==1.15.0
 soupsieve==2.1
 sqlparse==0.4.1
-t5==0.7.1
-tensorboard==2.4.0
-tensorboard-plugin-wit==1.7.0
-tensorflow==2.3.1
-tensorflow-datasets==4.1.0
-tensorflow-estimator==2.3.0
-tensorflow-metadata==0.25.0
-tensorflow-text==2.3.0
+
 termcolor==1.1.0
 tfds-nightly==4.1.0.dev202012020108
 threadpoolctl==2.1.0
+tika==1.24
 tinycss2==1.1.0
 tokenizers==0.9.4
 torch==1.7.0
