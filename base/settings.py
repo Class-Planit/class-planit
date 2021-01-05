@@ -19,12 +19,12 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_ROOT = 'staticfiles'
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, '../planit/static'),)
+    os.path.join(BASE_DIR, '../Planit/static'),)
 
 # Extra places for collectstatic to find static files.
 
 
-AUTH_USER_MODEL = 'planit.User'
+AUTH_USER_MODEL = 'Planit.User'
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'phonenumber_field',
-    'planit'
+    'Planit',
 ]
 
 MIDDLEWARE = [

@@ -1,0 +1,348 @@
+{% load static %}
+
+<!--
+
+=========================================================
+* Rocket - SaaS Bootstrap Template
+=========================================================
+
+* Product Page: https://themesberg.com/product/bootstrap-themes/rocket-saas-bootstrap-template
+* Copyright 2020 Themesberg (https://www.themesberg.com)
+* License (https://themesberg.com/licensing)
+
+* Coded by https://themesberg.com
+
+=========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+    <head> 
+        <!-- Primary Meta Tags -->
+    <title>Class Planit</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="title" content="Helping teachers create, share, and assess more engaging lessons">
+    <meta name="author" content="Class Planit">
+    <meta name="description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better lessons in minutes.">
+    <meta name="keywords" content="lesson plans, teacher pay teachers, worksheets" />
+    <link rel="canonical" href="www.classplanit.co">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="www.classplanit.co">
+    <meta property="og:title" content="Class Planit - helping teachers create, share, and assess more engaging lessons.">
+    <meta property="og:description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better lessons in minutes.">
+    <meta property="og:image" content="www.classplanit.co">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="www.classplanit.co">
+    <meta property="twitter:title" content="Class Planit - helping teachers create, share, and assess more engaging lessons.">
+    <meta property="twitter:description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better lessons in minutes.">
+    <meta property="twitter:image" content="{% static 'images/twitter_image.png' %}">
+    
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="120x120" href="{% static 'images/icon_120.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'mages/icon_40.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/icon_40.png' %}">
+    
+    <link rel="mask-icon" href="{% static 'images/icon.svg' %}" color="#ffffff">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="theme-color" content="#ffffff">
+    
+    <!-- Fontawesome -->
+    <link type="text/css" href="{% static 'vendor/@fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+    
+    <!-- Prism -->
+    <link type="text/css" href="{% static 'vendor/prismjs/themes/prism.css' %}" rel="stylesheet">
+    
+    <!-- VectorMap -->
+    <link rel="stylesheet" href="{% static 'vendor/jqvmap/dist/jqvmap.min.css' %}">
+    
+    <!-- Rocket CSS -->
+    <link type="text/css" href="{% static 'css/rocket.css' %}" rel="stylesheet">
+    
+    <!-- NOTICE: You can use the _analytics.html partial to include production code specific code & trackers -->
+    
+    </head>
+
+<body>
+
+        <div class="preloader bg-soft flex-column justify-content-center align-items-center">
+    <img class="loader-element" src="{% static 'images/circle_logo.svg' %}" height="50" alt="Rocket logo">
+</div>
+
+        <nav class="navbar navbar-dark navbar-theme-primary col-12 d-md-none">
+    <a class="navbar-brand mr-lg-5" href="../../index.html">
+        <img class="navbar-brand-dark" src="../../assets/img/brand/light.svg" alt="Pixel logo" /> <img class="navbar-brand-light" src="../../assets/img/brand/dark.svg" alt="Pixel Logo Dark" />
+    </a>
+    <div class="d-flex align-items-center">
+        <button class="navbar-toggler d-md-none collapsed" type="button" data-toggle="collapse" data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</nav>
+
+        <div class="container-fluid bg-soft">
+            <div class="row">
+                <div class="col-12">
+                    <!-- <nav id="sidebarMenu" class="sidebar col-md-4 col-lg-3 col-xl-2 d-md-block bg-primary text-white collapse"> -->
+                        <nav id="sidebarMenu" class="sidebar d-md-block bg-primary text-white collapse px-4">
+                            <div class="sidebar-sticky pt-4 mx-auto">
+                              <div class="user-card d-flex align-items-center justify-content-between justify-content-md-center pb-4">
+                                <div class="d-flex align-items-center">
+                                  <div class="user-avatar lg-avatar mr-4">
+                                    <img src="{% static 'images/user_default.png' %}" class="card-img-top rounded-circle border-white" alt="user">
+                                  </div>
+                                  <div class="d-block">
+                                    <h2 class="h6">Hi, Audrey</h2>
+                                    <a href="../sign-in.html" class="btn btn-secondary btn-xs"><span class="mr-2"><span class="fas fa-sign-out-alt"></span></span>Sign Out</a>
+                                  </div>
+                                </div>
+                                <div class="collapse-close d-md-none">
+                                    <a href="#sidebarMenu" class="fas fa-times" data-toggle="collapse"
+                                        data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="true"
+                                        aria-label="Toggle navigation"></a>
+                                </div>
+                              </div>
+                              <ul class="nav flex-column mt-4">
+                                <li class="nav-item">
+                                  <a href="{% url 'Dashboard' week_of='Current' %}" class="nav-link">
+                                      <span class="sidebar-icon"><span class="fas fa-chart-pie"></span></span>
+                                      <span>Overview</span>
+                                  </a>
+                                </li>
+                                <li class="nav-item active ">
+                                  <a href="{% url 'classrooms' %}" class="nav-link d-flex align-items-center justify-content-between">
+                                      <span>
+                                        <span class="sidebar-icon"><i class="fa fa-chalkboard-teacher"></i></span>
+                                        Classrooms
+                                      </span>
+                                      
+                                  </a>
+                                </li>
+                             
+                              
+                                <li class="nav-item ">
+                                  <a href="../dashboard/traffic-sources.html" class="nav-link">
+                                      <span class="sidebar-icon"><span class="fas fa-chart-line"></span></span>
+                                      <span>Standards Tracking</span>
+                                  </a>
+                                </li>
+                               
+                          
+                                <li class="nav-item ">
+                                  <a href="../dashboard/tasks.html" class="nav-link">
+                                      <span class="sidebar-icon"><span class="fas fa-clipboard-list"></span></span>
+                                      <span>Assignments</span>
+                                  </a>
+                                </li>
+                                <li class="nav-item ">
+                                  <a href="../dashboard/settings.html" class="nav-link">
+                                      <span class="sidebar-icon"><span class="fas fa-cog"></span></span>
+                                      <span>Settings</span>
+                                  </a>
+                                </li>
+                          
+                                <li role="separator" class="dropdown-divider mt-4 mb-3 border-blue"></li>
+                                <li class="nav-item">
+                                  <a href="https://themesberg.com/docs/rocket/getting-started/quick-start/" target="_blank" class="nav-link">
+                                    <span class="sidebar-icon"><span class="fas fa-book"></span></span>
+                                    <span>Tutorials</span>
+                                  </a>
+                                </li>
+                                <li class="nav-item">
+                                  <a href="../../index.html" class="nav-link d-flex align-items-center">
+                                    <span class="sidebar-icon">
+                                      <img src="{% static 'images/circle_logo.svg' %}" height="26" width="26" alt="Rocket Logo">
+                                    </span>
+                                    <span>Contact Us</span>
+                                  </a>
+                                </li>
+                              
+                           
+                              </ul>
+                            </div>
+                          </nav>
+
+
+
+
+
+
+
+
+
+                
+                    <main class="content">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+                            <div class="d-block mb-4 mb-md-0">
+                                <nav aria-label="breadcrumb" class="d-none d-md-inline-block">
+                                    <ol class="breadcrumb breadcrumb-dark breadcrumb-transparent">
+                                      <li class="breadcrumb-item"><a href="#"><span class="fas fa-home"></span></a></li>
+                                      <li class="breadcrumb-item"><a href="#">Rocket</a></li>
+                                      <li class="breadcrumb-item active" aria-current="page">Users List</li>
+                                    </ol>
+                                </nav>
+                                <h2 class="h4">Users List</h2>
+                                <p class="mb-0">Your web analytics dashboard template.</p>
+                            </div>
+                            <div class="btn-toolbar mb-2 mb-md-0">
+                                <a href="#" class="btn btn-sm btn-primary"><span class="fas fa-plus"></span> <span>Add New User</span></a>
+                                <div class="btn-group ml-3">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+                                </div>
+                            </div>
+                        </div>
+                       
+                        <section class="section section-md bg-white">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col">
+                                        <h2 class="h4 mb-4">Subjects</h2>
+                                    </div>
+                                </div>
+                                <div class="row justify-content-center">
+                                    <div class="col-12 col-lg-4 mb-3">
+                                        <a href="{% url 'subject_planner' %}" class="card border-light animate-up-3 shadow-soft p-0 p-lg-4">     
+                                            <div class="card-body">
+                                                <h5 class="mb-4">English</h5>
+                                                <p class="text-gray mb-4">How to edit account settings such as email addresss, user name, language and switch to dark mode</p>
+                                                                             
+                                                    <div class="ml-sm-3">
+                                                    <span class="badge super-badge badge-lg badge-success">Create</span>
+                                                    <span class="badge super-badge badge-lg badge-success">Define</span>
+                                                    <span class="badge super-badge badge-lg badge-warning"><i class="fa fa-leaf" aria-hidden="true"></i></span>
+                                                    <span class="badge super-badge badge-lg badge-warning"><i class="fa fa-leaf" aria-hidden="true"></i></span>
+                                                    <span class="badge super-badge badge-lg badge-warning"><i class="fa fa-leaf" aria-hidden="true"></i></span>
+                                                   
+                                                    <span class="badge super-badge badge-lg badge-warning"><i class="fa fa-leaf" aria-hidden="true"></i></span></div>
+                                              
+                                              
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="col-12 col-lg-4 mb-3">
+                                        <a href="./support-topic.html" class="card border-light animate-up-3 shadow-soft p-0 p-lg-4">     
+                                            <div class="card-body">
+                                                <h5 class="mb-4">Mathematics</h5>
+                                                <p class="text-gray mb-4">How to edit account settings such as email addresss, user name, language and switch to dark mode</p>
+                                                <div class="ml-sm-3">
+                                                    <span class="badge super-badge badge-lg badge-success">Create</span>
+                                                    <span class="badge super-badge badge-lg badge-success">Define</span>
+                                                    <span class="badge super-badge badge-lg badge-warning"><i class="fa fa-leaf" aria-hidden="true"></i></span>
+                                                    <span class="badge super-badge badge-lg badge-warning"><i class="fa fa-leaf" aria-hidden="true"></i></span>
+                                                    <span class="badge super-badge badge-lg badge-warning"><i class="fa fa-leaf" aria-hidden="true"></i></span>
+                                                   
+                                                    <span class="badge super-badge badge-lg badge-warning"><i class="fa fa-leaf" aria-hidden="true"></i></span></div>
+                                              
+                                              
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col">
+                                        <h2 class="h4 mt-5 mb-4">Resources</h2>
+                                    </div>
+                                </div>
+                                
+                                <div class="row justify-content-center">
+                                    <div class="col-12 col-lg-4 mb-3">
+                                         <!-- Profile Card -->
+                                         <div class="profile-card mb-7">
+                                            <div class="card shadow-soft border-light text-center">
+                                                <div class="profile-image">
+                                                    <img src="{% static 'images/icon_120.png' %}" class="card-img-top " alt="image">
+                                                </div>
+                                                <div class="card-body mt-n5">
+                                                    <h5 class="card-title">Grammer Quiz</h5>
+                                                    <h6 class="card-subtitle">English</h6>
+                                                    <p class="card-text my-2">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                                 
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- End of Profile Card -->
+                                    </div>
+                                
+                                </div>
+                            </div>
+                        </section>
+                  
+                       
+                        <footer class="footer section py-5">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 col-lg-6 mb-4 mb-lg-0">
+                <p class="mb-0 text-center text-xl-left">Copyright © 2019-<span class="current-year"></span> <a class="text-primary font-weight-normal" href="https://classplanit.co" target="_blank">Class Planit</a></p>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <!-- List -->
+                <ul class="list-inline list-group-flush list-group-borderless text-center text-xl-right mb-0">
+                    <li class="list-inline-item px-0 px-sm-2">
+                        <a href="https://themesberg.com/about">About</a>
+                    </li>
+                    <li class="list-inline-item px-0 px-sm-2">
+                        <a href="https://themesberg.com/themes">Themes</a>
+                    </li>
+                    <li class="list-inline-item px-0 px-sm-2">
+                        <a href="https://themesberg.com/blog">Blog</a>
+                    </li>
+                    <li class="list-inline-item px-0 px-sm-2">
+                        <a href="https://themesberg.com/contact">Contact</a>
+                    </li>
+                </ul>
+                <!-- End List -->
+            </div>
+        </div>
+    </div>
+</footer>
+                    </main>
+                </div>
+            </div>
+        </div>
+
+   
+   <!-- Core -->
+   <script src="https://code.highcharts.com/highcharts.src.js"></script>
+   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+   integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+   crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+    crossorigin="anonymous"></script>
+    <script src="{% static 'js/app.js' %}"></script>
+    <script src="{% static 'js/panel.js' %}"></script>
+   <script src="{% static 'vendor/jquery/dist/jquery.min.js' %}"></script>
+   <script src="{% static 'vendor/popper.js/dist/umd/popper.min.js' %}"></script>
+   <script src="{% static 'vendor/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+   <script src="{% static 'vendor/headroom.js/dist/headroom.min.js' %}"></script>
+   
+   <!-- Vendor JS -->
+   <script src="{% static 'vendor/countup.js/dist/countUp.min.js' %}"></script>
+   <script src="{% static 'vendor/jquery-countdown/dist/jquery.countdown.min.js' %}"></script>
+   <script src="{% static 'vendor/smooth-scroll/dist/smooth-scroll.polyfills.min.js' %}"></script>
+   <script src="{% static 'vendor/prismjs/prism.js' %}"></script>
+   
+   <!-- Chartist -->
+   <script src="{% static 'vendor/chartist/dist/chartist.min.js' %}"></script>
+   <script src="{% static 'vendor/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js' %}"></script>
+   
+   <!-- Vector Maps -->
+   <script src="{% static 'vendor/jqvmap/dist/jquery.vmap.min.js' %}"></script>
+   <script src="{% static 'vendor/jqvmap/dist/maps/jquery.vmap.world.js' %}"></script>
+   
+   <!-- Rocket JS -->
+   <script src="{% static 'js/rocket.js' %}"></script>
+    
+</body>
+
+</html>

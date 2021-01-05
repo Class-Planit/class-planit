@@ -1,0 +1,32 @@
+/* Add your CSS here */
+.signup-form {
+  padding: 30px;
+}
+.input-group .form-control:last-child {
+  color: white;
+}
+.signup-form input::placeholder {
+  color: white;
+}
+.form-control {
+  color: white;
+}
+.btn-primary.btn-has-icon .fas {
+  background: rgba(255, 255, 255, 0.1);
+}
+.btn.btn-has-icon .fas {
+  display: block;
+  position: absolute;
+  left: -1px;
+  top: -1px;
+  bottom: -1px;
+  background: rgba(0, 0, 0, 0.04);
+  width: 50px;
+  text-align: center;
+  padding: 17px 0;
+  font-weight: 400;
+}
+.btn.btn-has-icon.icon-right .fas {
+  left: auto;
+  right: -1px;
+}

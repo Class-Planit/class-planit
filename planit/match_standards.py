@@ -20,6 +20,8 @@ import bs4
 import requests
 from decouple import config, Csv
 from rake_nltk import Rake
+import re
+from collections import Counter
 #test comment 
 
 count_vect = CountVectorizer()
@@ -117,28 +119,39 @@ def check_topic_relevance(text, lesson_id):
         class_objectives_list = str(class_objectives.teacher_objective)
 
 
-        topics = googleSearchResult.objects.filter(lesson_plan=lesson_id)
+        topics = googleSearchResult.objects.filter(lesson_plan=lesson_id, is_selected=True)
         topic_results = []
         if topics: 
                 for item in topics:
-                        result = item.snippet
-                        topic_results.append(result)
+                        full_results = item.snippet
+                        topic_results.append(full_results)
 
-        questions = googleRelatedQuestions.objects.filter(lesson_plan=lesson_id)
+        
+        questions = googleRelatedQuestions.objects.filter(lesson_plan=lesson_id, is_selected=True)
         question_results = []
         if questions: 
                 for item in questions:
                         result = item.question
                         question_results.append(result)
 
+        wiki = wikiTopic.objects.filter(lesson_plan=lesson_id, is_selected=True)
+    
+        wiki_results = []
+        
+        if wiki: 
+                for item in wiki:
+                        text = item.topic
+                        wiki_results.append(text)
+                             
 
-
+        
         class_topics = ' '.join([str(i) for i in topic_results])
         related_questions = ' '.join([str(i) for i in question_results])
+        related_wiki = ' '.join([str(i) for i in wiki_results])
 
-        combined = class_objectives_list + str(topic_results) + str(question_results)
+        combined = class_objectives_list + str(class_topics) + str(related_questions) + str(related_wiki)
         
-        text = ''.join([str(i) for i in text])
+        text = ''.join([str(i) for i in combined])
         planned_objective = str(combined)
         planned_objective = ''.join([str(i) for i in planned_objective])
         Document1 = planned_objective
@@ -154,12 +167,13 @@ def check_topic_relevance(text, lesson_id):
 
 
 def google_results(text, lesson_id):
-        class_objectives = ' '.join([str(i) for i in lessonObjective.objects.get(id=lesson_id)])
+        class_objectives = lessonObjective.objects.get(id=lesson_id)
+        class_objectives_list = str(class_objectives.teacher_objective)
 
         class_topics = ' '.join([str(i) for i in googleSearchResult.objects.filter(lesson_plan=lesson_id)])
         related_questions = ' '.join([str(i) for i in googleRelatedQuestions.objects.filter(lesson_plan=lesson_id)])
 
-        combined = class_objectives + class_topics + related_questions
+        combined = class_objectives_list + class_topics + related_questions
         params = {
         'engine': "google",
         'q': combined,
@@ -309,6 +323,23 @@ def get_website_info(item_id):
 
         return(paragraph)
 
+def split_sentence(sentence):
+    return list(filter(lambda x: len(x) > 0, re.split('\W+', sentence.lower())))
+
+def generate_vocabulary(train_captions, min_threshold):
+    """
+    Return {token: index} for all train tokens (words) that occur min_threshold times or more, 
+        `index` should be from 0 to N, where N is a number of unique tokens in the resulting dictionary.
+    """  
+    #divide the string tokens (individual words), by calling the split_sentence function 
+    individual_words = split_sentence(train_captions)
+    #create a list of words that happen min_threshold times or more in that string  
+    condition_keys = sorted([key for key, value in Counter(individual_words).items() if value >= min_threshold])
+    #generate the vocabulary(dictionary)
+    result = dict(zip(condition_keys, range(len(condition_keys))))
+    return result
+
+
 
 def get_lesson_keywords(lesson_id):
         class_objectives = lessonObjective.objects.get(id=lesson_id)
@@ -319,7 +350,7 @@ def get_lesson_keywords(lesson_id):
         topic_results = []
         if topics: 
                 for item in topics:
-                        full_results = get_website_info(item.id)
+                        full_results = item.snippet
                         topic_results.append(full_results)
 
         
@@ -346,10 +377,10 @@ def get_lesson_keywords(lesson_id):
         related_wiki = ' '.join([str(i) for i in wiki_results])
 
         combined = class_objectives_list + str(class_topics) + str(related_questions) + str(related_wiki)
+        keyword_results = generate_vocabulary(combined, min_threshold=5)
+        print(keyword_results)
+
         
-        keyword_results = get_keywords(combined)
-
-
         topic_keywords = []    
      
         for item in keyword_results:
@@ -357,8 +388,8 @@ def get_lesson_keywords(lesson_id):
                  
                 keyword_results_num = check_topic_relevance(item, lesson_id)
               
-                if keyword_results_num >= .05:
-              
+                if keyword_results_num >= .10:
+                        print(item, keyword_results_num)
                         definitions = get_vocab_context(item)  
                     
                         if definitions:     
@@ -426,6 +457,3 @@ def get_questions(lesson_id):
                                         definitions.append(definition)
 
         return(g_summary, keyword_context, definitions, youtube_result)
-
-
-                                        
