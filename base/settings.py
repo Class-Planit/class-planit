@@ -24,7 +24,7 @@ STATICFILES_DIRS = (
 # Extra places for collectstatic to find static files.
 
 
-AUTH_USER_MODEL = 'Planit.User'
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
@@ -85,7 +85,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'base.wsgi.application'
-
+AUTH_USER_MODEL = 'Planit.User'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
