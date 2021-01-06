@@ -79,7 +79,7 @@ class academicYear(models.Model):
     end_date = models.DateField(blank=True,
                                    null=True)
     is_active = models.BooleanField(default=True)
-    planning_teacher = models.ForeignKey(User,
+    planning_teacher = models.ForeignKey(User, 
                                on_delete=models.CASCADE,
                                blank=True,
                                null=True)
@@ -137,7 +137,7 @@ class studentProfiles(models.Model):
     def __str__(self):
         return '%s %s' % (self.first_name, self.last_name)
 
-
+ 
 class classroom(models.Model):
     classroom_title = models.CharField(max_length=100)
     grade_level = models.ManyToManyField(gradeLevel,

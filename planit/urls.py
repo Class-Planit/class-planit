@@ -19,7 +19,7 @@ from .views import *
 urlpatterns = [
 
     url(r'^$',
-        view=Homepage.as_view(),
+        view=Homepage,
         name='Homepage'),
 
     url(r'^dashboard/(?P<week_of>[\w\s]+)/',
@@ -35,9 +35,13 @@ urlpatterns = [
         name='lesson_planner'),
 
     url(r'^subject-planners/',
+    
         view=SubjectPlanner.as_view(),
         name='subject_planner'),
 
+    url(r'^account-setip/(?P<user_id>[\w\s]+)/',
+        view=AccountSetup,
+        name='account_setup'),
 
     url(r'^create_objective/(?P<user_id>[\w\s]+)/(?P<week_of>[\w\s]+)/',
         view=CreateObjective,

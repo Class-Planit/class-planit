@@ -104,3 +104,6 @@ wikipedia==1.4.0
 wrapt==1.12.1
 youtube-search==1.1.1
 zipp==3.4.0
+sendgrid==6.1.0
+
+twilio==6.35.2

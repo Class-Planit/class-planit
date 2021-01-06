@@ -17,6 +17,11 @@ try:
 except ImportError:
     import Image
 import pytesseract
+from django.template.loader import get_template
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
+from twilio.rest import Client
+from twilio.rest import TwilioRestClient
 from pytesseract import image_to_string
 from .forms import *
 from .models import *
@@ -24,8 +29,51 @@ from .match_standards import *
 from .ocr import *
 # Create your views here.
 # Create your views here.
-class Homepage(TemplateView):
-    template_name = 'homepage/index.html' 
+
+
+def Homepage(request):
+
+    if request.method == "POST":
+        print(request)
+        form = TeacherForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            
+            user_email = form.cleaned_data.get('email')
+            my_number = form.cleaned_data.get('phone_number')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            user_id = user.id
+            login(request, user)
+            welcome_message = 'Welcome to Class Planit, %s! you can login to your profile at www.classplanit.co/login/' % (username)
+        
+            to = str(my_number)
+            if to:
+                client = Client(config('TWILIO_ACCOUNT_SID'), config('TWILIO_AUTH_TOKEN'))
+                response = client.messages.create(
+                        body=str(welcome_message),
+                        to=to, from_=config('TWILIO_PHONE_NUMBER'))
+            message = Mail(
+                        from_email='welcome@classplanit.co',
+                        to_emails=user_email,
+                        subject='Welcome to Class Planit',
+                        html_content= get_template('dashboard/welcome_to_class_planit.html').render({'username': username }))
+            try:
+                sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+                response = sg.send(message)
+                print(response.status_code)
+                print(response.body)
+                print(response.headers)
+            except Exception as e:
+                print('Error')
+            return redirect('account_setup', user_id=user_id)
+
+    else:
+
+        form = TeacherForm()
+    
+    return render(request, 'homepage/index.html', {'form': form})
 
 
 class Dashboard(TemplateView):
@@ -36,10 +84,70 @@ class Dashboard(TemplateView):
         return render(request, 'dashboard/dashboard.html', {'user_profile': user_profile, 'week_of': week_of})
 
 
+def AccountSetup(request, user_id):
+    if request.method == "POST":
+        user_profile = User.objects.filter(username=request.user.username).first()
+        form = classroomForm(request.POST, request.FILES)
 
+        if form.is_valid():
+            prev = form.save(commit=False)
+            prev.main_teacher = user_profile
+            prev.is_active = True
+            prev.save()
+        
+        
+            return redirect('select_standards', user_id=user_profile.id, class_id=classroom_match, subject=subject, lesson_id=prev.id)
+    else:
+        user_profile = User.objects.filter(username=request.user.username).first()
+        form = classroomForm()
+        step = 'One'
+        return render(request, 'dashboard/account_setup.html', {'user_profile': user_profile})
+
+class AccountSetupTwo(TemplateView):
+    template_name = 'dashboard/account_setup.html' 
+
+    def get(self,request,user_id):
+        if request.method == "POST":
+            user_profile = User.objects.filter(username=request.user.username).first()
+            form = classroomForm(request.POST, request.FILES)
+
+            if form.is_valid():
+                prev = form.save(commit=False)
+                prev.main_teacher = user_profile
+                prev.is_active = True
+                prev.save()
+            
+            
+                return redirect('select_standards', user_id=user_profile.id, class_id=classroom_match, subject=subject, lesson_id=prev.id)
+        else:
+            user_profile = User.objects.filter(username=request.user.username).first()
+            form = classroomForm()
+            step = 'One'
+            return render(request, 'dashboard/account_setup.html', {'user_profile': user_profile})
+
+    
 
 class Classrooms(TemplateView):
     template_name = 'dashboard/classrooms.html' 
+
+    def get(self,request):
+        if request.method == "POST":
+            user_profile = User.objects.filter(username=request.user.username).first()
+            form = classroomForm(request.POST, request.FILES)
+
+            if form.is_valid():
+                prev = form.save(commit=False)
+                prev.main_teacher = user_profile
+                prev.is_active = True
+                prev.save()
+            
+                return redirect('select_standards', user_id=user_profile.id, class_id=classroom_match, subject=subject, lesson_id=prev.id)
+        else:
+            user_profile = User.objects.filter(username=request.user.username).first()
+            form = classroomForm()
+            return render(request, 'dashboard/classrooms.html', {'user_profile': user_profile})
+
+     
 
 class LessonPlanner(TemplateView):
     template_name = 'dashboard/lesson_planner.html' 
