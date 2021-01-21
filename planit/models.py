@@ -198,6 +198,44 @@ class classroomSubjects(models.Model):
         return "%s" % (self.subject_classroom)
 
 
+class textBookTitle(models.Model):
+    title = models.TextField(max_length=500)
+    grade_level = models.ManyToManyField(gradeLevel,
+                                     blank=True,
+                                     related_name='book_grade')
+    standards_set = models.ForeignKey(standardSet,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    subject = models.ForeignKey(standardSubjects,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+
+    def __str__(self):
+        return "%s" % (self.title)
+
+class textBookBackground(models.Model):
+    textbook = models.ForeignKey(textBookTitle,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    line_counter = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
+    section = models.CharField(max_length=500,
+                                  blank=True,
+                                  null=True)
+    header = models.CharField(max_length=500,
+                                  blank=True,
+                                  null=True)
+    line_text = models.CharField(max_length=500,
+                                  blank=True,
+                                  null=True)
+
+    def __str__(self):
+        return "%s" % (self.line_text)
+
 class singleStandard(models.Model):
     standards_set = models.ForeignKey(standardSet,
                                on_delete=models.SET_NULL,
@@ -223,7 +261,52 @@ class singleStandard(models.Model):
     def __str__(self):
         return "%s : %s - %s" % (self.skill_topic, self.standard_objective, self.competency)
 
+class topicTypes(models.Model):
+    item = models.CharField(max_length=200,
+                                       blank=True,
+                                       null=True)	
+    
+    def __str__(self):
+        return "%s" % (self.item)
 
+class topicDescription(models.Model):
+    description = models.CharField(max_length=1000,
+                                       blank=True,
+                                       null=True)	
+    
+    def __str__(self):
+        return "%s" % (self.id)
+
+
+class topicInformation(models.Model):
+    subject	= models.ForeignKey(standardSubjects,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    grade_level = models.ForeignKey(gradeLevel,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True) 	
+    standard_set = models.ForeignKey(standardSet,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)	
+    topic = models.CharField(max_length=500,
+                                       blank=True,
+                                       null=True)	
+    item = models.CharField(max_length=200,
+                                       blank=True,
+                                       null=True)	
+    description	= models.ManyToManyField(topicDescription,
+                                     blank=True)
+    topic_type = models.ManyToManyField(topicTypes,
+                                     blank=True)
+    image_name = models.CharField(max_length=200,
+                                       blank=True,
+                                       null=True)
+
+    def __str__(self):
+        return "%s" % (self.item)
 
 
 class lessonObjective(models.Model):
@@ -235,7 +318,7 @@ class lessonObjective(models.Model):
                                on_delete=models.SET_NULL,
                                blank=True,
                                null=True)
-    week_of = models.CharField(max_length=10,
+    week_of = models.IntegerField(default = 0,
                                blank=True,
                                null=True)
     is_skill = models.BooleanField(default=False)
@@ -249,9 +332,13 @@ class lessonObjective(models.Model):
                                      blank=True,
                                      related_name='objectives_standards',
                                null=True)
+    objectives_topics = models.ManyToManyField(topicInformation,
+                                     blank=True,
+                                     related_name='objectives_topic',
+                                     null=True)
 
     def __str__(self):
-        return "%s" % (self.objective_title)
+        return "%s" % (self.id)
 
 class lessonStandardRecommendation(models.Model):
     lesson_classroom = models.ForeignKey(classroom,
@@ -284,6 +371,22 @@ class googleSearchResult(models.Model):
     def __str__(self):
         return "%s" % (self.id)
 
+class youtubeSearchResult(models.Model):
+    is_selected = models.BooleanField(default=False)
+    lesson_plan = models.ForeignKey(lessonObjective,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    title = models.CharField(max_length=100)
+    description = models.CharField(max_length=500)
+    link = models.CharField(max_length=500,
+                               blank=True,
+                               null=True)
+    vid_id = models.CharField(max_length=1000)
+
+    def __str__(self):
+        return "%s" % (self.title)
+
 class keywordResults(models.Model):
     is_selected = models.BooleanField(default=False)
     lesson_plan = models.ForeignKey(lessonObjective,
@@ -308,7 +411,7 @@ class keywordResults(models.Model):
 
 
     def __str__(self):
-        return "%s" % (self.id)
+        return "%s" % (self.word)
 
 class wikiTopic(models.Model):
     is_selected = models.BooleanField(default=False)
@@ -317,6 +420,9 @@ class wikiTopic(models.Model):
                                blank=True,
                                null=True)
     topic = models.CharField(max_length=1000)
+    term = models.CharField(max_length=300,
+                               blank=True,
+                               null=True)
     relevance = models.IntegerField(default = 0,
                                blank=True,
                                null=True)
@@ -363,7 +469,16 @@ class vocabularyWord(models.Model):
                                   null=True)
     question_image = models.ImageField(upload_to='images/words/',
                                        blank=True,
-                                       null=True)                              
+                                       null=True)   
+    synonyms = models.CharField(max_length=300,
+                                       blank=True,
+                                       null=True)
+    antonyms = models.CharField(max_length=300,
+                                       blank=True,
+                                       null=True)     
+    matched_standard = models.ManyToManyField(singleStandard,
+                                     blank=True)
+                     
     def __str__(self):
         return "%s" % (self.word)
 
@@ -519,4 +634,88 @@ class lessonFull(models.Model):
     def __str__(self):
         return "%s" % (self.id)
 
-# Create your models here.
+
+
+class multipleIntelligence(models.Model):
+    mi = models.CharField(max_length=200,
+                        blank=True,
+                        null=True)	
+    mi_label = models.CharField(max_length=100,
+                        blank=True,
+                        null=True)	
+    
+    def __str__(self):
+        return "%s" % (self.mi)
+
+
+
+class lessonProduct(models.Model):
+    mi = models.ForeignKey(multipleIntelligence,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True) 	
+    product = models.CharField(max_length=200,
+                        blank=True,
+                        null=True)
+    topic_type = models.ManyToManyField(topicTypes,
+                                     blank=True)
+
+    def __str__(self):
+        return "%s" % (self.product)
+
+
+
+class shortStorySection(models.Model):
+    title = models.CharField(max_length=500,
+                        blank=True,
+                        null=True)
+    text = models.CharField(max_length=5000,
+                        blank=True,
+                        null=True)
+
+    def __str__(self):
+        return "%s" % (self.title)
+
+
+class shortStory(models.Model):
+    title = models.CharField(max_length=500,
+                        blank=True,
+                        null=True)
+    author = models.CharField(max_length=200,
+                        blank=True,
+                        null=True)
+    story_sections = models.ManyToManyField(shortStorySection,
+                                     blank=True,
+                                     related_name='objectives_standards')
+    story_image = models.ImageField(upload_to='images/story/',
+                                       blank=True,
+                                       null=True) 
+
+    def __str__(self):
+        return "%s" % (self.title)
+
+class lessonTemplates(models.Model):
+    wording = models.CharField(max_length=1000,
+                        blank=True,
+                        null=True)
+    components = models.ManyToManyField(topicTypes,
+                                     blank=True)
+    story = models.ForeignKey(shortStory,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True) 
+    verb = models.CharField(max_length=100,
+                        blank=True,
+                        null=True)
+    work_product = models.CharField(max_length=300,
+                        blank=True,
+                        null=True)
+    bloom = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
+    mi = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
+
+    def __str__(self):
+        return "%s" % (self.components)

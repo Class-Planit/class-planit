@@ -79,4 +79,25 @@ urlpatterns = [
         name='standards_upload'),
         
 
+    url(r'^topic_upload/$',
+        view=TopicUploadOne,
+        name='topic_upload'),
+
+    url(r'^textbook_upload/$',
+        view=TextbookUploadOne,
+        name='textbook_uplad_one'),
+
+    url(r'^textbook_upload_two/(?P<textbook_id>[\w-]+)/$',
+        view=TextbookUploadTwo,
+        name='textbook_uplad_two'),
+
+    url(r'^print-study-guide/$',
+         view=generate_studyguide_pdf,
+         name='generate_study_guide'),
+
+    url(r'^digital-study-guide/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<lesson_id>[\w-]+)/$',
+         view=DigitalStudyGuide,
+         name='digital_study_guide'),
+
+
 ]

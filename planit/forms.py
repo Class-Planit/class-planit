@@ -25,6 +25,12 @@ class classroomForm(forms.ModelForm):
         fields = '__all__'
 
 
+class textBookTitleForm(forms.ModelForm):
+
+    class Meta:
+        model = textBookTitle
+        fields = '__all__'
+
 class TeacherForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=False, help_text='Optional.')
     last_name = forms.CharField(max_length=30, required=False, help_text='Optional.')

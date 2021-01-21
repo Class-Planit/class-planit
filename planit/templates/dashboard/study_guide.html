@@ -196,236 +196,13 @@
     <div class="row">
        
         <div class="col-lg-9">
-            <nav>
-                <div class="nav nav-tabs flex-column flex-md-row bg-white shadow-soft border border-light justify-content-around rounded mb-lg-3 py-3" id="nav-tab" role="tablist">
-                    <a class="nav-item nav-link rounded mr-md-3 active" id="nav-content-research-tab" data-toggle="tab" href="#nav-content-research" role="tab" aria-controls="nav-content-research" aria-selected="true"><span class="d-block"><span class="fas fa-file-alt mr-2"></span><span class="font-weight-normal">Lessons</span></span></a>
-                    <a class="nav-item nav-link rounded mr-md-3" id="nav-rank-track-tab" data-toggle="tab" href="#nav-rank-track" role="tab" aria-controls="nav-rank-track" aria-selected="false"><span class="fas fa-chart-line mr-2"></span><span class="font-weight-normal">Digital Worksheets</span></a>
-                    <a class="nav-item nav-link rounded mr-md-3" id="nav-web-monitor-tab" data-toggle="tab" href="#nav-web-monitor" role="tab" aria-controls="nav-web-monitor" aria-selected="false"><span class="far fa-bell mr-2"></span><span class="font-weight-normal">Digital Resources</span></a>
-                    <a class="nav-item nav-link rounded mr-md-3" id="nav-backlink-research-tab" data-toggle="tab" href="#nav-backlink-research" role="tab" aria-controls="nav-backlink-research" aria-selected="false"><span class="fas fa-link mr-2"></span><span class="font-weight-normal">Assessments</span></a>
-                    <a class="nav-item nav-link rounded mr-md-3" id="Analytics-tab" data-toggle="tab" href="#Analytics" role="tab" aria-controls="Analytics" aria-selected="false"><span class="fas fa-link mr-2"></span><span class="font-weight-normal">Analytics</span></a>
-        
-                </div>
-            </nav>
+            {% for topic in topic_list %}
+            <h5>{{ topic.item }}</h5>
+                {% for description in topic.description.all %}
+                <p>{{ description.description }}</p>
+                {% endfor %}
+            {% endfor %}
 
-
-                 <!-- Tab -->
-                 <div class="tab-content mt-5 mt-lg-6" id="nav-tabContent">
-                    <!-- Content Research Tab -->
-                    <div class="tab-pane fade show active" id="nav-content-research" role="tabpanel" aria-labelledby="nav-content-research-tab">
-                        <div class="row justify-content-between align-items-center">
-                            <div class="col-12">
-                                {% for item in keywords %}
-                                {% ifchanged item.0 %}
-                                <li>{{ item.0|title }} <br> {{ item.1 }}</li>
-                                {% endifchanged %}
-                                {% endfor %}
-                                
-                                {% if 'List' in view %}
-                                <div class="row justify-content-center">
-                                    <div class="col-lg-10 mb-3">
-                                        <div class="card border-light animate-up-3 shadow-soft p-0 p-lg-4">   
-                                            <div class="card-body">
-                                                <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#exampleModal">
-                                                    Create New Lesson
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {% for item in lesson_results %}
-                                    <div class="col-lg-10 mb-3">
-                                        <a href="./support-topic.html" class="card border-light animate-up-3 shadow-soft p-0 p-lg-4">   
-                                         
-                                            <div class="card-body">
-                                                {% if forloop.counter == 1 %}
-                                                <h2 class="h5">Mon</h2>
-                                                {% endif %}
-                                                <p class="text-gray mb-4">{{ item }}</p>
-                                                                             
-                                                    <div class="ml-sm-3">
-                                                    <span class="badge super-badge badge-lg badge-success">Create</span>
-                                                    <span class="badge super-badge badge-lg badge-success">Define</span>
-                                                    <span class="badge super-badge badge-lg badge-warning"><i class="fa fa-leaf" aria-hidden="true"></i></span>
-                                                    <span class="badge super-badge badge-lg badge-warning"><i class="fa fa-leaf" aria-hidden="true"></i></span>
-                                                    <span class="badge super-badge badge-lg badge-warning"><i class="fa fa-leaf" aria-hidden="true"></i></span>
-                                                   
-                                                    <span class="badge super-badge badge-lg badge-warning"><i class="fa fa-leaf" aria-hidden="true"></i></span></div>
-                                              
-                                              
-                                            </div>
-                                        </a>
-                                    </div>
-                                    {% endfor %}
-                                   
-                                   
-                                </div>
-                                {% else %}
-                            
-                                    <div class="row">
-                                        <div class="col-lg-4 mb-3">
-                                            <a href="{% url 'activity_builder' user_id=1 class_id=1 lesson_id=1 subject=1 %}#heading" class="card border-light animate-up-3 shadow-soft p-0 p-lg-4">     
-                                                <div class="card-body">
-                                                    <!-- Button trigger modal -->
-                                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                                                            Create New Lesson
-                                                        </button>
-                                                        
-                                                
-                                                    
-                                                
-                                                </div>
-                                            </a>
-                                        </div>
-                                        {% for item in lesson_results %}
-                                                <div class="col-lg-4 mb-3">
-                                                
-                                                    <a href="{% url 'activity_builder' user_id=1 class_id=1 lesson_id=1 subject=1 %}#heading" class="card border-light animate-up-3 shadow-soft p-0 p-lg-4">     
-                                                        <div class="card-body">
-                                                            {% if forloop.counter == 1 %}
-                                                            <h2 class="h5">Mon</h2>
-                                                            {% elif forloop.counter == 2 %}
-                                                            <h2 class="h5">Tues</h2>
-                                                            {% elif forloop.counter == 3 %}
-                                                            <h2 class="h5">Wed</h2>
-                                                            {% elif forloop.counter == 4 %}
-                                                            <h2 class="h5">Thurs</h2>
-                                                            {% elif forloop.counter == 5 %}
-                                                            <h2 class="h5">Fri</h2>
-                                                            {% else %}
-                                                            <h2 class="h5">Lesson</h2>
-                                                            {% endif %}
-                                                            
-                                                            <p class="text-gray mb-4">{{ item }}</p>
-                                                                                        
-                                                                <div class="ml-sm-3">
-                                                                <span class="badge super-badge badge-lg badge-success">Create</span>
-                                                                <span class="badge super-badge badge-lg badge-success">Define</span>
-                                                                <span class="badge super-badge badge-lg badge-warning"><i class="fa fa-leaf" aria-hidden="true"></i></span>
-                                                                <span class="badge super-badge badge-lg badge-warning"><i class="fa fa-leaf" aria-hidden="true"></i></span>
-                                                                <span class="badge super-badge badge-lg badge-warning"><i class="fa fa-leaf" aria-hidden="true"></i></span>
-                                                            
-                                                                <span class="badge super-badge badge-lg badge-warning"><i class="fa fa-leaf" aria-hidden="true"></i></span></div>
-                                                        
-                                                        
-                                                        </div>
-                                                    </a>
-                                                </div>
-                                         {% endfor %}      
-                                    </div>
-                                {% endif %}
-                            </div>
-                         
-                        </div>
-                    </div>
-                    <!-- Causes Tab -->
-                    <div class="tab-pane fade" id="nav-rank-track" role="tabpanel" aria-labelledby="nav-rank-track-tab">
-                        <div class="row justify-content-between align-items-center">
-                            <div class="col-12">
-
-                                <div class="card" style="width: 18rem;">
-                                    <div class="card-body">
-                                      <h5 class="card-title">Study Guide</h5>
-                                     
-                                      <p class="card-text">Review Key Terms</p>
-                                      <a href="{% url 'digital_study_guide' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">View</a>
-                                     
-                                    </div>
-                                  </div>
-                            </div>
-                      
-                        </div>
-                    </div>
-                    
-                    <!-- Effects Tab -->
-                    <div class="tab-pane fade" id="nav-web-monitor" role="tabpanel" aria-labelledby="nav-web-monitor-tab">
-                        <div class="row justify-content-between align-items-center">
-                            <div class="col-12">
-                                <div class="row">
-                                    {% for vid in youtube_matched %}
-                                    <!--Card-->
-                                    <div class="col-lg-4">
-                                        <div class="card">
-            
-                                           
-                                            <!--Card image-->
-                                            <iframe
-                                                src="https://www.youtube.com/embed/{{ vid.vid_id }}">
-                                                </iframe>
-                                            <!--Card content-->
-                                            <div class="card-body">
-                                            <!--Title-->
-                                            <h4 class="card-title">{{ vid.title }}</h4>
-                                            <!--Text-->
-                                            <p class="card-text">{{ vid.description }}</p>
-                                            {% if vid.is_selected %}
-                                            <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=7 item_id=vid.id action=1 %}" class="btn btn-secondary btn-sm btn-has-icon"><i class="fa fa-check"></i> Selected</a>
-                                            {% else %}
-                                            <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=7 item_id=vid.id action=0 %}" class="btn btn-success btn-sm btn-has-icon"><i class="fa fa-check"></i> Relevant</a>
-                                            {% endif %}
-                                        </div>
-                                            </div>
-                                        </div>
-                                        <!--/.Card-->
-                                        {% endfor %}
-                        
-                
-                        
-                                </div>    
-                            </div>
-                         
-                        </div>
-                    </div>
-                    <!-- Effects Tab -->
-                    <div class="tab-pane fade" id="nav-backlink-research" role="tabpanel" aria-labelledby="nav-backlink-research-tab">
-                        <div class="row justify-content-between align-items-center">
-                            <div class="col-12">
-                                <div class="card border-light shadow-sm">
-                                       
-                                    <div class="table-responsive">
-                                        <table class="table align-items-center table-flush">
-                                            <thead class="thead-light">
-                                            <tr>
-                                                <th scope="col">Assessment</th>
-                                                <th scope="col">Due Date</th>
-                                                <th scope="col">Completion %</th>
-                                                <th scope="col">Student AVG</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr>
-                                                <th scope="row">
-                                                   Grammer Assessment
-                                                </th>
-                                                <td>
-                                                    Jan 04, 2020
-                                                </td>
-                                                <td>
-                                                    70%
-                                                </td>
-                                                <td>
-                                                    <span class="fas fa-arrow-up text-success mr-3"></span> 80%
-                                                </td>
-                                            </tr>
-                                      
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        
-                        </div>
-                    </div>
-                    <div class="tab-pane fade" id="Analytics" role="tabpanel" aria-labelledby="Analytics-tab">
-                        <div class="row justify-content-between align-items-center">
-                            <div class="col-12">
-                                <h5>Analytics</h5>
-                            </div>
-                        
-                        </div>
-                    </div>
-                </div>
-                <!-- End of tab -->
-
- 
         </div>
         <div class="col-lg-3">
             <div class="col-12 px-0 mb-4">
@@ -488,16 +265,9 @@
                     </div>
                     <div class="card-body">
                     <div class="tagcloud">
-                        {% for item in topic_lists %}
-                        {% ifchanged item.0.id %}
-                        {% if item.1 %}
-                        <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=6 item_id=item.0.id action=0 %}" class="btn btn-sm btn-outline-success">{{ item.0.item }}</a>
-                        {% else %}
-                        <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=6 item_id=item.0.id action=1 %}" class="btn btn-sm btn-outline-secondary">{{ item.0.item }}</a>
-                        {% endif %}
-                        {% endifchanged %}
+                        {% for item in topic_list %}
+                        <a href="#" class="btn btn-sm btn-outline-secondary">{{ item.item }}</a>
                         {% endfor %}
-                        
                     </div>
                 </div>
                 </div>
@@ -616,6 +386,5 @@
 </body>
 
 </html>
-
 
 

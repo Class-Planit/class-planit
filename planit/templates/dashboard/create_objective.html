@@ -43,28 +43,28 @@
     <meta property="twitter:url" content="www.classplanit.co">
     <meta property="twitter:title" content="Class Planit - helping teachers create, share, and assess more engaging lessons.">
     <meta property="twitter:description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better lessons in minutes.">
-    <meta property="twitter:image" content="{% static 'images/twitter_image.png' %}">
+    <meta property="twitter:image" content="{% static 'images/dashboard/twitter_image.png' %}">
     
     <!-- Favicon -->
-    <link rel="apple-touch-icon" sizes="120x120" href="{% static 'images/icon_120.png' %}">
+    <link rel="apple-touch-icon" sizes="120x120" href="{% static 'images/dashboard/icon_120.png' %}">
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'mages/icon_40.png' %}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/icon_40.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/dashboard/icon_40.png' %}">
     
-    <link rel="mask-icon" href="{% static 'images/icon.svg' %}" color="#ffffff">
+    <link rel="mask-icon" href="{% static 'images/dashboard/icon.svg' %}" color="#ffffff">
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="theme-color" content="#ffffff">
     
     <!-- Fontawesome -->
-    <link type="text/css" href="{% static 'vendor/@fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+    <link type="text/css" href="{% static 'vendor/dashboard/@fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
     
     <!-- Prism -->
-    <link type="text/css" href="{% static 'vendor/prismjs/themes/prism.css' %}" rel="stylesheet">
+    <link type="text/css" href="{% static 'vendor/dashboard/prismjs/themes/prism.css' %}" rel="stylesheet">
     
     <!-- VectorMap -->
-    <link rel="stylesheet" href="{% static 'vendor/jqvmap/dist/jqvmap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/dashboard/jqvmap/dist/jqvmap.min.css' %}">
     
     <!-- Rocket CSS -->
-    <link type="text/css" href="{% static 'css/rocket.css' %}" rel="stylesheet">
+    <link type="text/css" href="{% static 'css/dashboard/rocket.css' %}" rel="stylesheet">
     
     <!-- NOTICE: You can use the _analytics.html partial to include production code specific code & trackers -->
     
@@ -73,7 +73,7 @@
 <body>
 
         <div class="preloader bg-soft flex-column justify-content-center align-items-center">
-    <img class="loader-element" src="{% static 'images/circle_logo.svg' %}" height="50" alt="Rocket logo">
+    <img class="loader-element" src="{% static 'images/dashboard/circle_logo.svg' %}" height="50" alt="Rocket logo">
 </div>
 
         <nav class="navbar navbar-dark navbar-theme-primary col-12 d-md-none">
@@ -229,12 +229,12 @@
                             <br>
                             <label>
                                 <input type="radio" name="is_skill" value=True checked>
-                                <img src="{% static 'images/skill.png' %}">
+                                <img src="{% static 'images/dashboard/skill.png' %}">
                               </label>
                               <label></label>
                               <label>
                                 <input type="radio" name="is_skill" value=False>
-                                <img src="{% static 'images/topic.png' %}">
+                                <img src="{% static 'images/dashboard/topic.png' %}">
                               </label>
                             <br>
                             <div class="d-flex justify-content-between align-items-center mt-3">
@@ -295,7 +295,24 @@
                                 {% endif %}
                            
                             {% endfor %}
-                            {% else %}
+                          
+                            <div class="card-body">
+                                <div class="tagcloud">
+                                    {% for topic in topic_lists %}
+                                       {% ifchanged topic.0 %}
+                                            {% if topic.1 == 1 %}
+                                            <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=6 item_id=topic.0.id action=0 %}#heading" class="btn btn-sm btn-outline-success">{{ topic.0 }}</a>
+                                            {% else %}
+                                            <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=6 item_id=topic.0.id action=1 %}#heading" class="btn btn-sm btn-outline-secondary">{{ topic.0 }}</a>
+                                            {% endif %}
+                                        {% endifchanged %}
+                                    {% endfor %}
+                
+                                </div>
+                            </div>
+                        
+                         
+                        {% else %}
                             {% for standard in lesson_standards %}
                             <li>{{ standard }}</li>
                             {% endfor %}  
@@ -318,8 +335,7 @@
             {% elif step == 3 %}
                 <div class="container">
                     <br>
-                         <!---| Objectives Sections step == 1  |--->     
-                       
+                        
                             
                             <h5>Related Topics:</h5>
                             {% for item in topics_selected %}
@@ -335,6 +351,8 @@
                            
                             <h6><li>{{ item.topic }}</li></h6>
                             {% endfor %}
+                            <hr>
+                         
                             <hr>
                             {% if wiki_topics %}
                             
@@ -374,9 +392,15 @@
                                         <td>{{ item.snippet }}</td>
                                         </tr>
                                         {% endfor %}
+                                    </tbody>
+                                </table>
+                                <table class="table table-bordered table-bordered__solid table-striped ">
+                                
+                                    <tbody>
+
                                         {% for item in related_question|slice:"5" %}
                         
-                            
+                                        
                                         <tr>
                                             
                                             <td><a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=3 item_id=item.id action=0 %}#heading" class="btn btn-success btn-sm btn-has-icon"><i class="fa fa-check"></i> Relevant</a> </td>
@@ -388,47 +412,68 @@
                                 </table>
                             </div>
                             {% endif %}
-                            <div class="row">   
-                                <div class="col-lg-9">
-                                    
-                                </div>
-                                <div class="col-lg-3">
-        
-                                    <a href="{% url 'select_keywords_two' user_id=1 class_id=1 lesson_id=lesson_match.id subject=lesson_match.subject_id %}#heading" class="btn btn-success btn-block btn-has-icon" >Next: Select Keywords </a>
-                                                 
-                                </div>
-                                </div>
+
+                             <!---| Objectives Sections step == 1  |--->     
+                        
+                         
+                         <!-- Effects Tab -->
+                 
+                         
+                           
+                           
             </div>
-                     
-            {% elif step == 4 %}
-            <div class="container">
-                <br>
-                     <!---| Objectives Sections step == 1  |--->     
-                   
-                        
-                        <h5>Select Keywords:</h5>
-
-                        
-                        <div class="card-body">
-                            <div class="tagcloud">
-                                {% for item in keywords_matched %}
-                                <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=1 item_id=item.id action=0 %}#heading" class="btn btn-sm btn-outline-secondary">{{ item.word }}</a>
-                                {% endfor %}
-            
-                            </div>
-                        </div>
-
-                        <div class="row">   
-                            <div class="col-lg-9">
-                                
-                            </div>
-                            <div class="col-lg-3">
+            <br>
+            <br>
+            <a name="youtube"></a>
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-12">
+                        <div class="row">
+                            {% for vid in vid_id_list %}
+                            <!--Card-->
+                            <div class="col-lg-4">
+                                <div class="card">
     
-                                <a href="{% url 'activity_builder' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id %}#heading" class="btn btn-success btn-block btn-has-icon" >Next: Identify Topics </a>
-                                             
-                            </div>
-                            </div>
-        </div>
+                                   
+                                    <!--Card image-->
+                                    <iframe
+                                        src="https://www.youtube.com/embed/{{ vid.vid_id }}">
+                                        </iframe>
+                                    <!--Card content-->
+                                    <div class="card-body">
+                                    <!--Title-->
+                                    <h4 class="card-title">{{ vid.title }}</h4>
+                                    <!--Text-->
+                                    <p class="card-text">{{ vid.description }}</p>
+                                    {% if vid.is_selected %}
+                                    <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=7 item_id=vid.id action=1 %}" class="btn btn-secondary btn-sm btn-has-icon"><i class="fa fa-check"></i> Selected</a>
+                                    {% else %}
+                                    <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=7 item_id=vid.id action=0 %}" class="btn btn-success btn-sm btn-has-icon"><i class="fa fa-check"></i> Relevant</a>
+                                    {% endif %}
+                                </div>
+                                    </div>
+                                </div>
+                                <!--/.Card-->
+                                {% endfor %}
+                
+        
+                
+                        </div>    
+                    </div>
+                 
+                </div>
+                <br>
+                <br>
+         <div class="row">   
+            <div class="col-lg-9">
+                
+            </div>
+            <div class="col-lg-3">
+
+                <a href="{% url 'activity_builder' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id %}#heading" class="btn btn-success btn-block btn-has-icon" >Next: Identify Topics </a>
+                             
+            </div>
+            </div>
+ 
             {% else %}
             <div class="container">
                 <br>
@@ -638,27 +683,27 @@
         </div>
 
     <!-- Core -->
-    <script src="{% static 'vendor/jquery/dist/jquery.min.js' %}"></script>
-    <script src="{% static 'vendor/popper.js/dist/umd/popper.min.js' %}"></script>
-    <script src="{% static 'vendor/bootstrap/dist/js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'vendor/headroom.js/dist/headroom.min.js' %}"></script>
+    <script src="{% static 'vendor/dashboard/jquery/dist/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/dashboard/popper.js/dist/umd/popper.min.js' %}"></script>
+    <script src="{% static 'vendor/dashboard/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'vendor/dashboard/headroom.js/dist/headroom.min.js' %}"></script>
     
     <!-- Vendor JS -->
-    <script src="{% static 'vendor/countup.js/dist/countUp.min.js' %}"></script>
-    <script src="{% static 'vendor/jquery-countdown/dist/jquery.countdown.min.js' %}"></script>
-    <script src="{% static 'vendor/smooth-scroll/dist/smooth-scroll.polyfills.min.js' %}"></script>
-    <script src="{% static 'vendor/prismjs/prism.js' %}"></script>
+    <script src="{% static 'vendor/dashboard/countup.js/dist/countUp.min.js' %}"></script>
+    <script src="{% static 'vendor/dashboard/jquery-countdown/dist/jquery.countdown.min.js' %}"></script>
+    <script src="{% static 'vendor/dashboard/smooth-scroll/dist/smooth-scroll.polyfills.min.js' %}"></script>
+    <script src="{% static 'vendor/dashboard/prismjs/prism.js' %}"></script>
     
     <!-- Chartist -->
-    <script src="{% static 'vendor/chartist/dist/chartist.min.js' %}"></script>
-    <script src="{% static 'vendor/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js' %}"></script>
+    <script src="{% static 'vendor/dashboard/chartist/dist/chartist.min.js' %}"></script>
+    <script src="{% static 'vendor/dashboard/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js' %}"></script>
     
     <!-- Vector Maps -->
-    <script src="{% static 'vendor/jqvmap/dist/jquery.vmap.min.js' %}"></script>
-    <script src="{% static 'vendor/jqvmap/dist/maps/jquery.vmap.world.js' %}"></script>
+    <script src="{% static 'vendor/dashboard/jqvmap/dist/jquery.vmap.min.js' %}"></script>
+    <script src="{% static 'vendor/dashboard/jqvmap/dist/maps/jquery.vmap.world.js' %}"></script>
     
     <!-- Rocket JS -->
-    <script src="{% static 'js/rocket.js' %}"></script>
+    <script src="{% static 'js/dashboard/rocket.js' %}"></script>
     
 </body>
 

@@ -112,7 +112,7 @@
     </div>
     <ul class="nav flex-column mt-4">
       <li class="nav-item  active ">
-        <a href="../dashboard/dashboard.html" class="nav-link">
+        <a href="{% url 'Dashboard' week_of='Current' %}" class="nav-link">
             <span class="sidebar-icon"><span class="fas fa-chart-pie"></span></span>
             <span>Overview</span>
         </a>
@@ -215,7 +215,7 @@
                                         
                                     </div>
                                     <div class="col-lg-8">
-                                        <h2 class="h4 mb-4"><center>Lesson Planners for Week of 52</center></h2>
+                                        <h2 class="h4 mb-4"><center>Lesson Planners for Week of {{ active_week }}</center></h2>
                                     </div>
                                     <div class="col-lg-2">
                                         
@@ -308,43 +308,25 @@
                                         </a>
                                  
                                     </div>
+                                
+                                    {% for objective in objective_matches %}
                                     <div class="col-12 col-lg-4 mb-3">
-                                        <a href="{% url 'activity_builder' user_id=1 class_id=1 lesson_id=1 subject=1 %}#heading" class="card border-light animate-up-3 shadow-soft p-0 p-lg-4">     
+                                        <a href="{% url 'activity_builder' user_id=1 class_id=1 lesson_id=objective.id subject=objective.subject_id %}#heading" class="card border-light animate-up-3 shadow-soft p-0 p-lg-4">     
                                             <div class="card-body">
-                                                <h5 class="mb-4">English : 1-B</h5>
-                                                <p class="text-gray mb-4">How to edit account settings such as email addresss, user name, language and switch to dark mode</p>
+                                                <h5 class="mb-4">{{ objective.subject }} : {{ objective.lesson_classroom }}</h5>
+                                                <p class="text-gray mb-4">{{ objective.teacher_objective }}</p>
                                                                              
                                                     <div class="ml-sm-3">
-                                                    <span class="badge super-badge badge-lg badge-success">Create</span>
-                                                    <span class="badge super-badge badge-lg badge-success">Define</span>
-                                                    <span class="badge super-badge badge-lg badge-warning"><i class="fa fa-leaf" aria-hidden="true"></i></span>
-                                                    <span class="badge super-badge badge-lg badge-warning"><i class="fa fa-leaf" aria-hidden="true"></i></span>
-                                                    <span class="badge super-badge badge-lg badge-warning"><i class="fa fa-leaf" aria-hidden="true"></i></span>
-                                                   
-                                                    <span class="badge super-badge badge-lg badge-warning"><i class="fa fa-leaf" aria-hidden="true"></i></span></div>
-                                              
-                                              
+                                                    {% for standard in objective.teacher_objective.objectives_standards.all %}
+                                                    <li>
+                                                        {{ standard.standard_objective }}
+                                                    </li>
+                                                    {% endfor %}
+                                                    </div>
                                             </div>
                                         </a>
                                     </div>
-                                    <div class="col-12 col-lg-4 mb-3">
-                                        <a href="./support-topic.html" class="card border-light animate-up-3 shadow-soft p-0 p-lg-4">     
-                                            <div class="card-body">
-                                                <h5 class="mb-4">Mathematics : 2-B</h5>
-                                                <p class="text-gray mb-4">How to edit account settings such as email addresss, user name, language and switch to dark mode</p>
-                                                <div class="ml-sm-3">
-                                                    <span class="badge super-badge badge-lg badge-success">Create</span>
-                                                    <span class="badge super-badge badge-lg badge-success">Define</span>
-                                                    <span class="badge super-badge badge-lg badge-warning"><i class="fa fa-leaf" aria-hidden="true"></i></span>
-                                                    <span class="badge super-badge badge-lg badge-warning"><i class="fa fa-leaf" aria-hidden="true"></i></span>
-                                                    <span class="badge super-badge badge-lg badge-warning"><i class="fa fa-leaf" aria-hidden="true"></i></span>
-                                                   
-                                                    <span class="badge super-badge badge-lg badge-warning"><i class="fa fa-leaf" aria-hidden="true"></i></span></div>
-                                              
-                                              
-                                            </div>
-                                        </a>
-                                    </div>
+                                  {% endfor %}
                                 </div>
                             </div>
                         </section>

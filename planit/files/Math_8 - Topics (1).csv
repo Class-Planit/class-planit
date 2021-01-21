@@ -1,0 +1,133 @@
+Mathematics,Eight,Texas TEKS,Vocabulary ,Absolute Value,"A number’s distance from zero. For any x; is defined as follows: |x| =  −x; if x < 0; x; if x ≥ 0.",key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Acute Angle,An angle whose measure is greater than 0 and less than 90 degrees.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Acute Triangle,A triangle in which all three angles are acute angles.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Algebraic Expression,An expression that includes one or more variables and may also include symbols indicating an operation or a relationship.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Area Model,A mathematical model based on the area of a rectangle; used to represent multiplication or to represent fractional parts of a whole.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Axis of Symmetry,The vertical line x = − b/(2a) for the parabola given by f(x) = ax² + bx + c or the vertical line x = h when written f(x) = a(x − h)² + k.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Base,For any number x raised to the nth power; written as x^n; x is called the base of the expression.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Base,In geometry any side of a triangle may be called the base.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Cartesian Plane,See: Coordinate Plane,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Coefficient,In the product of a constant and a variable the constant is the numerical coefficient of the variable and is frequently referred to simply as the coefficient.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Common Factor,A factor that appears in two or more terms.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Compound Interest,Interest paid on previous interest which was added to the principal.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Consistent system,See: System of Equations,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Convex Polygon,A plane; closed; figure formed by three or more line segments intersecting only at end points and each interior angle being less than 180 degrees.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Coordinate(s),A number assigned to each point on the number line which shows its position or location on the line. In a coordinate plane the ordered pair; (x; y); assigned to each point of the plane showing its position in relation to the x-axis and y-axis.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Coordinate Plane,A plane that consists of a horizontal and vertical number line; intersecting at right angles at their origins. The number lines; called axes; divide the plane into four quadrants. The quadrants are numbered I; II; III; and IV beginning in the upper right quadrant and moving counterclockwise.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Counterclockwise,"A circular movement opposite to the direction of the movement of the hands of a clock. Counting numbers: The counting numbers are the numbers in the following never-ending sequence: 1; 2; 3; 4; 5; 6; 7; . . . We can also write this as +1;+2;+3;+4;+5;+6;+7; . . .. These numbers are also called the positive integers or natural numbers.",key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Cube,The third power of a number.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Cube Root,For real number x and y; y is the cube root of x; (written √3 x ); if y³ = x.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Data Set,A collection of information; frequently in the form of numbers.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Degree,The degree of a term is the sum of the exponents of the variables. The degree of a polynomial is the highest degree of any of its terms. If it contains no variables its degree is 0 if it is non-zero; and undefined if the polynomial is zero.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Dependent System,See: System of Equations,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Dependent Variable,The variable in a function representing the elements of the range; the output values.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Direct Variation,For real variables x and y; y varies directly with x if y = Kx or yx = K for a constant K; K ≠ 0. K is called the constant of proportionality.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Discriminant,The expression b² −4ac that appears under the radical sign in the Quadratic Formula.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Domain,The set of input values in a function.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Elements,Members of a set.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Equation,A Mathematicssentence using the equal sign to state that two expressions represent the same number.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Equivalent Equations,Two equations are equivalent if they have the same solution or solution set.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Equivalent Inequalities,Two inequalities are equivalent if they have the same solution set.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Equivalent Expression,Expressions that have the same numerical value for given values of the variables.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Exponent,Suppose that n is a whole number. Then; for any number x; the nth power of x; or x to the nth power; is the product of n factors of the number x. This number is usually written x^n. The number x is usually called the base of the expression x^n; and n is called the exponent.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Exponential Function,For numbers a; k and b ≠ 0; the function f(t) = (ab)^ t/k is called an exponential function. The number a = f(0) is the initial value; b is the base and k is a constant related to growth rate or period.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Exponential Growth,For a > 0 and b > 1 the function denotes growth; for a > 0 and 0 < b < 1 the function denotes decay.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Exponential Decay,For a > 0 and b > 1 the function denotes growth; for a > 0 and 0 < b < 1 the function denotes decay.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Exponential Notation,A notation that expresses a number in terms of a base and an exponent.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Extraneous Solutions,Apparent solutions which do not satisfy the given equation; usually introduced by raising to a power or multiplying by the variable in obtaining the solution.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Factor,For integers a; b and c; a and b are factors of c if c = ab. Similarly f(x) and g(x) are factors of p(x) if p(x) = f(x) · g(x).,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Factor,Factor is also used as an instruction or command to express a given integer or polynomial as a product.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Formula,An equation showing the relationship between two or more quantities represented by variables.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Function,A function is a rule which assigns to each member of a set of inputs; called the domain; a member of a set of outputs; called the range.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Function Notation,f(x); read ”f of x”; forming one side of an equation and used to indicate the value of the function when the input is x. Also see Function.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Graph of a Function,The pictorial representation of a function by plotting all of its input-output pairs on a coordinate system.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Height,In a triangle it is the segment from a vertex perpendicular to the selected base. Also used to refer to the length of that segment.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Horizontal Axis,See: Coordinate Plane,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Hypotenuse,The side opposite the right angle in a right triangle.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Inconsistent system,See: System of Equations,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Independent system,See: System of Equations,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Independent Variable,The variable in a function representing the elements of the domain; the input values.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Inequality,A statement that two expressions represent different values. There are various forms.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Strict Inequalities,Statements such as “x is less than y”; (x < y ); and “x is greater than y”; (x > y ).,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Weak inequalities,Statements such as “x is less than or equal to y”; (x ≤ y ); and “x is greater than or equal to y”; ( x ≥ y).,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,General inequality,he statement ”x is not equal to y”; (x ≠ y ).,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Input Values,The values of the domain of a function.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Integers,The collection of integers is composed of the negative integers; zero and the positive integers: . . . ;−4;−3;−2;−1; 0; 1; 2; 3; 4; . . ..,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Intersection of Sets,A set whose elements are all the elements that the given sets have in common.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Inverse Variation,For real variables x and y; y varies inversely with x if yx = K or y = Kx and K is a non-zero constant.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Irrational Number,A decimal number that neither repeats nor terminates. A number that can not be expressed as an integer divided by an integer.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Joint Variation,For variables x; y and z; z varies jointly with x and y if z = Kxy and K is a non-zero constant.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Legs,The two sides of a right triangle that form the right angle.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Less Than; Greater Than,The statement that the number a is less than the number b; written a < b means that there is a positive number x such that b = a + x. The number x must be b− a. If a is less than b; then b is greater than a; written b > a.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Like Terms,Algebraic terms that contain the same variables and for each variable the power is the same.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Linear Model for Multiplication,Skip counting on a number line.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Multiple,An integer or polynomial is said to be a multiple of any of its factors.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Multiplicative Identity,For each n; n · 1 = n and 1 is called the identity element for multiplication.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Multiplicative Inverse,The number x is called the multiplicative inverse or reciprocal of n; n ≠ 0 ; if n · x = 1. This may also be written as n · 1/n = 1.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Natural Numbers,See: Counting Numbers,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Negative 1 Power,If x is non-zero; x^−1 is the number 1/x,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Non-negative Numbers,Numbers greater than or equal to zero.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Obtuse Angle,An angle whose measure is greater than 90 and less than 180 degrees.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Obtuse Triangle,A triangle that has one obtuse angle.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Ordered pair,A pair of numbers that represent the coordinates of a point in the coordinate plane with the first number measured along the horizontal scale and the second along the vertical scale.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Origin,The point with coordinate 0 on a number line; the point with coordinates (0; 0) in the coordinate plane.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Output Values,The set of results obtained by applying a function rule to a set of input values.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Parabola,The shape of the graph of f(x) = ax² + bx + c; a ≠ 0. If the function is written as f(x) = a(x−h)²+k; a ≠ 0; then the vertex is (h; k).,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Parallel Lines,Two lines in a plane that never intersect.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Parent function,The simplest example of a family of functions.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Perfect Cube,An integer n that can be written in the form n = k³ ; where k is an integer.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Perfect Square,"An integer n that can be written in the form n = k² ; where k is an integer. Also a trinomial which can be written in the form (ax ± b)².",key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Perpendicular,Lines are perpendicular if they intersect to form a right angle. Segments are perpendicular if the lines containing the segments are perpendicular.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Point-slope form,A form of a linear equation written as (y − y1) = m(x−x1) where m is the slope and the line passes through the point (x1; y1).,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Positive Integers,See: Counting Numbers,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Power,See: Exponent,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Polynomial,A polynomial is an algebraic expression obtained by adding; subtracting and /or multiplying real numbers and variables.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Quadrant,See: Coordinate Plane,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Quadratic Equation,An equation with a second degree term as its highest degree term.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Quadratic Expression,A polynomial containing a second degree term as its highest degree term.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Radical,An indicated root of a number or polynomial denoted by n√ so that r = n√x implies r^n = x. The index n is generally omitted when n = 2 and we write √x to mean the square root of x.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Radical Equation,An equation in which the variable appears in the radicand.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Radical Function,A function which is the square root of a variable expression. More generally; a function of the nth root of a variable expression.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Radicand,The number or expression that appears in the radical sign; the number or expression whose root is to be found.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Range,See: Function,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Rate,"A rate is a division comparison between two quantities with different units of measure. Also see Unit Rate. The amount of interest charged on an annual basis.",key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Rational Equation,An equation involving one or more rational expressions.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Rational Expression,An expression in the form a/b with a and b being polynomial expressions; b of at least degree one and b ≠ 0.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Rational Number,A number that can be written as a/b where a is an integer and b is a natural number.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Reciprocal,See: Multiplicative Inverse,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Right Angle,An angle formed by the intersection perpendicular lines; an angle with a measure of 90 deg.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Right Triangle,A triangle that has a right angle.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Roots of a Quadratic,The solutions of ax²+bx+c = 0. The same values are zeros of the quadratic expression or the function f(x) = ax² + bx + c. They are also the x-intercepts of the intersection of the graph of f(x) with the x-axis.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Scale Factor,For the parabola f(x) = a(x−h)² + k; a is the scale factor.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Scientific Notation,Base ten numbers written in the form a × 10^n where 1 ≤ a ≤ 10 and n is an integer.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Sequence,A list of terms ordered by the natural numbers. The outputs of a function whose domain is the natural numbers.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Set,A collection of objects or elements.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Set Notation,A symbolic description of the elements of a set. ”A is the set of all x’s such that x is an element of the natural numbers with x greater than 2 and less than 11” would be written A = {x|x is a natural number ; 2 < x < 11}.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Simplifying,Combining like terms of a polynomial by carrying out the indicated additions or subtractions.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Simple Interest,Interest paid a single time on a principal invested or borrowed. Computed using I = Prt.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Simultaneously,See: System of Equations in two Variables,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Slope of a Line,If (x1; y1) and (x2; y2) are two points on a line; then the slope of the line is the ratio m = rise/run = y/x = (y2−y1)/(x2−x1) provided x2 ≠ x1,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Slope-intercept form,The equation y = mx + b is the slope-intercept form of a line; where m is the slope and b is the y-intercept of the line.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Solution of an Equation,A solution to an equation with variable x is a number that; when substituted for x; makes the two sides of the equation equal. If the equation has more than one solution; then the collection of solutions is called the solution set.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Solution of an Inequality,The values that may be substituted for the variable in an inequality to form a true statement.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Solution of a System of Linear Equations,See System of Linear Equations.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Square Root,For non-negative x and y; y is the square root of x if y² = x. For x a real number; √x² = |x| because the square root symbol denotes the non-negative root.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Square Root Function,See Radical Function.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Standard Form,A form of a linear equation written as Ax +By = C.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Subset,Set B is a subset of set A if every element of set B is also an element of set A.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,System of Linear Equations,Two equations that both impose conditions on the variables. An ordered pair is a solution of the system if and only if it is a solution of each of the given equations.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,System of inequalities in two variables,Two inequalities that both impose conditions on the variables. If the inequalities form an ”and” statement the solution is all ordered pairs that satisfy both inequalities. If the inequalities form an ”or” statement the solution is any ordered pair that satisfies either inequality.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Term,1. Each member of a sequence. 2. Each expression in a polynomial separated by addition or subtraction signs.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Translation,A transformation that moves a figure along a line in a plane but does not alter its size or shape. For a parabola; a horizontal or vertical shift in the position of the parent function.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Unit Rate,A ratio of two unlike quantities that has a denominator of 1 unit.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Variable,A letter or symbol that represents an unknown quantity.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Vertex,"The common endpoint of two rays forming an angle. The highest or lowest point of the graph of a parabola.",key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Vertex form of a Parabola,A quadratic function written as f(x) = a(x − h)² + k is in vertex form. The vertex is (h; k) and the coefficient a is the scale factor.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Vertical Axis,See: Coordinate Plane,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Whole Numbers,The whole numbers are the numbers in the following never-ending sequence: 0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11; . . .,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,x-axis,The horizontal axis of a coordinate plane.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,x-intercept,The point of intersection of a graph with the x-axis.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,y-axis,The vertical axis of a coordinate plane.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,y-intercept,The point of intersection of a graph with the y-axis.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Zero power,For any number x; x ≠ 0; x^0 = 1.,key_term ,None
+Mathematics,Eight,Texas TEKS,Vocabulary ,Zeros of a Quadratic,See Roots of a Quadratic.,key_term ,None

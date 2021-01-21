@@ -1,0 +1,33 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/dashboard/rocket.css' %}" />
+
+<html>
+ <head>
+   <title>Test</title>
+
+ </head>
+ <body>
+    <img src="{% static 'images/dashboard/icon_120.png' %}" alt="Rocket">
+   <h1>List of people</h1>
+   <table>
+     <thead>
+       <tr>
+         <th>Last Name</th>
+         <th>First Name</th>
+         <th>Email</th>
+       </tr>
+     </thead>
+     <tbody>
+      
+         <tr>
+           <td>{{ person }}</td>
+        
+         </tr>
+      
+     </tbody>
+   </table>
+<!-- end #main-nav -->
+
+
+ </body>
+</html>
