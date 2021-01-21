@@ -25,8 +25,7 @@ import re
 from collections import Counter
 #test comment 
 from urllib.parse import urlparse
-from fastpunct import FastPunct
-fastpunct = FastPunct('en')
+
 wikipedia.set_rate_limiting(True)
 count_vect = CountVectorizer()
 from nltk.corpus import stopwords
