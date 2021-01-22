@@ -10,6 +10,16 @@ import datetime
 from datetime import datetime
 
 from phonenumber_field.formfields import PhoneNumberField
+from tinymce.widgets import TinyMCE
+
+class  lessonTextForm(forms.ModelForm):
+
+    content = forms.CharField(widget=TinyMCE(attrs={'cols': 80, 'rows': 30}))
+
+
+    class Meta:
+        model = lessonText
+        fields = '__all__'
 
 
 class lessonObjectiveForm(forms.ModelForm):

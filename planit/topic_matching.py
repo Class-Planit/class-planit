@@ -36,7 +36,7 @@ from bs4 import BeautifulSoup
 #test comment 
 from nltk.corpus import stopwords
 stop_words = stopwords.words('english')
-
+import re
 stop_words.extend(['The', 'students', 'learn'])
 count_vect = CountVectorizer()
 porter = PorterStemmer()
@@ -44,8 +44,12 @@ lancaster=LancasterStemmer()
 
 wikipedia.set_rate_limiting(True)
 
-stop_words = ['i', 'student', 'learn', 'objective', 'students', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', "you're", "you've", "you'll", "you'd", 'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', "she's", 'her', 'hers', 'herself', 'it', "it's", 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', "that'll", 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', "don't", 'should', "should've", 'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 'aren', "aren't", 'couldn', "couldn't", 'didn', "didn't", 'doesn', "doesn't", 'hadn', "hadn't", 'hasn', "hasn't", 'haven', "haven't", 'isn', "isn't", 'ma', 'mightn', "mightn't", 'mustn', "mustn't", 'needn', "needn't", 'shan', "shan't", 'shouldn', "shouldn't", 'wasn', "wasn't", 'weren', "weren't", 'won', "won't", 'wouldn', "wouldn't"]
+stop_words = ['i', "'", '!', '.', ':', ',', '[', ']', '(', ')', '?', "'see", "see", '...',  'student', 'learn', 'objective', 'students', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', "you're", "you've", "you'll", "you'd", 'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', "she's", 'her', 'hers', 'herself', 'it', "it's", 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', "that'll", 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', "don't", 'should', "should've", 'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 'aren', "aren't", 'couldn', "couldn't", 'didn', "didn't", 'doesn', "doesn't", 'hadn', "hadn't", 'hasn', "hasn't", 'haven', "haven't", 'isn', "isn't", 'ma', 'mightn', "mightn't", 'mustn', "mustn't", 'needn', "needn't", 'shan', "shan't", 'shouldn', "shouldn't", 'wasn', "wasn't", 'weren', "weren't", 'won', "won't", 'wouldn', "wouldn't"]
 
+TAG_RE = re.compile(r'<[^>]+>')
+
+def remove_tags(text):
+    return TAG_RE.sub('', text)
 
 def stemSentence(sentence):
     token_words=word_tokenize(sentence)
@@ -55,6 +59,40 @@ def stemSentence(sentence):
         stem_sentence.append(porter.stem(word))
         stem_sentence.append(" ")
     return "".join(stem_sentence)
+
+def get_objective_title(objective, stem):
+    objective_lowered = objective.lower()
+    text_tokens = word_tokenize(objective_lowered)
+    final = []
+
+    for term in text_tokens:
+        if any(word in term for word in stem):
+            result = term
+
+            final.append(result)
+    updated_final = ' '.join([str(i) for i in final])
+
+    return(updated_final)
+
+def get_keywords(text):
+        my_words = 'Use'
+        r = Rake() # Uses stopwords for english from NLTK, and all puntuation characters.
+        r.extract_keywords_from_text(text)
+        keywords = r.get_ranked_phrases() # To get keyword phrases ranked highest to lowest.
+        
+        remove_list = ['Use', 'students', 'learn']
+        cleaned_list = []
+        for word in keywords:
+                word_split = word.split()
+                
+                word_count = len(word_split)
+                
+                if word_count < 3:
+                        if word in remove_list:
+                                pass
+                        else:
+                                cleaned_list.append(word)        
+        return(cleaned_list)
 
 def match_topics(teacher_input, class_id, lesson_id):
      
@@ -69,14 +107,72 @@ def match_topics(teacher_input, class_id, lesson_id):
         topics = topicInformation.objects.filter(id__in=topic_matches)
         results_list = []
         for item in topics: 
-            result = item.description
+            result = item.item
             results_list.append(result)
        
         subject = class_objectives.subject
         grade_standards = []
-        teacher_input = teacher_input + str(results_list)
-        teacher_input = teacher_input.lower()
-        teacher_input = stemSentence(teacher_input)
+        teacher_input_full = teacher_input + str(results_list)
+        teacher_input_stem = teacher_input_full.lower()
+        teacher_input_stem = stemSentence(teacher_input_stem)
+        text_tokens = word_tokenize(teacher_input_stem)
+        tokens_without_sw = [word for word in text_tokens if not word in stop_words]
+
+        objective_title = get_objective_title(teacher_input, tokens_without_sw)
+        if class_objectives.objective_title:
+            pass
+        else:
+            class_objectives.objective_title = objective_title
+            class_objectives.save()
+
+        for grade in grade_list:
+                
+                obj = topicInformation.objects.filter(subject=subject, standard_set=standard_set, grade_level=grade)
+                
+
+                if obj:
+
+                    objectives_list = []
+                    for topic in obj:
+                            descriptions = topic.description.all()
+                            desc_list = []
+                            for item in descriptions:
+                                result = item.description
+                                result = get_keywords(result)
+                                desc_list.append(result)
+                            
+                            result = topic.id, (desc_list, topic.item) 
+                            objectives_list.append(result) 
+                    
+                    prediction = []
+                    for standard_full in objectives_list:
+                            standard_full_join = ''.join([str(i) for i in standard_full[1]]).lower()
+                            standard_full_joined = stemSentence(standard_full_join)
+                            if any(word in standard_full_joined for word in tokens_without_sw):
+                                
+                                prediction.append(standard_full)
+       
+                    
+                    return(prediction)
+                else:
+                    return(None)
+
+
+
+
+def match_lesson_topics(teacher_input, class_id, lesson_id):
+        classroom_profile = classroom.objects.get(id=class_id)
+        standard_set = classroom_profile.standards_set
+        class_objectives = lessonObjective.objects.get(id=lesson_id)
+        subject = class_objectives.subject
+        grade_list = classroom_profile.grade_level.all()
+        matched_text = lessonText.objects.filter(matched_lesson=lesson_id).first()
+        text = matched_text.content
+        text = remove_tags(text)
+        teacher_input_stem = stemSentence(text)
+        text_tokens = word_tokenize(teacher_input_stem)
+
+        tokens_without_sw = [word for word in text_tokens if not word in stop_words]
         
         for grade in grade_list:
                 
@@ -92,25 +188,21 @@ def match_topics(teacher_input, class_id, lesson_id):
                             for item in descriptions:
                                 result = item.description
                                 desc_list.append(result)
-                            result = topic.id, (desc_list, topic.item) 
+                            result = topic.id, (topic.item, topic.item)
                             objectives_list.append(result) 
                     
                     prediction = []
                     for standard_full in objectives_list:
                             standard_full_join = ''.join([str(i) for i in standard_full[1]]).lower()
                             standard_full_joined = stemSentence(standard_full_join)
-
-                            text_tokens = word_tokenize(teacher_input)
-                            tokens_without_sw = [word for word in text_tokens if not word in stop_words]
                             if any(word in standard_full_joined for word in tokens_without_sw):
-
+                                
                                 prediction.append(standard_full)
        
                     
-                    return(prediction[:30])
+                    return(prediction)
                 else:
                     return(None)
-
 
 def match_textbook(teacher_input, class_id, lesson_id):
         classroom_profile = classroom.objects.get(id=class_id)

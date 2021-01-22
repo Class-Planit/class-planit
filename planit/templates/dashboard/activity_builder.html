@@ -65,9 +65,11 @@
     
     <!-- Rocket CSS -->
     <link type="text/css" href="{% static 'css/dashboard/rocket.css' %}" rel="stylesheet">
-    
+
     <!-- NOTICE: You can use the _analytics.html partial to include production code specific code & trackers -->
-    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="{% static 'forms_ajaxified/js/forms_ajaxified.js' %}"></script>
     </head>
 
 <body>
@@ -219,99 +221,69 @@
                                 <li>{{ item.0|title }} <br> {{ item.1 }}</li>
                                 {% endifchanged %}
                                 {% endfor %}
-                                
-                                {% if 'List' in view %}
-                                <div class="row justify-content-center">
-                                    <div class="col-lg-10 mb-3">
-                                        <div class="card border-light animate-up-3 shadow-soft p-0 p-lg-4">   
-                                            <div class="card-body">
-                                                <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#exampleModal">
-                                                    Create New Lesson
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {% for item in lesson_results %}
-                                    <div class="col-lg-10 mb-3">
-                                        <a href="./support-topic.html" class="card border-light animate-up-3 shadow-soft p-0 p-lg-4">   
-                                         
-                                            <div class="card-body">
-                                                {% if forloop.counter == 1 %}
-                                                <h2 class="h5">Mon</h2>
-                                                {% endif %}
-                                                <p class="text-gray mb-4">{{ item }}</p>
-                                                                             
-                                                    <div class="ml-sm-3">
-                                                    <span class="badge super-badge badge-lg badge-success">Create</span>
-                                                    <span class="badge super-badge badge-lg badge-success">Define</span>
-                                                    <span class="badge super-badge badge-lg badge-warning"><i class="fa fa-leaf" aria-hidden="true"></i></span>
-                                                    <span class="badge super-badge badge-lg badge-warning"><i class="fa fa-leaf" aria-hidden="true"></i></span>
-                                                    <span class="badge super-badge badge-lg badge-warning"><i class="fa fa-leaf" aria-hidden="true"></i></span>
-                                                   
-                                                    <span class="badge super-badge badge-lg badge-warning"><i class="fa fa-leaf" aria-hidden="true"></i></span></div>
-                                              
-                                              
-                                            </div>
-                                        </a>
-                                    </div>
+                                {% if form.errors %}
+                                {% for field in form %}
+                                    {% for error in field.errors %}
+                                    <h3>Sign Up Error: <span class="badge badge-danger">{{ error }}</span></h3>
                                     {% endfor %}
-                                   
-                                   
-                                </div>
-                                {% else %}
-                            
-                                    <div class="row">
-                                        <div class="col-lg-4 mb-3">
-                                            <a href="{% url 'activity_builder' user_id=1 class_id=1 lesson_id=1 subject=1 %}#heading" class="card border-light animate-up-3 shadow-soft p-0 p-lg-4">     
-                                                <div class="card-body">
-                                                    <!-- Button trigger modal -->
-                                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                                                            Create New Lesson
-                                                        </button>
-                                                        
-                                                
-                                                    
-                                                
-                                                </div>
-                                            </a>
-                                        </div>
-                                        {% for item in lesson_results %}
-                                                <div class="col-lg-4 mb-3">
-                                                
-                                                    <a href="{% url 'activity_builder' user_id=1 class_id=1 lesson_id=1 subject=1 %}#heading" class="card border-light animate-up-3 shadow-soft p-0 p-lg-4">     
-                                                        <div class="card-body">
-                                                            {% if forloop.counter == 1 %}
-                                                            <h2 class="h5">Mon</h2>
-                                                            {% elif forloop.counter == 2 %}
-                                                            <h2 class="h5">Tues</h2>
-                                                            {% elif forloop.counter == 3 %}
-                                                            <h2 class="h5">Wed</h2>
-                                                            {% elif forloop.counter == 4 %}
-                                                            <h2 class="h5">Thurs</h2>
-                                                            {% elif forloop.counter == 5 %}
-                                                            <h2 class="h5">Fri</h2>
-                                                            {% else %}
-                                                            <h2 class="h5">Lesson</h2>
-                                                            {% endif %}
-                                                            
-                                                            <p class="text-gray mb-4">{{ item }}</p>
-                                                                                        
-                                                                <div class="ml-sm-3">
-                                                                <span class="badge super-badge badge-lg badge-success">Create</span>
-                                                                <span class="badge super-badge badge-lg badge-success">Define</span>
-                                                                <span class="badge super-badge badge-lg badge-warning"><i class="fa fa-leaf" aria-hidden="true"></i></span>
-                                                                <span class="badge super-badge badge-lg badge-warning"><i class="fa fa-leaf" aria-hidden="true"></i></span>
-                                                                <span class="badge super-badge badge-lg badge-warning"><i class="fa fa-leaf" aria-hidden="true"></i></span>
-                                                            
-                                                                <span class="badge super-badge badge-lg badge-warning"><i class="fa fa-leaf" aria-hidden="true"></i></span></div>
-                                                        
-                                                        
-                                                        </div>
-                                                    </a>
-                                                </div>
-                                         {% endfor %}      
-                                    </div>
+                                {% endfor %}
                                 {% endif %}
+                                <form  method='POST'>
+                                    {% csrf_token %}
+                                    <input type="submit" value="Save Progress">
+                                    {% if text_update.is_initial %}
+                                    <textarea name='content' id="basic-example">
+                                        <p style="text-align: center;">
+                                          <img title="TinyMCE Logo" src="{% static 'images/dashboard/icon.svg' %}" alt="TinyMCE Logo" width="110" height="97" />
+                                        </p>
+                                      
+                                        <h2 style="text-align: center;">Lesson Plan: {{ week_of }}| {{ user.username }}</h2>
+                                      
+                                        <h2>Objective: {{ lesson_match.teacher_objective }}</h2>
+                                      <h3>Aligned Stanards:</h3>
+                                        {% for standard in lesson_standards %}
+                                        <li>{{ standard }}</li>
+                                        {% endfor %}
+                                      
+                                        
+                                      
+                                     
+                                      </textarea>
+                                      {% else %}
+                                      <textarea name='content' id="basic-example">
+                                        {{ text_update.content|safe  }}
+                                      </textarea>
+                                      {% endif %}
+                                  </form>
+                                  <hr>
+                                  {% if topic_lists_selected %}
+                                  <h2>Key Topics, Places, People:</h2>
+                                      
+                                        <table style="border-collapse: collapse; width: 100%;" border="1">
+                                          <thead>
+                                            <tr>
+                                              <th>Term</th>
+                                              <th>Description</th>
+                                              
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            {% for term in topic_lists_selected %}
+                                            <tr>
+                                               
+                                              <td>{{ term.item }}</td>
+                                              <td>
+                                                  {% for line in term.description.all %}
+                                                  <li>{{ line.description }}</li>
+                                                  {% endfor %}
+                                                </td>
+
+                                              
+                                            </tr>
+                                         {% endfor %}
+                                          </tbody>
+                                        </table>
+                                  {% endif %}
                             </div>
                          
                         </div>
@@ -488,13 +460,18 @@
                     </div>
                     <div class="card-body">
                     <div class="tagcloud">
+                        {% for item in topic_lists_selected %}
+                        {% ifchanged item.id %}
+                        <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=6 item_id=item.id action=0 %}" class="btn btn-sm btn-outline-success">{{ item.item }}</a>
+                      
+                        {% endifchanged %}
+                        {% endfor %}
+                        
                         {% for item in topic_lists %}
                         {% ifchanged item.0.id %}
-                        {% if item.1 %}
-                        <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=6 item_id=item.0.id action=0 %}" class="btn btn-sm btn-outline-success">{{ item.0.item }}</a>
-                        {% else %}
+                      
                         <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=6 item_id=item.0.id action=1 %}" class="btn btn-sm btn-outline-secondary">{{ item.0.item }}</a>
-                        {% endif %}
+                      
                         {% endifchanged %}
                         {% endfor %}
                         
@@ -589,7 +566,73 @@
                 </div>
             </div>
         </div>
+        <script>
+            $(document).ready(function() {
+                $('[data-class="form_ajaxified"]').formsAjaxified();
+            });
+        </script>
+        <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+        <script>
+           tinymce.init({
+                selector: 'textarea#basic-example',
+                height: 700,
+                menubar: false,
+                plugins: [
+                    'advlist autolink lists link image charmap print preview anchor',
+                    'searchreplace visualblocks code fullscreen',
+                    'insertdatetime media table paste code help wordcount'
+                ],
+                toolbar: 'undo redo | formatselect | ' +
+                'bold italic backcolor | alignleft aligncenter ' +
+                'alignright alignjustify | bullist numlist outdent indent | ' +
+                'removeformat | help',
+                content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+                });
+          </script>
+        <script>
+            var dfreeHeaderConfig = {
+                selector: '.dfree-header',
+                menubar: false,
+                inline: true,
+                toolbar: false,
+                plugins: [ 'quickbars' ],
+                quickbars_insert_toolbar: 'undo redo',
+                quickbars_selection_toolbar: 'italic underline',
+                };
 
+                var dfreeBodyConfig = {
+                selector: '.dfree-body',
+                menubar: false,
+                inline: true,
+                plugins: [
+                    'autolink',
+                    'codesample',
+                    'link',
+                    'lists',
+                    'media',
+                    'powerpaste',
+                    'table',
+                    'image',
+                    'quickbars',
+                    'codesample',
+                    'help'
+                ],
+                toolbar: false,
+                quickbars_insert_toolbar: 'quicktable image media codesample',
+                quickbars_selection_toolbar: 'bold italic underline | formatselect | blockquote quicklink',
+                contextmenu: 'undo redo | inserttable | cell row column deletetable | help',
+                powerpaste_word_import: 'clean',
+                powerpaste_html_import: 'clean',
+                };
+
+                tinymce.init(dfreeHeaderConfig);
+                tinymce.init(dfreeBodyConfig);
+
+        </script>
+       
+
+        <script src="{% static 'base/js/tinymce/tinymce.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'base/js/tinymce/custom.js' %}" ></script>
     <!-- Core -->
    <script src="{% static 'vendor/dashboard/jquery/dist/jquery.min.js' %}"></script>
    <script src="{% static 'vendor/dashboard/popper.js/dist/umd/popper.min.js' %}"></script>

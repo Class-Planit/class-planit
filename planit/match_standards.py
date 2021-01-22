@@ -227,11 +227,12 @@ def wiki_google_results(text, lesson_id):
                 description = topic.description
                 subject = str(topic.subject)
                 grade = str(topic.grade_level)
-                search_sentence = term, description
+                search_sentence = term
                 search_sentences.append(search_sentence)
         for item in objective_topic:
                 search_sentence = item
                 search_sentences.append(search_sentence) 
+        print(search_sentences)
         for sentence in search_sentences:
                 
                 params = {
@@ -281,19 +282,18 @@ def wiki_google_results(text, lesson_id):
 
                 try:
                         wiki_search = wikipedia.search(sentence)
-                        
-                        for item in wiki_search:
+                       
+
+                        try:
+                                topic_result = wikipedia.summary(wiki_search[0], sentences = 3, auto_suggest=False, redirect=True)
                                 
-                                try:
-                                        topic_result = wikipedia.summary(item, sentences = 3, auto_suggest=False, redirect=True)
+                                result = check_topic_relevance(topic_result, lesson_id)
+                                if result >= .10:
                                         
-                                        result = check_topic_relevance(topic_result, lesson_id)
-                                        
-                                        if result >= .20:
-                                                new_wiki, created = wikiTopic.objects.get_or_create(lesson_plan=class_objectives , term=item, topic=topic_result, relevance=result)
-                
-                                except wikipedia.DisambiguationError as e:
-                                        pass
+                                        new_wiki, created = wikiTopic.objects.get_or_create(lesson_plan=class_objectives , term=wiki_search[0], topic=topic_result, relevance=result)
+        
+                        except wikipedia.DisambiguationError as e:
+                                pass
 
                 
                 except:
@@ -331,7 +331,7 @@ def generate_vocabulary(train_captions, min_threshold):
 
 
 
-def get_lesson_keywords(lesson_id):
+def get_wiki_lesson_keywords(lesson_id):
        
         class_objectives = lessonObjective.objects.get(id=lesson_id)
         
@@ -344,10 +344,15 @@ def get_lesson_keywords(lesson_id):
         standard_match = classroom_match.standards_set_id
         class_objectives_list = str(class_objectives.teacher_objective)
 
+        
         wiki = wikiTopic.objects.filter(lesson_plan=lesson_id, is_selected=True).first()
-        item = wiki.term
-        wiki_full = []                 
+      
+        if wiki:
+                item = wiki.term           
+        else:
+                item =  class_objectives.objective_title    
 
+        wiki_full = []
         try:
                 topic_result = wikipedia.summary(item, sentences = 10, auto_suggest=False, redirect=True)
                 wiki_page = wikipedia.WikipediaPage(title = item[0])
@@ -392,20 +397,21 @@ def get_lesson_keywords(lesson_id):
 
        
         for topic in topic_keywords:
-                
-                new_topic_description, created = topicDescription.objects.get_or_create(description=topic[1])
+                result = check_topic_relevance(topic[1], lesson_id)
+                if result >= .15:
+                        topic_title = topic[0].title()
+                        new_topic_description, created = topicDescription.objects.get_or_create(description=topic[1])
 
-                for grade in grade_matches:
-                        topic_match = topicTypes.objects.get(item='key_term ')
-                        new_topic, created = topicInformation.objects.get_or_create(subject=subject, grade_level=grade, standard_set_id=standard_match, topic=topic[0], item=topic[0], image_name='None')
-                        
-                        add_topic = new_topic.description.add(new_topic_description)
+                        for grade in grade_matches:
+                                topic_match = topicTypes.objects.get(item='key_term ')
+                                new_topic, created = topicInformation.objects.get_or_create(subject=subject, grade_level=grade, standard_set_id=standard_match, topic=topic_title, item=topic_title, image_name='None')
                                 
-                       
+                                add_topic = new_topic.description.add(new_topic_description)
+                                        
                         
-                        add_topic = new_topic.topic_type.add(topic_match)
+                                
+                                add_topic = new_topic.topic_type.add(topic_match)
         
-
 
 
 

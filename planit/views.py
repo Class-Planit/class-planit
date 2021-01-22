@@ -27,6 +27,7 @@ from pytesseract import image_to_string
 from .forms import *
 from .models import *
 from .match_standards import *
+from .word_cluster import *
 from .topic_matching import *
 from .ocr import *
 from weasyprint import HTML, CSS
@@ -253,7 +254,8 @@ def SelectStandards(request, user_id=None, class_id=None, subject=None, lesson_i
             else:
                 topic_lists.append(result)
 
-    
+    topic_lists.sort(key=lambda x: x[1], reverse=True)
+
     results = match_standard(teacher_objective, current_subject, class_id)
     
 
@@ -320,8 +322,7 @@ def SelectKeywords(request, user_id=None, class_id=None, subject=None, lesson_id
     wiki_count = selected_wiki.count()
     google_count = topics_selected.count()
     total = wiki_count + google_count
-    if total < 4:
-        results = wiki_google_results(teacher_objective, lesson_id)
+    
     
     youtube_matches = youtube_results(teacher_objective, lesson_id)
     if youtube_matches:
@@ -401,6 +402,15 @@ def SelectRelatedInformation(request, user_id=None, class_id=None, subject=None,
         else:
             update_lesson = lesson_match.objectives_topics.add(topic_match)
         return redirect('{}#keywords'.format(reverse('activity_builder', kwargs={'user_id':user_profile.id, 'class_id':classroom_profile.id, 'subject':subject, 'lesson_id':lesson_id})))
+    elif type_id == 8:
+        lesson_match = lessonObjective.objects.get(id=lesson_id)
+        topic_match = topicInformation.objects.get(id=item_id)
+        action = int(action)
+        if action == 0:
+            update_lesson = lesson_match.objectives_topics.remove(topic_match)
+        else:
+            update_lesson = lesson_match.objectives_topics.add(topic_match)
+        return redirect('{}#youtube'.format(reverse('select_standards', kwargs={'user_id':user_profile.id, 'class_id':classroom_profile.id, 'subject':subject, 'lesson_id':lesson_id})))
     else:
         keyword_match = wikiTopic.objects.get(id=item_id)
         action = int(action)
@@ -442,7 +452,7 @@ def SelectKeywordsTwo(request, user_id=None, class_id=None, subject=None, lesson
     keywords_selected = keywordResults.objects.filter(lesson_plan=lesson_match, is_selected=True).order_by('-relevance')
     keywords_matched = keywordResults.objects.filter(lesson_plan=lesson_match, is_selected=False).order_by('-relevance')
 
-    keywords = get_lesson_keywords(lesson_id)
+    keywords = []
     
     matched_topics = match_topics(teacher_objective, class_id, lesson_id)
    
@@ -484,10 +494,10 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     lesson_match = lessonObjective.objects.get(id=lesson_id)
     lesson_standards = singleStandard.objects.filter(id__in=lesson_match.objectives_standards.all())
     topic_matches = lesson_match.objectives_topics.all()
-    topic_list = topicInformation.objects.filter(id__in=topic_matches)
+    topic_lists_selected = topicInformation.objects.filter(id__in=topic_matches)
     teacher_objective = lesson_match.teacher_objective
    
-    lesson_results = get_lesson_keywords(lesson_id)
+    lesson_results = []
 
     questions_selected = googleRelatedQuestions.objects.filter(lesson_plan=lesson_match, is_selected=True)
     topics_selected = googleSearchResult.objects.filter(lesson_plan=lesson_match, is_selected=True)
@@ -495,30 +505,50 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     keywords_selected = keywordResults.objects.filter(lesson_plan=lesson_match, is_selected=True).order_by('-relevance')
     keywords_matched = keywordResults.objects.filter(lesson_plan=lesson_match, is_selected=False).order_by('-relevance')
     matched_topics = match_topics(teacher_objective, class_id, lesson_id)
+    
+    text_update, created = lessonText.objects.get_or_create(matched_lesson=lesson_match)
+    text_match = match_lesson_topics(text_update.content, class_id, lesson_id) 
 
+
+    
+    combined = matched_topics, text_match
     topic_lists = []
-    if matched_topics:
-        for item in matched_topics:
-            topic = topicInformation.objects.get(id=item[0])
-            word_term = topic.item
-            word_split = word_term.split()
-            word_count = len(word_split)
-            if lesson_match.objectives_topics.filter(id=item[0]).exists():
-                result = topic, 1, word_count
-            else:
-                result = topic, 0, word_count 
-                
-            if result in topic_lists:
-                pass
-            else:
-                topic_lists.append(result)
+    if combined:
+        for text_lists in combined:
+            if text_lists:
+                for item in text_lists:
+                    topic = topicInformation.objects.get(id=item[0])
+                    word_term = topic.item
+                    word_split = word_term.split()
+                    word_count = len(word_split)
+                    if lesson_match.objectives_topics.filter(id=item[0]).exists():
+                        pass
+                    else:
+                        result = topic, word_count 
+                        if result in topic_lists:
+                            pass
+                        else:
+                            topic_lists.append(result)
 
-    topic_lists.sort(key=lambda x: x[2])
+    topic_lists.sort(key=lambda x: x[1])
+
     youtube_matched = youtubeSearchResult.objects.filter(lesson_plan=lesson_match, is_selected=True)
     
-  
+    if request.method == "POST":
+        form = lessonTextForm(request.POST, request.FILES, instance=text_update)
+
+        if form.is_valid():
+            prev =  form.save(commit=False)
+            prev.matched_lesson = lesson_match
+            prev.save()
+            return redirect('activity_builder', user_id=user_profile.id, class_id=classroom_profile.id, subject=subject, lesson_id=lesson_id)
+    else:
+
+        form = lessonTextForm(instance=text_update)
+
+
     step = 4
-    return render(request, 'dashboard/activity_builder.html', {'user_profile': user_profile, 'lesson_results': lesson_results, 'topic_lists': topic_lists, 'keywords_selected': keywords_selected, 'youtube_matched': youtube_matched, 'questions_selected': questions_selected, 'topics_selected': topics_selected, 'keywords_matched': keywords_matched, 'step': step, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
+    return render(request, 'dashboard/activity_builder.html', {'user_profile': user_profile, 'text_update': text_update, 'form': form, 'lesson_results': lesson_results, 'topic_lists_selected': topic_lists_selected, 'topic_lists': topic_lists, 'keywords_selected': keywords_selected, 'youtube_matched': youtube_matched, 'questions_selected': questions_selected, 'topics_selected': topics_selected, 'keywords_matched': keywords_matched, 'step': step, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
 
 
 
@@ -552,7 +582,7 @@ def CreateLesson(request, user_id=None, class_id=None, subject=None, lesson_id=N
     keywords_selected = keywordResults.objects.filter(lesson_plan=lesson_match, is_selected=True).order_by('-relevance')
     keywords_matched = keywordResults.objects.filter(lesson_plan=lesson_match, is_selected=False).order_by('-relevance')
 
-    keywords = get_lesson_keywords(lesson_id)
+    keywords = get_wiki_lesson_keywords(lesson_id)
     
     if request.method == "POST":
         form = lessonObjectiveForm(request.POST, request.FILES)
@@ -641,64 +671,6 @@ def TextBookUploadTwo(request, textbook_id=None):
     return redirect('Dashboard', week_of='Current')
 
 
-def TopicUploadTwo(request):
-    #second step to the standards upload process
-    #name="standards_upload"
-    user_profile = User.objects.filter(username=request.user.username).first()
-
-    path3 = 'planit/files/english_topics_one.csv'
-    with open(path3) as f:
-        for line in f:
-            line = line.split(',') 
-            Subject = line[0]
-            Grade_Level = line[1]
-            Standard_Set = line[2]
-            topic = line[3]
-            item = line[4]
-            Description = line[5]
-            topic_type = line[6]
-            image_name = line[7]
-            
-            standard_match = standardSet.objects.filter(Location=Standard_Set).first()
-            matched_grade = gradeLevel.objects.filter(grade=Grade_Level, standards_set=standard_match).first()
-            matched_subject = standardSubjects.objects.filter(subject_title=Subject, standards_set=standard_match, grade_level=matched_grade).first()
-            topic_match, created = topicTypes.objects.get_or_create(item=topic_type)
-            new_topic, created = topicInformation.objects.get_or_create(subject=matched_subject, grade_level=matched_grade, standard_set=standard_match, topic=topic, item=item, description=Description, image_name=image_name)
-
-            add_topic = new_topic.topic_type.add(topic_match)
-            
-        
-    return redirect('Dashboard', week_of='Current')
-
-
-def TopicUploadOne(request):
-    #second step to the standards upload process
-    #name="standards_upload"
-    user_profile = User.objects.filter(username=request.user.username).first()
-
-    path3 = 'planit/files/Math_8 - Topics (1).csv'
-    with open(path3) as f:
-        for line in f:
-            line = line.split(',') 
-            Subject = line[0]
-            Grade_Level = line[1]
-            Standard_Set = line[2]
-            topic = line[3]
-            item = line[4]
-            Description = line[5]
-            topic_type = line[6]
-            image_name = line[7]
-            
-            standard_match = standardSet.objects.filter(Location=Standard_Set).first()
-            matched_grade = gradeLevel.objects.filter(grade=Grade_Level, standards_set=standard_match).first()
-            matched_subject = standardSubjects.objects.filter(subject_title=Subject, standards_set=standard_match, grade_level=matched_grade).first()
-            topic_match, created = topicTypes.objects.get_or_create(item=topic_type)
-            new_topic, created = topicInformation.objects.get_or_create(subject=matched_subject, grade_level=matched_grade, standard_set=standard_match, topic=topic, item=item, description=Description, image_name=image_name)
-
-            add_topic = new_topic.topic_type.add(topic_match)
-            
-        
-    return redirect('Dashboard', week_of='Current')
 
 def TextbookUploadOne(request):
     #second step to the standards upload process
@@ -743,12 +715,40 @@ def TextbookUploadTwo(request, textbook_id=None):
     context = {'step': True}
     return render(request, template, context)
 
+def TopicUploadOne(request):
+    #second step to the standards upload process
+    #name="standards_upload"
+    user_profile = User.objects.filter(username=request.user.username).first()
 
-def TopicUploadTwo(request, topic_id=None):
+    path3 = 'planit/files/Math_8 - Topics (1).csv'
+    with open(path3) as f:
+        for line in f:
+            line = line.split(',') 
+            Subject = line[0]
+            Grade_Level = line[1]
+            Standard_Set = line[2]
+            topic = line[3].title()
+            item = line[4].title()
+            Description = line[5]
+            topic_type = line[6]
+            image_name = line[7]
+            
+            standard_match = standardSet.objects.filter(Location=Standard_Set).first()
+            matched_grade = gradeLevel.objects.filter(grade=Grade_Level, standards_set=standard_match).first()
+            matched_subject = standardSubjects.objects.filter(subject_title=Subject, standards_set=standard_match, grade_level=matched_grade).first()
+            topic_match, created = topicTypes.objects.get_or_create(item=topic_type)
+            new_topic, created = topicInformation.objects.get_or_create(subject=matched_subject, grade_level=matched_grade, standard_set=standard_match, topic=topic, item=item, description=Description, image_name=image_name)
+
+            add_topic = new_topic.topic_type.add(topic_match)
+            
+        
+    return redirect('Dashboard', week_of='Current')
+    
+def TopicUploadTwo(request):
     #second step to the standards upload process
     #name="standards_upload"
     template = "administrator/upload_textbook.html"
-    textbook_match = textBookTitle.objects.get(id=textbook_id)
+
 
     prompt = {
         'order': 'Order of the CSV should be first name, surname'   
@@ -766,8 +766,23 @@ def TopicUploadTwo(request, topic_id=None):
     next(io_string)
 
     for line in csv.reader(io_string, delimiter=','):
-        obj, created = textBookBackground.objects.get_or_create(textbook=textbook_match, line_counter=line[0], section=line[1], header=line[2], line_text=line[3])
-        obj.save()
+        Subject = line[0]
+        Grade_Level = line[1]
+        Standard_Set = line[2]
+        topic = line[3]
+        item = line[4]
+        Description = line[5]
+        topic_type = line[6]
+        image_name = line[7]
+        
+        standard_match = standardSet.objects.filter(Location=Standard_Set).first()
+        matched_grade = gradeLevel.objects.filter(grade=Grade_Level, standards_set=standard_match).first()
+        matched_subject = standardSubjects.objects.filter(subject_title=Subject, standards_set=standard_match, grade_level=matched_grade).first()
+        topic_match, created = topicTypes.objects.get_or_create(item=topic_type)
+        new_topic, created = topicInformation.objects.get_or_create(subject=matched_subject, grade_level=matched_grade, standard_set=standard_match, topic=topic, item=item, image_name=image_name)
+        new_description, created =  topicDescription.objects.get_or_create(description=Description) 
+        add_description = new_topic.description.add(new_description)
+        add_topic = new_topic.topic_type.add(topic_match)
 
     context = {'step': True}
     return render(request, template, context)
@@ -831,7 +846,7 @@ def DigitalStudyGuide(request, user_id=None, class_id=None, subject=None, lesson
     keywords_selected = keywordResults.objects.filter(lesson_plan=lesson_match, is_selected=True).order_by('-relevance')
     keywords_matched = keywordResults.objects.filter(lesson_plan=lesson_match, is_selected=False).order_by('-relevance')
 
-    keywords = get_lesson_keywords(lesson_id)
+    keywords = []
     
     youtube_matched = youtubeSearchResult.objects.filter(lesson_plan=lesson_match, is_selected=True)
     

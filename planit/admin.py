@@ -33,6 +33,6 @@ admin.site.register(textBookBackground)
 admin.site.register(shortStorySection)
 admin.site.register(shortStory)
 admin.site.register(youtubeSearchResult)
-
+admin.site.register(lessonText)
 
 

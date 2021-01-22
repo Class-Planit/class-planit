@@ -13,6 +13,8 @@ import os
 import django_on_heroku
 from pathlib import Path
 from decouple import config, Csv
+from django.core.exceptions import FieldDoesNotExist
+
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -53,6 +55,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'planit',
     'phonenumber_field',
+    'tinymce',
+
     
 ]
 
@@ -64,6 +68,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'base.urls'

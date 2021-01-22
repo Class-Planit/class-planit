@@ -80,7 +80,7 @@ urlpatterns = [
         
 
     url(r'^topic_upload/$',
-        view=TopicUploadOne,
+        view=TopicUploadTwo,
         name='topic_upload'),
 
     url(r'^textbook_upload/$',
@@ -98,6 +98,8 @@ urlpatterns = [
     url(r'^digital-study-guide/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<lesson_id>[\w-]+)/$',
          view=DigitalStudyGuide,
          name='digital_study_guide'),
+    
+    path('tinymce/', include('tinymce.urls')),
 
 
 ]

@@ -7,6 +7,8 @@ from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from .generator import token_generator
 from phonenumber_field.modelfields import PhoneNumberField
+from tinymce.models import HTMLField
+from tinymce import models as tinymce_models
 import datetime
 datetime.date.today()
 
@@ -69,8 +71,6 @@ class gradeLevel(models.Model):
 
     def __str__(self):
         return "%s" % (self.grade_labels)
-
-
 
 
 class academicYear(models.Model):
@@ -336,6 +336,17 @@ class lessonObjective(models.Model):
                                      blank=True,
                                      related_name='objectives_topic',
                                      null=True)
+
+    def __str__(self):
+        return "%s" % (self.id)
+
+class lessonText(models.Model):
+    matched_lesson = models.ForeignKey(lessonObjective,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    is_initial = models.BooleanField(default=True)
+    content = tinymce_models.HTMLField()
 
     def __str__(self):
         return "%s" % (self.id)
