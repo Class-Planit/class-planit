@@ -3,9 +3,9 @@ asgiref==3.3.1
 astunparse==1.6.3
 attrs==20.3.0
 Babel==2.9.0
-boto3==1.9.238
-botocore==1.12.238
 beautifulsoup4==4.9.3
+boto3==1.16.59
+botocore==1.19.59
 bs4==0.0.1
 cachetools==4.1.1
 cairocffi==1.2.0
@@ -29,6 +29,7 @@ django-forms-ajaxified==0.2
 django-libs==2.0.3
 django-on-heroku==1.1.2
 django-phonenumber-field==5.0.0
+django-storages==1.11.1
 django-tinymce==3.2.0
 fastpunct==1.0.2
 filelock==3.0.12
@@ -47,9 +48,9 @@ html5lib==1.1
 idna==2.10
 importlib-metadata==3.1.1
 importlib-resources==3.3.0
+jmespath==0.10.0
 joblib==0.17.0
 Keras-Preprocessing==1.1.2
-
 lda==2.0.0
 lxml==4.6.2
 Markdown==3.3.3
@@ -90,6 +91,7 @@ requests==2.25.0
 requests-oauthlib==1.3.0
 rouge-score==0.0.4
 rsa==4.6
+s3transfer==0.3.4
 sacrebleu==1.4.14
 sacremoses==0.0.43
 scikit-learn==0.23.2
