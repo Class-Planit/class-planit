@@ -12,12 +12,14 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 import os
 import django_on_heroku
 from pathlib import Path
+from django.urls import reverse_lazy
 from decouple import config, Csv
+#from whitenoise import WhiteNoise
 from django.core.exceptions import FieldDoesNotExist
 
 
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATIC_ROOT = 'staticfiles'
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
@@ -38,7 +40,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 DATE_INPUT_FORMATS = ['%m/%d/%y']
-
+DEFAULT_FILE_STORAGE = 'storages.backends.s3.S3Storage'
 # Application definition
 
 INSTALLED_APPS = [
@@ -54,6 +56,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'planit',
+    'storages',
     'phonenumber_field',
     'tinymce',
 
@@ -62,12 +65,14 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # 'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.common.BrokenLinkEmailsMiddleware',
     
 ]
 
@@ -159,5 +164,36 @@ AUTHENTICATION_BACKENDS = (
 
 SITE_ID = 2
 
-STATIC_URL = '/static/'
-django_on_heroku.settings(locals())
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+
+STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
+#STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+LOGIN_URL = reverse_lazy("login")
+LOGIN_REDIRECT_URL = reverse_lazy("login")
+
+AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
+AWS_S3_REGION_NAME = 'us-east-2'
+#AWS_S3_ENDPOINT_URL = 's3.us-east-2.amazonaws.com'
+AWS_STORAGE_BUCKET_NAME = 'classplanit'
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+AWS_LOCATION = 'static'
+
+AWS_DEFAULT_ACL = 'public-read'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
+STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+django_on_heroku.settings(locals(), staticfiles=False)

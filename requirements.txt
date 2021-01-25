@@ -3,6 +3,8 @@ asgiref==3.3.1
 astunparse==1.6.3
 attrs==20.3.0
 Babel==2.9.0
+boto3==1.9.238
+botocore==1.12.238
 beautifulsoup4==4.9.3
 bs4==0.0.1
 cachetools==4.1.1
