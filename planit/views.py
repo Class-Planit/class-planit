@@ -332,12 +332,15 @@ def SelectKeywords(request, user_id=None, class_id=None, subject=None, lesson_id
 
     vid_id_list = []
     for result in youtube_list:
-        link = result['link']
-        vid_id = video_id(link)
-        description = result['description']
-        title = result['title']
-        youtube_create, created = youtubeSearchResult.objects.get_or_create(lesson_plan=lesson_match, title=title, description=description, vid_id=vid_id)
-        vid_id_list.append(youtube_create)
+        try: 
+            link = result['link']
+            vid_id = video_id(link)
+            description = result['description']
+            title = result['title']
+            youtube_create, created = youtubeSearchResult.objects.get_or_create(lesson_plan=lesson_match, title=title, description=description, vid_id=vid_id)
+            vid_id_list.append(youtube_create)
+        except:
+            pass
 
     step = 3
     return render(request, 'dashboard/create_objective.html', {'user_profile': user_profile, 'selected_wiki': selected_wiki, 'vid_id_list': vid_id_list, 'questions_selected': questions_selected, 'topics_selected': topics_selected,  'related_question': related_question, 'related_topics': related_topics, 'wiki_topics': wiki_topics, 'step': step, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
@@ -496,7 +499,7 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     topic_matches = lesson_match.objectives_topics.all()
     topic_lists_selected = topicInformation.objects.filter(id__in=topic_matches)
     teacher_objective = lesson_match.teacher_objective
-   
+    
     lesson_results = []
 
     questions_selected = googleRelatedQuestions.objects.filter(lesson_plan=lesson_match, is_selected=True)
@@ -507,10 +510,38 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     matched_topics = match_topics(teacher_objective, class_id, lesson_id)
     
     text_update, created = lessonText.objects.get_or_create(matched_lesson=lesson_match)
-    text_match = match_lesson_topics(text_update.content, class_id, lesson_id) 
-
-
+    lessons_wording = text_update.activities
     
+
+    if text_update.overview:
+        split_text = split_matched_text(text_update.overview) 
+        split_terms = split_matched_terms(text_update.lesson_terms, class_id, lesson_id) 
+        question_list = []
+        for line_topic in topic_matches:
+            for description_item in line_topic.description.all():
+                sentence = line_topic.item + ' - ' + description_item.description
+                results = genQuestion(sentence)
+                if results:
+                    question_list.append(results)
+                else:
+                    pass
+        text_match = match_lesson_topics(text_update.overview, class_id, lesson_id) 
+        question_match = match_lesson_questions(text_update.overview, class_id, lesson_id)
+    else:
+        split_text = []
+        text_match = [] 
+        question_match = []
+        question_list = []
+    
+    
+    question_lists = []
+    if question_match:
+        for item in question_match:
+            topic = topicQuestion.objects.get(id=item[0])
+    
+            question_lists.append(topic )
+    
+
     combined = matched_topics, text_match
     topic_lists = []
     if combined:
@@ -546,9 +577,10 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
 
         form = lessonTextForm(instance=text_update)
 
-
+    
     step = 4
-    return render(request, 'dashboard/activity_builder.html', {'user_profile': user_profile, 'text_update': text_update, 'form': form, 'lesson_results': lesson_results, 'topic_lists_selected': topic_lists_selected, 'topic_lists': topic_lists, 'keywords_selected': keywords_selected, 'youtube_matched': youtube_matched, 'questions_selected': questions_selected, 'topics_selected': topics_selected, 'keywords_matched': keywords_matched, 'step': step, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
+    print(question_list)
+    return render(request, 'dashboard/activity_builder.html', {'user_profile': user_profile, 'question_list': question_list, 'lessons_wording': lessons_wording, 'question_lists': question_lists, 'text_update': text_update, 'form': form, 'lesson_results': lesson_results, 'topic_lists_selected': topic_lists_selected, 'topic_lists': topic_lists, 'keywords_selected': keywords_selected, 'youtube_matched': youtube_matched, 'questions_selected': questions_selected, 'topics_selected': topics_selected, 'keywords_matched': keywords_matched, 'step': step, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
 
 
 
@@ -788,6 +820,49 @@ def TopicUploadTwo(request):
     return render(request, template, context)
 
 
+def TopicUploadTwo(request):
+    #second step to the standards upload process
+    #name="standards_upload"
+    template = "administrator/upload_textbook.html"
+
+
+    prompt = {
+        'order': 'Order of the CSV should be first name, surname'   
+              }
+    # GET request returns the value of the data with the specified key.
+    if request.method == "GET":
+        return render(request, template, prompt)
+    csv_file = request.FILES['file']
+    # let's check if it is a csv file
+    if not csv_file.name.endswith('.csv'):
+        messages.error(request, 'THIS IS NOT A CSV FILE')
+    data_set = csv_file.read().decode('UTF-8')
+    # setup a stream which is when we loop through each line we are able to handle a data in a stream
+    io_string = io.StringIO(data_set)
+    next(io_string)
+
+    for line in csv.reader(io_string, delimiter=','):
+        Subject = line[0]
+        Grade_Level = line[1]
+        Standard_Set = line[2]
+        topic = line[3]
+        item = line[4]
+        Description = line[5]
+        topic_type = line[6]
+        image_name = line[7]
+        
+        standard_match = standardSet.objects.filter(Location=Standard_Set).first()
+        matched_grade = gradeLevel.objects.filter(grade=Grade_Level, standards_set=standard_match).first()
+        matched_subject = standardSubjects.objects.filter(subject_title=Subject, standards_set=standard_match, grade_level=matched_grade).first()
+        topic_match, created = topicTypes.objects.get_or_create(item=topic_type)
+        new_topic, created = topicInformation.objects.get_or_create(subject=matched_subject, grade_level=matched_grade, standard_set=standard_match, topic=topic, item=item, image_name=image_name)
+        new_description, created =  topicDescription.objects.get_or_create(description=Description) 
+        add_description = new_topic.description.add(new_description)
+        add_topic = new_topic.topic_type.add(topic_match)
+
+    context = {'step': True}
+    return render(request, template, context)
+
 def generate_studyguide_pdf(request):
 #     ## This is the text pdf generation that will be used for worksheets and reports 
 #     """Generate pdf."""
@@ -853,3 +928,74 @@ def DigitalStudyGuide(request, user_id=None, class_id=None, subject=None, lesson
 
     return render(request, 'dashboard/study_guide.html', {'user_profile': user_profile, 'topic_list': topic_list, 'keywords_selected': keywords_selected, 'youtube_matched': youtube_matched, 'questions_selected': questions_selected, 'topics_selected': topics_selected, 'keywords_matched': keywords_matched, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
 
+
+
+
+def QuestionUploadTwo(request):
+    #second step to the standards upload process
+    #name="standards_upload"
+    template = "administrator/upload_textbook.html"
+
+
+    prompt = {
+        'order': 'Order of the CSV should be first name, surname'   
+              }
+    # GET request returns the value of the data with the specified key.
+    if request.method == "GET":
+        return render(request, template, prompt)
+    csv_file = request.FILES['file']
+    # let's check if it is a csv file
+    if not csv_file.name.endswith('.csv'):
+        messages.error(request, 'THIS IS NOT A CSV FILE')
+    data_set = csv_file.read().decode('UTF-8')
+    # setup a stream which is when we loop through each line we are able to handle a data in a stream
+    io_string = io.StringIO(data_set)
+    next(io_string)
+
+    for line in csv.reader(io_string, delimiter=','):
+        subject	= line[0]
+        grade_level = line[1]	
+        standard_set = line[2]
+        topic_type = line[3]	
+        item = line[4] 	
+        question_type = line[5]  
+        question_points = 1		
+        Question = line[6] 		
+        Correct	= line[8] 	
+        Incorrect_One = line[10] 	
+        Incorrect_Two = line[12] 		
+        Incorrect_Three	= line[14] 
+        explanation	= line[16]
+        
+        item = get_keywords(Question)
+        standard_match = standardSet.objects.filter(Location=standard_set).first()
+        matched_grade = gradeLevel.objects.filter(grade=grade_level, standards_set=standard_match).first()
+        matched_subject = standardSubjects.objects.filter(subject_title=subject, standards_set=standard_match, grade_level=matched_grade).first()
+        topic_match, created = topicTypes.objects.get_or_create(item=topic_type)
+        question_type, created = questionType.objects.get_or_create(item=question_type)
+
+        new_question, created = topicQuestion.objects.get_or_create(subject=matched_subject, grade_level=matched_grade, standard_set=standard_match, item=item, question_type=question_type, question_points=question_points, Question=Question, Correct=Correct, Incorrect_One=Incorrect_One, Incorrect_Two=Incorrect_Two, Incorrect_Three=Incorrect_Three, explanation=explanation )
+
+        add_topic = new_question.topic_type.add(topic_match)
+
+    context = {'step': True}
+    return render(request, template, context)
+
+
+
+
+     
+
+def login_user(request):
+
+    if request.method == "POST":
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('Dashboard', week_of='Current')
+        else:
+            pass
+  
+    return render(request, 'dashboard/sign-in.html', {})

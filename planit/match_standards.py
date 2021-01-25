@@ -210,8 +210,11 @@ def youtube_results(text, lesson_id):
 
         search = GoogleSearch(params)
         results = search.get_dict()
-        video_results = results['video_results']
-        return(video_results)
+        try:
+                video_results = results['video_results']
+                return(video_results)
+        except:
+                return(None)
 
 
 def wiki_google_results(text, lesson_id):

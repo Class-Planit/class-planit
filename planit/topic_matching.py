@@ -7,7 +7,6 @@ from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
-
 from django.db.models import Q, Sum
 import pandas as pd 
 from .models import *
@@ -26,6 +25,7 @@ nltk.download('wordnet')
 from nltk.stem import PorterStemmer
 from nltk.stem import LancasterStemmer
 import bs4
+from textblob import TextBlob
 import requests
 from decouple import config, Csv
 from rake_nltk import Rake
@@ -37,6 +37,7 @@ from bs4 import BeautifulSoup
 from nltk.corpus import stopwords
 stop_words = stopwords.words('english')
 import re
+import language_tool_python
 stop_words.extend(['The', 'students', 'learn'])
 count_vect = CountVectorizer()
 porter = PorterStemmer()
@@ -47,6 +48,14 @@ wikipedia.set_rate_limiting(True)
 stop_words = ['i', "'", '!', '.', ':', ',', '[', ']', '(', ')', '?', "'see", "see", '...',  'student', 'learn', 'objective', 'students', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', "you're", "you've", "you'll", "you'd", 'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', "she's", 'her', 'hers', 'herself', 'it', "it's", 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', "that'll", 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', "don't", 'should', "should've", 'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 'aren', "aren't", 'couldn', "couldn't", 'didn', "didn't", 'doesn', "doesn't", 'hadn', "hadn't", 'hasn', "hasn't", 'haven', "haven't", 'isn', "isn't", 'ma', 'mightn', "mightn't", 'mustn', "mustn't", 'needn', "needn't", 'shan', "shan't", 'shouldn', "shouldn't", 'wasn', "wasn't", 'weren', "weren't", 'won', "won't", 'wouldn', "wouldn't"]
 
 TAG_RE = re.compile(r'<[^>]+>')
+tool = language_tool_python.LanguageTool('en-US') 
+
+def check_grammar(sentence):
+    i = 0
+    match = tool.correct(sentence) 
+    return(match)
+
+
 
 def remove_tags(text):
     return TAG_RE.sub('', text)
@@ -167,7 +176,7 @@ def match_lesson_topics(teacher_input, class_id, lesson_id):
         subject = class_objectives.subject
         grade_list = classroom_profile.grade_level.all()
         matched_text = lessonText.objects.filter(matched_lesson=lesson_id).first()
-        text = matched_text.content
+        text = matched_text.activities
         text = remove_tags(text)
         teacher_input_stem = stemSentence(text)
         text_tokens = word_tokenize(teacher_input_stem)
@@ -203,6 +212,103 @@ def match_lesson_topics(teacher_input, class_id, lesson_id):
                     return(prediction)
                 else:
                     return(None)
+
+
+
+def split_matched_text(teacher_input):
+    if teacher_input:
+        soup = BeautifulSoup(teacher_input)
+
+        return(soup.text)
+    else:
+        return(None)
+
+ 
+def split_matched_terms(teacher_input, class_id, lesson_id):
+    classroom_profile = classroom.objects.get(id=class_id)
+    standard_set = classroom_profile.standards_set
+    class_objectives = lessonObjective.objects.get(id=lesson_id)
+    subject = class_objectives.subject
+    grade_list = classroom_profile.grade_level.all()
+
+    if teacher_input:
+        soup = BeautifulSoup(teacher_input)
+        lines = soup.findAll('tr')
+        topic_lists = []
+        for one_line in lines:
+            items = one_line.findAll('td')
+            if items:
+                word = items[0]
+                word = word.text
+                for grade in grade_list: 
+                    topic_term, created = topicInformation.objects.get_or_create(subject=subject, standard_set=standard_set, grade_level=grade, item=word)
+
+                    descriptions = items[1]
+                    for desc in descriptions:
+                        lines = one_line.findAll('p')
+                        
+                        for item in lines:
+                            try:
+                                line = item.text
+                                print(line)
+                                if topicInformation.objects.filter(id=topic_term.id, description=line).exists():
+                                    pass
+                                else:
+                                    description_create, created = topicDescription.objects.get_or_create(description=line) 
+                                    all_matches = topic_term.description.all()
+                                    update_term = topic_term.description.add(description_create)
+                            except: 
+                                pass
+
+
+                    topic_lists.append(topic_term)
+
+        for topic in topic_lists:
+            update_objective = class_objectives.objectives_topics.add(topic)
+
+
+def match_lesson_questions(teacher_input, class_id, lesson_id):
+        classroom_profile = classroom.objects.get(id=class_id)
+        standard_set = classroom_profile.standards_set
+        class_objectives = lessonObjective.objects.get(id=lesson_id)
+        subject = class_objectives.subject
+        grade_list = classroom_profile.grade_level.all()
+        
+        text = teacher_input
+        text = remove_tags(text)
+        teacher_input_stem = stemSentence(teacher_input)
+        text_tokens = word_tokenize(teacher_input_stem)
+
+        tokens_without_sw = [word for word in text_tokens if not word in stop_words]
+        
+        for grade in grade_list:
+                
+                obj = topicQuestion.objects.filter(subject=subject, standard_set=standard_set, grade_level=grade)
+                
+
+                if obj:
+
+                    objectives_list = []
+                    for topic in obj:
+                        question = topic.Question
+                        answer = topic.Correct
+
+                        result = topic.id, (topic.item, topic.item)
+                        objectives_list.append(result) 
+                    
+                    prediction = []
+                    for standard_full in objectives_list:
+                            standard_full_join = ''.join([str(i) for i in standard_full[1]]).lower()
+                            standard_full_joined = stemSentence(standard_full_join)
+                            if any(word in standard_full_joined for word in tokens_without_sw):
+                                
+                                prediction.append(standard_full)
+       
+                    
+                    return(prediction)
+                else:
+                    return(None)
+
 
 def match_textbook(teacher_input, class_id, lesson_id):
         classroom_profile = classroom.objects.get(id=class_id)
@@ -314,3 +420,95 @@ def get_website_data(link):
 
 
 
+def genQuestion(line):
+    vowels = ['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U']
+    """
+    outputs question from the given text
+    """
+
+    if type(line) is str:  # If the passed variable is of type string.
+        line = TextBlob(line)  # Create object of type textblob.blob.TextBlob
+
+
+    bucket = {}  # Create an empty dictionary
+
+    for i, j in enumerate(line.tags):  # line.tags are the parts-of-speach in English
+        if j[1] not in bucket:
+            bucket[j[1]] = i  # Add all tags to the dictionary or bucket variable
+
+
+    question = ''  # Create an empty string
+
+    # Create a list of tag-combination
+
+    l1 = ['NNP', 'VBG', 'VBZ', 'IN']
+    l2 = ['NNP', 'VBG', 'VBZ']
+
+    l3 = ['PRP', 'VBG', 'VBZ', 'IN']
+    l4 = ['PRP', 'VBG', 'VBZ']
+    l5 = ['PRP', 'VBG', 'VBD']
+    l6 = ['NNP', 'VBG', 'VBD']
+    l7 = ['NN', 'VBG', 'VBZ']
+
+    l8 = ['NNP', 'VBZ', 'JJ']
+    l9 = ['NNP', 'VBZ', 'NN']
+
+    l10 = ['NNP', 'VBZ']
+    l11 = ['PRP', 'VBZ']
+    l12 = ['NNP', 'NN', 'IN']
+    l13 = ['NN', 'VBZ']
+
+   
+    if all(key in  bucket for key in l1): #'NNP', 'VBG', 'VBZ', 'IN' in sentence.
+        question = 'What' + ' ' + line.words[bucket['VBZ']] +' '+ line.words[bucket['NNP']]+ ' '+ line.words[bucket['VBG']] + '?'
+
+    
+    elif all(key in  bucket for key in l2): #'NNP', 'VBG', 'VBZ' in sentence.
+        if line.words[bucket['NNP']][0] in vowels:
+            question = 'What' + ' ' + line.words[bucket['VBZ']] +' '+ ' an '+line.words[bucket['NNP']] +' '+ line.words[bucket['VBG']] + '?'
+        else:
+            question = 'What' + ' ' + line.words[bucket['VBZ']] +' '+ ' a '+line.words[bucket['NNP']] +' '+ line.words[bucket['VBG']] + '?'
+
+    
+    elif all(key in  bucket for key in l3): #'PRP', 'VBG', 'VBZ', 'IN' in sentence.
+        question = 'What' + ' ' + line.words[bucket['VBZ']] +' '+ line.words[bucket['PRP']]+ ' '+ line.words[bucket['VBG']] + '?'
+
+    
+    elif all(key in  bucket for key in l4): #'PRP', 'VBG', 'VBZ' in sentence.
+        question = 'What ' + line.words[bucket['PRP']] +' '+  ' does ' + line.words[bucket['VBG']]+ ' '+  line.words[bucket['VBG']] + '?'
+
+    elif all(key in  bucket for key in l7): #'NN', 'VBG', 'VBZ' in sentence.
+        if line.words[bucket['NNP']][0] in vowels:
+            question = 'What' + ' ' + line.words[bucket['VBZ']] +' '+ ' an '+line.words[bucket['NN']] +' '+ line.words[bucket['VBG']] + '?'
+        else:
+            question = 'What' + ' ' + line.words[bucket['VBZ']] +' '+ ' a '+line.words[bucket['NN']] +' '+ line.words[bucket['VBG']] + '?'
+
+    elif all(key in bucket for key in l8): #'NNP', 'VBZ', 'JJ' in sentence.
+        if line.words[bucket['NNP']][0] in vowels:
+            question = 'What' + ' ' + line.words[bucket['VBZ']] + ' ' + ' an '+line.words[bucket['NNP']] + '?'
+        else:
+            question = 'What' + ' ' + line.words[bucket['VBZ']] + ' ' + ' a '+line.words[bucket['NNP']] + '?'
+
+    elif all(key in bucket for key in l9): #'NNP', 'VBZ', 'NN' in sentence
+        if line.words[bucket['NNP']][0] in vowels:
+            question = 'What' + ' ' + line.words[bucket['VBZ']] + ' ' + ' an '+line.words[bucket['NNP']] + '?'
+        else:
+            question = 'What' + ' ' + line.words[bucket['VBZ']] + ' ' + ' a '+line.words[bucket['NNP']] + '?'
+
+    elif all(key in bucket for key in l11): #'PRP', 'VBZ' in sentence.
+        if line.words[bucket['PRP']] in ['she','he']:
+            question = 'What' + ' does ' + line.words[bucket['PRP']].lower() + ' ' + line.words[bucket['VBZ']].singularize() + '?'
+
+    elif all(key in bucket for key in l10): #'NNP', 'VBZ' in sentence.
+        question = 'What' + ' does ' + line.words[bucket['NNP']] + ' ' + line.words[bucket['VBZ']].singularize() + '?'
+
+    elif all(key in bucket for key in l13): #'NN', 'VBZ' in sentence.
+        question = 'What' + ' ' + line.words[bucket['VBZ']] + ' ' + line.words[bucket['NN']] + '?'
+
+    question = check_grammar(question)
+    if question:
+        question_match, create = mainQuestion.objects.get_or_create(question=question, answer=line) 
+    else:
+        question_match = None
+
+    return(question_match)

@@ -1,0 +1,177 @@
+{% load static %}
+<!--
+
+=========================================================
+* Rocket - Startup Bootstrap Template
+=========================================================
+
+* Product Page: https://themes.getbootstrap.com/product/rocket/
+* Copyright 2020 Themesberg (https://www.themesberg.com)
+* License (https://themes.getbootstrap.com/licenses/)
+
+* Coded by https://themesberg.com
+
+=========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+
+    <head> 
+        <!-- Primary Meta Tags -->
+    <title>Class Planit</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="title" content="Helping teachers create, share, and assess more engaging lessons">
+    <meta name="author" content="Class Planit">
+    <meta name="description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better lessons in minutes.">
+    <meta name="keywords" content="lesson plans, teacher pay teachers, worksheets" />
+    <link rel="canonical" href="www.classplanit.co">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="www.classplanit.co">
+    <meta property="og:title" content="Class Planit - helping teachers create, share, and assess more engaging lessons.">
+    <meta property="og:description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better lessons in minutes.">
+    <meta property="og:image" content="www.classplanit.co">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="www.classplanit.co">
+    <meta property="twitter:title" content="Class Planit - helping teachers create, share, and assess more engaging lessons.">
+    <meta property="twitter:description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better lessons in minutes.">
+    <meta property="twitter:image" content="{% static 'images/dashboard/twitter_image.png' %}">
+    
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="120x120" href="{% static 'images/dashboard/icon_120.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'mages/icon_40.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/dashboard/icon_40.png' %}">
+    
+    <link rel="mask-icon" href="{% static 'images/dashboard/icon.svg' %}" color="#ffffff">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="theme-color" content="#ffffff">
+    
+    <!-- Fontawesome -->
+    <link type="text/css" href="{% static 'vendor/dashboard/@fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+    
+    <!-- Prism -->
+    <link type="text/css" href="{% static 'vendor/dashboard/prismjs/themes/prism.css' %}" rel="stylesheet">
+    
+    <!-- VectorMap -->
+    <link rel="stylesheet" href="{% static 'vendor/dashboard/jqvmap/dist/jqvmap.min.css' %}">
+    
+    <!-- Rocket CSS -->
+    <link type="text/css" href="{% static 'css/dashboard/rocket.css' %}" rel="stylesheet">
+    
+    <!-- NOTICE: You can use the _analytics.html partial to include production code specific code & trackers -->
+    
+    </head>
+
+<body>
+    <main>
+
+        <div class="preloader bg-soft flex-column justify-content-center align-items-center">
+    <img class="loader-element" src="../assets/img/brand/dark.svg" height="50" alt="Rocket logo">
+</div>
+
+        <!-- Section -->
+        <section class="vh-100 d-flex align-items-center section-image overlay-soft-dark" data-background="../assets/img/saas-form-image.jpg">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-12 d-flex align-items-center justify-content-center">
+                        <div class="signin-inner mt-3 mt-lg-0 bg-white shadow-soft border rounded border-light p-4 p-lg-5 w-100 fmxw-500">
+                            <div class="text-center text-md-center mb-4 mt-md-0">
+                                <h1 class="mb-0 h3">Sign in to Class Planit</h1>
+                            </div>
+                            <form  method='POST'>
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="far fa-user"></i></span>
+                                        </div>
+                                        <input type="username" name='username' class="form-control" id="username"
+                                            placeholder="Enter username" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-unlock-alt"></i></span>
+                                        </div>
+                                        <input class="form-control" placeholder="Password" name='password' type="password" required>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">
+                                                <i class="far fa-eye"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="d-block d-sm-flex justify-content-between align-items-center mt-2">
+                                        <div class="form-group form-check mt-3">
+                                            <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                                            <label class="form-check-label form-check-sign-white" for="exampleCheck1">Remember me</label>
+                                        </div>
+                                        <div><a href="./forgot-password.html" class="small text-right">Lost password?</a></div>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <button type="submit" class="btn btn-block btn-primary">Sign in</button>
+                                </div>
+                            </form>
+                            <div class="mt-3 mb-4 text-center">
+                                <span class="font-weight-normal">or login with</span>
+                            </div>
+                            <div class="btn-wrapper my-4 text-center">
+                                <button class="btn mr-2 btn-icon-only btn-pill btn-twitter" type="button">
+                                    <span class="btn-inner-icon"><i class="fab fa-twitter"></i></span>
+                                </button>
+                                <button class="btn mr-2 btn-icon-only btn-pill btn-facebook" type="button">
+                                    <span class="btn-inner-icon"><i class="fab fa-facebook-f"></i></span>
+                                </button>
+                                <button class="btn mr-2 btn-icon-only btn-pill btn-google" type="button">
+                                    <span class="btn-inner-icon"><i class="fab fa-google"></i></span>
+                                </button>
+                            </div>
+                            <div class="d-block d-sm-flex justify-content-center align-items-center mt-4">
+                                <span class="font-weight-normal">
+                                    Not registered?
+                                    <a href="./sign-up.html" class="font-weight-bold">Create account</a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Core -->
+  <!-- Core -->
+  <script src="{% static 'vendor/dashboard/jquery/dist/jquery.min.js' %}"></script>
+  <script src="{% static 'vendor/dashboard/popper.js/dist/umd/popper.min.js' %}"></script>
+  <script src="{% static 'vendor/dashboard/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'vendor/dashboard/headroom.js/dist/headroom.min.js' %}"></script>
+  
+  <!-- Vendor JS -->
+  <script src="{% static 'vendor/dashboard/countup.js/dist/countUp.min.js' %}"></script>
+  <script src="{% static 'vendor/dashboard/jquery-countdown/dist/jquery.countdown.min.js' %}"></script>
+  <script src="{% static 'vendor/dashboard/smooth-scroll/dist/smooth-scroll.polyfills.min.js' %}"></script>
+  <script src="{% static 'vendor/dashboard/prismjs/prism.js' %}"></script>
+  
+  <!-- Chartist -->
+  <script src="{% static 'vendor/dashboard/chartist/dist/chartist.min.js' %}"></script>
+  <script src="{% static 'vendor/dashboard/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js' %}"></script>
+  
+  <!-- Vector Maps -->
+  <script src="{% static 'vendor/dashboard/jqvmap/dist/jquery.vmap.min.js' %}"></script>
+  <script src="{% static 'vendor/dashboard/jqvmap/dist/maps/jquery.vmap.world.js' %}"></script>
+  
+  <!-- Rocket JS -->
+  <script src="{% static 'js/dashboard/rocket.js' %}"></script>
+    
+</body>
+
+</html>

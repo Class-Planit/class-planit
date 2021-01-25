@@ -70,6 +70,14 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script src="{% static 'forms_ajaxified/js/forms_ajaxified.js' %}"></script>
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <script type="text/javascript">
+    tinymce.init({
+      selector: '.myeditablediv',
+      inline: true,
+      menubar: false
+    });
+    </script>
     </head>
 
 <body>
@@ -211,10 +219,12 @@
 
 
                  <!-- Tab -->
-                 <div class="tab-content mt-5 mt-lg-6" id="nav-tabContent">
+                 <div class="tab-content mt-5 mt-lg-6 " id="nav-tabContent">
                     <!-- Content Research Tab -->
-                    <div class="tab-pane fade show active" id="nav-content-research" role="tabpanel" aria-labelledby="nav-content-research-tab">
-                        <div class="row justify-content-between align-items-center">
+                    <div class="tab-pane fade show active bg-white" id="nav-content-research" role="tabpanel" aria-labelledby="nav-content-research-tab">
+                        <br>
+                        <div class='container'>
+                        <div class="row justify-content-between  align-items-center">
                             <div class="col-12">
                                 {% for item in keywords %}
                                 {% ifchanged item.0 %}
@@ -228,65 +238,75 @@
                                     {% endfor %}
                                 {% endfor %}
                                 {% endif %}
-                                <form  method='POST'>
+                                <form method="POST">
                                     {% csrf_token %}
                                     <input type="submit" value="Save Progress">
-                                    {% if text_update.is_initial %}
-                                    <textarea name='content' id="basic-example">
-                                        <p style="text-align: center;">
-                                          <img title="TinyMCE Logo" src="{% static 'images/dashboard/icon.svg' %}" alt="TinyMCE Logo" width="110" height="97" />
-                                        </p>
-                                      
-                                        <h2 style="text-align: center;">Lesson Plan: {{ week_of }}| {{ user.username }}</h2>
-                                      
-                                        <h2>Objective: {{ lesson_match.teacher_objective }}</h2>
-                                      <h3>Aligned Stanards:</h3>
-                                        {% for standard in lesson_standards %}
-                                        <li>{{ standard }}</li>
-                                        {% endfor %}
-                                      
+                                    <br>
+                                    <div class='demo-dfree'>
+                                        <h2 class="dfree-header mce-content-body" contenteditable="true" style="position: relative;" spellcheck="false">
+                                            Lesson Plan: {{ week_of }}| {{ user.username }}
+                                        </h2>
+                                        <br>
+                                        <div class="dfree-body mce-content-body" name='overview' id='overview' contenteditable="true" style="position: relative;" spellcheck="false">
+                                            <p style="text-align: center;">
+                                                <img title="TinyMCE Logo" src="{% static 'images/dashboard/icon.svg' %}" alt="TinyMCE Logo" width="110" height="97" />
+                                              </p>
+                                              <h2>Objective: {{ lesson_match.teacher_objective }}</h2>
+                                            <h3>Aligned Stanards:</h3>
+                                              {% for standard in lesson_standards %}
+                                              <li>{{ standard }}</li>
+                                              {% endfor %}
                                         
+                                        
+                                         
+                                        
+                                        </div>
+                                        <div class="dfree-body mce-content-body" name='activities' id='activities' contenteditable="true" style="position: relative;" spellcheck="false">
+                                           <h4>Lesson Activities:</h4>
                                       
-                                     
-                                      </textarea>
-                                      {% else %}
-                                      <textarea name='content' id="basic-example">
-                                        {{ text_update.content|safe  }}
-                                      </textarea>
-                                      {% endif %}
-                                  </form>
-                                  <hr>
-                                  {% if topic_lists_selected %}
-                                  <h2>Key Topics, Places, People:</h2>
-                                      
-                                        <table style="border-collapse: collapse; width: 100%;" border="1">
-                                          <thead>
-                                            <tr>
-                                              <th>Term</th>
-                                              <th>Description</th>
-                                              
-                                            </tr>
-                                          </thead>
-                                          <tbody>
-                                            {% for term in topic_lists_selected %}
-                                            <tr>
-                                               
-                                              <td>{{ term.item }}</td>
-                                              <td>
-                                                  {% for line in term.description.all %}
-                                                  <li>{{ line.description }}</li>
-                                                  {% endfor %}
-                                                </td>
+                                           <li></li>
+<br>
+                                        </div>
+                                        <div class="dfree-body mce-content-body" name='lesson_terms' id='lesson_terms' contenteditable="true" style="position: relative;" spellcheck="false">
+                                            <h4>Key Term, Place, People:</h4>
+                                            {% if topic_lists_selected %}
+                                            <table style="border-collapse: collapse; width: 100%;" border="1">
+                                                <thead>
+                                                  <tr>
+                                                    <th>Term</th>
+                                                    <th>Description</th>
+                                                    
+                                                  </tr>
+                                                </thead>
+                                                <tbody>
+                                                  {% for term in topic_lists_selected %}
+                                                  <tr>
+                                                     
+                                                    <td>{{ term.item }}</td>
+                                                    <td>
+                                                        {% for line in term.description.all %}
+                                                        {% ifchanged line.id %}
+                                                        <p>{{ line.description }}</p>
+                                                        {% endifchanged %}
+                                                        {% endfor %}
+                                                      </td>
+      
+                                                    
+                                                  </tr>
+                                               {% endfor %}
+                                                </tbody>
+                                              </table>
+                                              {% endif %}
+                                         </div>
 
-                                              
-                                            </tr>
-                                         {% endfor %}
-                                          </tbody>
-                                        </table>
-                                  {% endif %}
+                                      </div>
+                                      <br>
+                                  </form>
+   
                             </div>
                          
                         </div>
+                    </div>
                     </div>
                     <!-- Causes Tab -->
                     <div class="tab-pane fade" id="nav-rank-track" role="tabpanel" aria-labelledby="nav-rank-track-tab">
@@ -302,6 +322,11 @@
                                      
                                     </div>
                                   </div>
+
+                                  {% for item in question_lists  %}
+                                  <li>{{ item.Question }}</li>
+                                  {% endfor %}
+                            
                             </div>
                       
                         </div>
@@ -501,6 +526,16 @@
                                
                                 
                             </tr>
+                            {% endfor %}
+
+                            {% for item in question_list %}
+                           {% if item.question %}
+                            <tr>
+                                <th scope="col">{{ forloop.counter }}. {{ item.question|title }}</th>
+                               
+                                
+                            </tr>
+                            {% endif %}
                             {% endfor %}
                             </thead>
                       

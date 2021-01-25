@@ -269,13 +269,21 @@ class topicTypes(models.Model):
     def __str__(self):
         return "%s" % (self.item)
 
+class questionType(models.Model):
+    item = models.CharField(max_length=200,
+                                       blank=True,
+                                       null=True)	
+    
+    def __str__(self):
+        return "%s" % (self.item)
+
 class topicDescription(models.Model):
     description = models.CharField(max_length=1000,
                                        blank=True,
                                        null=True)	
     
     def __str__(self):
-        return "%s" % (self.id)
+        return "%s" % (self.description)
 
 
 class topicInformation(models.Model):
@@ -304,6 +312,9 @@ class topicInformation(models.Model):
     image_name = models.CharField(max_length=200,
                                        blank=True,
                                        null=True)
+    image_file = models.ImageField(upload_to='images/topic/',
+                                       blank=True,
+                                       null=True) 
 
     def __str__(self):
         return "%s" % (self.item)
@@ -346,7 +357,12 @@ class lessonText(models.Model):
                                blank=True,
                                null=True)
     is_initial = models.BooleanField(default=True)
-    content = tinymce_models.HTMLField()
+    overview = tinymce_models.HTMLField(blank=True,
+                               null=True)
+    activities = tinymce_models.HTMLField(blank=True,
+                               null=True)
+    lesson_terms = tinymce_models.HTMLField(blank=True,
+                               null=True)
 
     def __str__(self):
         return "%s" % (self.id)
@@ -730,3 +746,125 @@ class lessonTemplates(models.Model):
 
     def __str__(self):
         return "%s" % (self.components)
+
+class storySection(models.Model):
+    Title = models.CharField(max_length=1000,
+                        blank=True,
+                        null=True)
+    Section = models.CharField(max_length=10000,
+                        blank=True,
+                        null=True)
+    Section_Image = models.ImageField(upload_to='images/story/',
+                                       blank=True,
+                                       null=True)
+
+    def __str__(self):
+        return "%s" % (self.Title)
+
+class storyFull(models.Model):
+    Title = models.CharField(max_length=500,
+                        blank=True,
+                        null=True)
+    section = models.ManyToManyField(storySection,
+                                     blank=True) 
+    
+    def __str__(self):
+        return "%s" % (self.Title)
+
+class topicQuestion(models.Model):
+    subject	= models.ForeignKey(standardSubjects,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    grade_level = models.ForeignKey(gradeLevel,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True) 	
+    standard_set = models.ForeignKey(standardSet,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    topic_type = models.ManyToManyField(topicTypes,
+                                     blank=True)	
+    topic_story = models.ManyToManyField(storyFull,
+                                     blank=True)
+    item = models.CharField(max_length=200,
+                                       blank=True,
+                                       null=True)	
+    question_type = models.ForeignKey(questionType,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True) 
+    question_points = models.IntegerField(default = 1,
+                               blank=True,
+                               null=True)		
+    Question = models.CharField(max_length=1000,
+                        blank=True,
+                        null=True)	
+    Question_Image = models.ImageField(upload_to='images/question/',
+                                       blank=True,
+                                       null=True) 	
+    Correct	= models.CharField(max_length=500,
+                        blank=True,
+                        null=True)
+    correct_image = models.ImageField(upload_to='images/question/',
+                                       blank=True,
+                                       null=True) 	
+    Incorrect_One = models.CharField(max_length=500,
+                        blank=True,
+                        null=True)	
+    in_one_image = models.ImageField(upload_to='images/question/',
+                                       blank=True,
+                                       null=True) 	
+    Incorrect_Two = models.CharField(max_length=500,
+                        blank=True,
+                        null=True)	
+    in_two_image = models.ImageField(upload_to='images/question/',
+                                       blank=True,
+                                       null=True) 	
+    Incorrect_Three	= models.CharField(max_length=500,
+                        blank=True,
+                        null=True)
+    in_three_image = models.ImageField(upload_to='images/question/',
+                                       blank=True,
+                                       null=True) 
+    explanation	= models.CharField(max_length=1000,
+                        blank=True,
+                        null=True)
+
+    def __str__(self):
+        return "%s" % (self.item)
+
+class worksheetSection(models.Model):
+    section_title	= models.CharField(max_length=200,
+                        blank=True,
+                        null=True)
+    directions	= models.CharField(max_length=1000,
+                        blank=True,
+                        null=True)
+    section_image = models.ImageField(upload_to='images/question/',
+                                       blank=True,
+                                       null=True) 
+    questions = models.ManyToManyField(topicQuestion,
+                                     blank=True)
+
+    def __str__(self):
+        return "%s" % (self.section_title)
+
+class worksheetFull(models.Model):
+    created_by = models.ForeignKey(User,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True)
+    is_admin = models.BooleanField(default=False)
+    title	= models.CharField(max_length=200,
+                        blank=True,
+                        null=True)
+    worksheet_image = models.ImageField(upload_to='images/question/',
+                                       blank=True,
+                                       null=True) 
+    questions = models.ManyToManyField(topicQuestion,
+                                     blank=True)
+
+    def __str__(self):
+        return "%s" % (self.title)

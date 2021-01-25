@@ -6,6 +6,11 @@ class wikiTopicAdmin(admin.ModelAdmin):
     model = wikiTopic
     list_filter = ['is_selected']
 
+class topicQuestionAdmin(admin.ModelAdmin):
+    model = wikiTopic
+    search_fields = ['Question']
+
+
 admin.site.register(User)
 admin.site.register(standardSet)
 admin.site.register(gradeLevel)
@@ -34,5 +39,12 @@ admin.site.register(shortStorySection)
 admin.site.register(shortStory)
 admin.site.register(youtubeSearchResult)
 admin.site.register(lessonText)
+admin.site.register(questionType)
+admin.site.register(topicQuestion, topicQuestionAdmin)
+admin.site.register(mainQuestion)
+admin.site.register(topicDescription)
+
+
+
 
 

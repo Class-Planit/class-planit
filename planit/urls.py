@@ -83,6 +83,16 @@ urlpatterns = [
         view=TopicUploadTwo,
         name='topic_upload'),
 
+    url(r'^login/$',
+        view=login_user,
+        name='login_user'),
+
+
+    url(r'^question_upload/$',
+        view=QuestionUploadTwo,
+        name='question_upload'),
+
+
     url(r'^textbook_upload/$',
         view=TextbookUploadOne,
         name='textbook_uplad_one'),
