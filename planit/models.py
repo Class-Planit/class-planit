@@ -835,37 +835,37 @@ class topicQuestion(models.Model):
     question_points = models.IntegerField(default = 1,
                                blank=True,
                                null=True)		
-    Question = models.CharField(max_length=1000,
+    Question = models.CharField(max_length=1500,
                         blank=True,
                         null=True)	
     Question_Image = models.ImageField(upload_to='images/question/',
                                        blank=True,
                                        null=True) 	
-    Correct	= models.CharField(max_length=500,
+    Correct	= models.CharField(max_length=1000,
                         blank=True,
                         null=True)
     correct_image = models.ImageField(upload_to='images/question/',
                                        blank=True,
                                        null=True) 	
-    Incorrect_One = models.CharField(max_length=500,
+    Incorrect_One = models.CharField(max_length=1000,
                         blank=True,
                         null=True)	
     in_one_image = models.ImageField(upload_to='images/question/',
                                        blank=True,
                                        null=True) 	
-    Incorrect_Two = models.CharField(max_length=500,
+    Incorrect_Two = models.CharField(max_length=1000,
                         blank=True,
                         null=True)	
     in_two_image = models.ImageField(upload_to='images/question/',
                                        blank=True,
                                        null=True) 	
-    Incorrect_Three	= models.CharField(max_length=500,
+    Incorrect_Three	= models.CharField(max_length=1000,
                         blank=True,
                         null=True)
     in_three_image = models.ImageField(upload_to='images/question/',
                                        blank=True,
                                        null=True) 
-    explanation	= models.CharField(max_length=1000,
+    explanation	= models.CharField(max_length=1500,
                         blank=True,
                         null=True)
 
