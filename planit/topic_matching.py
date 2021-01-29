@@ -98,7 +98,7 @@ def get_keywords(text):
                                 pass
                         else:
                                 cleaned_list.append(word)        
-        return(cleaned_list)
+        return(cleaned_list[:10])
 
 def match_topics(teacher_input, class_id, lesson_id):
      
