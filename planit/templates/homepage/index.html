@@ -3,7 +3,33 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Spring - Software, App, Saas & Product Showcase Landing HTML5 Template | Home Version One</title>
+<title>Class Planit</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="title" content="Class Planit - More engaging lessons, in less time">
+<meta name="author" content="Class Planit">
+<meta name="description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better inidviualized in minutes.">
+<meta name="keywords" content="lesson plans, teacher pay teachers, worksheets" />
+<link rel="canonical" href="www.classplanit.co">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="www.classplanit.co">
+<meta property="og:title" content="Class Planit - More engaging lessons, in less time">
+<meta property="og:description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better inidviualized in minutes.">
+<meta property="og:image" content="www.classplanit.co">
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:url" content="www.classplanit.co">
+<meta property="twitter:title" content="Class Planit - More engaging lessons, in less time">
+<meta property="twitter:description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better inidviualized in minutes.">
+<meta property="twitter:image" content="{% static 'images/dashboard/twitter_image.png' %}">
+
+<!-- Favicon -->
+<link rel="apple-touch-icon" sizes="120x120" href="{% static 'images/dashboard/icon_120.png' %}">
+<link rel="icon" type="image/png" sizes="32x32" href="{% static 'mages/icon_40.png' %}">
+<link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/dashboard/icon_40.png' %}">
 <!-- Stylesheets -->
 <link href="{% static 'css/homepage/bootstrap.css' %}" rel="stylesheet">
 <link href="{% static 'css/homepage/style.css' %}" rel="stylesheet">
@@ -85,6 +111,17 @@
 
 
 </style>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5Q1SQHYG0R"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-5Q1SQHYG0R');
+</script>
+
 </head>
 
 <body>
@@ -103,7 +140,7 @@
             	<div class="outer-container clearfix">
                     <!--Logo Box-->
                     <div class="logo-box">
-                        <div class="logo"><a href="index.html"><img src="{% static 'images/homepage/cp_rounded.png' %}" alt=""></a></div>
+                        <div class="logo"><a href="{% url 'homepage' %}"><img src="{% static 'images/homepage/cp_rounded.png' %}" alt=""></a></div>
                     </div>
                     
                     <!--Nav Outer-->
@@ -122,7 +159,7 @@
                             
                             <div class="navbar-collapse collapse scroll-nav clearfix">
                                 <ul class="navigation clearfix">
-                                    <li class="dropdown current"><a href="#banner">Home</a>
+                                    <li class="current"><a href="{% url 'homepage' %}">Home</a>
                                     </li>
                                
                                     <li><a href="#products">Products</a></li>
@@ -137,7 +174,7 @@
                         
                         <!--Other Links-->
                         <div class="other-links">
-                        	<a href="contact.html" class="theme-btn btn-style-one">Get Started</a>
+                        	<a data-toggle="modal" data-target="#myModal2" class="theme-btn btn-style-one">Get Started</a>
                         </div>
                         
                     </div>
@@ -167,7 +204,7 @@
                 <!--Image Column-->
                 <div class="image-column col-md-6 col-sm-12 col-xs-12">
                 	<div class="inner">
-                    	<figure class="image"><img src="images/resource/banner-image-1.png" alt=""></figure>
+                    	<figure class="image"><img src="{% static 'images/homepage/homepage21.png' %}" alt=""></figure>
                     </div>
                 </div>
                 
@@ -276,7 +313,7 @@
             	<div class="form-column col-md-6 col-sm-12 col-xs-12">
                 	<div class="sec-title">
                         <h2>Join the Class Planit Community!</h2>
-                        
+                        <h5>Recieve updates, planning resources, and tips with our weekly newsletter.</h5>
                     </div>
                     
                 	<!-- Begin Mailchimp Signup Form -->
@@ -396,50 +433,14 @@
                                         <div class="links">
                                             <ul>
                                                 <li><a href="#">About us</a></li>
-                                                <li><a href="#">Careers</a></li>
-                                                <li><a href="#">Contact us </a></li>
-                                                <li><a href="#">Customers</a></li>
-                                                <li><a href="#">Career</a></li>
+  
                                             </ul>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             
-                            <!--Footer Column-->
-                            <div class="footer-column col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                                <div class="footer-widget links-widget">
-                                    <div class="widget-inner">
-                                        <h3>Resources</h3>
-                                        <div class="links">
-                                            <ul>
-                                                <li><a href="#">Library</a></li>
-                                                <li><a href="#">Support</a></li>
-                                                <li><a href="#">Blog</a></li>
-                                                <li><a href="#">Live webinars</a></li>
-                                                <li><a href="#">API & Developers</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!--Footer Column-->
-                            <div class="footer-column col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                                <div class="footer-widget links-widget">
-                                    <div class="widget-inner">
-                                        <h3>Solutions</h3>
-                                        <div class="links">
-                                            <ul>
-                                                <li><a href="#">Consumer</a></li>
-                                                <li><a href="#">Financial Services</a></li>
-                                                <li><a href="#">Media & Entertainment</a></li>
-                                                <li><a href="#">SaaS</a></li>
-                                                <li><a href="#">Infrastructure</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        
                             <!--Footer Column-->
                             <div class="footer-column col-lg-3 col-md-3 col-sm-6 col-xs-12">
                                 <div class="footer-widget follow-widget">

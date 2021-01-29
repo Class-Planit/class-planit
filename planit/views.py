@@ -48,23 +48,30 @@ def Homepage(request):
             
             user_email = form.cleaned_data.get('email')
             my_number = form.cleaned_data.get('phone_number')
+            if '+1' in my_number:
+                pass
+            else:
+                my_number = '+1', my_number
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             user_id = user.id
-            login(request, user)
-            welcome_message = 'Welcome to Class Planit, %s! you can login to your profile at www.classplanit.co/login/' % (username)
+            
+            welcome_message = 'Welcome to Class Planit, %s! We will be in touch when your account is activated.' % (username)
         
             to = str(my_number)
             if to:
-                client = Client(config('TWILIO_ACCOUNT_SID'), config('TWILIO_AUTH_TOKEN'))
-                response = client.messages.create(
-                        body=str(welcome_message),
-                        to=to, from_=config('TWILIO_PHONE_NUMBER'))
-            message = Mail(
-                        from_email='welcome@classplanit.co',
-                        to_emails=user_email,
-                        subject='Welcome to Class Planit',
-                        html_content= get_template('dashboard/welcome_to_class_planit.html').render({'username': username }))
+                try:
+                    client = Client(config('TWILIO_ACCOUNT_SID'), config('TWILIO_AUTH_TOKEN'))
+                    response = client.messages.create(
+                            body=str(welcome_message),
+                            to=to, from_=config('TWILIO_PHONE_NUMBER'))
+                    message = Mail(
+                            from_email='welcome@classplanit.co',
+                            to_emails=user_email,
+                            subject='Welcome to Class Planit',
+                            html_content= get_template('dashboard/welcome_to_class_planit.html').render({'user': user}))
+                except Exception as e:
+                    pass
             try:
                 sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
                 response = sg.send(message)
@@ -72,14 +79,30 @@ def Homepage(request):
                 print(response.body)
                 print(response.headers)
             except Exception as e:
-                print('Error')
-            return redirect('account_setup', user_id=user_id)
+                pass
+        
+        return redirect('thank_you', user_id=user_id)
+        
 
     else:
 
         form = TeacherForm()
     
     return render(request, 'homepage/index.html', {'form': form})
+
+class Services(TemplateView):
+    template_name = 'homepage/services.html' 
+
+    def get(self,request):
+
+        return render(request, 'homepage/services.html', { })
+
+class ThankYou(TemplateView):
+    template_name = 'homepage/thank_you.html' 
+
+    def get(self,request,user_id):
+        user_profile = User.objects.filter(username=request.user.username).first()
+        return render(request, 'homepage/thank_you.html', {'user_profile': user_profile })
 
 
 class Dashboard(TemplateView):

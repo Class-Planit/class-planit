@@ -42,7 +42,7 @@ class TeacherForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=False, help_text='Optional.')
     last_name = forms.CharField(max_length=30, required=False, help_text='Optional.')
     email = forms.EmailField(max_length=254, help_text='Required. Inform a valid email address.')
-    phone_number = PhoneNumberField(required=False, help_text='Enter your mobile phone number beginging with +264 without the begining "0". For example +264811234567')
+    phone_number = forms.CharField(max_length=30, required=False, help_text='Optional.')
 
     class Meta(UserCreationForm.Meta):
         model = User

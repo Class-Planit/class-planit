@@ -33,7 +33,8 @@ class school_user(models.Model):
     username = models.CharField(max_length=30)
     email = models.EmailField(blank=True,
                               null=True)
-    phone_number = PhoneNumberField(blank=True,
+    phone_number = models.CharField(max_length=30,
+                                    blank=True,
                                     null=True)
     use_whatsapp = models.BooleanField(default=False)
     user_image = models.ImageField(upload_to='images/',

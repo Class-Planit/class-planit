@@ -20,11 +20,19 @@ urlpatterns = [
 
     url(r'^$',
         view=Homepage,
-        name='Homepage'),
+        name='homepage'),
 
     url(r'^dashboard/(?P<week_of>[\w\s]+)/',
         view=Dashboard.as_view(),
         name='Dashboard'),
+
+    url(r'^services/',
+        view=Services.as_view(),
+        name='services'),
+
+    url(r'^thanks/(?P<user_id>[\w\s]+)/',
+        view=ThankYou.as_view(),
+        name='thank_you'),
 
     url(r'^classrooms/',
         view=Classrooms.as_view(),

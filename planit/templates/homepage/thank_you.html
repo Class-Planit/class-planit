@@ -1,0 +1,331 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Class Planit</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="title" content="Class Planit - More engaging lessons, in less time">
+<meta name="author" content="Class Planit">
+<meta name="description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better inidviualized in minutes.">
+<meta name="keywords" content="lesson plans, teacher pay teachers, worksheets" />
+<link rel="canonical" href="www.classplanit.co">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="www.classplanit.co">
+<meta property="og:title" content="Class Planit - More engaging lessons, in less time">
+<meta property="og:description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better inidviualized in minutes.">
+<meta property="og:image" content="www.classplanit.co">
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:url" content="www.classplanit.co">
+<meta property="twitter:title" content="Class Planit - More engaging lessons, in less time">
+<meta property="twitter:description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better inidviualized in minutes.">
+<meta property="twitter:image" content="{% static 'images/dashboard/twitter_image.png' %}">
+
+<!-- Favicon -->
+<link rel="apple-touch-icon" sizes="120x120" href="{% static 'images/dashboard/icon_120.png' %}">
+<link rel="icon" type="image/png" sizes="32x32" href="{% static 'mages/icon_40.png' %}">
+<link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/dashboard/icon_40.png' %}">
+<!-- Stylesheets -->
+<link href="{% static 'css/homepage/bootstrap.css' %}" rel="stylesheet">
+<link href="{% static 'css/homepage/style.css' %}" rel="stylesheet">
+<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon">
+<link rel="icon" href="images/favicon.png" type="image/x-icon">
+<!-- Responsive -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<link type="text/css" href="{% static 'vendor/dashboard/fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+    
+<link href="{% static 'css/homepage/responsive.css' %}" rel="stylesheet">
+<!--[if lt IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script><![endif]-->
+<!--[if lt IE 9]><script src="js/respond.js"></script><![endif]-->
+<style>
+    /*******************************
+* MODAL AS LEFT/RIGHT SIDEBAR
+* Add "left" or "right" in modal parent div, after class="modal".
+* Get free snippets on bootpen.com
+*******************************/
+	.modal.left .modal-dialog,
+	.modal.right .modal-dialog {
+		position: fixed;
+		margin: auto;
+		width: 320px;
+		height: 100%;
+		-webkit-transform: translate3d(0%, 0, 0);
+		    -ms-transform: translate3d(0%, 0, 0);
+		     -o-transform: translate3d(0%, 0, 0);
+		        transform: translate3d(0%, 0, 0);
+	}
+
+	.modal.left .modal-content,
+	.modal.right .modal-content {
+		height: 100%;
+		overflow-y: auto;
+	}
+	
+	.modal.left .modal-body,
+	.modal.right .modal-body {
+		padding: 15px 15px 80px;
+	}
+
+/*Left*/
+	.modal.left.fade .modal-dialog{
+		left: -320px;
+		-webkit-transition: opacity 0.3s linear, left 0.3s ease-out;
+		   -moz-transition: opacity 0.3s linear, left 0.3s ease-out;
+		     -o-transition: opacity 0.3s linear, left 0.3s ease-out;
+		        transition: opacity 0.3s linear, left 0.3s ease-out;
+	}
+	
+	.modal.left.fade.in .modal-dialog{
+		left: 0;
+	}
+        
+/*Right*/
+	.modal.right.fade .modal-dialog {
+		right: -320px;
+		-webkit-transition: opacity 0.3s linear, right 0.3s ease-out;
+		   -moz-transition: opacity 0.3s linear, right 0.3s ease-out;
+		     -o-transition: opacity 0.3s linear, right 0.3s ease-out;
+		        transition: opacity 0.3s linear, right 0.3s ease-out;
+	}
+	
+	.modal.right.fade.in .modal-dialog {
+		right: 0;
+	}
+
+/* ----- MODAL STYLE ----- */
+	.modal-content {
+		border-radius: 0;
+		border: none;
+	}
+
+	.modal-header {
+		border-bottom-color: #EEEEEE;
+		background-color: #FAFAFA;
+	}
+
+
+</style>
+</style>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5Q1SQHYG0R"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-5Q1SQHYG0R');
+</script>
+</head>
+
+<body>
+
+<div class="page-wrapper">
+ 	
+    <!-- Preloader -->
+    <div class="preloader"></div>
+ 	
+    <!-- Main Header-->
+    <header class="main-header">
+    	
+        <!-- Main Box -->
+    	<div class="main-box">
+        	<div class="auto-container">
+            	<div class="outer-container clearfix">
+                    <!--Logo Box-->
+                    <div class="logo-box">
+                        <div class="logo"><a href="index.html"><img src="{% static 'images/homepage/cp_rounded.png' %}" alt=""></a></div>
+                    </div>
+                    
+                    <!--Nav Outer-->
+                    <div class="nav-outer clearfix">
+                        <!-- Main Menu -->
+                        <nav class="main-menu">
+                        
+                            <div class="navbar-header">
+                                <!-- Toggle Button -->    	
+                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                            </div>
+                            
+                            <div class="navbar-collapse collapse scroll-nav clearfix">
+                                <ul class="navigation clearfix">
+                                    <li class="current"><a href="{% url 'homepage' %}">Back to Home</a>
+                                    </li>
+                                                                 
+                                 </ul>
+                            </div>
+                            
+                        </nav>
+                        <!-- Main Menu End-->
+                        
+                  
+                        
+                    </div>
+                    <!--Nav Outer End-->
+                    
+            	</div>    
+            </div>
+        </div>
+    
+    </header>
+    <!--End Main Header -->
+  
+    <!--Main Banner / Banner One-->
+    <section class="main-banner banner-one" id="banner" style="background-image:url({% static 'images/homepage/background_bg.png' %});">
+    	<div class="auto-container">
+        	<div class="row clearfix">
+            	<!--Text Column-->
+                <div class="text-column col-md-6 col-sm-12 col-xs-12">
+                	<div class="inner">
+                    	
+                        <h2>{{ user_profile.first_name }} {{ user_profile.last_name }}, Thanks for Signing Up!</h2>
+                        <p>We are onboarding new teachers everyday for our beta version. We will be in touch shortly as we move through our waitlist.</p>
+                        <a href="{% url 'homepage' %}" class="theme-btn btn-style-two">Back to Home</a>
+                    </div>
+                </div>
+                
+                <!--Image Column-->
+                <div class="image-column col-md-6 col-sm-12 col-xs-12">
+                	<div class="inner">
+                    	<figure class="image"><img src="images/resource/banner-image-1.png" alt=""></figure>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+  	<!--End Main Banner-->
+ 
+	
+	
+</div><!-- container -->
+    <!--Footer Style One-->
+    <footer class="footer-style-one">
+        <!--Footer Upper-->
+        <div class="footer-upper">
+            <div class="auto-container">
+                <div class="row clearfix">
+                    <!--Big Column-->
+                    <div class="big-column col-lg-3 col-md-12 col-sm-12 col-xs-12">
+                        <div class="footer-column">
+                            <div class="footer-widget about-widget">
+                                <div class="widget-inner">
+                                    <div class="logo"><img src="{% static 'images/homepage/cp_rounded.png' %}" alt=""></div>
+                                    <div class="copyright">&copy; 2020 All Rights Reserved</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!--Big Column-->
+                    <div class="big-column col-lg-9 col-md-12 col-sm-12 col-xs-12">    
+                        <div class="row clearfix">
+                        	<!--Footer Column-->
+                            <div class="footer-column col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                                <div class="footer-widget links-widget">
+                                    <div class="widget-inner">
+                                        <h3>Company</h3>
+                                        <div class="links">
+                                            <ul>
+                                                <li><a href="#">About us</a></li>
+                                                <li><a href="#">Careers</a></li>
+                                                <li><a href="#">Contact us </a></li>
+                                                <li><a href="#">Customers</a></li>
+                                                <li><a href="#">Career</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!--Footer Column-->
+                            <div class="footer-column col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                                <div class="footer-widget links-widget">
+                                    <div class="widget-inner">
+                                        <h3>Resources</h3>
+                                        <div class="links">
+                                            <ul>
+                                                <li><a href="#">Library</a></li>
+                                                <li><a href="#">Support</a></li>
+                                                <li><a href="#">Blog</a></li>
+                                                <li><a href="#">Live webinars</a></li>
+                                                <li><a href="#">API & Developers</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Footer Column-->
+                            <div class="footer-column col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                                <div class="footer-widget links-widget">
+                                    <div class="widget-inner">
+                                        <h3>Solutions</h3>
+                                        <div class="links">
+                                            <ul>
+                                                <li><a href="#">Consumer</a></li>
+                                                <li><a href="#">Financial Services</a></li>
+                                                <li><a href="#">Media & Entertainment</a></li>
+                                                <li><a href="#">SaaS</a></li>
+                                                <li><a href="#">Infrastructure</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Footer Column-->
+                            <div class="footer-column col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                                <div class="footer-widget follow-widget">
+                                    <div class="widget-inner">
+                                    	<h3>Follow</h3>
+                                        <div class="social-links">
+                                            <ul class="clearfix">
+                                                <li><a href="#"><span class="fa fa-facebook-f"></span></a></li>
+                                                <li><a href="#"><span class="fa fa-twitter"></span></a></li>
+                                                <li><a href="#"><span class="fa fa-instagram"></span></a></li>
+                                                <li><a href="#"><span class="fa fa-linkedin"></span></a></li>
+                                                <li><a href="#"><span class="fa fa-google-plus"></span></a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </footer>
+    
+    
+</div>
+<!--End pagewrapper-->
+
+<!--Scroll to top-->
+<div class="scroll-to-top scroll-to-target" data-target="html"><span class="fa fa-angle-double-up"></span></div>
+
+
+<script src="{% static 'js/homepage/jquery.js' %}"></script> 
+<script src="{% static 'js/homepage/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/homepage/pagenav.js' %}"></script>
+<script src="{% static 'js/homepage/jquery.scrollTo.js' %}"></script>
+<script src="{% static 'js/homepage/jquery.fancybox.pack.js' %}"></script>
+<script src="{% static 'js/homepage/owl.js' %}"></script>
+<script src="{% static 'js/homepage/wow.js' %}"></script>
+<script src="{% static 'js/homepage/validate.js' %}"></script>
+<script src="{% static 'js/homepage/script.js' %}"></script>
+
+
+</body>
+</html>
