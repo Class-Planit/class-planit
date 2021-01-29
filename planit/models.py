@@ -870,7 +870,7 @@ class topicQuestion(models.Model):
                         null=True)
 
     def __str__(self):
-        return "%s" % (self.item)
+        return "%s" % (self.Question)
 
 class worksheetSection(models.Model):
     section_title	= models.CharField(max_length=200,
