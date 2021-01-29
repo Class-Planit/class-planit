@@ -359,6 +359,8 @@ class lessonText(models.Model):
     is_initial = models.BooleanField(default=True)
     overview = tinymce_models.HTMLField(blank=True,
                                null=True)
+    introduction = tinymce_models.HTMLField(blank=True,
+                               null=True)
     activities = tinymce_models.HTMLField(blank=True,
                                null=True)
     lesson_terms = tinymce_models.HTMLField(blank=True,
@@ -745,7 +747,42 @@ class lessonTemplates(models.Model):
                                null=True)
 
     def __str__(self):
-        return "%s" % (self.components)
+        return "%s" % (self.wording)
+
+class selectedActivity(models.Model):
+    created_by = models.ForeignKey(User,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True)
+    lesson_overview = models.ForeignKey(lessonObjective,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    lesson_text = models.CharField(max_length=1500,
+                        blank=True,
+                        null=True)
+    story = models.ForeignKey(shortStory,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True) 
+    verb = models.CharField(max_length=100,
+                        blank=True,
+                        null=True)
+    work_product = models.CharField(max_length=300,
+                        blank=True,
+                        null=True)
+    bloom = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
+    mi = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
+    is_admin = models.BooleanField(default=False)
+    is_selected = models.BooleanField(default=False)
+    
+
+    def __str__(self):
+        return "%s - %s" % (self.verb, self.work_product)
 
 class storySection(models.Model):
     Title = models.CharField(max_length=1000,

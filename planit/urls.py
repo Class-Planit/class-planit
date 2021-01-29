@@ -73,6 +73,10 @@ urlpatterns = [
         view=ActivityBuilder,
         name='activity_builder'), 
 
+    url(r'^lesson-pdf/(?P<lesson_id>[\w-]+)/$',
+        view=generate_lesson_pdf,
+        name='lesson_pdf'), 
+
         
     url(r'^standards_upload/$',
         view=StandardUploadTwo,

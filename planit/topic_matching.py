@@ -153,12 +153,20 @@ def match_topics(teacher_input, class_id, lesson_id):
                     prediction = []
                     for standard_full in objectives_list:
                             standard_full_join = ''.join([str(i) for i in standard_full[1]]).lower()
+                            
                             standard_full_joined = stemSentence(standard_full_join)
                             if any(word in standard_full_joined for word in tokens_without_sw):
-                                
-                                prediction.append(standard_full)
-       
-                    
+                                Document1 = ''.join([str(i) for i in tokens_without_sw]).lower()
+                                Document2 = standard_full_joined
+                                corpus = [Document1,Document2]
+                                X_train_counts = count_vect.fit_transform(corpus)
+                                vectorizer = TfidfVectorizer()
+                                trsfm=vectorizer.fit_transform(corpus)
+                                result = cosine_similarity(trsfm[0:1], trsfm)
+                                result = result[0][1]
+                                total = standard_full, result
+                                prediction.append(total)
+
                     return(prediction)
                 else:
                     return(None)
@@ -202,8 +210,16 @@ def match_lesson_topics(teacher_input, class_id, lesson_id):
                             standard_full_join = ''.join([str(i) for i in standard_full[1]]).lower()
                             standard_full_joined = stemSentence(standard_full_join)
                             if any(word in standard_full_joined for word in tokens_without_sw):
-                                
-                                prediction.append(standard_full)
+                                Document1 = ''.join([str(i) for i in tokens_without_sw]).lower()
+                                Document2 = standard_full_joined
+                                corpus = [Document1,Document2]
+                                X_train_counts = count_vect.fit_transform(corpus)
+                                vectorizer = TfidfVectorizer()
+                                trsfm=vectorizer.fit_transform(corpus)
+                                result = cosine_similarity(trsfm[0:1], trsfm)
+                                result = result[0][1]
+                                total = standard_full, result
+                                prediction.append(total)
        
                     
                     return(prediction)
@@ -222,6 +238,7 @@ def split_matched_text(teacher_input):
 
  
 def split_matched_terms(teacher_input, class_id, lesson_id):
+    
     classroom_profile = classroom.objects.get(id=class_id)
     standard_set = classroom_profile.standards_set
     class_objectives = lessonObjective.objects.get(id=lesson_id)
@@ -247,7 +264,7 @@ def split_matched_terms(teacher_input, class_id, lesson_id):
                         for item in lines:
                             try:
                                 line = item.text
-                                print(line)
+                            
                                 if topicInformation.objects.filter(id=topic_term.id, description=line).exists():
                                     pass
                                 else:
@@ -263,6 +280,41 @@ def split_matched_terms(teacher_input, class_id, lesson_id):
         for topic in topic_lists:
             update_objective = class_objectives.objectives_topics.add(topic)
 
+
+
+def split_matched_activities(teacher_input, class_id, lesson_id, user_id):
+    user_profile = User.objects.get(id=user_id)
+    classroom_profile = classroom.objects.get(id=class_id)
+    standard_set = classroom_profile.standards_set
+    class_objectives = lessonObjective.objects.get(id=lesson_id)
+    subject = class_objectives.subject
+    grade_list = classroom_profile.grade_level.all()
+    all_selected = selectedActivity.objects.filter(lesson_overview=class_objectives)
+    for item in all_selected:
+        item.is_selected = False
+        item.save()
+    
+    if teacher_input:
+        soup = BeautifulSoup(teacher_input)
+
+        lines = soup.findAll('li')
+        line_2 = soup.findAll('p')
+        p_lines = []
+        for p in line_2:
+            p_lines.append(p.text)
+        
+        line2 = ''.join([str(i) for i in p_lines])
+
+        for line in lines:
+            if len(line.text) >= 2:
+                new, created = selectedActivity.objects.get_or_create(lesson_overview=class_objectives, lesson_text=line.text, created_by=user_profile)
+                new.is_selected = True 
+                new.save()
+
+        if len(line2) >= 2:
+            new, created = selectedActivity.objects.get_or_create(lesson_overview=class_objectives, lesson_text=line2, created_by=user_profile)
+            new.is_selected = True 
+            new.save()
 
 def match_lesson_questions(teacher_input, class_id, lesson_id):
         classroom_profile = classroom.objects.get(id=class_id)
@@ -366,7 +418,8 @@ def match_textbook(teacher_input, class_id, lesson_id):
 
 
 
-def get_lessons(lesson_id):
+def get_lessons(lesson_id, user_id):
+    user_profile = User.objects.get(id=user_id)
     lesson_match = lessonObjective.objects.get(id=lesson_id)
     topic_matches = lesson_match.objectives_topics.all()
     topic_list = topicInformation.objects.filter(id__in=topic_matches)
@@ -380,10 +433,18 @@ def get_lessons(lesson_id):
             masked_info = tt.item
             result = masked_info.upper()
             lesson_templates = lessonTemplates.objects.filter(components=tt)
+            
             for template in lesson_templates:
+                verb = template.verb
+                work_product = template.work_product
+                bloom = template.bloom
+                mi = template.mi
                 wording = template.wording
                 lesson = wording.replace(result, replacement)  
-                topic_results.append(lesson)
+                results = lesson, template.id
+                new, created = selectedActivity.objects.get_or_create(created_by=user_profile , lesson_overview = lesson_match, lesson_text = lesson, verb = verb, work_product = work_product, bloom = bloom, mi = mi, is_admin = False)
+                topic_results.append(results)
+    
     
     return(topic_results)
 
@@ -417,7 +478,8 @@ def get_website_data(link):
 
 
 
-def genQuestion(line):
+def genQuestion(line, main_word):
+    main_word = main_word.lower()
     vowels = ['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U']
     """
     outputs question from the given text
@@ -502,9 +564,18 @@ def genQuestion(line):
     elif all(key in bucket for key in l13): #'NN', 'VBZ' in sentence.
         question = 'What' + ' ' + line.words[bucket['VBZ']] + ' ' + line.words[bucket['NN']] + '?'
 
-    
     if question:
         question_match, create = mainQuestion.objects.get_or_create(question=question, answer=line) 
+        quest = str(question_match.question.lower())
+
+        for word in main_word.split():
+
+            if word in quest:
+
+                new_quest = quest.replace(word, main_word)
+                question_match.question = new_quest
+                question_match.save()
+
     else:
         question_match = None
 

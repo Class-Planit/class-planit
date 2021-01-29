@@ -55,7 +55,7 @@
     <meta name="theme-color" content="#ffffff">
     
     <!-- Fontawesome -->
-    <link type="text/css" href="{% static 'vendor/dashboard/@fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+    <link type="text/css" href="{% static 'vendor/dashboard/fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
     
     <!-- Prism -->
     <link type="text/css" href="{% static 'vendor/dashboard/prismjs/themes/prism.css' %}" rel="stylesheet">
@@ -139,7 +139,7 @@
                           
                                 <li class="nav-item ">
                                   <a href="../dashboard/traffic-sources.html" class="nav-link">
-                                      <span class="sidebar-icon"><span class="fas fa-chart-line"></span></span>
+                                      <span class="sidebar-icon"><span class="fas fa-chart-bar"></span></span>
                                       <span>Standards Tracking</span>
                                   </a>
                                 </li>
@@ -194,13 +194,16 @@
    
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
         <div class="btn-toolbar">
-            <a href="#" class="btn btn-sm btn-outline-secondary"><i class="fa fa-bars"></i> List</a>
-            <a href="#" class="btn btn-sm btn-outline-secondary"><i class="fa fa-th-large"></i> Grid</a>
+            <a href="#" class="btn btn-sm btn-outline-secondary"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+
 
         </div>
         <div class="btn-group mr-2">
-            <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
-            <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+            
+
+            <button  onclick="window.print();return false;" type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+            <input type="button" class="btn btn-sm btn-outline-secondary" onclick="printDiv('print-content')" value="Export"/>
+
         </div>
     </div>
     <div class="row">
@@ -208,12 +211,11 @@
         <div class="col-lg-9">
             <nav>
                 <div class="nav nav-tabs flex-column flex-md-row bg-white shadow-soft border border-light justify-content-around rounded mb-lg-3 py-3" id="nav-tab" role="tablist">
-                    <a class="nav-item nav-link rounded mr-md-3 active" id="nav-content-research-tab" data-toggle="tab" href="#nav-content-research" role="tab" aria-controls="nav-content-research" aria-selected="true"><span class="d-block"><span class="fas fa-file-alt mr-2"></span><span class="font-weight-normal">Lessons</span></span></a>
-                    <a class="nav-item nav-link rounded mr-md-3" id="nav-rank-track-tab" data-toggle="tab" href="#nav-rank-track" role="tab" aria-controls="nav-rank-track" aria-selected="false"><span class="fas fa-chart-line mr-2"></span><span class="font-weight-normal">Digital Worksheets</span></a>
-                    <a class="nav-item nav-link rounded mr-md-3" id="nav-web-monitor-tab" data-toggle="tab" href="#nav-web-monitor" role="tab" aria-controls="nav-web-monitor" aria-selected="false"><span class="far fa-bell mr-2"></span><span class="font-weight-normal">Digital Resources</span></a>
-                    <a class="nav-item nav-link rounded mr-md-3" id="nav-backlink-research-tab" data-toggle="tab" href="#nav-backlink-research" role="tab" aria-controls="nav-backlink-research" aria-selected="false"><span class="fas fa-link mr-2"></span><span class="font-weight-normal">Assessments</span></a>
-                    <a class="nav-item nav-link rounded mr-md-3" id="Analytics-tab" data-toggle="tab" href="#Analytics" role="tab" aria-controls="Analytics" aria-selected="false"><span class="fas fa-link mr-2"></span><span class="font-weight-normal">Analytics</span></a>
-        
+                    <a class="nav-item nav-link rounded mr-md-3 active" id="nav-content-research-tab" data-toggle="tab" href="#nav-content-research" role="tab" aria-controls="nav-content-research" aria-selected="true"><span class="d-block"><span class="fas fa-file-alt mr-2"></span><span class="font-weight-normal">Lesson Plan</span></span></a>
+                    <a class="nav-item nav-link rounded mr-md-3" id="nav-rank-track-tab" data-toggle="tab" href="#nav-rank-track" role="tab" aria-controls="nav-rank-track" aria-selected="false"><span class="fas fa-list mr-2"></span><span class="font-weight-normal">Digital Worksheets</span></a>
+                    <a class="nav-item nav-link rounded mr-md-3" id="nav-web-monitor-tab" data-toggle="tab" href="#nav-web-monitor" role="tab" aria-controls="nav-web-monitor" aria-selected="false"><span class="fas fa-globe mr-2"></span><span class="font-weight-normal">Digital Resources</span></a>
+                    <a class="nav-item nav-link rounded mr-md-3" id="nav-backlink-research-tab" data-toggle="tab" href="#nav-backlink-research" role="tab" aria-controls="nav-backlink-research" aria-selected="false"><span class="fas fa-chart-line mr-2"></span><span class="font-weight-normal">Student Progress</span></a>
+                  
                 </div>
             </nav>
 
@@ -240,8 +242,11 @@
                                 {% endif %}
                                 <form method="POST">
                                     {% csrf_token %}
+                                    
                                     <input type="submit" value="Save Progress">
+                                    
                                     <br>
+                                    <div id="print-content">
                                     <div class='demo-dfree'>
                                         <h2 class="dfree-header mce-content-body" contenteditable="true" style="position: relative;" spellcheck="false">
                                             Lesson Plan: {{ week_of }}| {{ user.username }}
@@ -251,8 +256,8 @@
                                             <p style="text-align: center;">
                                                 <img title="TinyMCE Logo" src="{% static 'images/dashboard/icon.svg' %}" alt="TinyMCE Logo" width="110" height="97" />
                                               </p>
-                                              <h2>Objective: {{ lesson_match.teacher_objective }}</h2>
-                                            <h3>Aligned Stanards:</h3>
+                                              <h3>Objective: {{ lesson_match.teacher_objective }}</h3>
+                                            <h4>Aligned Standards:</h4>
                                               {% for standard in lesson_standards %}
                                               <li>{{ standard }}</li>
                                               {% endfor %}
@@ -261,15 +266,24 @@
                                          
                                         
                                         </div>
+                                        <hr>
+                                        <div class="dfree-body mce-content-body" name='introduction' id='introduction' contenteditable="true" style="position: relative;" spellcheck="false">
+                                            <h4>Teacher Introduction:</h4>
+                                  <p></p>
+                                                 <br>
+                                         </div>
                                         <div class="dfree-body mce-content-body" name='activities' id='activities' contenteditable="true" style="position: relative;" spellcheck="false">
                                            <h4>Lesson Activities:</h4>
-                                      
-                                           <li></li>
-<br>
+                                           {% for lesson in selected_activities %}
+                                            <li>{{ lesson.lesson_text }}</li>
+                                           
+                                            {% endfor %}
+                                            <li> </li>
+                                                <br>
                                         </div>
                                         <div class="dfree-body mce-content-body" name='lesson_terms' id='lesson_terms' contenteditable="true" style="position: relative;" spellcheck="false">
                                             <h4>Key Term, Place, People:</h4>
-                                            {% if topic_lists_selected %}
+                                            
                                             <table style="border-collapse: collapse; width: 100%;" border="1">
                                                 <thead>
                                                   <tr>
@@ -280,6 +294,7 @@
                                                 </thead>
                                                 <tbody>
                                                   {% for term in topic_lists_selected %}
+                                                  {% if term.item %}
                                                   <tr>
                                                      
                                                     <td>{{ term.item }}</td>
@@ -293,13 +308,26 @@
       
                                                     
                                                   </tr>
+                                                {% endif %}
                                                {% endfor %}
+                                               <tr>
+                                                     
+                                                <td> </td>
+                                                <td>
+
+                                                    <p> </p>
+                                                    
+                                                  </td>
+  
+                                                
+                                              </tr>
                                                 </tbody>
                                               </table>
-                                              {% endif %}
+                                            
                                          </div>
 
                                       </div>
+                                    </div>
                                       <br>
                                   </form>
    
@@ -411,14 +439,7 @@
                         
                         </div>
                     </div>
-                    <div class="tab-pane fade" id="Analytics" role="tabpanel" aria-labelledby="Analytics-tab">
-                        <div class="row justify-content-between align-items-center">
-                            <div class="col-12">
-                                <h5>Analytics</h5>
-                            </div>
-                        
-                        </div>
-                    </div>
+          
                 </div>
                 <!-- End of tab -->
 
@@ -427,24 +448,52 @@
         <div class="col-lg-3">
             <div class="col-12 px-0 mb-4">
                 <div class="card border-light shadow-sm">
-                    <div class="card-header">
-                        <div class="row align-items-center">
-                            <div class="col">
-                            <h2 class="h5">Objectives:</h2>
-                            </div>
-                            <div class="col text-right">
-                                <a href="#" class="btn btn-sm btn-secondary">Edit</a>
-                            </div>
-                        </div>
-                    </div>
                     <div class="card-body">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div>
-                                <li>{{ lesson_match.teacher_objective }}</li>
-                            
-                            </div>
-                           
-                        </div>
+                        <h6>Diffrentiation:</h6>
+                        <div class="progress">
+                            <div
+                              class="progress-bar bg-success"
+                              role="progressbar"
+                              style="width: 25%"
+                              aria-valuenow="25"
+                              aria-valuemin="0"
+                              aria-valuemax="100"
+                            ></div>
+                          </div>
+                          <h6>Difficulty:</h6>
+                          <div class="progress">
+                            <div
+                              class="progress-bar bg-info"
+                              role="progressbar"
+                              style="width: 50%"
+                              aria-valuenow="50"
+                              aria-valuemin="0"
+                              aria-valuemax="100"
+                            ></div>
+                          </div>
+                          <h6>Engagement:</h6>
+                          <div class="progress">
+                            <div
+                              class="progress-bar bg-warning"
+                              role="progressbar"
+                              style="width: 75%"
+                              aria-valuenow="75"
+                              aria-valuemin="0"
+                              aria-valuemax="100"
+                            ></div>
+                          </div>
+                          <h6>Alignment:</h6>
+                          <div class="progress">
+                            <div
+                              class="progress-bar bg-danger"
+                              role="progressbar"
+                              style="width: 100%"
+                              aria-valuenow="100"
+                              aria-valuemin="0"
+                              aria-valuemax="100"
+                            ></div>
+                          </div>
+                 
                      
                     </div>
                 </div>
@@ -455,17 +504,18 @@
                     <div class="card-header">
                         <div class="row align-items-center">
                             <div class="col">
-                            <h2 class="h5">Standards:</h2>
-                            </div>
-                            <div class="col text-right">
-                                <a href="#" class="btn btn-sm btn-secondary">Add New</a>
+                            <h2 class="h5">Reccomended Activities:</h2>
                             </div>
                         </div>
                     </div>
                     <div class="card-body">
                       
-                        {% for standard in lesson_standards %}
-                        <li>{{ standard }}</li>
+                        {% for item in not_selected_activities|slice:"5" %}
+                        {% ifchanged item.bloom %}
+                       <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=10 item_id=item.id action=0 %}#heading" >
+                        {{ item.lesson_text }}</a>
+                        <hr>
+                        {% endifchanged %}
                         {% endfor %}
 
                     </div>
@@ -485,17 +535,17 @@
                     </div>
                     <div class="card-body">
                     <div class="tagcloud">
-                        {% for item in topic_lists_selected %}
-                        {% ifchanged item.id %}
-                        <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=6 item_id=item.id action=0 %}" class="btn btn-sm btn-outline-success">{{ item.item }}</a>
+                        {% for topic in topic_lists_selected %}
+                        {% ifchanged topic.id %}
+                        <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=6 item_id=topic.id action=0 %}" data-toggle="tooltip" data-placement="top" title="{{ topic }} - {% for item in topic.description.all%}{{item }} ; {% endfor %}"class="btn btn-sm btn-outline-success">{{ topic.item }}</a>
                       
                         {% endifchanged %}
                         {% endfor %}
                         
-                        {% for item in topic_lists %}
-                        {% ifchanged item.0.id %}
+                        {% for topic in topic_lists %}
+                        {% ifchanged topic.0.id %}
                       
-                        <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=6 item_id=item.0.id action=1 %}" class="btn btn-sm btn-outline-secondary">{{ item.0.item }}</a>
+                        <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=6 item_id=topic.0.id action=1 %}" class="btn btn-sm btn-outline-secondary" data-toggle="tooltip" data-placement="top" title="{{ topic.0 }} - {% for item in topic.0.description.all%}{{item }} ; {% endfor %}" >{{ topic.0.item }}</a>
                       
                         {% endifchanged %}
                         {% endfor %}
@@ -692,6 +742,16 @@
    <script src="{% static 'js/dashboard/rocket.js' %}"></script>
     
 </body>
+
+<script type="text/javascript">
+    function printDiv(divName) {
+        var printContents = document.getElementById(divName).innerHTML;
+        w=window.open();
+        w.document.write(printContents);
+        w.print();
+        w.close();
+    }
+</script>
 
 </html>
 

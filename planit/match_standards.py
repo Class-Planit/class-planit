@@ -235,7 +235,7 @@ def wiki_google_results(text, lesson_id):
         for item in objective_topic:
                 search_sentence = item
                 search_sentences.append(search_sentence) 
-        print(search_sentences)
+
         for sentence in search_sentences:
                 
                 params = {

@@ -12,6 +12,7 @@ import _datetime
 from datetime import datetime
 from django.views.generic import TemplateView
 from chartjs.views.lines import BaseLineChartView
+import random
 try:
     from PIL import Image
 except ImportError:
@@ -239,12 +240,12 @@ def SelectStandards(request, user_id=None, class_id=None, subject=None, lesson_i
     recomendations = lessonStandardRecommendation.objects.filter(lesson_classroom=classroom_profile, objectives=lesson_match)
     
     matched_topics = match_topics(teacher_objective, class_id, lesson_id)
-   
+
     topic_lists = []
     if matched_topics:
         for item in matched_topics:
-            topic = topicInformation.objects.get(id=item[0])
-            if lesson_match.objectives_topics.filter(id=item[0]).exists():
+            topic = topicInformation.objects.get(id=item[0][0])
+            if lesson_match.objectives_topics.filter(id=item[0][0]).exists():
                 result = topic, 1
             else:
                 result = topic, 0 
@@ -414,6 +415,17 @@ def SelectRelatedInformation(request, user_id=None, class_id=None, subject=None,
         else:
             update_lesson = lesson_match.objectives_topics.add(topic_match)
         return redirect('{}#youtube'.format(reverse('select_standards', kwargs={'user_id':user_profile.id, 'class_id':classroom_profile.id, 'subject':subject, 'lesson_id':lesson_id})))
+    elif type_id == 10:
+        lesson_match = lessonObjective.objects.get(id=lesson_id)
+        topic_match = selectedActivity.objects.get(id=item_id)
+        action = int(action)
+        if action == 0:
+            topic_match.is_selected = True 
+            topic_match.save()
+        else:
+            topic_match.is_selected = False
+            topic_match.save()
+        return redirect('{}#keywords'.format(reverse('activity_builder', kwargs={'user_id':user_profile.id, 'class_id':classroom_profile.id, 'subject':subject, 'lesson_id':lesson_id})))
     else:
         keyword_match = wikiTopic.objects.get(id=item_id)
         action = int(action)
@@ -426,6 +438,9 @@ def SelectRelatedInformation(request, user_id=None, class_id=None, subject=None,
             keyword_match.is_selected = False
             keyword_match.save()
         return redirect('{}#keywords'.format(reverse('select_keywords', kwargs={'user_id':user_profile.id, 'class_id':classroom_profile.id, 'subject':subject, 'lesson_id':lesson_id})))
+
+
+
 
 def SelectKeywordsTwo(request, user_id=None, class_id=None, subject=None, lesson_id=None):
     current_week = date.today().isocalendar()[1] 
@@ -511,7 +526,13 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     
     text_update, created = lessonText.objects.get_or_create(matched_lesson=lesson_match)
     lessons_wording = text_update.activities
-    
+    lesson_activities_matched = get_lessons(lesson_id, user_id)
+
+    selected_activities = selectedActivity.objects.filter(lesson_overview=lesson_match, is_selected=True)
+    not_selected_activities = selectedActivity.objects.filter(lesson_overview=lesson_match, is_selected=False).order_by('bloom')
+
+    if text_update.activities:
+        split_activities = split_matched_activities(text_update.activities, class_id, lesson_id, user_id)
 
     if text_update.overview:
         split_text = split_matched_text(text_update.overview) 
@@ -520,7 +541,7 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
         for line_topic in topic_matches:
             for description_item in line_topic.description.all():
                 sentence = line_topic.item + ' - ' + description_item.description
-                results = genQuestion(sentence)
+                results = genQuestion(sentence, line_topic.item)
                 if results:
                     question_list.append(results)
                 else:
@@ -548,11 +569,13 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
         for text_lists in combined:
             if text_lists:
                 for item in text_lists:
-                    topic = topicInformation.objects.get(id=item[0])
+
+                    topic = topicInformation.objects.get(id=item[0][0])
+
                     word_term = topic.item
                     word_split = word_term.split()
                     word_count = len(word_split)
-                    if lesson_match.objectives_topics.filter(id=item[0]).exists():
+                    if lesson_match.objectives_topics.filter(id=topic.id).exists():
                         pass
                     else:
                         result = topic, word_count 
@@ -579,8 +602,8 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
 
     
     step = 4
-    print(question_list)
-    return render(request, 'dashboard/activity_builder.html', {'user_profile': user_profile, 'question_list': question_list, 'lessons_wording': lessons_wording, 'question_lists': question_lists, 'text_update': text_update, 'form': form, 'lesson_results': lesson_results, 'topic_lists_selected': topic_lists_selected, 'topic_lists': topic_lists, 'keywords_selected': keywords_selected, 'youtube_matched': youtube_matched, 'questions_selected': questions_selected, 'topics_selected': topics_selected, 'keywords_matched': keywords_matched, 'step': step, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
+
+    return render(request, 'dashboard/activity_builder.html', {'user_profile': user_profile, 'selected_activities': selected_activities, 'not_selected_activities':not_selected_activities, 'question_list': question_list, 'lessons_wording': lessons_wording, 'question_lists': question_lists, 'text_update': text_update, 'form': form, 'lesson_results': lesson_results, 'topic_lists_selected': topic_lists_selected, 'topic_lists': topic_lists, 'keywords_selected': keywords_selected, 'youtube_matched': youtube_matched, 'questions_selected': questions_selected, 'topics_selected': topics_selected, 'keywords_matched': keywords_matched, 'step': step, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
 
 
 
@@ -887,7 +910,29 @@ def generate_studyguide_pdf(request):
     return response
 
 
+def generate_lesson_pdf(request, lesson_id):
+#     ## This is the text pdf generation that will be used for worksheets and reports 
+#     """Generate pdf."""
+#     # Model data
 
+    lesson_match = lessonObjective.objects.get(id=lesson_id)
+    # Rendered
+    text_update = lessonText.objects.get(matched_lesson=lesson_match)
+    html_string = render_to_string('dashboard/lesson_pdf.html', {'text_update': text_update})
+    html = HTML(string=html_string, base_url=request.build_absolute_uri('/'))
+    result = html.write_pdf()
+
+     # Creating http response
+    response = HttpResponse(content_type='application/pdf;')
+    response['Content-Disposition'] = 'inline; filename=Lesson_Plan.pdf'
+    response['Content-Transfer-Encoding'] = 'binary'
+    with tempfile.NamedTemporaryFile(delete=True) as output:
+         output.write(result)
+         output.flush()
+         output = open(output.name, 'rb')
+         response.write(output.read())
+
+    return response
 
 
 

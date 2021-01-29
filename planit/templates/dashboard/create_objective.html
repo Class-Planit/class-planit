@@ -55,7 +55,7 @@
     <meta name="theme-color" content="#ffffff">
     
     <!-- Fontawesome -->
-    <link type="text/css" href="{% static 'vendor/dashboard/@fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+    <link type="text/css" href="{% static 'vendor/dashboard/fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
     
     <!-- Prism -->
     <link type="text/css" href="{% static 'vendor/dashboard/prismjs/themes/prism.css' %}" rel="stylesheet">
@@ -291,9 +291,9 @@
                                     {% for topic in topic_lists %}
                                        {% ifchanged topic.0 %}
                                             {% if topic.1 == 1 %}
-                                            <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=8 item_id=topic.0.id action=0 %}#heading" class="btn btn-sm btn-outline-success">{{ topic.0 }}</a>
+                                            <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=8 item_id=topic.0.id action=0 %}#heading" data-toggle="tooltip" data-placement="top" title="{{ topic.0 }} - {% for item in topic.0.description.all%}{{item }} ; {% endfor %}" class="btn btn-sm btn-outline-success">{{ topic.0 }}</a>
                                             {% else %}
-                                            <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=8 item_id=topic.0.id action=1 %}#heading" class="btn btn-sm btn-outline-secondary">{{ topic.0 }}</a>
+                                            <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=8 item_id=topic.0.id action=1 %}#heading" data-toggle="tooltip" data-placement="top" title="{{ topic.0 }} - {% for item in topic.0.description.all%}{{item }} ; {% endfor %}" class="btn btn-sm btn-outline-secondary">{{ topic.0 }}</a>
                                             {% endif %}
                                         {% endifchanged %}
                                     {% endfor %}
