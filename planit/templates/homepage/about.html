@@ -1,0 +1,511 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Class Planit</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="title" content="Class Planit - More engaging lessons, in less time">
+        <meta name="author" content="Class Planit">
+        <meta name="description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better inidviualized in minutes.">
+        <meta name="keywords" content="lesson plans, teacher pay teachers, worksheets" />
+        <link rel="canonical" href="www.classplanit.co">
+        
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="www.classplanit.co">
+        <meta property="og:title" content="Class Planit - More engaging lessons, in less time">
+        <meta property="og:description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better inidviualized in minutes.">
+        <meta property="og:image" content="www.classplanit.co">
+        
+        <!-- Twitter -->
+        <meta property="twitter:card" content="summary_large_image">
+        <meta property="twitter:url" content="www.classplanit.co">
+        <meta property="twitter:title" content="Class Planit - More engaging lessons, in less time">
+        <meta property="twitter:description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better inidviualized in minutes.">
+        <meta property="twitter:image" content="{% static 'images/dashboard/twitter_image.png' %}">
+        
+        <!-- Favicon -->
+        <link rel="apple-touch-icon" sizes="120x120" href="{% static 'images/dashboard/icon_120.png' %}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'mages/icon_40.png' %}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/dashboard/icon_40.png' %}">
+        <!-- Stylesheets -->
+        <link href="{% static 'css/homepage/bootstrap.css' %}" rel="stylesheet">
+        <link href="{% static 'css/homepage/style.css' %}" rel="stylesheet">
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon">
+        <link rel="icon" href="images/favicon.png" type="image/x-icon">
+        <!-- Responsive -->
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+        
+        <link type="text/css" href="{% static 'vendor/dashboard/fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+            
+        <link href="{% static 'css/homepage/responsive.css' %}" rel="stylesheet">
+        <!--[if lt IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script><![endif]-->
+        <!--[if lt IE 9]><script src="js/respond.js"></script><![endif]-->
+        <style>
+            /*******************************
+        * MODAL AS LEFT/RIGHT SIDEBAR
+        * Add "left" or "right" in modal parent div, after class="modal".
+        * Get free snippets on bootpen.com
+        *******************************/
+            .modal.left .modal-dialog,
+            .modal.right .modal-dialog {
+                position: fixed;
+                margin: auto;
+                width: 320px;
+                height: 100%;
+                -webkit-transform: translate3d(0%, 0, 0);
+                    -ms-transform: translate3d(0%, 0, 0);
+                     -o-transform: translate3d(0%, 0, 0);
+                        transform: translate3d(0%, 0, 0);
+            }
+        
+            .modal.left .modal-content,
+            .modal.right .modal-content {
+                height: 100%;
+                overflow-y: auto;
+            }
+            
+            .modal.left .modal-body,
+            .modal.right .modal-body {
+                padding: 15px 15px 80px;
+            }
+        
+        /*Left*/
+            .modal.left.fade .modal-dialog{
+                left: -320px;
+                -webkit-transition: opacity 0.3s linear, left 0.3s ease-out;
+                   -moz-transition: opacity 0.3s linear, left 0.3s ease-out;
+                     -o-transition: opacity 0.3s linear, left 0.3s ease-out;
+                        transition: opacity 0.3s linear, left 0.3s ease-out;
+            }
+            
+            .modal.left.fade.in .modal-dialog{
+                left: 0;
+            }
+                
+        /*Right*/
+            .modal.right.fade .modal-dialog {
+                right: -320px;
+                -webkit-transition: opacity 0.3s linear, right 0.3s ease-out;
+                   -moz-transition: opacity 0.3s linear, right 0.3s ease-out;
+                     -o-transition: opacity 0.3s linear, right 0.3s ease-out;
+                        transition: opacity 0.3s linear, right 0.3s ease-out;
+            }
+            
+            .modal.right.fade.in .modal-dialog {
+                right: 0;
+            }
+        
+        /* ----- MODAL STYLE ----- */
+            .modal-content {
+                border-radius: 0;
+                border: none;
+            }
+        
+            .modal-header {
+                border-bottom-color: #EEEEEE;
+                background-color: #FAFAFA;
+            }
+        
+        
+        </style>
+        
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-5Q1SQHYG0R"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+        
+          gtag('config', 'G-5Q1SQHYG0R');
+        </script>
+        
+    </head>
+
+<body>
+
+<div class="page-wrapper">
+ 	
+    <!-- Preloader -->
+   
+ 	
+    <header class="main-header">
+    	
+        <!-- Main Box -->
+    	<div class="main-box">
+        	<div class="auto-container">
+            	<div class="outer-container clearfix">
+                    <!--Logo Box-->
+                    <div class="logo-box">
+                        <div class="logo"><a href="{% url 'homepage' %}l"><img src="{% static 'images/homepage/cp_rounded.png' %}" alt=""></a></div>
+                    </div>
+                    
+                    <!--Nav Outer-->
+                    <div class="nav-outer clearfix">
+                        <!-- Main Menu -->
+                        <nav class="main-menu">
+                        
+                            <div class="navbar-header">
+                                <!-- Toggle Button -->    	
+                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                            </div>
+                            
+                            <div class="navbar-collapse collapse scroll-nav clearfix">
+                                <ul class="navigation clearfix">
+                                    <li><a href="{% url 'homepage' %}">Back to Home</a>
+                                    </li>
+                                                                 
+                                 </ul>
+                            </div>
+                            
+                        </nav>
+                        <!-- Main Menu End-->
+                        
+                  
+                        
+                    </div>
+                    <!--Nav Outer End-->
+                    
+            	</div>    
+            </div>
+        </div>
+    
+    </header>
+    
+    <!--Page Title-->
+    <section class="page-title">
+    	<span class="left-curve"></span>
+        <span class="right-curve"></span>
+        <div class="auto-container">
+        	<h1>About Us</h1>
+            <ul class="page-breadcrumb">
+            	<li><a href="{% url 'homepage' %}">Home</a></li>
+                <li>About</li>
+            </ul>
+        </div>
+    </section>
+    
+    <!--Welcome Section-->
+    <section class="welcome-section">
+    	<div class="auto-container">
+        	<h2>Welcome to Class Planit</h2>
+            <div class="text">Class Planit was built by teachers to support teachers. Our software makes creating awesome and engaging lessons easy and quick. We are currently serving educators in Texas.</div>
+        </div>
+    </section>
+    <!--End Welcome Section-->
+    
+    <!--Counter Section-->
+    <section class="counter-section">
+    	<div class="auto-container">
+        	<div class="inner-container">
+            	
+                <div class="fact-counter">
+                    <div class="row clearfix">
+                    
+                        <!--Column-->
+                        <div class="column counter-column col-md-3 col-sm-6 col-xs-12">
+                            <div class="inner">
+                                <div class="count-outer count-box">
+                                    <span class="count-text" data-speed="3000" data-stop="150">100's</span>
+                                </div>
+                                <h4 class="counter-title">Digital Lesson Templates</h4>
+                            </div>
+                        </div>
+                
+                        <!--Column-->
+                        <div class="column counter-column col-md-3 col-sm-6 col-xs-12">
+                            <div class="inner">
+                                <div class="count-outer count-box">
+                                    <span class="count-text" data-speed="4000" data-stop="1000">1000's</span>
+                                </div>
+                                <h4 class="counter-title">Activity Templates</h4>
+                            </div>
+                        </div>
+                
+                        <!--Column-->
+                        <div class="column counter-column col-md-3 col-sm-6 col-xs-12">
+                            <div class="inner">
+                                <div class="count-outer count-box">
+                                    <span class="count-text" data-speed="2200" data-stop="100">250</span>+
+                                </div>
+                                <h4 class="counter-title">Happy Teachers</h4>
+                            </div>
+                        </div>
+                
+                        <!--Column-->
+                        <div class="column counter-column col-md-3 col-sm-6 col-xs-12">
+                            <div class="inner">
+                                <div class="count-outer count-box">
+                                    <span class="count-text" data-speed="4000" data-stop="5">50</span>+
+                                </div>
+                                <h4 class="counter-title">Years of Teaching<br>Experience</h4>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+    <!--End Counter Section-->
+    
+    <!--Team Section-->
+    <section class="team-section">
+    	<div class="auto-container">
+        	<!--Heading-->
+        	<div class="sec-title centered">
+                <h2>Meet Our Team</h2>
+                <div class="desc-text">Sulation is an easy to use tool for eCommerce. <br> You can present your products.</div>
+            </div>
+            <div class="row clearfix">
+            
+                <!--Team Block-->
+                <div class="team-block col-md-3 col-sm-6 col-xs-12">
+                    <div class="inner-box">
+                    	<div class="upper-box">
+                            <div class="image">
+                               
+                                <img src="{% static 'images/homepage/staff/6.png' %}" alt="" />
+                                <div class="social-box">
+                                    <a href="https://twitter.com/audreyakwenye"><span class="fab fa-twitter"></span></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lower-box">
+                        	<h3>Audrey Taylor Akwenye</h3>
+                            <div class="designation">Founder</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!--Team Block-->
+                <div class="team-block col-md-3 col-sm-6 col-xs-12">
+                    <div class="inner-box">
+                    	<div class="upper-box">
+                            <div class="image">
+                                <img src="{% static 'images/homepage/staff/2.png' %}" alt="" />
+                                <div class="social-box">
+                                    <a href="https://www.linkedin.com/in/counney-kemp-1a3b1a9b/"><span class="fab fa-linkedin-in"></span></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lower-box">
+                        	<h3>Counney Kemp</h3>
+                            <div class="designation">Operations</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!--Team Block-->
+                <div class="team-block col-md-3 col-sm-6 col-xs-12">
+                    <div class="inner-box">
+                    	<div class="upper-box">
+                            <div class="image">
+                                <img src="{% static 'images/homepage/staff/3.png' %}" alt="" />
+                                <div class="social-box">
+                                    <a href="https://www.linkedin.com/in/tatyana-katjirua-72a6881ba/"><span class="fab fa-linkedin-in"></span></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lower-box">
+                        	<h3>Tatyana Katjirua</h3>
+                            <div class="designation">Marketing</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!--Team Block-->
+                <div class="team-block col-md-3 col-sm-6 col-xs-12">
+                    <div class="inner-box">
+                    	<div class="upper-box">
+                            <div class="image">
+                                <img src="{% static 'images/homepage/staff/4.png' %}" alt="" />
+                                <div class="social-box">
+                                    <a href="https://twitter.com/gg_elzahn?s=20"><span class="fab fa-twitter"></span></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lower-box">
+                        	<h3>Elzhan Gaes</h3>
+                            <div class="designation">Social Media</div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="row clearfix">
+            
+                <!--Team Block-->
+                <div class="team-block col-md-3 col-sm-6 col-xs-12">
+                    <div class="inner-box">
+                    	<div class="upper-box">
+                            <div class="image">
+                               
+                                <img src="{% static 'images/homepage/staff/1.png' %}" alt="" />
+                                <div class="social-box">
+                                    <a href="https://www.linkedin.com/in/alondraalbarran/"><span class="fab fa-linkedin-in"></span></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lower-box">
+                        	<h3>Alondra Albarran</h3>
+                            <div class="designation">Marketing</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!--Team Block-->
+                <div class="team-block col-md-3 col-sm-6 col-xs-12">
+                    <div class="inner-box">
+                    	<div class="upper-box">
+                            <div class="image">
+                                <img src="{% static 'images/homepage/staff/5.png' %}" alt="" />
+                                <div class="social-box">
+                                    <a href="https://www.linkedin.com/in/lettisia-ibemere-4aab68167/"><span class="fab fa-linkedin-in"></span></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lower-box">
+                        	<h3>Lettisia Tjambari-Ibemere</h3>
+                            <div class="designation">Curriculum</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!--Team Block-->
+                <div class="team-block col-md-3 col-sm-6 col-xs-12">
+                    <div class="inner-box">
+                    	<div class="upper-box">
+                            <div class="image">
+                                <img src="{% static 'images/homepage/staff/7.png' %}" alt="" />
+                                <div class="social-box">
+                                    <a href="https://www.linkedin.com/in/diana-zilberstein-304027150/"><span class="fab fa-linkedin-in"></span></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lower-box">
+                        	<h3>Diana Zilberstein</h3>
+                            <div class="designation">Curriculum</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!--Team Block-->
+                <div class="team-block col-md-3 col-sm-6 col-xs-12">
+                    <div class="inner-box">
+                    	<div class="upper-box">
+                            <div class="image">
+                                <img src="{% static 'images/homepage/staff/8.png' %}" alt="" />
+                                <div class="social-box">
+
+                                    <a href="https://twitter.com/AnnaShimuni"><span class="fab fa-twitter"></span></a>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lower-box">
+                        	<h3>Anna Shimuni</h3>
+                            <div class="designation">Product</div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+    <!--End Team Section-->
+    
+
+    
+    <!--Footer Style One-->
+    <footer class="footer-style-one">
+        <!--Footer Upper-->
+        <div class="footer-upper">
+            <div class="auto-container">
+                <div class="row clearfix">
+                    <!--Big Column-->
+                    <div class="big-column col-lg-3 col-md-12 col-sm-12 col-xs-12">
+                        <div class="footer-column">
+                            <div class="footer-widget about-widget">
+                                <div class="widget-inner">
+                                    <div class="logo"><img src="{% static 'images/homepage/cp_rounded.png' %}" alt=""></div>
+                                    <div class="copyright">&copy; 2020 All Rights Reserved</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!--Big Column-->
+                    <div class="big-column col-lg-9 col-md-12 col-sm-12 col-xs-12">    
+                        <div class="row clearfix">
+                        	<!--Footer Column-->
+                            <div class="footer-column col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                                <div class="footer-widget links-widget">
+                                    <div class="widget-inner">
+                                        <h3>Company</h3>
+                                        <div class="links">
+                                            <ul>
+                                                <li><a href="{% url 'about_us' %}">About us</a></li>
+  
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        
+                            <!--Footer Column-->
+                            <div class="footer-column col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                                <div class="footer-widget follow-widget">
+                                    <div class="widget-inner">
+                                    	<h3>Follow</h3>
+                                        <div class="social-links">
+                                            <ul class="clearfix">
+                                                <li><a href="https://www.facebook.com/classplanit/"><span class="fab fa-facebook-f"></span></a></li>
+                                                <li><a href="https://twitter.com/classplanit"><span class="fab fa-twitter"></span></a></li>
+                                                <li><a href="https://www.instagram.com/classplanit"><span class="fab fa-instagram"></span></a></li>
+                                                <li><a href="https://www.linkedin.com/company/class-planit/"><span class="fab fa-linkedin-in"></span></a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </footer>
+    
+    
+</div>
+<!--End pagewrapper-->
+
+<!--Scroll to top-->
+<div class="scroll-to-top scroll-to-target" data-target="html"><span class="fa fa-angle-double-up"></span></div>
+
+
+<script src="{% static 'js/homepage/jquery.js' %}"></script> 
+<script src="{% static 'js/homepage/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/homepage/pagenav.js' %}"></script>
+<script src="{% static 'js/homepage/jquery.scrollTo.js' %}"></script>
+<script src="{% static 'js/homepage/jquery.fancybox.pack.js' %}"></script>
+<script src="{% static 'js/homepage/owl.js' %}"></script>
+<script src="{% static 'js/homepage/wow.js' %}"></script>
+<script src="{% static 'js/homepage/validate.js' %}"></script>
+<script src="{% static 'js/homepage/script.js' %}"></script>
+
+
+
+</body>
+</html>

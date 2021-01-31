@@ -32,6 +32,14 @@ class classroomForm(forms.ModelForm):
         fields = '__all__'
 
 
+class teacherQuestionnaireForm(forms.ModelForm):
+
+    class Meta:
+        model = teacherQuestionnaire
+        fields = '__all__'
+
+
+
 class textBookTitleForm(forms.ModelForm):
 
     class Meta:
@@ -39,10 +47,11 @@ class textBookTitleForm(forms.ModelForm):
         fields = '__all__'
 
 class TeacherForm(UserCreationForm):
-    first_name = forms.CharField(max_length=30, required=False, help_text='Optional.')
-    last_name = forms.CharField(max_length=30, required=False, help_text='Optional.')
-    email = forms.EmailField(max_length=254, help_text='Required. Inform a valid email address.')
-    phone_number = forms.CharField(max_length=30, required=False, help_text='Optional.')
+    username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'example: EdnaK'}))
+    first_name = forms.CharField(max_length=30, required=False, widget=forms.TextInput(attrs={'placeholder': 'example: Edna'}), help_text='Optional.')
+    last_name = forms.CharField(max_length=30, required=False, widget=forms.TextInput(attrs={'placeholder': 'example: Krabappel'}), help_text='Optional.')
+    email = forms.EmailField(max_length=254, widget=forms.TextInput(attrs={'placeholder': 'example@none.com'}), help_text='Required. Inform a valid email address.')
+    phone_number = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'placeholder': '+12345678900'}),required=False, help_text='Optional.')
 
     class Meta(UserCreationForm.Meta):
         model = User

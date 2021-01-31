@@ -14,6 +14,8 @@ datetime.date.today()
 
 # Create your models here.
 
+
+
 class User(AbstractUser):
     is_parent = models.BooleanField(default=False)
     is_teacher = models.BooleanField(default=False)
@@ -72,6 +74,35 @@ class gradeLevel(models.Model):
 
     def __str__(self):
         return "%s" % (self.grade_labels)
+
+
+class teacherQuestionnaire(models.Model):
+
+    current_grade = models.CharField(max_length=100,
+                                  blank=True,
+                                  null=True)
+    current_state = models.CharField(max_length=100,
+                                  blank=True,
+                                  null=True)
+    current_planning = models.TextField(max_length=1000,
+                                  blank=True,
+                                  null=True)
+    happy_scale = models.CharField(max_length=50,
+                                  blank=True,
+                                  null=True)
+    lesson_good = models.TextField(max_length=1000,
+                                  blank=True,
+                                  null=True)
+    lesson_bad = models.TextField(max_length=1000,
+                                  blank=True,
+                                  null=True)
+    ideal_feature = models.TextField(max_length=1000,
+                                  blank=True,
+                                  null=True)
+
+    def __str__(self):
+        return "%s" % (self.happy_scale)
+
 
 
 class academicYear(models.Model):

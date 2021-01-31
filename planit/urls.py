@@ -22,6 +22,14 @@ urlpatterns = [
         view=Homepage,
         name='homepage'),
 
+    url(r'^full-form/',
+        view=FormFull,
+        name='registration_full'),
+
+    url(r'^questionnaire/',
+        view=QuestionnaireFull,
+        name='questionnaire_full'),
+
     url(r'^dashboard/(?P<week_of>[\w\s]+)/',
         view=Dashboard.as_view(),
         name='Dashboard'),
@@ -30,9 +38,19 @@ urlpatterns = [
         view=Services.as_view(),
         name='services'),
 
+
+    url(r'^about/',
+        view=AboutUs.as_view(),
+        name='about_us'),
+
+
     url(r'^thanks/(?P<user_id>[\w\s]+)/',
         view=ThankYou.as_view(),
         name='thank_you'),
+
+    url(r'^thanks-questionnaire/',
+        view=ThankYouQuestionnaire.as_view(),
+        name='thank_you_questionnaire'),
 
     url(r'^classrooms/',
         view=Classrooms.as_view(),

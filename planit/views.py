@@ -80,8 +80,10 @@ def Homepage(request):
                 print(response.headers)
             except Exception as e:
                 pass
+            return redirect('thank_you', user_id=user_id)
+        else:
+            return redirect('registration_full')
         
-        return redirect('thank_you', user_id=user_id)
         
 
     else:
@@ -90,12 +92,96 @@ def Homepage(request):
     
     return render(request, 'homepage/index.html', {'form': form})
 
+
+
+def FormFull(request):
+
+    if request.method == "POST":
+        print(request)
+        form = TeacherForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            
+            user_email = form.cleaned_data.get('email')
+            my_number = form.cleaned_data.get('phone_number')
+            if '+1' in my_number:
+                pass
+            else:
+                my_number = '+1', my_number
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            user_id = user.id
+            
+            welcome_message = 'Welcome to Class Planit, %s! We will be in touch when your account is activated.' % (username)
+        
+            to = str(my_number)
+            if to:
+                try:
+                    client = Client(config('TWILIO_ACCOUNT_SID'), config('TWILIO_AUTH_TOKEN'))
+                    response = client.messages.create(
+                            body=str(welcome_message),
+                            to=to, from_=config('TWILIO_PHONE_NUMBER'))
+                    message = Mail(
+                            from_email='welcome@classplanit.co',
+                            to_emails=user_email,
+                            subject='Welcome to Class Planit',
+                            html_content= get_template('dashboard/welcome_to_class_planit.html').render({'user': user}))
+                except Exception as e:
+                    pass
+            try:
+                sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+                response = sg.send(message)
+                print(response.status_code)
+                print(response.body)
+                print(response.headers)
+            except Exception as e:
+                pass
+            return redirect('thank_you', user_id=user_id)
+        else:
+            return redirect('registration_full')
+        
+        
+
+    else:
+
+        form = TeacherForm()
+    
+    return render(request, 'homepage/registration_full.html', {'form': form})
+
+
+
+
+def QuestionnaireFull(request):
+
+    if request.method == "POST":
+
+        form = teacherQuestionnaireForm(request.POST)
+        if form.is_valid():
+            form.save()
+            
+            return redirect('thank_you_questionnaire')
+    else:
+
+        form = teacherQuestionnaireForm()
+    
+    return render(request, 'homepage/teacher_questionnaire.html', {'form': form})
+
+
+
 class Services(TemplateView):
     template_name = 'homepage/services.html' 
 
     def get(self,request):
 
         return render(request, 'homepage/services.html', { })
+
+class AboutUs(TemplateView):
+    template_name = 'homepage/about.html' 
+
+    def get(self,request):
+
+        return render(request, 'homepage/about.html', { })
 
 class ThankYou(TemplateView):
     template_name = 'homepage/thank_you.html' 
@@ -104,6 +190,11 @@ class ThankYou(TemplateView):
         user_profile = User.objects.filter(username=request.user.username).first()
         return render(request, 'homepage/thank_you.html', {'user_profile': user_profile })
 
+class ThankYouQuestionnaire(TemplateView):
+    template_name = 'homepage/thank_you_questionnaire.html' 
+
+    def get(self,request):
+        return render(request, 'homepage/thank_you_questionnaire.html', {})
 
 class Dashboard(TemplateView):
     template_name = 'dashboard/dashboard.html' 

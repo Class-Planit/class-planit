@@ -44,7 +44,7 @@ admin.site.register(topicQuestion, topicQuestionAdmin)
 admin.site.register(mainQuestion)
 admin.site.register(topicDescription)
 admin.site.register(selectedActivity)
-
+admin.site.register(teacherQuestionnaire)
 
 
 
