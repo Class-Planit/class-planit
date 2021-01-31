@@ -1,128 +1,71 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="utf-8">
-<title>Class Planit</title>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="title" content="Class Planit - More engaging lessons, in less time">
-<meta name="author" content="Class Planit">
-<meta name="description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better inidviualized in minutes.">
-<meta name="keywords" content="lesson plans, teacher pay teachers, worksheets" />
-<link rel="canonical" href="www.classplanit.co">
-
-<!-- Open Graph / Facebook -->
-<meta property="og:type" content="website">
-<meta property="og:url" content="www.classplanit.co">
-<meta property="og:title" content="Class Planit - More engaging lessons, in less time">
-<meta property="og:description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better inidviualized in minutes.">
-<meta property="og:image" content="www.classplanit.co">
-
-<!-- Twitter -->
-<meta property="twitter:card" content="summary_large_image">
-<meta property="twitter:url" content="www.classplanit.co">
-<meta property="twitter:title" content="Class Planit - More engaging lessons, in less time">
-<meta property="twitter:description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better inidviualized in minutes.">
-<meta property="twitter:image" content="{% static 'images/dashboard/twitter_image.png' %}">
-
-<!-- Favicon -->
-<link rel="apple-touch-icon" sizes="120x120" href="{% static 'images/dashboard/icon_120.png' %}">
-<link rel="icon" type="image/png" sizes="32x32" href="{% static 'mages/icon_40.png' %}">
-<link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/dashboard/icon_40.png' %}">
-<!-- Stylesheets -->
-<link href="{% static 'css/homepage/bootstrap.css' %}" rel="stylesheet">
-<link href="{% static 'css/homepage/style.css' %}" rel="stylesheet">
-<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon">
-<link rel="icon" href="images/favicon.png" type="image/x-icon">
-<!-- Responsive -->
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-<link type="text/css" href="{% static 'vendor/dashboard/fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
-    
-<link href="{% static 'css/homepage/responsive.css' %}" rel="stylesheet">
-<!--[if lt IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script><![endif]-->
-<!--[if lt IE 9]><script src="js/respond.js"></script><![endif]-->
-<style>
-    /*******************************
-* MODAL AS LEFT/RIGHT SIDEBAR
-* Add "left" or "right" in modal parent div, after class="modal".
-* Get free snippets on bootpen.com
-*******************************/
-	.modal.left .modal-dialog,
-	.modal.right .modal-dialog {
-		position: fixed;
-		margin: auto;
-		width: 320px;
-		height: 100%;
-		-webkit-transform: translate3d(0%, 0, 0);
-		    -ms-transform: translate3d(0%, 0, 0);
-		     -o-transform: translate3d(0%, 0, 0);
-		        transform: translate3d(0%, 0, 0);
-	}
-
-	.modal.left .modal-content,
-	.modal.right .modal-content {
-		height: 100%;
-		overflow-y: auto;
-	}
-	
-	.modal.left .modal-body,
-	.modal.right .modal-body {
-		padding: 15px 15px 80px;
-	}
-
-/*Left*/
-	.modal.left.fade .modal-dialog{
-		left: -320px;
-		-webkit-transition: opacity 0.3s linear, left 0.3s ease-out;
-		   -moz-transition: opacity 0.3s linear, left 0.3s ease-out;
-		     -o-transition: opacity 0.3s linear, left 0.3s ease-out;
-		        transition: opacity 0.3s linear, left 0.3s ease-out;
-	}
-	
-	.modal.left.fade.in .modal-dialog{
-		left: 0;
-	}
+    <head>
+        <meta charset="utf-8">
+        <title>Class Planit</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="title" content="Class Planit - More engaging lessons, in less time">
+        <meta name="author" content="Class Planit">
+        <meta name="description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better individualized lessons in minutes.">
+        <meta name="keywords" content="lesson plans, teacher pay teachers, worksheets" />
+        <link rel="canonical" href="www.classplanit.co">
         
-/*Right*/
-	.modal.right.fade .modal-dialog {
-		right: -320px;
-		-webkit-transition: opacity 0.3s linear, right 0.3s ease-out;
-		   -moz-transition: opacity 0.3s linear, right 0.3s ease-out;
-		     -o-transition: opacity 0.3s linear, right 0.3s ease-out;
-		        transition: opacity 0.3s linear, right 0.3s ease-out;
-	}
-	
-	.modal.right.fade.in .modal-dialog {
-		right: 0;
-	}
-
-/* ----- MODAL STYLE ----- */
-	.modal-content {
-		border-radius: 0;
-		border: none;
-	}
-
-	.modal-header {
-		border-bottom-color: #EEEEEE;
-		background-color: #FAFAFA;
-	}
-
-
-</style>
-</style>
-
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-5Q1SQHYG0R"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-5Q1SQHYG0R');
-</script>
-</head>
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="www.classplanit.co">
+        <meta property="og:title" content="Class Planit - More engaging lessons, in less time">
+        <meta property="og:description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better individualized lessons in minutes.">
+        <meta property="og:image" content="www.classplanit.co">
+        
+        <!-- Twitter -->
+        <meta property="twitter:card" content="summary_large_image">
+        <meta property="twitter:url" content="www.classplanit.co">
+        <meta property="twitter:title" content="Class Planit - More engaging lessons, in less time">
+        <meta property="twitter:description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better individualized lessons in minutes.">
+        <meta property="twitter:image" content="{% static 'images/dashboard/twitter_image.png' %}">
+        
+        <!-- Favicon -->
+        <link rel="apple-touch-icon" sizes="120x120" href="{% static 'images/dashboard/icon_120.png' %}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'mages/icon_40.png' %}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/dashboard/icon_40.png' %}">
+        <!-- Stylesheets -->
+        <link href="{% static 'css/homepage/bootstrap.css' %}" rel="stylesheet">
+        <link href="{% static 'css/homepage/style.css' %}" rel="stylesheet">
+        <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon">
+        <link rel="icon" href="images/favicon.png" type="image/x-icon">
+        <!-- Responsive -->
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+        <link type="text/css" href="{% static 'vendor/dashboard/fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+            
+        <link href="{% static 'css/homepage/responsive.css' %}" rel="stylesheet">
+        <!--[if lt IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script><![endif]-->
+        <!--[if lt IE 9]><script src="js/respond.js"></script><![endif]-->
+        
+        </style>
+        
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-5Q1SQHYG0R"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+        
+          gtag('config', 'G-5Q1SQHYG0R');
+        </script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-188513321-1">
+        </script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+        
+          gtag('config', 'UA-188513321-1');
+        </script>
+        </head>
 
 <body>
 
