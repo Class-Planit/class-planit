@@ -39,6 +39,7 @@ from .tasks import *
 
 
 def Homepage(request):
+    
 
     if request.method == "POST":
         print(request)
@@ -91,6 +92,7 @@ def Homepage(request):
 
         form = TeacherForm()
     
+
     return render(request, 'homepage/index.html', {'form': form})
 
 
@@ -783,28 +785,39 @@ def CreateLesson(request, user_id=None, class_id=None, subject=None, lesson_id=N
 def StandardUploadTwo(request):
     #second step to the standards upload process
     #name="standards_upload"
-    user_profile = User.objects.filter(username=request.user.username).first()
-    stand_upload = upload_standards.delay()
+    template = "administrator/upload_textbook.html"
 
-    path3 = 'Planit/files/teks_final.csv'
-    with open(path3) as f:
-        for line in f:
-            line = line.split(',') 
-            standard_set = line[0]
-            grade_level = line[1]
-            subject = line[2]
-            skill_topic = line[3]
-            standard_objective = line[4]
-            competency = line[5]
+    prompt = {
+        'order': 'Order of the CSV should be first name, surname'   
+              }
+    # GET request returns the value of the data with the specified key.
+    if request.method == "GET":
+        return render(request, template, prompt)
+    csv_file = request.FILES['file']
+    # let's check if it is a csv file
+    if not csv_file.name.endswith('.csv'):
+        messages.error(request, 'THIS IS NOT A CSV FILE')
+    data_set = csv_file.read().decode('UTF-8')
+    # setup a stream which is when we loop through each line we are able to handle a data in a stream
+    io_string = io.StringIO(data_set)
+    next(io_string)
+    for line in csv.reader(io_string, delimiter=','):
+        standard_set = line[0]
+        grade_level = line[1]
+        subject = line[2]
+        skill_topic = line[3]
+        standard_objective = line[4]
+        competency = line[5]
 
-            new_standard_set, i = standardSet.objects.get_or_create(Location=standard_set)
-            new_grade, i = gradeLevel.objects.get_or_create(grade=grade_level , grade_labels=grade_level , standards_set=new_standard_set)
-            new_subject, i = standardSubjects.objects.get_or_create(subject_title=subject, standards_set=new_standard_set, is_admin=True)
-            add_grade_subject = new_subject.grade_level.add(new_grade)
+        new_standard_set, i = standardSet.objects.get_or_create(Location=standard_set)
+        new_grade, i = gradeLevel.objects.get_or_create(grade=grade_level , grade_labels=grade_level , standards_set=new_standard_set)
+        new_subject, i = standardSubjects.objects.get_or_create(subject_title=subject, standards_set=new_standard_set, is_admin=True)
+        add_grade_subject = new_subject.grade_level.add(new_grade)
 
-            obj, created = singleStandard.objects.get_or_create(standards_set=new_standard_set, subject=new_subject, grade_level=new_grade, skill_topic=skill_topic, standard_objective=standard_objective, competency=competency)
+        obj, created = singleStandard.objects.get_or_create(standards_set=new_standard_set, subject=new_subject, grade_level=new_grade, skill_topic=skill_topic, standard_objective=standard_objective, competency=competency)
 
-    return redirect('Dashboard', week_of='Current')
+    context = { }
+    return render(request, template, context)
 
 def TextBookUploadOne(request):
     #second step to the standards upload process
