@@ -1,0 +1,502 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Class Planit || </title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="title" content="Class Planit - More engaging lessons, in less time">
+<meta name="author" content="Class Planit">
+<meta name="description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better individualized lessons in minutes.">
+<meta name="keywords" content="lesson plans, teacher pay teachers, worksheets" />
+<link rel="canonical" href="www.classplanit.co">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="www.classplanit.co">
+<meta property="og:title" content="Class Planit - More engaging lessons, in less time">
+<meta property="og:description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better individualized lessons in minutes.">
+<meta property="og:image" content="www.classplanit.co">
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:url" content="www.classplanit.co">
+<meta property="twitter:title" content="Class Planit - More engaging lessons, in less time">
+<meta property="twitter:description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better individualized lessons in minutes.">
+<meta property="twitter:image" content="{% static 'images/dashboard/twitter_image.png' %}">
+
+<!-- Favicon -->
+<link rel="apple-touch-icon" sizes="120x120" href="{% static 'images/dashboard/icon_120.png' %}">
+<link rel="icon" type="image/png" sizes="32x32" href="{% static 'mages/icon_40.png' %}">
+<link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/dashboard/icon_40.png' %}">
+<!-- Stylesheets -->
+
+<link href="{% static 'css/homepage/bootstrap.css' %}" rel="stylesheet">
+<link href="{% static 'css/homepage/style.css' %}" rel="stylesheet">
+<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon">
+<link rel="icon" href="images/favicon.png" type="image/x-icon">
+<!-- Responsive -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<link type="text/css" href="{% static 'vendor/dashboard/fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+    
+<link href="{% static 'css/homepage/responsive.css' %}" rel="stylesheet">
+
+<!--[if lt IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script><![endif]-->
+<!--[if lt IE 9]><script src="js/respond.js"></script><![endif]-->
+<style>
+    /*******************************
+* MODAL AS LEFT/RIGHT SIDEBAR
+* Add "left" or "right" in modal parent div, after class="modal".
+* Get free snippets on bootpen.com
+*******************************/
+	.modal.left .modal-dialog,
+	.modal.right .modal-dialog {
+		position: fixed;
+		margin: auto;
+		width: 320px;
+		height: 100%;
+		-webkit-transform: translate3d(0%, 0, 0);
+		    -ms-transform: translate3d(0%, 0, 0);
+		     -o-transform: translate3d(0%, 0, 0);
+		        transform: translate3d(0%, 0, 0);
+	}
+
+	.modal.left .modal-content,
+	.modal.right .modal-content {
+		height: 100%;
+		overflow-y: auto;
+	}
+	
+	.modal.left .modal-body,
+	.modal.right .modal-body {
+		padding: 15px 15px 80px;
+	}
+
+/*Left*/
+	.modal.left.fade .modal-dialog{
+		left: -320px;
+		-webkit-transition: opacity 0.3s linear, left 0.3s ease-out;
+		   -moz-transition: opacity 0.3s linear, left 0.3s ease-out;
+		     -o-transition: opacity 0.3s linear, left 0.3s ease-out;
+		        transition: opacity 0.3s linear, left 0.3s ease-out;
+	}
+	
+	.modal.left.fade.in .modal-dialog{
+		left: 0;
+	}
+        
+/*Right*/
+	.modal.right.fade .modal-dialog {
+		right: -320px;
+		-webkit-transition: opacity 0.3s linear, right 0.3s ease-out;
+		   -moz-transition: opacity 0.3s linear, right 0.3s ease-out;
+		     -o-transition: opacity 0.3s linear, right 0.3s ease-out;
+		        transition: opacity 0.3s linear, right 0.3s ease-out;
+	}
+	
+	.modal.right.fade.in .modal-dialog {
+		right: 0;
+	}
+
+/* ----- MODAL STYLE ----- */
+	.modal-content {
+		border-radius: 0;
+		border: none;
+	}
+
+	.modal-header {
+		border-bottom-color: #EEEEEE;
+		background-color: #FAFAFA;
+	}
+
+
+</style>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5Q1SQHYG0R"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-5Q1SQHYG0R');
+</script>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-188513321-1">
+</script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-188513321-1');
+</script>
+</head>
+
+<body>
+
+<div class="page-wrapper">
+ 	
+    <!-- Preloader -->
+    <div class="preloader"></div>
+ 	
+    <!-- Main Header-->
+    <header class="main-header">
+    	
+        <!-- Main Box -->
+    	<div class="main-box">
+        	<div class="auto-container">
+            	<div class="outer-container clearfix">
+                    <!--Logo Box-->
+                    <div class="logo-box">
+                        <div class="logo"><a href="{% url 'homepage' %}"><img src="{% static 'images/homepage/cp_rounded5.png' %}" alt=""></a></div>
+                    </div>
+                    
+                    <!--Nav Outer-->
+                    <div class="nav-outer clearfix">
+                        <!-- Main Menu -->
+                        <nav class="main-menu">
+                        
+                            <div class="navbar-header">
+                                <!-- Toggle Button -->    	
+                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                            </div>
+                            
+                            <div class="navbar-collapse collapse scroll-nav clearfix">
+                                <ul class="navigation clearfix">
+                                    <li class="current"><a href="{% url 'homepage' %}">Home-2</a>
+                                    </li>
+                               
+                                    <li><a href="#products">Products</a></li>
+                                   
+                                    <li><a href="#blog">Blog</a></li>
+                                    <li><a href="#contact">Newsletter</a></li>                                      
+                                 </ul>
+                            </div>
+                            
+                        </nav>
+                        <!-- Main Menu End-->
+                        
+                        <!--Other Links-->
+                        <div class="other-links">
+                        	<a data-toggle="modal" data-target="#myModal2" class="theme-btn btn-style-one">Get Started</a>
+                        </div>
+                        
+                    </div>
+                    <!--Nav Outer End-->
+                    
+            	</div>    
+            </div>
+        </div>
+    
+    </header>
+    <!--End Main Header -->
+  
+    <!--Main Banner / Banner One-->
+    <section class="main-banner banner-one" id="banner" style="background-image:url({% static 'images/homepage/background_bg.png' %});">
+    	<div class="auto-container">
+        	<div class="row clearfix">
+            	<!--Text Column-->
+                <div class="text-column col-md-6 col-sm-12 col-xs-12">
+                	<div class="inner">
+                    	
+                        <h2>More Engaging Lessons in Less Time.</h2>
+                        <p>Digital lesson planners powered by data-driven instruction.</p>
+                        <a data-toggle="modal" data-target="#myModal2" class="theme-btn btn-style-two">Sign Up <span class="icon ti-arrow-circle-right"></span></a>
+                    </div>
+                </div>
+                
+                <!--Image Column-->
+                <div class="image-column col-md-6 col-sm-12 col-xs-12">
+                	<div class="inner">
+                    	<figure class="image"><img src="{% static 'images/homepage/homepage_final_full (2).png' %}" alt=""></figure>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+  	<!--End Main Banner-->
+    
+    
+    <!--Products Section-->
+    <section class="products-section" id="products">
+    	<div class="auto-container">
+        	<!--Heading-->
+        	<div class="sec-title">
+            	<div class="icon"><figure class="image"><img src="images/icons/icon-1.png" alt=""></figure></div>
+                <h2>Streamline the Planning Process</h2>
+                <div class="desc-text">Quickly create, edit, and share awesome lesson plans</div>
+            </div>
+            
+            <!--Services-->
+            <div class="services-outer clearfix">
+            	<!--Service Style One-->
+                <div class="service-style-one col-md-4 col-sm-6 col-xs-12">
+                	<div class="inner-box">
+                    	<div class="icon"><figure class="image"><img src="images/icons/icon-2.png" alt=""></figure></div>
+                        <h3>Create</h3>
+                        <div class="text">Simply answer a few questions and we'll generate a ready-to-use plan tailored to your needs</div>
+                        
+                    </div>
+                </div>
+                
+                <!--Service Style One-->
+                <div class="service-style-one col-md-4 col-sm-6 col-xs-12">
+                	<div class="inner-box">
+                    	<div class="icon"><figure class="image"><img src="images/icons/icon-3.png" alt=""></figure></div>
+                        <h3>Measure</h3>
+                        <div class="text">We'll track how your plans are meeting local education standards and learning styles.</div>
+                      
+                    </div>
+                </div>
+                
+                <!--Service Style One-->
+                <div class="service-style-one col-md-4 col-sm-6 col-xs-12">
+                	<div class="inner-box">
+                    	<div class="icon"><figure class="image"><img src="images/icons/icon-4.png" alt=""></figure></div>
+                        <h3>Engage</h3>
+                        <div class="text">Easily invite students to complete digital activities generated from the content on your lesson plan and keep track of their progress</div>
+                       
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+    
+
+
+
+    <!--Blog Section-->
+    <section class="blog-section" id="blog">
+    	<div class="auto-container">
+        	<!--Heading-->
+        	<div class="sec-title-two centered">
+                <h2>Recent Blog</h2>
+                
+            </div>
+            
+            <div class="row clearfix">
+            	
+                <!--News Block-->
+                <div class="news-style-one col-md-4 col-sm-6 col-xs-12">
+                	<div class="inner-box wow fadeInLeft" data-wow-delay="0ms" data-wow-duration="1500ms">
+
+                    	<figure class="image-box"><a href="https://medium.com/class-planit/begin-with-the-end-in-mind-720778f8ff5"><img src="{% static 'images/homepage/Beginning with the End in Mind.png' %}" alt=""></a></figure>
+                        <div class="lower-content">
+                        	<div class="post-meta">Oct 23, 2020 By Counney Kemp
+                            </div>
+                            <h3><a href="https://medium.com/class-planit/begin-with-the-end-in-mind-720778f8ff5">Mastering Online Lesson Planning</a></h3>
+                            <div class="text">Creating lesson plans can be challenging for both new and seasoned instructors. Focusing on an objective, creating eye-catching worksheets, and managing your time are important factors to keep in mind. </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="text-center wow tada" data-wow-delay="0ms" data-wow-duration="1500ms"><a href="https://medium.com/class-planit" class="theme-btn btn-style-seven">Go To Blog</a></div>
+            
+        </div>
+    </section>
+    
+
+
+    <!--Overview Section-->
+
+    <!--Contact Section-->
+    <section class="contact-section" id="contact">
+    	<div class="auto-container">
+        	<div class="row clearfix">
+            	
+                <!--Image Column-->
+                <div class="image-column col-md-6 col-sm-12 col-xs-12">
+                	<div class="inner">
+                    	<figure class="image"><img src="{% static 'images/homepage/community.png' %}" alt=""></figure>
+                    </div>
+                </div>
+                
+                <!--Form Column-->
+            	<div class="form-column col-md-6 col-sm-12 col-xs-12">
+                	<div class="sec-title">
+                        <h2>Join the Class Planit Community!</h2>
+                        <h5>Recieve updates, planning resources, and tips with our weekly newsletter.</h5>
+                    </div>
+                    
+                	<!-- Begin Mailchimp Signup Form -->
+            <link href="//cdn-images.mailchimp.com/embedcode/classic-10_7.css" rel="stylesheet" type="text/css">
+            <style type="text/css">
+                #mc_embed_signup{background:#fff; clear:left; font:14px Helvetica,Arial,sans-serif; }
+                /* Add your own Mailchimp form style overrides in your site stylesheet or in this style block.
+                We recommend moving this block and the preceding CSS link to the HEAD of your HTML file. */
+            </style>
+            <div id="mc_embed_signup">
+            <form action="https://classplanit.us7.list-manage.com/subscribe/post?u=06fc358d8fb2941c2a784956d&amp;id=435e720588" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+                <div id="mc_embed_signup_scroll">
+                <h2>Subscribe</h2>
+            <div class="indicates-required"><span class="asterisk">*</span> indicates required</div>
+            <div class="mc-field-group">
+                <label for="mce-EMAIL">Email Address  <span class="asterisk">*</span>
+            </label>
+                <input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL">
+            </div>
+            <div class="mc-field-group">
+                <label for="mce-FNAME">First Name </label>
+                <input type="text" value="" name="FNAME" class="" id="mce-FNAME">
+            </div>
+            <div class="mc-field-group">
+                <label for="mce-LNAME">Last Name </label>
+                <input type="text" value="" name="LNAME" class="" id="mce-LNAME">
+            </div>
+            <div class="mc-field-group">
+                <label for="mce-STATE_REG">State/Region  <span class="asterisk">*</span>
+            </label>
+                <input type="text" value="" name="STATE_REG" class="required" id="mce-STATE_REG">
+            </div>
+            <div class="mc-field-group">
+                <label for="mce-GRADES">Grades You Teach  <span class="asterisk">*</span>
+            </label>
+                <input type="text" value="" name="GRADES" class="required" id="mce-GRADES">
+            </div>
+                <div id="mce-responses" class="clear">
+                    <div class="response" id="mce-error-response" style="display:none"></div>
+                    <div class="response" id="mce-success-response" style="display:none"></div>
+                </div>    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+                <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_06fc358d8fb2941c2a784956d_435e720588" tabindex="-1" value=""></div>
+                <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+                </div>
+            </form>
+            </div>
+            <script type='text/javascript' src='//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js'></script><script type='text/javascript'>(function($) {window.fnames = new Array(); window.ftypes = new Array();fnames[0]='EMAIL';ftypes[0]='email';fnames[1]='FNAME';ftypes[1]='text';fnames[2]='LNAME';ftypes[2]='text';fnames[3]='STATE_REG';ftypes[3]='text';fnames[4]='GRADES';ftypes[4]='text';}(jQuery));var $mcj = jQuery.noConflict(true);</script>
+            <!--End mc_embed_signup-->
+                </div>
+            </div>
+       	</div>
+   	</section>
+    <!-- Modal -->
+	<div class="modal right fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+
+				<div class="modal-header">
+                    <a type="button" href="{% url 'homepage' %}"><span aria-hidden="true">&times;</span> Go Back</a>
+                    <hr>
+					
+					<h4 class="modal-title" id="myModalLabel2">Create an Account:</h4>
+				</div>
+
+				<div class="modal-body">
+					<form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {% for field in form %}
+                        {% for error in field.errors %}
+                              <p style="color: red">{{ error }}</p>
+                        {% endfor %}
+
+                        <p>{{ field.label_tag }}<br>
+                        {{ field }}</p>
+                            <hr>
+                            
+                          
+                        {% endfor %}
+                        
+                        <button type="submit">Next</button>
+                      </form>
+				</div>
+
+			</div><!-- modal-content -->
+		</div><!-- modal-dialog -->
+	</div><!-- modal -->
+	
+	
+</div><!-- container -->
+    <!--Footer Style One-->
+    <footer class="footer-style-one">
+        <!--Footer Upper-->
+        <div class="footer-upper">
+            <div class="auto-container">
+                <div class="row clearfix">
+                    <!--Big Column-->
+                    <div class="big-column col-lg-3 col-md-12 col-sm-12 col-xs-12">
+                        <div class="footer-column">
+                            <div class="footer-widget about-widget">
+                                <div class="widget-inner">
+                                    <div class="logo"><img src="{% static 'images/homepage/cp_rounded5.png' %}" alt=""></div>
+                                    <div class="copyright">&copy; 2020 All Rights Reserved</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!--Big Column-->
+                    <div class="big-column col-lg-9 col-md-12 col-sm-12 col-xs-12">    
+                        <div class="row clearfix">
+                        	<!--Footer Column-->
+                            <div class="footer-column col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                                <div class="footer-widget links-widget">
+                                    <div class="widget-inner">
+                                        <h3>Company</h3>
+                                        <div class="links">
+                                            <ul>
+                                                <li><a href="{% url 'about_us' %}">About us</a></li>
+                                                <li><a href="{% url 'how_it_works' %}">How It Works</a></li>
+  
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        
+                            <!--Footer Column-->
+                            <div class="footer-column col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                                <div class="footer-widget follow-widget">
+                                    <div class="widget-inner">
+                                    	<h3>Follow</h3>
+                                        <div class="social-links">
+                                            <ul class="clearfix">
+                                                <li><a href="https://www.facebook.com/classplanit/"><span class="fab fa-facebook-f"></span></a></li>
+                                                <li><a href="https://twitter.com/classplanit"><span class="fab fa-twitter"></span></a></li>
+                                                <li><a href="https://www.instagram.com/classplanit"><span class="fab fa-instagram"></span></a></li>
+                                                <li><a href="https://www.linkedin.com/company/class-planit/"><span class="fab fa-linkedin-in"></span></a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </footer>
+    
+    
+</div>
+<!--End pagewrapper-->
+
+<!--Scroll to top-->
+<div class="scroll-to-top scroll-to-target" data-target="html"><span class="fa fa-angle-double-up"></span></div>
+
+
+<script src="{% static 'js/homepage/jquery.js' %}"></script> 
+<script src="{% static 'js/homepage/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/homepage/pagenav.js' %}"></script>
+<script src="{% static 'js/homepage/jquery.scrollTo.js' %}"></script>
+<script src="{% static 'js/homepage/jquery.fancybox.pack.js' %}"></script>
+<script src="{% static 'js/homepage/owl.js' %}"></script>
+<script src="{% static 'js/homepage/wow.js' %}"></script>
+<script src="{% static 'js/homepage/validate.js' %}"></script>
+<script src="{% static 'js/homepage/script.js' %}"></script>
+
+
+</body>
+</html>

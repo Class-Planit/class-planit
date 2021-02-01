@@ -92,8 +92,11 @@ def Homepage(request):
 
         form = TeacherForm()
     
-
-    return render(request, 'homepage/index.html', {'form': form})
+    choice = random.choice([1, 2])
+    if choice == 1:
+        return render(request, 'homepage/index.html', {'form': form})
+    else:
+        return render(request, 'homepage/index2.html', {'form': form})
 
 
 
