@@ -36,8 +36,8 @@ STATICFILES_DIRS = (
 SECRET_KEY = config('SECRET_KEY') 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-SECURE_SSL_REDIRECT = False
+DEBUG = False
+SECURE_SSL_REDIRECT = True
 
 ALLOWED_HOSTS = ['*']
 DATE_INPUT_FORMATS = ['%m/%d/%y']
