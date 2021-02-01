@@ -113,7 +113,7 @@ def match_topics(teacher_input, class_id, lesson_id):
         topics = topicInformation.objects.filter(id__in=topic_matches)
         results_list = []
         for item in topics: 
-            result = item.item
+            result = item.item, item.topic
             results_list.append(result)
        
         subject = class_objectives.subject
@@ -147,13 +147,13 @@ def match_topics(teacher_input, class_id, lesson_id):
                                 result = get_keywords(result)
                                 desc_list.append(result)
                             
-                            result = topic.id, (desc_list, topic.item) 
+                            result = topic.id, (desc_list, topic.item, topic.topic) 
                             objectives_list.append(result) 
                     
                     prediction = []
                     for standard_full in objectives_list:
-                            standard_full_join = ''.join([str(i) for i in standard_full[1]]).lower()
-                            
+                            standard_full_join = ''.join([str(i) for i in standard_full]).lower()
+                            print(standard_full_join)
                             standard_full_joined = stemSentence(standard_full_join)
                             if any(word in standard_full_joined for word in tokens_without_sw):
                                 Document1 = ''.join([str(i) for i in tokens_without_sw]).lower()
@@ -254,6 +254,7 @@ def split_matched_terms(teacher_input, class_id, lesson_id):
             if items:
                 word = items[0]
                 word = word.text
+                print(word)
                 for grade in grade_list: 
                     topic_term, created = topicInformation.objects.get_or_create(subject=subject, standard_set=standard_set, grade_level=grade, item=word)
 

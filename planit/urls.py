@@ -26,6 +26,7 @@ urlpatterns = [
         view=FormFull,
         name='registration_full'),
 
+
     url(r'^questionnaire/',
         view=QuestionnaireFull,
         name='questionnaire_full'),
@@ -33,6 +34,10 @@ urlpatterns = [
     url(r'^dashboard/(?P<week_of>[\w\s]+)/',
         view=Dashboard.as_view(),
         name='Dashboard'),
+
+    url(r'^how-it-works/',
+        view=HowItWorks.as_view(),
+        name='how_it_works'),
 
     url(r'^services/',
         view=Services.as_view(),

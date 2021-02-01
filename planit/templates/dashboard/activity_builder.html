@@ -504,12 +504,17 @@
                     <div class="card-header">
                         <div class="row align-items-center">
                             <div class="col">
-                            <h2 class="h5">Reccomended Activities:</h2>
+                            <h2 class="h5">Recommended Activities:</h2>
                             </div>
                         </div>
                     </div>
                     <div class="card-body">
-                      
+                        <a href="#" >
+                            Students will create a living museum where they become one of the key people of the American Revolution</a>
+                            <hr>
+                        <a href="#" >
+                            Students will divide the key people of the Revolution between those that were for and against Independence.</a>
+                            <hr>
                         {% for item in not_selected_activities|slice:"5" %}
                         {% ifchanged item.bloom %}
                        <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=10 item_id=item.id action=0 %}#heading" >
