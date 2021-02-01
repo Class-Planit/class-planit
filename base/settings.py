@@ -39,7 +39,7 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = False
 SECURE_SSL_REDIRECT = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['www.classplanit.co', 'www.classplanit.herokuapp.com', 'http://127.0.0.1:8000']
 DATE_INPUT_FORMATS = ['%m/%d/%y']
 DEFAULT_FILE_STORAGE = 'storages.backends.s3.S3Storage'
 # Application definition
