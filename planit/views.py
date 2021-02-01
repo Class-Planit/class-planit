@@ -33,6 +33,7 @@ from .topic_matching import *
 from .ocr import *
 from weasyprint import HTML, CSS
 import tempfile
+from .tasks import *
 # Create your views here.
 # Create your views here.
 
@@ -783,6 +784,7 @@ def StandardUploadTwo(request):
     #second step to the standards upload process
     #name="standards_upload"
     user_profile = User.objects.filter(username=request.user.username).first()
+    stand_upload = upload_standards.delay()
 
     path3 = 'Planit/files/teks_final.csv'
     with open(path3) as f:
