@@ -28,6 +28,7 @@ from pytesseract import image_to_string
 from .forms import *
 from .models import *
 from .match_standards import *
+from .textbook_matching import *
 from .word_cluster import *
 from .topic_matching import *
 from .ocr import *
@@ -367,6 +368,8 @@ def SelectStandards(request, user_id=None, class_id=None, subject=None, lesson_i
     
     matched_topics = match_topics(teacher_objective, class_id, lesson_id)
 
+    
+
     topic_lists = []
     if matched_topics:
         for item in matched_topics:
@@ -383,6 +386,8 @@ def SelectStandards(request, user_id=None, class_id=None, subject=None, lesson_i
 
     topic_lists.sort(key=lambda x: x[1], reverse=True)
 
+    get_textbook_data = match_textbook_lines(topic_matches, class_id, lesson_id)
+
     results = match_standard(teacher_objective, current_subject, class_id)
     
 
@@ -395,7 +400,7 @@ def SelectStandards(request, user_id=None, class_id=None, subject=None, lesson_i
             create_objective, created = lessonStandardRecommendation.objects.get_or_create(lesson_classroom=classroom_profile, objectives=lesson_match, objectives_standard=standard_match)   
 
     step = 2
-    return render(request, 'dashboard/create_objective.html', {'user_profile': user_profile, 'topic_lists': topic_lists, 'step': step, 'current_standards': current_standards, 'recomendations': recomendations, 'lesson_match': lesson_match, 'subject_matches': subject_matches, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'vocab_list': vocab_list, 'current_week': current_week, 'subjects_list': subjects_list, 'grade_list': grade_list, 'classroom_profile': classroom_profile, 'classroom_subjects': classroom_subjects})
+    return render(request, 'dashboard/create_objective.html', {'user_profile': user_profile, 'get_textbook_data': get_textbook_data, 'topic_lists': topic_lists, 'step': step, 'current_standards': current_standards, 'recomendations': recomendations, 'lesson_match': lesson_match, 'subject_matches': subject_matches, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'vocab_list': vocab_list, 'current_week': current_week, 'subjects_list': subjects_list, 'grade_list': grade_list, 'classroom_profile': classroom_profile, 'classroom_subjects': classroom_subjects})
 
 def EditObjectiveStandards(request, user_id=None, class_id=None, subject=None, lesson_id=None, standard_id=None, action=None):
     user_profile = User.objects.get(id=user_id)
@@ -822,52 +827,11 @@ def StandardUploadTwo(request):
     context = { }
     return render(request, template, context)
 
-def TextBookUploadOne(request):
-    #second step to the standards upload process
-    #name="standards_upload"
-    if request.method == "POST":
-        form = textBookTitleForm(request.POST, request.FILES)
-
-        if form.is_valid():
-            prev = form.save(commit=False)
-            prev.save()
-           
-            return redirect('textbook_upload_two', textbook_id=prev.id)
-    else:
-        form = textBookTitleForm()
-    return render(request, 'dashboard/activity_builder.html', {'form', form})
-
-
-def TextBookUploadTwo(request, textbook_id=None):
-    #second step to the standards upload process
-    #name="standards_upload"
-    user_profile = User.objects.filter(username=request.user.username).first()
-
-    path3 = 'Planit/files/teks_final.csv'
-    with open(path3) as f:
-        for line in f:
-            line = line.split(',') 
-            standard_set = line[0]
-            grade_level = line[1]
-            subject = line[2]
-            skill_topic = line[3]
-            standard_objective = line[4]
-            competency = line[5]
-
-            new_standard_set, i = standardSet.objects.get_or_create(Location=standard_set)
-            new_grade, i = gradeLevel.objects.get_or_create(grade=grade_level , grade_labels=grade_level , standards_set=new_standard_set)
-            new_subject, i = standardSubjects.objects.get_or_create(subject_title=subject, standards_set=new_standard_set, is_admin=True)
-            add_grade_subject = new_subject.grade_level.add(new_grade)
-
-            obj, created = singleStandard.objects.get_or_create(standards_set=new_standard_set, subject=new_subject, grade_level=new_grade, skill_topic=skill_topic, standard_objective=standard_objective, competency=competency)
-
-    return redirect('Dashboard', week_of='Current')
-
-
 
 def TextbookUploadOne(request):
     #second step to the standards upload process
     #name="standards_upload"
+    
     user_profile = User.objects.filter(username=request.user.username).first()
 
     if request.method == "POST":
@@ -900,9 +864,10 @@ def TextbookUploadTwo(request, textbook_id=None):
     # setup a stream which is when we loop through each line we are able to handle a data in a stream
     io_string = io.StringIO(data_set)
     next(io_string)
-
+    counter = 1
     for line in csv.reader(io_string, delimiter=','):
-        obj, created = textBookBackground.objects.get_or_create(textbook=textbook_match, line_counter=line[0], section=line[1], header=line[2], line_text=line[3])
+        obj, created = textBookBackground.objects.get_or_create(textbook=textbook_match, line_counter=counter, line_text=line[0], line_lemma=line[1])
+        counter = counter + 1 
         obj.save()
 
     context = {'step': True}

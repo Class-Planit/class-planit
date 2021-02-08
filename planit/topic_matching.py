@@ -42,7 +42,7 @@ stop_words.extend(['The', 'students', 'learn'])
 count_vect = CountVectorizer()
 porter = PorterStemmer()
 lancaster=LancasterStemmer()
-
+from textblob import TextBlob
 wikipedia.set_rate_limiting(True)
 
 stop_words = ['i', "'", '!', '.', ':', ',', '[', ']', '(', ')', '?', "'see", "see", '...',  'student', 'learn', 'objective', 'students', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', "you're", "you've", "you'll", "you'd", 'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', "she's", 'her', 'hers', 'herself', 'it', "it's", 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', "that'll", 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', "don't", 'should', "should've", 'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 'aren', "aren't", 'couldn', "couldn't", 'didn', "didn't", 'doesn', "doesn't", 'hadn', "hadn't", 'hasn', "hasn't", 'haven', "haven't", 'isn', "isn't", 'ma', 'mightn', "mightn't", 'mustn', "mustn't", 'needn', "needn't", 'shan', "shan't", 'shouldn', "shouldn't", 'wasn', "wasn't", 'weren', "weren't", 'won', "won't", 'wouldn', "wouldn't"]
@@ -101,7 +101,17 @@ def get_keywords(text):
         return(cleaned_list[:10])
 
 def match_topics(teacher_input, class_id, lesson_id):
-     
+        
+        blob = TextBlob(teacher_input)
+        blob_result = blob.noun_phrases
+        result_list = []
+        for term in blob_result:
+            if term in result_list:
+                pass
+            else:
+                result_list.append(term)
+
+
         classroom_profile = classroom.objects.get(id=class_id)
        
         grade_list = classroom_profile.grade_level.all()
@@ -118,7 +128,7 @@ def match_topics(teacher_input, class_id, lesson_id):
        
         subject = class_objectives.subject
         grade_standards = []
-        teacher_input_full = teacher_input + str(results_list)
+        teacher_input_full = str(result_list) + str(results_list)
         teacher_input_stem = teacher_input_full.lower()
         teacher_input_stem = stemSentence(teacher_input_stem)
         text_tokens = word_tokenize(teacher_input_stem)
@@ -150,24 +160,25 @@ def match_topics(teacher_input, class_id, lesson_id):
                             result = topic.id, (desc_list, topic.item, topic.topic) 
                             objectives_list.append(result) 
                     
+
                     prediction = []
                     for standard_full in objectives_list:
                             standard_full_join = ''.join([str(i) for i in standard_full]).lower()
-                            print(standard_full_join)
+                         
                             standard_full_joined = stemSentence(standard_full_join)
-                            if any(word in standard_full_joined for word in tokens_without_sw):
-                                Document1 = ''.join([str(i) for i in tokens_without_sw]).lower()
-                                Document2 = standard_full_joined
-                                corpus = [Document1,Document2]
-                                X_train_counts = count_vect.fit_transform(corpus)
-                                vectorizer = TfidfVectorizer()
-                                trsfm=vectorizer.fit_transform(corpus)
-                                result = cosine_similarity(trsfm[0:1], trsfm)
-                                result = result[0][1]
-                                total = standard_full, result
-                                prediction.append(total)
 
-                    return(prediction)
+                            Document1 = ''.join([str(i) for i in tokens_without_sw]).lower()
+                            Document2 = standard_full_joined
+                            corpus = [Document1,Document2]
+                            X_train_counts = count_vect.fit_transform(corpus)
+                            vectorizer = TfidfVectorizer()
+                            trsfm=vectorizer.fit_transform(corpus)
+                            result = cosine_similarity(trsfm[0:1], trsfm)
+                            result = result[0][1]
+                            total = standard_full, result
+                            prediction.append(total)
+                    prediction.sort(key=lambda x: x[1], reverse=True)
+                    return(prediction[:20])
                 else:
                     return(None)
 
@@ -209,19 +220,19 @@ def match_lesson_topics(teacher_input, class_id, lesson_id):
                     for standard_full in objectives_list:
                             standard_full_join = ''.join([str(i) for i in standard_full[1]]).lower()
                             standard_full_joined = stemSentence(standard_full_join)
-                            if any(word in standard_full_joined for word in tokens_without_sw):
-                                Document1 = ''.join([str(i) for i in tokens_without_sw]).lower()
-                                Document2 = standard_full_joined
-                                corpus = [Document1,Document2]
-                                X_train_counts = count_vect.fit_transform(corpus)
-                                vectorizer = TfidfVectorizer()
-                                trsfm=vectorizer.fit_transform(corpus)
-                                result = cosine_similarity(trsfm[0:1], trsfm)
-                                result = result[0][1]
-                                total = standard_full, result
-                                prediction.append(total)
+                            
+                            Document1 = ''.join([str(i) for i in tokens_without_sw]).lower()
+                            Document2 = standard_full_joined
+                            corpus = [Document1,Document2]
+                            X_train_counts = count_vect.fit_transform(corpus)
+                            vectorizer = TfidfVectorizer()
+                            trsfm=vectorizer.fit_transform(corpus)
+                            result = cosine_similarity(trsfm[0:1], trsfm)
+                            result = result[0][1]
+                            total = standard_full, result
+                            prediction.append(total)
        
-                    
+                    prediction.sort(key=lambda x: x[1], reverse=True)
                     return(prediction)
                 else:
                     return(None)
@@ -254,7 +265,7 @@ def split_matched_terms(teacher_input, class_id, lesson_id):
             if items:
                 word = items[0]
                 word = word.text
-                print(word)
+                
                 for grade in grade_list: 
                     topic_term, created = topicInformation.objects.get_or_create(subject=subject, standard_set=standard_set, grade_level=grade, item=word)
 
@@ -475,7 +486,6 @@ def get_website_data(link):
         if t.parent.name not in blacklist:
             output += '{} '.format(t)
 
-    print(output)
 
 
 

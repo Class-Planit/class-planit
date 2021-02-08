@@ -261,7 +261,10 @@ class textBookBackground(models.Model):
     header = models.CharField(max_length=500,
                                   blank=True,
                                   null=True)
-    line_text = models.CharField(max_length=500,
+    line_text = models.CharField(max_length=1000,
+                                  blank=True,
+                                  null=True)
+    line_lemma = models.CharField(max_length=1000,
                                   blank=True,
                                   null=True)
 
