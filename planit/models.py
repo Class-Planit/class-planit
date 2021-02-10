@@ -269,7 +269,7 @@ class textBookBackground(models.Model):
                                   null=True)
 
     def __str__(self):
-        return "%s" % (self.line_text)
+        return "%s" % (self.line_counter)
 
 class singleStandard(models.Model):
     standards_set = models.ForeignKey(standardSet,
@@ -350,6 +350,8 @@ class topicInformation(models.Model):
     image_file = models.ImageField(upload_to='images/topic/',
                                        blank=True,
                                        null=True) 
+    text_index	= models.ManyToManyField(textBookBackground,
+                                     blank=True)
 
     def __str__(self):
         return "%s" % (self.item)

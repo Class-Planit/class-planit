@@ -367,7 +367,7 @@ def SelectStandards(request, user_id=None, class_id=None, subject=None, lesson_i
     recomendations = lessonStandardRecommendation.objects.filter(lesson_classroom=classroom_profile, objectives=lesson_match)
     
     matched_topics = match_topics(teacher_objective, class_id, lesson_id)
-
+    text_result = group_topic_texts(lesson_id) #match_textbook_lines(topic_matches, class_id, lesson_id)
     
 
     topic_lists = []
@@ -386,8 +386,6 @@ def SelectStandards(request, user_id=None, class_id=None, subject=None, lesson_i
 
     topic_lists.sort(key=lambda x: x[1], reverse=True)
 
-    get_textbook_data = match_textbook_lines(topic_matches, class_id, lesson_id)
-
     results = match_standard(teacher_objective, current_subject, class_id)
     
 
@@ -400,7 +398,7 @@ def SelectStandards(request, user_id=None, class_id=None, subject=None, lesson_i
             create_objective, created = lessonStandardRecommendation.objects.get_or_create(lesson_classroom=classroom_profile, objectives=lesson_match, objectives_standard=standard_match)   
 
     step = 2
-    return render(request, 'dashboard/create_objective.html', {'user_profile': user_profile, 'get_textbook_data': get_textbook_data, 'topic_lists': topic_lists, 'step': step, 'current_standards': current_standards, 'recomendations': recomendations, 'lesson_match': lesson_match, 'subject_matches': subject_matches, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'vocab_list': vocab_list, 'current_week': current_week, 'subjects_list': subjects_list, 'grade_list': grade_list, 'classroom_profile': classroom_profile, 'classroom_subjects': classroom_subjects})
+    return render(request, 'dashboard/create_objective.html', {'user_profile': user_profile, 'topic_lists': topic_lists, 'step': step, 'current_standards': current_standards, 'recomendations': recomendations, 'lesson_match': lesson_match, 'subject_matches': subject_matches, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'vocab_list': vocab_list, 'current_week': current_week, 'subjects_list': subjects_list, 'grade_list': grade_list, 'classroom_profile': classroom_profile, 'classroom_subjects': classroom_subjects})
 
 def EditObjectiveStandards(request, user_id=None, class_id=None, subject=None, lesson_id=None, standard_id=None, action=None):
     user_profile = User.objects.get(id=user_id)
@@ -644,6 +642,15 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     lesson_standards = singleStandard.objects.filter(id__in=lesson_match.objectives_standards.all())
     topic_matches = lesson_match.objectives_topics.all()
     topic_lists_selected = topicInformation.objects.filter(id__in=topic_matches)
+    text_questions = get_question_text(lesson_id)
+    text_questions_two_full = get_cluster_text(lesson_id)
+
+    match_textlines = text_questions_two_full[0]
+    topics_selected = text_questions_two_full[1]
+    topic_match = text_questions_two_full[2]
+
+    summarize_text = summ_text(match_textlines)
+    sent_text = get_statment_sent(match_textlines)
     teacher_objective = lesson_match.teacher_objective
     
     lesson_results = []
@@ -734,7 +741,7 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     
     step = 4
 
-    return render(request, 'dashboard/activity_builder.html', {'user_profile': user_profile, 'selected_activities': selected_activities, 'not_selected_activities':not_selected_activities, 'question_list': question_list, 'lessons_wording': lessons_wording, 'question_lists': question_lists, 'text_update': text_update, 'form': form, 'lesson_results': lesson_results, 'topic_lists_selected': topic_lists_selected, 'topic_lists': topic_lists, 'keywords_selected': keywords_selected, 'youtube_matched': youtube_matched, 'questions_selected': questions_selected, 'topics_selected': topics_selected, 'keywords_matched': keywords_matched, 'step': step, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
+    return render(request, 'dashboard/activity_builder.html', {'user_profile': user_profile, 'sent_text': sent_text,  'topic_match': topic_match, 'match_textlines': match_textlines, 'text_questions': text_questions, 'selected_activities': selected_activities, 'not_selected_activities':not_selected_activities, 'question_list': question_list, 'lessons_wording': lessons_wording, 'question_lists': question_lists, 'text_update': text_update, 'form': form, 'lesson_results': lesson_results, 'topic_lists_selected': topic_lists_selected, 'topic_lists': topic_lists, 'keywords_selected': keywords_selected, 'youtube_matched': youtube_matched, 'questions_selected': questions_selected, 'topics_selected': topics_selected, 'keywords_matched': keywords_matched, 'step': step, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
 
 
 
@@ -831,7 +838,7 @@ def StandardUploadTwo(request):
 def TextbookUploadOne(request):
     #second step to the standards upload process
     #name="standards_upload"
-    
+
     user_profile = User.objects.filter(username=request.user.username).first()
 
     if request.method == "POST":
@@ -864,12 +871,15 @@ def TextbookUploadTwo(request, textbook_id=None):
     # setup a stream which is when we loop through each line we are able to handle a data in a stream
     io_string = io.StringIO(data_set)
     next(io_string)
-    counter = 1
+
+    text_id = textbook_match.id
+
     for line in csv.reader(io_string, delimiter=','):
-        obj, created = textBookBackground.objects.get_or_create(textbook=textbook_match, line_counter=counter, line_text=line[0], line_lemma=line[1])
-        counter = counter + 1 
+        obj, created = textBookBackground.objects.get_or_create(textbook=textbook_match, line_text=line[0], line_lemma=line[1])
+        obj.line_counter = int(str(text_id) + str(obj.id)) 
         obj.save()
 
+    update_matches = match_topic_texts(textbook_match.subject, text_id)
     context = {'step': True}
     return render(request, template, context)
 
@@ -1149,3 +1159,5 @@ def login_user(request):
             pass
   
     return render(request, 'dashboard/sign-in.html', {})
+
+

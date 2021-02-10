@@ -330,7 +330,12 @@
                                     </div>
                                       <br>
                                   </form>
-   
+                              
+                                  {% for item in text_questions %}
+
+                                  <li>{{ item }}</li>
+                                  {% endfor %}
+                                  <hr>
                             </div>
                          
                         </div>
@@ -350,10 +355,10 @@
                                      
                                     </div>
                                   </div>
-
-                                  {% for item in question_lists  %}
-                                  <li>{{ item.Question }}</li>
-                                  {% endfor %}
+                                  {% for summ in sent_text %}
+                                  <p>{{ summ }}</p>
+                               {% endfor %}
+                        
                             
                             </div>
                       
@@ -546,14 +551,25 @@
                       
                         {% endifchanged %}
                         {% endfor %}
+                        {% if topic_match %}
+                            {% for line in topic_match %}
+                            {% for i in line %}
+                            {% for y in i %}
+                                {% if y.item %}
+                                <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=6 item_id=y.id action=1 %}" class="btn btn-sm btn-outline-secondary" data-toggle="tooltip" data-placement="top" title="{{ y.item }} - {% for item in y.description.all%}{{item }} ; {% endfor %}" >{{ y.item }}</a>
+                                {% endif %}
+                            {% endfor %}
+                            {% endfor %}
+                            {% endfor %}
+                        {% else %}
+                            {% for topic in topic_lists %}
+                            {% ifchanged topic.0.id %}
                         
-                        {% for topic in topic_lists %}
-                        {% ifchanged topic.0.id %}
-                      
-                        <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=6 item_id=topic.0.id action=1 %}" class="btn btn-sm btn-outline-secondary" data-toggle="tooltip" data-placement="top" title="{{ topic.0 }} - {% for item in topic.0.description.all%}{{item }} ; {% endfor %}" >{{ topic.0.item }}</a>
-                      
-                        {% endifchanged %}
-                        {% endfor %}
+                            <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=6 item_id=topic.0.id action=1 %}" class="btn btn-sm btn-outline-secondary" data-toggle="tooltip" data-placement="top" title="{{ topic.0 }} - {% for item in topic.0.description.all%}{{item }} ; {% endfor %}" >{{ topic.0.item }}</a>
+                        
+                            {% endifchanged %}
+                            {% endfor %}
+                        {% endif %}
                         
                     </div>
                 </div>

@@ -1,47 +1,10 @@
-<form  method='POST'>
-    {% csrf_token %}
-    <input type="submit" value="Save Progress">
-    {% if text_update.is_initial %}
-    <textarea name='content' id="basic-example">
-        <p style="text-align: center;">
-          <img title="TinyMCE Logo" src="{% static 'images/dashboard/icon.svg' %}" alt="TinyMCE Logo" width="110" height="97" />
-        </p>
-      
-        <h2 style="text-align: center;">Lesson Plan: {{ week_of }}| {{ user.username }}</h2>
-      
-        <h2>Objective: {{ lesson_match.teacher_objective }}</h2>
-      <h3>Aligned Stanards:</h3>
-        {% for standard in lesson_standards %}
-        <li>{{ standard }}</li>
-        {% endfor %}
-      
-        
-      
-     
-      </textarea>
-      <textarea name='content2' id="basic-example">
-        <p style="text-align: center;">
-          <img title="TinyMCE Logo" src="{% static 'images/dashboard/icon.svg' %}" alt="TinyMCE Logo" width="110" height="97" />
-        </p>
-      
-        <h2 style="text-align: center;">Lesson Plan: {{ week_of }}| {{ user.username }}</h2>
-      
-        <h2>Objective: {{ lesson_match.teacher_objective }}</h2>
-      <h3>Aligned Stanards:</h3>
-        {% for standard in lesson_standards %}
-        <li>{{ standard }}</li>
-        {% endfor %}
-      
-        
-      
-     
-      </textarea>
-      {% else %}
-      <textarea name='content' id="basic-example">
-        {{ text_update.content|safe  }}
-      </textarea>
-      {% endif %}
-  </form>
+{% for item in topic_lists_selected %}
+{% for line in item.text_index.all %}
+<li>{{ line.line_text }}</li>
+
+{% endfor %}
+{% endfor %}
+<hr>
 
 
 

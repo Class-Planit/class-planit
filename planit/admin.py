@@ -10,6 +10,13 @@ class topicQuestionAdmin(admin.ModelAdmin):
     model = wikiTopic
     search_fields = ['Question']
 
+class topicInformationAdmin(admin.ModelAdmin):
+    model = wikiTopic
+    search_fields = ['item']
+
+class textBookBackgroundAdmin(admin.ModelAdmin):
+    model = textBookBackground
+    search_fields = ['line_text']
 
 admin.site.register(User)
 admin.site.register(standardSet)
@@ -32,9 +39,9 @@ admin.site.register(wikiTopic, wikiTopicAdmin)
 admin.site.register(googleRelatedQuestions)
 admin.site.register(lessonTemplates)
 admin.site.register(lessonProduct)
-admin.site.register(topicInformation)
+admin.site.register(topicInformation, topicInformationAdmin)
 admin.site.register(topicTypes)
-admin.site.register(textBookBackground)
+admin.site.register(textBookBackground, textBookBackgroundAdmin)
 admin.site.register(shortStorySection)
 admin.site.register(shortStory)
 admin.site.register(youtubeSearchResult)

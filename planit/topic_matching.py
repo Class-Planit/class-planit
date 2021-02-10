@@ -10,6 +10,7 @@ from nltk.tokenize import word_tokenize
 from django.db.models import Q, Sum
 import pandas as pd 
 from .models import *
+from .textbook_matching import *
 import numpy.random
 from serpapi import GoogleSearch
 import re
@@ -100,18 +101,17 @@ def get_keywords(text):
                                 cleaned_list.append(word)        
         return(cleaned_list[:10])
 
+def check_matches_topics(teacher_input, standard):
+    text_split = teacher_input.split()
+    standard_split = standard.split()
+    if any(word in text_split for word in standard_split):
+        return(True)
+    else:
+        return(False)
+
+
 def match_topics(teacher_input, class_id, lesson_id):
-        
-        blob = TextBlob(teacher_input)
-        blob_result = blob.noun_phrases
-        result_list = []
-        for term in blob_result:
-            if term in result_list:
-                pass
-            else:
-                result_list.append(term)
-
-
+ 
         classroom_profile = classroom.objects.get(id=class_id)
        
         grade_list = classroom_profile.grade_level.all()
@@ -123,12 +123,13 @@ def match_topics(teacher_input, class_id, lesson_id):
         topics = topicInformation.objects.filter(id__in=topic_matches)
         results_list = []
         for item in topics: 
-            result = item.item, item.topic
+            result = item.item
             results_list.append(result)
        
         subject = class_objectives.subject
         grade_standards = []
-        teacher_input_full = str(result_list) + str(results_list)
+        teacher_input_full = teacher_input + str(results_list)
+
         teacher_input_stem = teacher_input_full.lower()
         teacher_input_stem = stemSentence(teacher_input_stem)
         text_tokens = word_tokenize(teacher_input_stem)
@@ -141,9 +142,14 @@ def match_topics(teacher_input, class_id, lesson_id):
             class_objectives.objective_title = objective_title
             class_objectives.save()
 
+        get_topic_ids = group_topic_texts(lesson_id)
+
         for grade in grade_list:
                 
-                obj = topicInformation.objects.filter(subject=subject, standard_set=standard_set, grade_level=grade)
+                if get_topic_ids:
+                     obj = topicInformation.objects.filter(id__in=get_topic_ids)
+                else:
+                    obj = topicInformation.objects.filter(subject=subject, standard_set=standard_set, grade_level=grade)
                 
 
                 if obj:
@@ -154,29 +160,30 @@ def match_topics(teacher_input, class_id, lesson_id):
                             desc_list = []
                             for item in descriptions:
                                 result = item.description
-                                result = get_keywords(result)
                                 desc_list.append(result)
                             
-                            result = topic.id, (desc_list, topic.item, topic.topic) 
+                            result = topic.id, (desc_list, topic.item) 
                             objectives_list.append(result) 
                     
 
                     prediction = []
                     for standard_full in objectives_list:
+                            
                             standard_full_join = ''.join([str(i) for i in standard_full]).lower()
-                         
-                            standard_full_joined = stemSentence(standard_full_join)
+                            Document1 = ''.join([str(i) for i in teacher_input_full])
+                            Document2 = standard_full_join
+                            check_matched = check_matches_topics(Document2, Document1)
+                            if check_matched:
 
-                            Document1 = ''.join([str(i) for i in tokens_without_sw]).lower()
-                            Document2 = standard_full_joined
-                            corpus = [Document1,Document2]
-                            X_train_counts = count_vect.fit_transform(corpus)
-                            vectorizer = TfidfVectorizer()
-                            trsfm=vectorizer.fit_transform(corpus)
-                            result = cosine_similarity(trsfm[0:1], trsfm)
-                            result = result[0][1]
-                            total = standard_full, result
-                            prediction.append(total)
+                                corpus = [Document1,Document2]
+
+                                X_train_counts = count_vect.fit_transform(corpus)
+                                vectorizer = TfidfVectorizer()
+                                trsfm=vectorizer.fit_transform(corpus)
+                                result = cosine_similarity(trsfm[0:1], trsfm)
+                                result = result[0][1]
+                                total = standard_full, result
+                                prediction.append(total)
                     prediction.sort(key=lambda x: x[1], reverse=True)
                     return(prediction[:20])
                 else:
