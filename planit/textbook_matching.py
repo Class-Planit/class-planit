@@ -14,8 +14,6 @@ import pyLDAvis
 import pyLDAvis.gensim  # don't skip this
 import matplotlib.pyplot as plt
 from textblob import TextBlob
-import language_tool_python
-tool = language_tool_python.LanguageTool('en-US')  # use a local server (automatically set up), language English
 
 # Enable logging for gensim - optional
 import logging
@@ -210,7 +208,6 @@ def get_statment_sent(match_textlines):
                     pass
                 else:
                     if sent not in full_sent_list:
-                        matches = tool.check(sent)
                         sent = tool.correct(sent)
                         full_sent_list.append(sent)
 
