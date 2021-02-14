@@ -130,11 +130,12 @@
             	<!--Text Column-->
                 <div class="text-column col-md-6 col-sm-12 col-xs-12">
                 	<div class="inner">
-                        <h2>Sorry, Something Went Wrong!</h2>
-                        <p>Please fill in your registration information again as there was an error.</p>
+                        <h2>{{ message }}</h2>
+
                         <hr>
                         <form method="POST" enctype="multipart/form-data">
                             {% csrf_token %}
+
                             {% for field in form %}
                             {% for error in field.errors %}
                                   <p style="color: red">{{ error }}</p>

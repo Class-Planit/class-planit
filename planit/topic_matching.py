@@ -121,6 +121,7 @@ def match_topics(teacher_input, class_id, lesson_id):
         topic_matches = class_objectives.objectives_topics.all()
        
         topics = topicInformation.objects.filter(id__in=topic_matches)
+        topic_count = topics.count()
         results_list = []
         for item in topics: 
             result = item.item
@@ -141,13 +142,16 @@ def match_topics(teacher_input, class_id, lesson_id):
         else:
             class_objectives.objective_title = objective_title
             class_objectives.save()
-
-        get_topic_ids = group_topic_texts(lesson_id)
+        if topic_count > 2:
+            get_topic_ids = group_topic_texts(lesson_id)
+        else:
+            get_topic_ids = []
 
         for grade in grade_list:
                 
                 if get_topic_ids:
-                     obj = topicInformation.objects.filter(id__in=get_topic_ids)
+                     result_list = topicInformation.objects.filter(id__in=get_topic_ids)
+                     obj = sorted(chain(topic_matches, result_list), key=lambda instance: instance.id)
                 else:
                     obj = topicInformation.objects.filter(subject=subject, standard_set=standard_set, grade_level=grade)
                 

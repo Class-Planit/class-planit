@@ -40,7 +40,7 @@ SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = False
 
 ALLOWED_HOSTS = ['www.classplanit.co', 'www.classplanit.herokuapp.com', 'http://127.0.0.1:8000']
 DATE_INPUT_FORMATS = ['%m/%d/%y']

@@ -14,7 +14,11 @@ datetime.date.today()
 
 # Create your models here.
 
+class standardSet(models.Model):
+    Location = models.TextField(max_length=500)
 
+    def __str__(self):
+        return "%s" % (self.Location)
 
 class User(AbstractUser):
     is_parent = models.BooleanField(default=False)
@@ -42,22 +46,17 @@ class school_user(models.Model):
     user_image = models.ImageField(upload_to='images/',
                                    blank=True,
                                    null=True)
+    standards_set = models.ForeignKey(standardSet,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
 
     def __str__(self):
-        return "%s" % (self.username)
+        return "%s" % (self.user)
 
 
-class standardSet(models.Model):
-    Location = models.TextField(max_length=500)
-
-    def __str__(self):
-        return "%s" % (self.Location)
 
 
-    
-
-    def __str__(self):
-        return "%s" % (self.Location)
 
 class gradeLevel(models.Model):
     grade = models.CharField(max_length=30)
@@ -169,6 +168,24 @@ class studentProfiles(models.Model):
     def __str__(self):
         return '%s %s' % (self.first_name, self.last_name)
 
+class standardSubjects(models.Model):
+    subject_title = models.CharField(max_length=100)
+    standards_set = models.ForeignKey(standardSet,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    created_by = models.ForeignKey(User,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True)
+    is_admin = models.BooleanField(default=False)
+    grade_level = models.ManyToManyField(gradeLevel,
+                                     blank=True,
+                                     related_name='subject_grades')
+
+    def __str__(self):
+        return "%s" % (self.subject_title)
+
  
 class classroom(models.Model):
     classroom_title = models.CharField(max_length=100)
@@ -195,41 +212,15 @@ class classroom(models.Model):
                                on_delete=models.SET_NULL,
                                blank=True,
                                null=True)
+    subjects = models.ManyToManyField(standardSubjects,
+                                     blank=True)
 
 
     def __str__(self):
         return "%s" % (self.classroom_title)
 
-class standardSubjects(models.Model):
-    subject_title = models.CharField(max_length=100)
-    standards_set = models.ForeignKey(standardSet,
-                               on_delete=models.SET_NULL,
-                               blank=True,
-                               null=True)
-    created_by = models.ForeignKey(User,
-                               on_delete=models.CASCADE,
-                               blank=True,
-                               null=True)
-    is_admin = models.BooleanField(default=False)
-    grade_level = models.ManyToManyField(gradeLevel,
-                                     blank=True,
-                                     related_name='subject_grades')
 
-    def __str__(self):
-        return "%s" % (self.subject_title)
                         
-class classroomSubjects(models.Model):
-    subject_classroom = models.ForeignKey(classroom,
-                               on_delete=models.SET_NULL,
-                               blank=True,
-                               null=True)
-    subjects = models.ManyToManyField(standardSubjects,
-                                     blank=True)
-
-    def __str__(self):
-        return "%s" % (self.subject_classroom)
-
-
 class textBookTitle(models.Model):
     title = models.TextField(max_length=500)
     grade_level = models.ManyToManyField(gradeLevel,

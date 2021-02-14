@@ -1,0 +1,323 @@
+{% load static %}
+
+<!--
+
+=========================================================
+* Rocket - SaaS Bootstrap Template
+=========================================================
+
+* Product Page: https://themesberg.com/product/bootstrap-themes/rocket-saas-bootstrap-template
+* Copyright 2020 Themesberg (https://www.themesberg.com)
+* License (https://themesberg.com/licensing)
+
+* Coded by https://themesberg.com
+
+=========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+    <head> 
+        <!-- Primary Meta Tags -->
+    <title>Class Planit</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="title" content="Helping teachers create, share, and assess more engaging lessons">
+    <meta name="author" content="Class Planit">
+    <meta name="description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better lessons in minutes.">
+    <meta name="keywords" content="lesson plans, teacher pay teachers, worksheets" />
+    <link rel="canonical" href="www.classplanit.co">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="www.classplanit.co">
+    <meta property="og:title" content="Class Planit - helping teachers create, share, and assess more engaging lessons.">
+    <meta property="og:description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better lessons in minutes.">
+    <meta property="og:image" content="www.classplanit.co">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="www.classplanit.co">
+    <meta property="twitter:title" content="Class Planit - helping teachers create, share, and assess more engaging lessons.">
+    <meta property="twitter:description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better lessons in minutes.">
+    <meta property="twitter:image" content="{% static 'images/dashboard/twitter_image.png' %}">
+    
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="120x120" href="{% static 'images/dashboard/icon_120.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'mages/icon_40.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/dashboard/icon_40.png' %}">
+    
+    <link rel="mask-icon" href="{% static 'images/dashboard/icon.svg' %}" color="#ffffff">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="theme-color" content="#ffffff">
+    
+    <!-- Fontawesome -->
+    <link type="text/css" href="{% static 'vendor/dashboard/fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+    
+    <!-- Prism -->
+    <link type="text/css" href="{% static 'vendor/dashboard/prismjs/themes/prism.css' %}" rel="stylesheet">
+    
+    <!-- VectorMap -->
+    <link rel="stylesheet" href="{% static 'vendor/dashboard/jqvmap/dist/jqvmap.min.css' %}">
+    
+    <!-- Rocket CSS -->
+    <link type="text/css" href="{% static 'css/dashboard/rocket.css' %}" rel="stylesheet">
+
+    <!-- NOTICE: You can use the _analytics.html partial to include production code specific code & trackers -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="{% static 'forms_ajaxified/js/forms_ajaxified.js' %}"></script>
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <script type="text/javascript">
+    tinymce.init({
+      selector: '.myeditablediv',
+      inline: true,
+      menubar: false
+    });
+    </script>
+    <style>
+        .hide {
+        display: none;
+        }
+
+        .myDIV:hover + .hide {
+        display: block;
+        }
+    </style>
+    </head>
+
+<body>
+
+        <div class="preloader bg-soft flex-column justify-content-center align-items-center">
+    <img class="loader-element" src="{% static 'images/dashboard/circle_logo.svg' %}" height="50" alt="Rocket logo">
+</div>
+
+        <nav class="navbar navbar-dark navbar-theme-primary col-12 d-md-none">
+    <a class="navbar-brand mr-lg-5" href="../../index.html">
+        <img class="navbar-brand-dark" src="../../assets/img/brand/light.svg" alt="Pixel logo" /> <img class="navbar-brand-light" src="../../assets/img/brand/dark.svg" alt="Pixel Logo Dark" />
+    </a>
+    <div class="d-flex align-items-center">
+        <button class="navbar-toggler d-md-none collapsed" type="button" data-toggle="collapse" data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</nav>
+
+        <div class="container-fluid bg-soft">
+            <div class="row">
+                <div class="col-12">
+
+                    <!-- <nav id="sidebarMenu" class="sidebar col-md-4 col-lg-3 col-xl-2 d-md-block bg-primary text-white collapse"> -->
+                        <nav id="sidebarMenu" class="sidebar d-md-block bg-primary text-white collapse px-4">
+                            <div class="sidebar-sticky pt-4 mx-auto">
+                              <div class="user-card d-flex align-items-center justify-content-between justify-content-md-center pb-4">
+                                <div class="d-flex align-items-center">
+                                  <div class="user-avatar lg-avatar mr-4">
+                                    <img src="{% static 'images/dashboard/user_default.png' %}" class="card-img-top rounded-circle border-white" alt="user">
+                                  </div>
+                                  <div class="d-block">
+                                    <h2 class="h6">Hi, Audrey</h2>
+                                    <a href="../sign-in.html" class="btn btn-secondary btn-xs"><span class="mr-2"><span class="fas fa-sign-out-alt"></span></span>Sign Out</a>
+                                  </div>
+                                </div>
+                                <div class="collapse-close d-md-none">
+                                    <a href="#sidebarMenu" class="fas fa-times" data-toggle="collapse"
+                                        data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="true"
+                                        aria-label="Toggle navigation"></a>
+                                </div>
+                              </div>
+                              <ul class="nav flex-column mt-4">
+                                  {% if 'Overview' in page %}
+                                <li class="nav-item  active ">
+                                    {% else %}
+                                    <li class="nav-item">
+                                    {% endif %}
+                                  <a href="{% url 'Dashboard' week_of='Current' %}" class="nav-link">
+                                      <span class="sidebar-icon"><span class="fas fa-chart-pie"></span></span>
+                                      <span>Overview</span>
+                                  </a>
+                                </li>
+                                {% if 'Classrooms' in page %}
+                                <li class="nav-item  active ">
+                                    {% else %}
+                                    <li class="nav-item">
+                                    {% endif %}
+                                  <a href="{% url 'classroom_list' %}" class="nav-link d-flex align-items-center justify-content-between">
+                                      <span>
+                                        <span class="sidebar-icon"><i class="fa fa-chalkboard-teacher"></i></span>
+                                        Classrooms
+                                      </span>
+                                      
+                                  </a>
+                                </li>
+                          
+                                {% if 'Standards' in page %}
+                                <li class="nav-item  active ">
+                                    {% else %}
+                                    <li class="nav-item">
+                                    {% endif %}
+                                  <a href="../dashboard/traffic-sources.html" class="nav-link">
+                                      <span class="sidebar-icon"><span class="fas fa-chart-bar"></span></span>
+                                      <span>Standards Tracking</span>
+                                  </a>
+                                </li>
+                               
+                          
+                                {% if 'Assignments' in page %}
+                                <li class="nav-item  active ">
+                                    {% else %}
+                                    <li class="nav-item">
+                                    {% endif %}
+                                  <a href="../dashboard/tasks.html" class="nav-link">
+                                      <span class="sidebar-icon"><span class="fas fa-clipboard-list"></span></span>
+                                      <span>Assignments</span>
+                                  </a>
+                                </li>
+                                <li class="nav-item ">
+                                  <a href="../dashboard/settings.html" class="nav-link">
+                                      <span class="sidebar-icon"><span class="fas fa-cog"></span></span>
+                                      <span>Settings</span>
+                                  </a>
+                                </li>
+                          
+                                <li role="separator" class="dropdown-divider mt-4 mb-3 border-blue"></li>
+                                <li class="nav-item">
+                                  <a href="https://themesberg.com/docs/rocket/getting-started/quick-start/" target="_blank" class="nav-link">
+                                    <span class="sidebar-icon"><span class="fas fa-book"></span></span>
+                                    <span>Tutorials</span>
+                                  </a>
+                                </li>
+                                <li class="nav-item">
+                                  <a href="../../index.html" class="nav-link d-flex align-items-center">
+                                    <span class="sidebar-icon">
+                                      <img src="{% static 'images/dashboard/circle_logo.svg' %}" height="26" width="26" alt="Rocket Logo">
+                                    </span>
+                                    <span>Contact Us</span>
+                                  </a>
+                                </li>
+                              
+                           
+                              </ul>
+                            </div>
+                          </nav>
+                          
+{% block content %}
+{% endblock %}
+</div>
+</div>
+</div>
+<script>
+$(document).ready(function() {
+    $('[data-class="form_ajaxified"]').formsAjaxified();
+});
+</script>
+<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+
+<script>
+tinymce.init({
+    selector: 'textarea#basic-example',
+    height: 700,
+    menubar: false,
+    plugins: [
+        'advlist autolink lists link image charmap print preview anchor',
+        'searchreplace visualblocks code fullscreen',
+        'insertdatetime media table paste code help wordcount',
+        'noneditable'
+    ],
+    toolbar: 'undo redo | formatselect | ' +
+    'bold italic backcolor | alignleft aligncenter ' +
+    'alignright alignjustify | bullist numlist outdent indent | ' +
+    'removeformat | help',
+    content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+    });
+</script>
+<script>
+var dfreeHeaderConfig = {
+    selector: '.dfree-header',
+    menubar: false,
+    inline: true,
+    toolbar: false,
+    plugins: [ 'quickbars' ],
+    quickbars_insert_toolbar: 'undo redo',
+    quickbars_selection_toolbar: 'italic underline',
+    };
+
+    var dfreeBodyConfig = {
+    selector: '.dfree-body',
+    menubar: false,
+    inline: true,
+    plugins: [
+        'autolink',
+        'codesample',
+        'link',
+        'lists',
+        'media',
+        'powerpaste',
+        'table',
+        'image',
+        'quickbars',
+        'codesample',
+        'help'
+    ],
+    toolbar: false,
+    quickbars_insert_toolbar: 'quicktable image media codesample',
+    quickbars_selection_toolbar: 'bold italic underline | formatselect | blockquote quicklink',
+    contextmenu: 'undo redo | inserttable | cell row column deletetable | help',
+    powerpaste_word_import: 'clean',
+    powerpaste_html_import: 'clean',
+    };
+
+    tinymce.init(dfreeHeaderConfig);
+    tinymce.init(dfreeBodyConfig);
+
+</script>
+
+<script src="https://cdn.tiny.cloud/1/0ak6ftt9ng9va9e98pl0iwxwwh0rb1tipwsg8it4mjmcbkjb/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+<script src="{% static 'base/js/tinymce/tinymce.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'base/js/tinymce/custom.js' %}" ></script>
+<!-- Core -->
+<script src="{% static 'vendor/dashboard/jquery/dist/jquery.min.js' %}"></script>
+<script src="{% static 'vendor/dashboard/popper.js/dist/umd/popper.min.js' %}"></script>
+<script src="{% static 'vendor/dashboard/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'vendor/dashboard/headroom.js/dist/headroom.min.js' %}"></script>
+
+<!-- Vendor JS -->
+<script src="{% static 'vendor/dashboard/countup.js/dist/countUp.min.js' %}"></script>
+<script src="{% static 'vendor/dashboard/jquery-countdown/dist/jquery.countdown.min.js' %}"></script>
+<script src="{% static 'vendor/dashboard/smooth-scroll/dist/smooth-scroll.polyfills.min.js' %}"></script>
+<script src="{% static 'vendor/dashboard/prismjs/prism.js' %}"></script>
+
+<!-- Chartist -->
+<script src="{% static 'vendor/dashboard/chartist/dist/chartist.min.js' %}"></script>
+<script src="{% static 'vendor/dashboard/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js' %}"></script>
+
+<!-- Vector Maps -->
+<script src="{% static 'vendor/dashboard/jqvmap/dist/jquery.vmap.min.js' %}"></script>
+<script src="{% static 'vendor/dashboard/jqvmap/dist/maps/jquery.vmap.world.js' %}"></script>
+
+<!-- Rocket JS -->
+<script src="{% static 'js/dashboard/rocket.js' %}"></script>
+
+</body>
+
+<script type="text/javascript">
+function printDiv(divName) {
+var printContents = document.getElementById(divName).innerHTML;
+w=window.open();
+w.document.write(printContents);
+w.print();
+w.close();
+}
+</script>
+
+</html>
+
+
+
+
+
+
+

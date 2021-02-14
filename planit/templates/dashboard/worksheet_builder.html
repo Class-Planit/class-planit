@@ -19,46 +19,10 @@
     <div class="row">
        
         <div class="col-lg-9">
-            <table style="border-collapse: collapse; width: 100%;" border="1">
-                <thead>
-                  <tr>
-                    <th>Term</th>
-                    <th>Description</th>
-                    
-                  </tr>
-                </thead>
-                <tbody>
-                    {% for topic in topic_list %}
-                  {% if topic.item %}
-                  <tr>
-                     
-                    <td>{{ topic.item }}</td>
-                    <td>
-                        {% for line in topic.description.all %}
-                        {% ifchanged line.id %}
-                        <p>{{ line.description }}</p>
-                        {% endifchanged %}
-                        {% endfor %}
-                      </td>
-
-                    
-                  </tr>
-                {% endif %}
-               {% endfor %}
-               <tr>
-                     
-                <td> </td>
-                <td>
-
-                    <p> </p>
-                    
-                  </td>
-
-                
-              </tr>
-                </tbody>
-              </table>
-
+            {% for item in generated_questions %}
+            <li>{{ forloop.counter }}. {{ item.0 }} | <span style="color:blue">{{ item.1 }}</span></li>
+            {% endfor %}
+            <hr>
 
         </div>
         <div class="col-lg-3">
@@ -213,4 +177,5 @@
 </div>
 </footer>
 </main>
+
 {% endblock %}

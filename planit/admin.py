@@ -19,13 +19,15 @@ class textBookBackgroundAdmin(admin.ModelAdmin):
     search_fields = ['line_text']
 
 admin.site.register(User)
+admin.site.register(school_user)
+
+
 admin.site.register(standardSet)
 admin.site.register(gradeLevel)
 admin.site.register(academicYear)
 admin.site.register(studentProfiles)
 admin.site.register(classroom)
 admin.site.register(standardSubjects)
-admin.site.register(classroomSubjects)
 admin.site.register(lessonObjective)
 admin.site.register(singleStandard)
 admin.site.register(vocabularyWord)

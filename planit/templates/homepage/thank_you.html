@@ -131,7 +131,7 @@
                 <div class="text-column col-md-6 col-sm-12 col-xs-12">
                 	<div class="inner">
                     	
-                        <h2>{{ user_profile.first_name }} {{ user_profile.last_name }}, Thanks for Signing Up!</h2>
+                        <h2>{% if user_profile.first_name %}{{ user_profile.first_name|title }} {{ user_profile.last_name|title }},{% endif %} Thanks for Signing Up!</h2>
                         <p>We are onboarding new teachers everyday for our beta version. We will be in touch shortly as we move through our waitlist.</p>
                         <a href="{% url 'homepage' %}" class="theme-btn btn-style-two">Back to Home</a>
                     </div>

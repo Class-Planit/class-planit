@@ -1,0 +1,30 @@
+Linguistic,Knowledge Remember (dates  events  vocabulary  5W’s),Name  label  tell  recall  report  list  define  record  memorize  narrate  quote  cite  match,1,1
+Linguistic,Understand Describe  Explain (find meaning  interpret facts  infer causes & consequences),Review  describe  express  discuss  report  explain  restate  question  examine  annotate  summarize,1,2
+Linguistic,Apply (solve problems),Translate  teach  interview  adapt  interpret  apply  communicate,1,3
+Linguistic,Analyze (recognize & explain patterns and meaning  see parts and wholes),Facilitate  observe  debate  discuss  criticize  inquire  question  relate  interpret  probe  investigate,1,4
+Linguistic,Evaluate (make choices),Critique  clarify  judge  debate  justify  choose  rate  deduce,1,5
+Linguistic,Create (produce product),Compose  reflect  propose  produce  formulate  plan  hypothesize  order,1,6
+Spatial,Knowledge Remember (dates  events  vocabulary  5W’s),Draw  match  chart  graph  sort  describe  sketch  show  illustrate  diagram,2,1
+Spatial,Understand Describe  Explain (find meaning  interpret facts  infer causes & consequences),Locate  outline  tell  summarize  identify  question  recognize  review  describe  expand  express,2,2
+Spatial,Apply (solve problems),Translate  draw  illustrate  sketch  apply  make  visualize  exhibit,2,3
+Spatial,Analyze (recognize & explain patterns and meaning  see parts and wholes),Adapt  paint  express  analyze  differentiate  test  diagram  order  distinguish  discover  contrast,2,4
+Spatial,Evaluate (make choices),Predict  measure  estimate  defend  order  analyze  diagram  interpret,2,5
+Spatial,Create (produce product),Formulate  reflect  propose  imagine  design  plan  infer  organize  suppose,2,6
+Musical,Knowledge Remember (dates  events  vocabulary  5W’s),Play  select  cite  match  repeat  memorize  replay  choose  examine  evaluate  repeat,3,1
+Musical,Understand Describe  Explain (find meaning  interpret facts  infer causes & consequences),Express  convert  expand  record  recognize  tell  relate  identify  summarize,3,2
+Musical,Apply (solve problems),Characterize    practice  compute  teach  apply  adapt  simulate,3,3
+Musical,Analyze (recognize & explain patterns and meaning  see parts and wholes),Interpret  group  inventory  inspect  experiment  sort  diagram  classify  organize  dissect  separate  detect,3,4
+Musical,Evaluate (make choices),Decide  appraise  assess  judge  score  defend  validate  conclude,3,5
+Musical,Create (produce product),Compose  arrange  modify  combine  prepare  create  infer  improve,3,6
+Bodily-Kinesthetic,Knowledge Remember (dates  events  vocabulary  5W’s),Find  sort  play  classify  show  reproduce  select  choose  recite  restate  underline  highlight,4,1
+Bodily-Kinesthetic,Understand Describe  Explain (find meaning  interpret facts  infer causes & consequences),Locate  express  act out  observe  dramatize  roleplay  practice  convert  review,4,2
+Bodily-Kinesthetic,Apply (solve problems),Demonstrate     apply  dramatize  mime  operate  teach,4,3
+Bodily-Kinesthetic,Analyze (recognize & explain patterns and meaning  see parts and wholes),Interpret  group  inventory  inspect  experiment  sort  diagram  classify  organize  dissect  separate  detect,4,4
+Bodily-Kinesthetic,Evaluate (make choices),Measure  probe  estimate  rank  rate  award  debate  argue,4,5
+Bodily-Kinesthetic,Create (produce product),Assemble  invent  construct  collect  design  arrange  prepare  classify,4,6
+Logical Mathematical,Knowledge Remember (dates  events  vocabulary  5W’s),Label  select  cite  name  group  test  solve  quiz  underline  match,5,1
+Logical Mathematical,Understand Describe  Explain (find meaning  interpret facts  infer causes & consequences),Recognize  list  identify  review  describe  retell  calculate  solve  explain  tally  convert  expand,5,2
+Logical Mathematical,Apply (solve problems),Draw  act out  apply  collect     mime  adapt  practice  interpret,5,3
+Logical Mathematical,Analyze (recognize & explain patterns and meaning  see parts and wholes),Calculate  computer  question  solve  inventory  sift  compare  probe  distinguish  differentiate,5,4
+Logical Mathematical,Evaluate (make choices),Rate  value  tally  assess  select  judge  predict  choose  estimate,5,5
+Logical Mathematical,Create (produce product),Propose  blend  formulate  infer  prepare  classify  design  generate,5,6

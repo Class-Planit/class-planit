@@ -26,23 +26,13 @@
     </div>
     <section class="section section-md ">
         <div class="container">
-            <div class="row">
-                <div class="col-sm-2">
-                    <button type="button" class="btn btn-sm btn-block btn-outline-secondary">Previous Week</button>
-                </div>
-                <div class="col-sm-8">
-                    
-                </div>
-                <div class="col-sm-2">
-                    <button type="button" class="btn btn-sm btn-block btn-outline-secondary">Next Week</button>
-                </div>
-            </div>
+
             <div class="row">
                 <div class="col-lg-2">
                     
                 </div>
                 <div class="col-lg-8">
-                    <h2 class="h4 mb-4"><center>Lesson Planners for Week of {{ active_week }}</center></h2>
+                    <h2 class="h4 mb-4"><center>Your Classrooms:</center></h2>
                 </div>
                 <div class="col-lg-2">
                     
@@ -107,7 +97,7 @@
             </div>
             <div class="row justify-content-center">
                 <div class="col-12 col-sm-6 col-xl-4 mb-4">
-                    <a href="{% url 'create_objective' user_id=user_profile.id week_of='Current' %}" class="card border-light animate-up-3 shadow-soft p-0 p-lg-4">     
+                    <a href="{% url 'create_classroom' user_id=user_profile.id %}" class="card border-light animate-up-3 shadow-soft p-0 p-lg-4">     
                         <div class="card-body">
                             <div class="row d-block d-xl-flex align-items-center">
                                 <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
@@ -116,13 +106,13 @@
                                     </div>
                                     <div class="d-sm-none">
                                         <h2 class="h5"> </h2>
-                                        <h3 class="mb-1">New Planner</h3>
+                                        <h3 class="mb-1">New Classroom</h3>
                                     </div>
                                 </div>
                                 <div class="col-12 col-xl-7 px-xl-0">
                                     <div class="d-none d-sm-block">
                                         <h2 class="h5"> </h2>
-                                        <h3 class="mb-1">New Planner</h3>
+                                        <h3 class="mb-1">New Classroom</h3>
                                     </div>
                                     
                                     
@@ -136,19 +126,15 @@
                 
                 </div>
             
-                {% for objective in objective_matches %}
+                {% for classroom in classroom_profiles %}
                 <div class="col-12 col-lg-4 mb-3">
-                    <a href="{% url 'activity_builder' user_id=1 class_id=1 lesson_id=objective.id subject=objective.subject_id %}#heading" class="card border-light animate-up-3 shadow-soft p-0 p-lg-4">     
+                    <a href="{% url 'classrooms' class_id=classroom.id %}#heading" class="card border-light animate-up-3 shadow-soft p-0 p-lg-4">     
                         <div class="card-body">
-                            <h5 class="mb-4">{{ objective.subject }} : {{ objective.lesson_classroom }}</h5>
-                            <p class="text-gray mb-4">{{ objective.teacher_objective }}</p>
+                            <h5 class="mb-4">{{ classroom.classroom_title }}</h5>
+                            <p class="text-gray mb-4">--</p>
                                                             
                                 <div class="ml-sm-3">
-                                {% for standard in objective.teacher_objective.objectives_standards.all %}
-                                <li>
-                                    {{ standard.standard_objective }}
-                                </li>
-                                {% endfor %}
+                               --
                                 </div>
                         </div>
                     </a>

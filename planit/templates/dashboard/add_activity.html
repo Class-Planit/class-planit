@@ -1,0 +1,300 @@
+
+{% extends 'dashboard/base.html' %}
+{% load static %}
+{% block content %}
+<main class="content">
+
+ 
+   
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+        <div class="btn-toolbar">
+            <a href="#" class="btn btn-sm btn-outline-secondary"><i class="fas fa-arrow-left"></i> Back to Lesson Plan</a>
+
+
+        </div>
+        <div class="btn-group mr-2">
+            
+
+            <button  onclick="window.print();return false;" type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+            <input type="button" class="btn btn-sm btn-outline-secondary" onclick="printDiv('print-content')" value="Export"/>
+
+        </div>
+    </div>
+    <div class="row">
+       
+        <div class="col-12 col-xl-9">
+            <div class="card card-body bg-white border-light shadow-sm mb-4">
+                <h2 class="h5 mb-4">Activity</h2>
+                {% if form.errors %}
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <h4 style="color:#cb6318"> {{ error }} </h4>
+                        {% endfor %}
+                    {% endfor %}
+                {% endif %}
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="lesson_text">Add Activity</label>
+                        <textarea class="form-control" name='lesson_text' id="lesson_text" rows="4"></textarea>
+                      </div>
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-primary">Save All</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="col-12 px-0 mb-4">
+                <div class="card border-light shadow-sm">
+                    <div class="card-body">
+                        <h6>Differentiation:</h6>
+                        <div class="progress">
+                            <div
+                              class="progress-bar bg-success"
+                              role="progressbar"
+                              style="width: 25%"
+                              aria-valuenow="25"
+                              aria-valuemin="0"
+                              aria-valuemax="100"
+                            ></div>
+                          </div>
+                          <h6>Difficulty:</h6>
+                          <div class="progress">
+                            <div
+                              class="progress-bar bg-info"
+                              role="progressbar"
+                              style="width: 50%"
+                              aria-valuenow="50"
+                              aria-valuemin="0"
+                              aria-valuemax="100"
+                            ></div>
+                          </div>
+                          <h6>Engagement:</h6>
+                          <div class="progress">
+                            <div
+                              class="progress-bar bg-warning"
+                              role="progressbar"
+                              style="width: 75%"
+                              aria-valuenow="75"
+                              aria-valuemin="0"
+                              aria-valuemax="100"
+                            ></div>
+                          </div>
+                          <h6>Alignment:</h6>
+                          <div class="progress">
+                            <div
+                              class="progress-bar bg-danger"
+                              role="progressbar"
+                              style="width: 100%"
+                              aria-valuenow="100"
+                              aria-valuemin="0"
+                              aria-valuemax="100"
+                            ></div>
+                          </div>
+                 
+                     
+                    </div>
+                </div>
+            </div>
+         
+            <div class="col-12 px-0 mb-4">
+                <div class="card border-light shadow-sm">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col">
+                            <h2 class="h5">Recommended Activities:</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <a href="#" >
+                            Students will create a living museum where they become one of the key people of the American Revolution</a>
+                            <hr>
+                        <a href="#" >
+                            Students will divide the key people of the Revolution between those that were for and against Independence.</a>
+                            <hr>
+                        {% for item in not_selected_activities|slice:"5" %}
+                        {% ifchanged item.bloom %}
+                       <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=10 item_id=item.id action=0 %}#heading" >
+                        {{ item.lesson_text }}</a>
+                        <hr>
+                        {% endifchanged %}
+                        {% endfor %}
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 px-0 mb-4">
+                <div class="card border-light shadow-sm">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col">
+                            <h2 class="h5">Key Terms:</h2>
+                            </div>
+                            <div class="col text-right">
+                                <a href="#" class="btn btn-sm btn-secondary">Add New</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                    <div class="tagcloud">
+                        {% for topic in topic_lists_selected %}
+                        {% ifchanged topic.item %}
+                        <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=6 item_id=topic.id action=0 %}" data-toggle="tooltip" data-placement="top" title="{{ topic }} - {% for item in topic.description.all%}{{item }} ; {% endfor %}" class="btn btn-sm btn-outline-success">{{ topic.item }}</a>
+                      
+                        {% endifchanged %}
+                        {% endfor %}
+                        {% if topic_match %}
+                            {% for line in topic_lists_matched %}
+                                {% if line.item %}
+                                {% ifchanged line.item %}
+                                <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=6 item_id=line.id action=1 %}" class="btn btn-sm btn-outline-secondary" data-toggle="tooltip" data-placement="top" title="{{ line.item }} - {% for item in line.description.all%}{{item }} ; {% endfor %}" >{{ line.item }}</a>
+                                {% endifchanged %}
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            {% for topic in topic_lists %}
+                            {% ifchanged topic.0.id %}
+                        
+                            <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=6 item_id=topic.0.id action=1 %}" class="btn btn-sm btn-outline-secondary" data-toggle="tooltip" data-placement="top" title="{{ topic.0 }} - {% for item in topic.0.description.all%}{{item }} ; {% endfor %}" >{{ topic.0.item }}</a>
+                        
+                            {% endifchanged %}
+                            {% endfor %}
+                        {% endif %}
+                        
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="col-12 px-0 mb-4">
+                <div class="card border-light shadow-sm">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col">
+                            <h2 class="h5">Main Questions:</h2>
+                            </div>
+                            <div class="col text-right">
+                                <a href="#" class="btn btn-sm btn-secondary">Add New</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table align-items-center table-flush">
+                            <thead class="thead-light">
+                                {% for item in questions_selected %}
+                            <tr>
+                                <th scope="col">{{ forloop.counter }}. {{ item.question|title }}</th>
+                               
+                                
+                            </tr>
+                            {% endfor %}
+
+                            {% for item in question_list %}
+                           {% if item.question %}
+                            <tr>
+                                <th scope="col">{{ forloop.counter }}. {{ item.question|title }}</th>
+                               
+                                
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                            </thead>
+                      
+                        </table>
+                    </div>
+              
+                </div>
+                </div>
+            </div>
+          
+        </div>
+    </div>
+      <!-- Modal -->
+      <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Add New Key Word</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+            ...
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+        </div>
+    </div>
+     <!-- Modal -->
+     <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModal2Label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="exampleModal2Label">Add New Activities</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <form  method="POST">
+                    {% if form2.errors %}
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <h4 style="color:#cb6318"> {{ error }} </h4>
+                        {% endfor %}
+                    {% endfor %}
+                {% endif %}
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="exampleFormControlTextarea1">Activity:</label>
+                        <textarea class="form-control" name='lesson_text' id="exampleFormControlTextarea1" rows="4"></textarea>
+                      </div>
+                    <div class="form-actions">
+                        <button>Send</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <footer class="footer section py-5">
+<div class="container-fluid">
+<div class="row">
+<div class="col-12 col-lg-6 mb-4 mb-lg-0">
+<p class="mb-0 text-center text-xl-left">Copyright © 2019-<span class="current-year"></span> <a class="text-primary font-weight-normal" href="https://themesberg.com" target="_blank">Themesberg</a></p>
+</div>
+
+<div class="col-12 col-lg-6">
+<!-- List -->
+<ul class="list-inline list-group-flush list-group-borderless text-center text-xl-right mb-0">
+<li class="list-inline-item px-0 px-sm-2">
+    <a href="https://themesberg.com/about">About</a>
+</li>
+<li class="list-inline-item px-0 px-sm-2">
+    <a href="https://themesberg.com/themes">Themes</a>
+</li>
+<li class="list-inline-item px-0 px-sm-2">
+    <a href="https://themesberg.com/blog">Blog</a>
+</li>
+<li class="list-inline-item px-0 px-sm-2">
+    <a href="https://themesberg.com/contact">Contact</a>
+</li>
+</ul>
+<!-- End List -->
+</div>
+</div>
+</div>
+</footer>
+</main>
+{% endblock %}

@@ -140,42 +140,170 @@
                             {% endfor %}
                             <form method="POST" enctype="multipart/form-data">
                             {% csrf_token %}
-                            
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                  <label for="current_state">Your State?</label>
-                                  <input type="text" class="form-control" name='current_state' id="current_state">
+                            <div class="row">
+                                <div class="col-6">
+                                    <h4>Current Grades You Teach?</h4>
+                                  <input type="text" class="form-control" name='current_grade'>
                                 </div>
-                                <div class="form-group col-md-6">
-                                  <label for="current_grade">Current Grades You Teach?</label>
-                                  <input type="text" class="form-control" name='current_grade' id="current_grade">
+                                <br>
+                                <div class="col-6">
+                                    <h4>Your State/Region?</h4>
+                                  <input type="text" class="form-control" name='current_state' placeholder="Your State">
                                 </div>
-                               
                               </div>
-                            <div class="form-group">
-                              <label for="current_planning">How do you currently plan your lessons?</label>
-                              <textarea class="form-control" name='current_planning' id="current_planning" rows="3"></textarea>
+                              <br>
+                            <div class="col-12">
+                                <h3>1. On a Scale of 1 - 5, how happy are you with your current lesson planning tools?</h3>
+                                <hr>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name='happy_scale' id="happy_scale" value="1" checked>
+                                    <label class="form-check-label" for="exampleRadios1">
+                                       1. Very Unhappy OR I need new lesson planning tools!
+                                    </label>
+                                  </div>
+                                  <div class="form-check">
+                                    <input class="form-check-input" type="radio" name='happy_scale' id="happy_scale" value="2">
+                                    <label class="form-check-label" for="exampleRadios2">
+                                       2. Unhappy OR My lesson planning tools can be better
+                                    </label>
+                                  </div>
+                                  <div class="form-check">
+                                    <input class="form-check-input" type="radio" name='happy_scale' id="happy_scale" value="3">
+                                    <label class="form-check-label" for="exampleRadios2">
+                                       3. Satisfactory OR They get the job done
+                                    </label>
+                                  </div>
+                                  <div class="form-check">
+                                    <input class="form-check-input" type="radio" name='happy_scale' id="happy_scale" value="4">
+                                    <label class="form-check-label" for="exampleRadios2">
+                                        4. Happy OR My lesson planning tools are good
+                                    </label>
+                                  </div>
+                                  <div class="form-check">
+                                    <input class="form-check-input" type="radio" name='happy_scale' id="happy_scale" value="5">
+                                    <label class="form-check-label" for="exampleRadios2">
+                                        5. Very Happy OR I love my lesson planning tools!
+                                    </label>
+                                  </div>
+
+                              
                             </div>
-                            <div class="form-group">
-                              <label for="happy_scale">On a Scale of 1 - 10, how happy are you with your current lesson planning tools?</label>
-                              <input type="text" class="form-control" name='happy_scale' id="happy_scale">
+                            <br>
+                            <br>
+                            <div class="col-12">
+                                <h3>2. How do you currently plan your lessons? </h3>
+                                <hr>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name='current_planning' id="current_planning" value="Online planner/educational platforms (ex: Planboard)" checked>
+                                    <label class="form-check-label" for="exampleRadios1">
+                                        Online planner/educational platforms (ex: Planboard)
+                                    </label>
+                                  </div>
+                                  <div class="form-check">
+                                    <input class="form-check-input" type="radio" name='current_planning' id="current_planning" value="Physical planner (written notes, calendar,">
+                                    <label class="form-check-label" for="exampleRadios2">
+                                        Physical planner (written notes, calendar,
+                                    </label>
+                                  </div>
+                                  <div class="form-check">
+                                    <input class="form-check-input" type="radio" name='current_planning' id="current_planning" value="Resources from other teachers (ex: Teachers Pay Teachers)">
+                                    <label class="form-check-label" for="exampleRadios2">
+                                        Resources from other teachers (ex: Teachers Pay Teachers)
+                                    </label>
+                                  </div>
+                                  <div class="form-check">
+                                    <input class="form-check-input" type="radio" name='current_planning' id="current_planning" value="Other">
+                                    <label class="form-check-label" for="exampleRadios2">
+                                        Other
+                                    </label>
+                                  </div>
+
+                              
                             </div>
-                         
+                            <br>
+                            <div class="col-12">
+                                <h3>3. What makes you happy about your current lesson planning tools? (can select more than one)? </h3>
+                                <hr>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name='lesson_good' id="lesson_good" value=" Time management" checked>
+                                    <label class="form-check-label" for="exampleRadios1">
+                                       Time management
+                                    </label>
+                                  </div>
+                                  <div class="form-check">
+                                    <input class="form-check-input" type="radio" name='lesson_good' id="lesson_good" value="Organization">
+                                    <label class="form-check-label" for="exampleRadios2">
+                                      Organization
+                                    </label>
+                                  </div>
+                                  <div class="form-check">
+                                    <input class="form-check-input" type="radio" name='lesson_good' id="lesson_good" value="Data driven (track student progress)">
+                                    <label class="form-check-label" for="exampleRadios2">
+                                       Data driven (track student progress)
+                                    </label>
+                                  </div>
+                                  <div class="form-check">
+                                    <input class="form-check-input" type="radio" name='lesson_good' id="lesson_good" value="Personalization">
+                                    <label class="form-check-label" for="exampleRadios2">
+                                       Personalization
+                                    </label>
+                                  </div>
+                                  <div class="form-check">
+                                    <input class="form-check-input" type="radio" name='lesson_good' id="lesson_good" value="Access to Engaging Content">
+                                    <label class="form-check-label" for="exampleRadios2">
+                                       Access to Engaging Content
+                                    </label>
+                                  </div>
+
+                              
+                            </div>
+                            <br>
+                            <div class="col-12">
+                                <h3>4. What are some challenges for your current lesson planning tools? (can select more than one)? </h3>
+                                <hr>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name='lesson_bad' id="lesson_bad" value="Time management" checked>
+                                    <label class="form-check-label" for="exampleRadios1">
+                                       Time management
+                                    </label>
+                                  </div>
+                                  <div class="form-check">
+                                    <input class="form-check-input" type="radio" name='lesson_bad' id="lesson_bad" value="Organization">
+                                    <label class="form-check-label" for="exampleRadios2">
+                                      Organization
+                                    </label>
+                                  </div>
+                                  <div class="form-check">
+                                    <input class="form-check-input" type="radio" name='lesson_bad' id="lesson_bad" value="Data driven (track student progress)">
+                                    <label class="form-check-label" for="exampleRadios2">
+                                       Data driven (track student progress)
+                                    </label>
+                                  </div>
+                                  <div class="form-check">
+                                    <input class="form-check-input" type="radio" name='lesson_bad' id="lesson_bad" value="Personalization">
+                                    <label class="form-check-label" for="exampleRadios2">
+                                       Personalization
+                                    </label>
+                                  </div>
+                                  <div class="form-check">
+                                    <input class="form-check-input" type="radio" name='lesson_bad' id="lesson_bad" value="Access to Engaging Content">
+                                    <label class="form-check-label" for="exampleRadios2">
+                                       Access to Engaging Content
+                                    </label>
+                                  </div>
+                              
+                            </div>
+                            <br>
                             <div class="form-group">
-                                <label for="lesson_good">What makes you happy about your current lesson planning tools?</label>
-                                <textarea class="form-control" id="lesson_good" name='lesson_good' rows="3"></textarea>
-                              </div>
-                              <div class="form-group">
-                                <label for="lesson_bad">What are some challenges for your current lesson planning tools?</label>
-                                <textarea class="form-control" id="lesson_bad" name='lesson_bad' rows="3"></textarea>
-                              </div>
-                              <div class="form-group">
-                                <label for="ideal_feature">What is one feature you would love for your current lesson planning tool to offer?</label>
+                                <h3>5. What is one feature you would love for your current lesson planning tool to offer? <small>(optional)</small></h3>
                                 <textarea class="form-control" id="ideal_feature" name='ideal_feature' rows="3"></textarea>
-                              </div>
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                            <div class="mt-3">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+
                           </form>
-                   
+
                     </div>
                 </div>
                 

@@ -25,9 +25,9 @@
             <nav>
                 <div class="nav nav-tabs flex-column flex-md-row bg-white shadow-soft border border-light justify-content-around rounded mb-lg-3 py-3" id="nav-tab" role="tablist">
                     <a class="nav-item nav-link rounded mr-md-3 active" id="nav-content-research-tab" data-toggle="tab" href="#nav-content-research" role="tab" aria-controls="nav-content-research" aria-selected="true"><span class="d-block"><span class="fas fa-file-alt mr-2"></span><span class="font-weight-normal">Lesson Plan</span></span></a>
-                    <a class="nav-item nav-link rounded mr-md-3" id="nav-rank-track-tab" data-toggle="tab" href="#nav-rank-track" role="tab" aria-controls="nav-rank-track" aria-selected="false"><span class="fas fa-list mr-2"></span><span class="font-weight-normal">Digital Activities</span></a>
+                    <a class="nav-item nav-link rounded mr-md-3" id="nav-rank-track-tab" data-toggle="tab" href="#nav-rank-track" role="tab" aria-controls="nav-rank-track" aria-selected="false"><span class="fas fa-list mr-2"></span><span class="font-weight-normal">Digital Worksheets</span></a>
                     <a class="nav-item nav-link rounded mr-md-3" id="nav-web-monitor-tab" data-toggle="tab" href="#nav-web-monitor" role="tab" aria-controls="nav-web-monitor" aria-selected="false"><span class="fas fa-globe mr-2"></span><span class="font-weight-normal">Digital Resources</span></a>
-                    <a class="nav-item nav-link rounded mr-md-3" id="nav-backlink-research-tab" data-toggle="tab" href="#nav-backlink-research" role="tab" aria-controls="nav-backlink-research" aria-selected="false"><span class="fas fa-chart-line mr-2"></span><span class="font-weight-normal">Assessments</span></a>
+                    <a class="nav-item nav-link rounded mr-md-3" id="nav-backlink-research-tab" data-toggle="tab" href="#nav-backlink-research" role="tab" aria-controls="nav-backlink-research" aria-selected="false"><span class="fas fa-chart-line mr-2"></span><span class="font-weight-normal">Student Progress</span></a>
                   
                 </div>
             </nav>
@@ -81,65 +81,76 @@
                                                 <br>
                                         </div>
                                     <div class="container">
-                                        <h4><a data-toggle="modal" data-target="#exampleModal2" data-toggle="tooltip" data-placement="top" title="Click to Add New Term" >Lesson Activities:</a></h4>
-                                        <div class="col text-right">
-                                            <a href="{% url 'lesson_activity' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="btn btn-sm btn-secondary">Add New</a>
-                                        </div>
-                                        <br>
+                                        <div class="myDIV" style="width: 18rem;"><h4><a data-toggle="modal" data-target="#exampleModal2" data-toggle="tooltip" data-placement="top" title="Click to Add New Term" >Lesson Activities:</a></h4></div>
+                                        <div class="hide alert alert-light" role="alert" style="width: 18rem;"><i class="fas fa-arrow-up"></i> Click to Add Activity <i class="fas fa-arrow-up"></i></div>
                                         <div class='row'>
-                                            {% for activity in selected_activities %}
+                                        
                                             <div class='col-lg-4'>
-                                                <div class="card" style="width: 18rem;" border="1">
-                                                    <div class="card-body">
-                                                    
-                                                        <div class="dropdown">
-                                                        <button  class="card-title btn btn-light btn-block dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                            Activity {{ forloop.counter }}
-                                                        </button>
-                                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                            <a class="dropdown-item" href="#">Action</a>
-                                                            <a class="dropdown-item" href="#">Another action</a>
-                                                            <a class="dropdown-item" href="#">Something else here</a>
-                                                        </div>
-                                                        </div>
-                                                        <p class="card-text">{{ activity.lesson_text }}</p>
-                                                        <!--- Blooms -->
-                                                        {% if activity.bloom >= 600 %}
-                                                        <span class="badge badge-primary">Create</span>
-                                                        {% elif activity.bloom >= 500 %}
-                                                        <span class="badge badge-primary">Evaluate</span>
-                                                        {% elif activity.bloom >= 400 %}
-                                                        <span class="badge badge-primary">Analyze</span>
-                                                        {% elif activity.bloom >= 300 %}
-                                                        <span class="badge badge-primary">Apply</span>
-                                                        {% elif activity.bloom >= 200 %}
-                                                        <span class="badge badge-primary">Understand</span>
-                                                        {% else %}
-                                                        <span class="badge badge-primary">Know</span>
-                                                        {% endif %}
+                                            <table style="border-collapse: collapse; width: 100%;" border="1">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <div class="card" style="width: 18rem;" border="1">
+                                                                <div class="card-body">
+                                                                
+                                                                    <div class="dropdown">
+                                                                    <button  class="card-title btn btn-light btn-block dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                        Activity One
+                                                                    </button>
+                                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                                        <a class="dropdown-item" href="#">Action</a>
+                                                                        <a class="dropdown-item" href="#">Another action</a>
+                                                                        <a class="dropdown-item" href="#">Something else here</a>
+                                                                    </div>
+                                                                    </div>
+                                                                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                                                    <span class="badge badge-primary">Create</span>
+                                                                    <span class="badge badge-primary">Explain</span>
+                                                                    <span class="badge badge-success"><i class="fas fa-leaf"></i></span>
+                                                                    <span class="badge badge-success"><i class="fas fa-leaf"></i></span>
+                                                                
+                                                                </div>
+                                                                </div>
+                                                        </td>
                                                         
-                                                        <!--Multiple Intelligences -->
-                                                       {% if activity.mi >= 500 %}
-                                                        <span class="badge badge-success"><i class="fas fa-puzzle"></i></span>
-                                                        {% elif activity.mi >= 400 %}
-                                                        <span class="badge badge-success"><i class="fas fa-walking"></i></span>
-                                                        {% elif activity.mi >= 300 %}
-                                                        <span class="badge badge-success"><i class="fas fa-music"></i></span>
-                                                        {% elif activity.mi >= 200 %}
-                                                        <span class="badge badge-success"><i class="fas fa-eye"></i></span>
-                                                        {% else %}
-                                                        <span class="badge badge-success"><i class="fas fa-book-open"></i></span>
-                                                        {% endif %}
-                                                        <div class="card-footer text-muted">
-                                                            {% if activity.work_product %}
-                                                               <center>{{ activity.work_product|title }}</center>
-                                                            {% endif %}
-                                                        </div>
-                                                    </div>
-                                                    </div>
-                                       
+                                                    </tr>
+                                                </tbody>
+                                                    </table>
                                             </div>
-                                            {% endfor %}   
+                                            <div class='col-lg-4'>
+                                            <table style="border-collapse: collapse; width: 100%;" border="1">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <div class="card" style="width: 18rem;" border="1">
+                                                                <div class="card-body">
+                                                                
+                                                                    <div class="dropdown">
+                                                                    <button  class="card-title btn btn-light btn-block dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                        Activity Two
+                                                                    </button>
+                                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                                        <a class="dropdown-item" href="#">Action</a>
+                                                                        <a class="dropdown-item" href="#">Another action</a>
+                                                                        <a class="dropdown-item" href="#">Something else here</a>
+                                                                    </div>
+                                                                    </div>
+                                                                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                                                    <span class="badge badge-primary">Create</span>
+                                                                    <span class="badge badge-primary">Explain</span>
+                                                                    <span class="badge badge-success"><i class="fas fa-leaf"></i></span>
+                                                                    <span class="badge badge-success"><i class="fas fa-leaf"></i></span>
+                                                                
+                                                                </div>
+                                                                </div>
+                                                        </td>
+                                                        
+                                                    </tr>
+                                                </tbody>
+                                                    </table>
+                                            </div>
+                                            
+                                            
                                         </div>
                                         
                                         
@@ -151,9 +162,9 @@
                                 </div>
                                   <hr>
                                   <div class='container'>
-                                    <h4><a data-toggle="modal" data-target="#exampleModal" data-toggle="tooltip" data-placement="top" title="Click to Add New Term" >Key Term, Place, People:</a></h4>
-                                    <div class="col text-right">
-                                        <a href="#" class="btn btn-sm btn-secondary">Add New</a>
+                                    <div class="myDIV" style="width: 18rem;"><h4><a data-toggle="modal" data-target="#exampleModal" data-toggle="tooltip" data-placement="top" title="Click to Add New Term" >Key Term, Place, People:</a></h4></div>
+                                    <div class="hide alert alert-light" role="alert" style="width: 18rem;">
+                                        <i class="fas fa-arrow-up"></i> Click to Add Key Term <i class="fas fa-arrow-up"></i>
                                     </div>
                                     <div class='row'>
                                         <div class='col-lg-4'>
@@ -193,7 +204,7 @@
                                  <hr>
                                  <div class='container'>
 
-                                    <h4><a data-toggle="modal" data-target="#exampleModal" data-toggle="tooltip" data-placement="top" title="Click to Add New Term" >Digital Activities:</a></h4>
+                                    <h4><a data-toggle="modal" data-target="#exampleModal" data-toggle="tooltip" data-placement="top" title="Click to Add New Term" >Study Aids:</a></h4>
                                   
                                    <p><a her='#'>Link One </a></p>
                                    <p><a her='#'>Link One </a></p>
@@ -243,21 +254,9 @@
                                      
                                     </div>
                                   </div>
-                                  <div class="card" style="width: 18rem;">
-                                    <div class="card-body">
-                                      <h5 class="card-title">Worksheet:</h5>
-                                     
-                                      <p class="card-text">Digital Worksheet:</p>
-                                      <a href="{% url 'digital_worksheet' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">View</a>
-                                     
-                                    </div>
-                                  </div>
                                   <hr>
-                                
                                   <div class="container bg-white">
-                                
-
-                                    
+                                      
                                   <form method="POST">
                                     {% csrf_token %}
                                     
@@ -273,7 +272,45 @@
                                   </form>
                                   </div>
                                  <hr>
-                                  
+                                  <table style="border-collapse: collapse; width: 100%;" border="1">
+                                    <thead>
+                                      <tr>
+                                        <th>Term</th>
+                                        <th>Description</th>
+                                        
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      {% for term in topic_lists_selected %}
+                                      {% if term.item %}
+                                      <tr>
+                                         
+                                        <td>{{ term.item }}</td>
+                                        <td>
+                                            {% for line in term.description.all %}
+                                            {% ifchanged line.id %}
+                                            <p>{{ line.description }}</p>
+                                            {% endifchanged %}
+                                            {% endfor %}
+                                          </td>
+
+                                        
+                                      </tr>
+                                    {% endif %}
+                                   {% endfor %}
+                                   <tr>
+                                         
+                                    <td> </td>
+                                    <td>
+
+                                        <p> </p>
+                                        
+                                      </td>
+
+                                    
+                                  </tr>
+                                    </tbody>
+                                  </table>
                                     {% for summ in sent_text %}
                                         <li>{% for word in summ %}
                                             {% if 'NNP' in word.1 %}
@@ -439,7 +476,12 @@
                         </div>
                     </div>
                     <div class="card-body">
-                     
+                        <a href="#" >
+                            Students will create a living museum where they become one of the key people of the American Revolution</a>
+                            <hr>
+                        <a href="#" >
+                            Students will divide the key people of the Revolution between those that were for and against Independence.</a>
+                            <hr>
                         {% for item in not_selected_activities|slice:"5" %}
                         {% ifchanged item.bloom %}
                        <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=10 item_id=item.id action=0 %}#heading" >
@@ -475,7 +517,7 @@
                             {% for line in topic_lists_matched %}
                                 {% if line.item %}
                                 {% ifchanged line.item %}
-                                <a class="btn btn-sm btn-outline-secondary selecttopic" id="like{{line.id}}" href="#" data-topid="{{ line.id }}" data-lessid="{{ lesson_match.id }}" data-toggle="tooltip" data-placement="top" title="{{ line.item }} - {% for item in line.description.all%}{{item }} ; {% endfor %}" >{{ line.item }}</a>
+                                <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=6 item_id=line.id action=1 %}" class="btn btn-sm btn-outline-secondary" data-toggle="tooltip" data-placement="top" title="{{ line.item }} - {% for item in line.description.all%}{{item }} ; {% endfor %}" >{{ line.item }}</a>
                                 {% endifchanged %}
                                 {% endif %}
                             {% endfor %}
@@ -493,7 +535,47 @@
                 </div>
                 </div>
             </div>
-     
+            <div class="col-12 px-0 mb-4">
+                <div class="card border-light shadow-sm">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col">
+                            <h2 class="h5">Main Questions:</h2>
+                            </div>
+                            <div class="col text-right">
+                                <a href="#" class="btn btn-sm btn-secondary">Add New</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table align-items-center table-flush">
+                            <thead class="thead-light">
+                                {% for item in questions_selected %}
+                            <tr>
+                                <th scope="col">{{ forloop.counter }}. {{ item.question|title }}</th>
+                               
+                                
+                            </tr>
+                            {% endfor %}
+
+                            {% for item in question_list %}
+                           {% if item.question %}
+                            <tr>
+                                <th scope="col">{{ forloop.counter }}. {{ item.question|title }}</th>
+                               
+                                
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                            </thead>
+                      
+                        </table>
+                    </div>
+              
+                </div>
+                </div>
+            </div>
           
         </div>
     </div>
@@ -528,7 +610,23 @@
             </button>
             </div>
             <div class="modal-body">
-               ...
+                <form  method="POST">
+                    {% if form2.errors %}
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <h4 style="color:#cb6318"> {{ error }} </h4>
+                        {% endfor %}
+                    {% endfor %}
+                {% endif %}
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="exampleFormControlTextarea1">Activity:</label>
+                        <textarea class="form-control" name='lesson_text' id="exampleFormControlTextarea1" rows="4"></textarea>
+                      </div>
+                    <div class="form-actions">
+                        <button>Send</button>
+                    </div>
+                </form>
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -567,27 +665,4 @@
 </div>
 </footer>
 </main>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-    <script type="text/javascript">
-    $('.selecttopic').click(function(){
-    var topid;
-    topid = $(this).attr("data-topid");
-    var lessid;
-    lessid = $(this).attr("data-lessid");
-    $.ajax(
-    {
-        type:"GET",
-        url: "/sel-topic",
-        data:{
-                 topic_id: topid,
-                 lesson_id: lessid
-        },
-        success: function( data ) 
-        {
-            $( '#like'+ topid ).remove();
-            $( '#message' ).text(data);
-        }
-     })
-});
-</script>
 {% endblock %}

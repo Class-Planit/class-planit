@@ -22,7 +22,7 @@ urlpatterns = [
         view=Homepage,
         name='homepage'),
 
-    url(r'^full-form/',
+    url(r'^full-form/(?P<retry>[\w\s]+)/',
         view=FormFull,
         name='registration_full'),
 
@@ -53,22 +53,42 @@ urlpatterns = [
         view=ThankYou.as_view(),
         name='thank_you'),
 
+
+    url(r'^create-classroom/(?P<user_id>[\w\s]+)/',
+        view=CreateClassroom,
+        name='create_classroom'),
+
+
     url(r'^thanks-questionnaire/',
         view=ThankYouQuestionnaire.as_view(),
         name='thank_you_questionnaire'),
 
-    url(r'^classrooms/',
+    url(r'^classroom/(?P<class_id>[\w\s]+)/',
         view=Classrooms.as_view(),
         name='classrooms'),
+
+    url(r'^add-subjects/(?P<user_id>[\w\s]+)/(?P<class_id>[\w\s]+)/(?P<subject_id>[\w\s]+)/',
+        view=addSubject,
+        name='add_subjects'),
+
 
     url(r'^planners/',
         view=LessonPlanner.as_view(),
         name='lesson_planner'),
 
     url(r'^subject-planners/',
-    
         view=SubjectPlanner.as_view(),
         name='subject_planner'),
+
+
+    url(r'^classrooms-all/',
+        view=ClassroomList.as_view(),
+        name='classroom_list'),
+
+
+    url(r'^sel-topic/$',
+        view=SelectTopic,
+        name='select_topic'),
 
     url(r'^account-setip/(?P<user_id>[\w\s]+)/',
         view=AccountSetup,
@@ -79,7 +99,7 @@ urlpatterns = [
         name='create_objective'),
     
 
-    url(r'^select_standards/(?P<user_id>[\w\s]+)/(?P<class_id>[\w\s]+)/(?P<subject>[\w\s]+)/(?P<lesson_id>[\w\s]+)/',
+    url(r'^select_standards/(?P<user_id>[\w\s]+)/(?P<class_id>[\w\s]+)/(?P<subject>[\w\s]+)/(?P<lesson_id>[\w\s]+)/(?P<select_all>[\w\s]+)/',
         view=SelectStandards,
         name='select_standards'),
 
@@ -103,6 +123,10 @@ urlpatterns = [
     url(r'^activity-builder/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<lesson_id>[\w-]+)/$',
         view=ActivityBuilder,
         name='activity_builder'), 
+
+    url(r'^lesson-activity/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<lesson_id>[\w-]+)/$',
+        view=CreateActivity,
+        name='lesson_activity'),
 
     url(r'^lesson-pdf/(?P<lesson_id>[\w-]+)/$',
         view=generate_lesson_pdf,
@@ -141,9 +165,13 @@ urlpatterns = [
          name='generate_study_guide'),
 
     url(r'^digital-study-guide/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<lesson_id>[\w-]+)/$',
-         view=DigitalStudyGuide,
-         name='digital_study_guide'),
+        view=DigitalStudyGuide,
+        name='digital_study_guide'),
     
+    url(r'^digital-worksheet/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<lesson_id>[\w-]+)/$',
+        view=DigitalWorksheet,
+        name='digital_worksheet'),
+
     path('tinymce/', include('tinymce.urls')),
 
 

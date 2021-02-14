@@ -76,6 +76,12 @@ def group_topic_texts(lesson_id):
         if results:
             all_topic_lines.append(results)
 
+    topic_line_count = len(all_topic_lines)
+    if topic_line_count > 10:
+        pass
+    else:
+        pass
+    
     line_ranges = []
     for item in all_topic_lines:
         low = min(item)
@@ -175,6 +181,9 @@ def summ_text(match_textlines):
     summ_results.append(summ_words)
     return(summ_results) 
 
+
+
+
 def get_statment_sent(match_textlines):
     full_sent_list = []
     for text_list in match_textlines:
@@ -198,7 +207,7 @@ def get_statment_sent(match_textlines):
                     is_noun = True
                 elif 'NNPS' in y[1]:
                     is_noun = True
-            remove_list = ['illustrations', 'cartoon']
+            remove_list = ['illustrations', 'cartoon', 'Figure', 'they', 'those']
 
             if is_verb and is_noun:
                 sent = re.sub(r'\(.*\)', '', sent)
@@ -208,9 +217,9 @@ def get_statment_sent(match_textlines):
                     pass
                 else:
                     if sent not in full_sent_list:
-                        sent = tool.correct(sent)
-                        full_sent_list.append(sent)
-
+                        
+                        full_sent_list.append(sent_tagger)
+    
     return(full_sent_list)   
   
 
