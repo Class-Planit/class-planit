@@ -238,12 +238,49 @@ class ClassroomList(TemplateView):
 
         return render(request, 'dashboard/classroom_list.html', {'user_profile': user_profile, 'classroom_profiles': classroom_profiles, 'page': page})
 
-def CreateClassroom(request, user_id):
+def CreateClassroom(request, user_id=None, class_id=None):
     user_profile = User.objects.filter(username=request.user.username).first()
     s_user = school_user.objects.filter(user_id=user_profile.id).first()
     ay = academicYear.objects.filter(planning_teacher=user_profile).first()
     
     grade_levels = gradeLevel.objects.filter(standards_set=s_user.standards_set)
+    if request.method == "POST":
+        user_profile = User.objects.filter(username=request.user.username).first()
+        form = classroomForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            grade_level = form.cleaned_data.get('grade_level')
+           
+            prev = form.save(commit=False)
+            prev.main_teacher = user_profile
+            prev.is_active = True
+            prev.standards_set = s_user.standards_set
+            prev.academic_year = ay
+            prev.save()
+            
+            update_classroom = classroom.objects.get(id=prev.id)
+            for gl in grade_level:
+                update_classroom.grade_level.add(gl)
+            return redirect('create_classroom_two', user_id=user_id, class_id=prev.id)
+    else:
+        user_profile = User.objects.filter(username=request.user.username).first()
+        form = classroomForm()
+        step = 'One'
+    
+    page = 'Classrooms'
+    return render(request, 'dashboard/create_classroom.html', {'user_profile': user_profile, 'form': form, 'page': page, 'grade_levels': grade_levels})
+
+
+def CreateClassroomTwo(request, user_id=None, class_id=None):
+    user_profile = User.objects.filter(username=request.user.username).first()
+    s_user = school_user.objects.filter(user_id=user_profile.id).first()
+    ay = academicYear.objects.filter(planning_teacher=user_profile).first()
+    class_match = classroom.objects.get(id=class_id)
+    grade_levels = gradeLevel.objects.filter(standards_set=s_user.standards_set)
+    cs = class_match.subjects.all()
+    current_subject = standardSubjects.objects.filter(id__in=cs)
+    matched_subject = standardSubjects.objects.filter(standards_set=class_match.standards_set).exclude(id__in=current_subject)
+
     if request.method == "POST":
         user_profile = User.objects.filter(username=request.user.username).first()
         form = classroomForm(request.POST, request.FILES)
@@ -256,14 +293,15 @@ def CreateClassroom(request, user_id):
             prev.academic_year = ay
             prev.save()
 
-            return redirect('classrooms', class_id=prev.id)
+            return redirect('create_classroom_two', user_id=user_id, class_id=prev.id)
     else:
         user_profile = User.objects.filter(username=request.user.username).first()
         form = classroomForm()
         step = 'One'
     
     page = 'Classrooms'
-    return render(request, 'dashboard/create_classroom.html', {'user_profile': user_profile, 'form': form, 'page': page, 'grade_levels': grade_levels})
+    return render(request, 'dashboard/create_classroom.html', {'user_profile': user_profile, 'class_match': class_match, 'form': form, 'page': page, 'grade_levels': grade_levels, 'current_subject': current_subject, 'matched_subject': matched_subject})
+
 
 
 
@@ -342,7 +380,7 @@ def addSubject(request, user_id=None, class_id=None, subject_id=None):
     classroom_profile = classroom.objects.get(id=class_id)
     matched_subject = standardSubjects.objects.get(id=subject_id)
     update_classroom = classroom_profile.subjects.add(matched_subject)
-    return redirect('{}#subjects'.format(reverse('classrooms', kwargs={'class_id':class_id})))
+    return redirect('{}#subjects'.format(reverse('create_classroom_two', kwargs={'user_id':user_id, 'class_id':class_id})))
 
 
 class LessonPlanner(TemplateView):
@@ -366,7 +404,6 @@ def CreateObjective(request, user_id=None, week_of=None):
     if user_classrooms:
         subjects = []
         for classroom_m in user_classrooms:
-            print(classroom_m)
             s_match = classroom_m.subjects.all()
             subject_match = standardSubjects.objects.filter(id__in=s_match)
             subjects.append(subject_match)
@@ -382,9 +419,11 @@ def CreateObjective(request, user_id=None, week_of=None):
             prev = form.save(commit=False)
             prev.week_of = current_week
             subject = prev.subject_id
+            selected_class = prev.lesson_classroom_id
+            print(selected_class)
             prev.save()
            
-            return redirect('select_standards', user_id=user_profile.id, class_id=user_classrooms, subject=subject, lesson_id=prev.id, select_all=False)
+            return redirect('select_standards', user_id=user_profile.id, class_id=selected_class, subject=subject, lesson_id=prev.id, select_all=False)
     else:
         form = lessonObjectiveForm()
   
@@ -1247,8 +1286,10 @@ def DigitalWorksheet(request, user_id=None, class_id=None, subject=None, lesson_
     grade_list = classroom_profile.grade_level.all()
 
     standard_match = standardSet.objects.get(id=classroom_profile.standards_set_id)
-    classroom_subjects = classroomSubjects.objects.filter(subject_classroom=classroom_profile).first()
-    subject_matches = standardSubjects.objects.filter(id__in=classroom_subjects.subjects.all())                                         
+    classroom_subjects = classroom_profile.subjects.all()
+
+    subject_matches = standardSubjects.objects.filter(id__in=classroom_subjects)                                         
+                                             
     
     lesson_match = lessonObjective.objects.get(id=lesson_id)
     topic_matches = lesson_match.objectives_topics.all()
@@ -1277,9 +1318,9 @@ def DigitalStudyGuide(request, user_id=None, class_id=None, subject=None, lesson
     grade_list = classroom_profile.grade_level.all()
 
     standard_match = standardSet.objects.get(id=classroom_profile.standards_set_id)
-    classroom_subjects = classroomSubjects.objects.filter(subject_classroom=classroom_profile).first()
-    subjects_list = classroom_subjects.subjects.all()
-    subject_matches = standardSubjects.objects.filter(id__in=classroom_subjects.subjects.all())                                         
+    classroom_subjects = classroom_profile.subjects.all()
+
+    subject_matches = standardSubjects.objects.filter(id__in=classroom_subjects)                                         
     
     
     class_objectives = lessonObjective.objects.all().order_by('subject')

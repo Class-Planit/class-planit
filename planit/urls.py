@@ -58,6 +58,9 @@ urlpatterns = [
         view=CreateClassroom,
         name='create_classroom'),
 
+    url(r'^create-classroom-two/(?P<user_id>[\w\s]+)/(?P<class_id>[\w\s]+)/',
+        view=CreateClassroomTwo,
+        name='create_classroom_two'),
 
     url(r'^thanks-questionnaire/',
         view=ThankYouQuestionnaire.as_view(),

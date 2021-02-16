@@ -8,8 +8,8 @@
    
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
         <div class="btn-toolbar">
-            <a href="#" class="btn btn-sm btn-outline-secondary"><i class="fa fa-bars"></i> List</a>
-            <a href="#" class="btn btn-sm btn-outline-secondary"><i class="fa fa-th-large"></i> Grid</a>
+            <a href="#" class="btn btn-sm btn-outline-secondary"><i class="fas fa-left"></i> Back to Class List</a>
+
 
         </div>
         <div class="btn-group mr-2">
@@ -17,13 +17,66 @@
             <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
         </div>
     </div>
-
+    
     <div class="row">
-       
+       {% if matched_subject %}
         <div class="col-lg-6 bg-white">
             <div class="container">
                 <br>
-                <h5>Objective:</h5>
+                <h5>Classroom: {{ class_match.classroom_title }}</h5>
+                <h6>Grade Levels:</h6>
+                {% for grade in class_match.grade_level.all %}
+                <li>{{ grade }}</li>
+                {% endfor %}        
+                
+            </div>
+        </div>
+      
+        <div class="col-lg-6">
+            <div class="col-12 px-0 mb-4">
+                <div class="card border-light shadow-sm">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col">
+                            <h2 class="h5">Subjects:</h2>
+                            </div>
+                            <div class="col text-right">
+                                <a href="#" class="btn btn-sm btn-secondary">Edit</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                
+                                <p>Current Subjects</p>
+                                {% for current in current_subject %}
+                                <li><i class="fas fa-check"></i> {{ current }}</li>
+                                {% endfor %}
+                                <hr>
+                                <p>Add Subjects:</p>
+                                {% for subject in matched_subject %}
+
+                            <li><a href="{% url 'add_subjects' user_id=user_profile.id class_id=class_match.id subject_id=subject.id %}#heading"> {{ subject }}</a>
+                                </li>
+
+                                {% endfor %}
+                            
+                            </div>
+                           
+                        </div>
+                     
+                    </div>
+                </div>
+            </div>
+
+          
+        </div>
+        {% else %}
+        <div class="col-lg-6 bg-white">
+            <div class="container">
+                <br>
+                <h5>Classroom:</h5>
                        
                         
                 <form  method="POST"> 
@@ -34,7 +87,7 @@
                     </div>
                     <div class="form-group">
                         <label for="grade_levels">Grade Levels:</label>
-                        <select class="form-control" name='grade_levels' id="grade_levels">
+                        <select class="form-control" name='grade_level' id="grade_level">
                             {% for grade in grade_levels %}
                           <option value='{{ grade.id }}'>{{ grade.grade_labels }}</option>
                             {% endfor %}
@@ -50,13 +103,14 @@
                 </form>
             </div>
         </div>
+      
         <div class="col-lg-6">
             <div class="col-12 px-0 mb-4">
                 <div class="card border-light shadow-sm">
                     <div class="card-header">
                         <div class="row align-items-center">
                             <div class="col">
-                            <h2 class="h5">Objectives:</h2>
+                            <h2 class="h5">Subjects:</h2>
                             </div>
                             <div class="col text-right">
                                 <a href="#" class="btn btn-sm btn-secondary">Edit</a>
@@ -66,7 +120,19 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center justify-content-between">
                             <div>
-                                <li>{{ lesson_match.teacher_objective }}</li>
+                                
+                                <p>Current Subjects</p>
+                                {% for current in current_subject %}
+                                <li><i class="fas fa-check"></i> {{ current }}</li>
+                                {% endfor %}
+                                <hr>
+                                <p>Add Subjects:</p>
+                                {% for subject in matched_subject %}
+
+                            <li><a href="{% url 'add_subjects' user_id=user_profile.id class_id=class_match.id subject_id=subject.id %}#heading"> {{ subject }}</a>
+                                </li>
+
+                                {% endfor %}
                             
                             </div>
                            
@@ -75,109 +141,10 @@
                     </div>
                 </div>
             </div>
-         
-            <div class="col-12 px-0 mb-4">
-                <div class="card border-light shadow-sm">
-                    <div class="card-header">
-                        <div class="row align-items-center">
-                            <div class="col">
-                            <h2 class="h5">Standards:</h2>
-                            </div>
-                            <div class="col text-right">
-                                <a href="#" class="btn btn-sm btn-secondary">Add New</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        {% for standard in lesson_standards %}
-                        <li>{{ standard }}</li>
-                        {% endfor %}
 
-                    </div>
-                </div>
-            </div>
-            <div class="col-12 px-0 mb-4">
-                <div class="card border-light shadow-sm">
-                    <div class="card-header">
-                        <div class="row align-items-center">
-                            <div class="col">
-                            <h2 class="h5">Key Terms:</h2>
-                            </div>
-                            <div class="col text-right">
-                                <a href="#" class="btn btn-sm btn-secondary">Add New</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                    <div class="tagcloud">
-                        {% for item in keywords_selected %}
-                        <a href="#" class="btn btn-sm btn-outline-secondary">{{ item.word }}</a>
-                        {% endfor %}
-                    </div>
-                </div>
-                </div>
-            </div>
-            <div class="col-12 px-0 mb-4">
-                <div class="card border-light shadow-sm">
-                    <div class="card-header">
-                        <div class="row align-items-center">
-                            <div class="col">
-                            <h2 class="h5">Main Questions:</h2>
-                            </div>
-                            <div class="col text-right">
-                                <a href="#" class="btn btn-sm btn-secondary">Add New</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table align-items-center table-flush">
-                            <thead class="thead-light">
-                            <tr>
-                                <th scope="col">1. What is a Home</th>
-                               
-                                
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td scope="row">
-                                   <li>It's A Dwelling</li>
-                                </td>
-                        
-                              
-                            </tr>
-                          
-                            </tbody>
-                        </table>
-                    </div>
-                   
-                    <div class="table-responsive">
-                        <table class="table align-items-center table-flush">
-                            <thead class="thead-light">
-                            <tr>
-                                <th scope="col">2. What is a Cave</th>
-                               
-                                
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td scope="row">
-                                   <li>In the Mountain</li>
-                                </td>
-                        
-                              
-                            </tr>
-                          
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                </div>
-            </div>
           
         </div>
+        {% endif %}
     </div>
       <!-- Modal -->
       <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

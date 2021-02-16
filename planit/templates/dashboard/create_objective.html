@@ -47,7 +47,7 @@
                                 <label for="lesson_classroom">Classroom:</label>
                                 <select class="form-control" name='lesson_classroom' id="lesson_classroom">
                                     {% for classroom in user_classrooms %}
-                                  <option value='{{classroom.id }}'>{{ classroom.classroom_title }}</option>
+                                  <option value='{{ classroom.id }}'>{{ classroom.classroom_title }}</option>
                                     {% endfor %}
                                 </select>
                               </div>
