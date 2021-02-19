@@ -195,19 +195,16 @@
 
                                     <h4><a data-toggle="modal" data-target="#exampleModal" data-toggle="tooltip" data-placement="top" title="Click to Add New Term" >Digital Activities:</a></h4>
                                   
-                                   <p><a her='#'>Link One </a></p>
-                                   <p><a her='#'>Link One </a></p>
-                                   
-                               
-                                   
+                                    <li><a href="{% url 'digital_study_guide' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Study Guide</a></li>
+
                                 </div>
                                   <hr>
                                   <div class='container'>
 
                                     <h4><a data-toggle="modal" data-target="#exampleModal" data-toggle="tooltip" data-placement="top" title="Click to Add New Term" >Digital Resources:</a></h4>
-                                  
-                                   <p><a her='#'>Link One </a></p>
-                                   <p><a her='#'>Link One </a></p>
+                                    {% for vid in youtube_matched %}
+                                   <li><a href="https://www.youtube.com/embed/{{ vid.vid_id }}">Youtube: {{ vid.title }}</a></li>
+                                   {% endfor %}
                                    
                                
                                    
@@ -217,8 +214,8 @@
 
                                     <h4><a data-toggle="modal" data-target="#exampleModal" data-toggle="tooltip" data-placement="top" title="Click to Add New Term" >Assessments:</a></h4>
                                   
-                                   <p><a her='#'>Link One </a></p>
-                                   <p><a her='#'>Link One </a></p>
+                                    <li><a href="{% url 'digital_worksheet' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Digital Worksheet</a></li>
+                                    <li><a href="{% url 'practice_test' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Practice Test</a></li>
                                    
                                
                                    
@@ -252,10 +249,19 @@
                                      
                                     </div>
                                   </div>
+                                  <div class="card" style="width: 18rem;">
+                                    <div class="card-body">
+                                      <h5 class="card-title">Practice Test:</h5>
+                                     
+                                      <p class="card-text">Practice Test:</p>
+                                      <a href="{% url 'practice_test' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">View</a>
+                                     
+                                    </div>
+                                  </div>
                                   <hr>
-                                
+                                  
                                   <div class="container bg-white">
-                                
+                               
 
                                     
                                   <form method="POST">
@@ -300,7 +306,7 @@
                                     <div class="col-lg-4">
                                         <div class="card">
             
-                                           
+                                            <a href="https://www.youtube.com/embed/{{ vid.vid_id }}" class="btn btn-secondary btn-sm btn-has-icon">https://www.youtube.com/embed/{{ vid.vid_id }}</a>
                                             <!--Card image-->
                                             <iframe
                                                 src="https://www.youtube.com/embed/{{ vid.vid_id }}">

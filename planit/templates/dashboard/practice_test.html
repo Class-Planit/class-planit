@@ -1,0 +1,254 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+{% block content %}
+<main class="content">
+
+ 
+   
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+        <div class="btn-toolbar">
+            <a href="#" class="btn btn-sm btn-outline-secondary"><i class="fa fa-bars"></i> List</a>
+            <a href="#" class="btn btn-sm btn-outline-secondary"><i class="fa fa-th-large"></i> Grid</a>
+
+        </div>
+        <div class="btn-group mr-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+        </div>
+    </div>
+    <div class="row">
+       
+        <div class="col-lg-9">
+            {% for question in question_lists %}
+           <div class='row'>
+               <div class='col'>
+                {% if  question.Question_Image  %}
+                <img class="card-img-top" src="{{ question.Question_Image.url }}" >
+                {% endif %}
+               </div>
+               <div class='col'>
+                <li>{{question.Question}}</li>
+            </div>
+           </div>
+
+                <hr>
+                <div class='row'>
+                    <div class='col'>
+                        <a href="#">
+                            <div class="card">
+                             {% if  question.correct_image  %}
+                             <img class="card-img-top" src="{{ question.correct_image.url }}" >
+                             {% endif %}
+                             <div class="card-body">
+                               <h5 class="card-title">A.</h5>
+                               <p class="card-text">{{ question.Correct }}</p>
+                             </div>
+                           </div>
+                         </a> 
+                    </div>
+                    <div class='col'>
+                        <a href="#">
+                            <div class="card">
+                             {% if  question.correct_image  %}
+                             <img class="card-img-top" src="{{ question.in_one_image.url }}" >
+                             {% endif %}
+                             <div class="card-body">
+                               <h5 class="card-title">B.</h5>
+                               <p class="card-text">{{ question.Incorrect_One }}</p>
+                             </div>
+                           </div>
+                         </a> 
+                    </div>
+                    <div class='col'>
+                        <a href="#">
+                            <div class="card">
+                             {% if  question.correct_image  %}
+                             <img class="card-img-top" src="{{ question.in_two_image.url }}" >
+                             {% endif %}
+                             <div class="card-body">
+                               <h5 class="card-title">C.</h5>
+                               <p class="card-text">{{ question.Incorrect_Two }}</p>
+                             </div>
+                           </div>
+                         </a> 
+                    </div>
+                    <div class='col'>
+                        <a href="#">
+                            <div class="card">
+                             {% if  question.correct_image  %}
+                             <img class="card-img-top" src="{{ question.in_three_image.url }}" >
+                             {% endif %}
+                             <div class="card-body">
+                               <h5 class="card-title">D.</h5>
+                               <p class="card-text">{{ question.Incorrect_Three }}</p>
+                             </div>
+                           </div>
+                         </a>   
+                    </div>
+                </div>
+             
+              
+                
+
+                
+                <p>{{question.explanation}}</p>
+
+                {% endfor %}
+            <hr>
+
+        </div>
+        <div class="col-lg-3">
+            <div class="col-12 px-0 mb-4">
+                <div class="card border-light shadow-sm">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col">
+                            <h2 class="h5">Objectives:</h2>
+                            </div>
+                            <div class="col text-right">
+                                <a href="#" class="btn btn-sm btn-secondary">Edit</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <li>{{ lesson_match.teacher_objective }}</li>
+                            
+                            </div>
+                           
+                        </div>
+                     
+                    </div>
+                </div>
+            </div>
+         
+            <div class="col-12 px-0 mb-4">
+                <div class="card border-light shadow-sm">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col">
+                            <h2 class="h5">Standards:</h2>
+                            </div>
+                            <div class="col text-right">
+                                <a href="#" class="btn btn-sm btn-secondary">Add New</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                      
+                        {% for standard in lesson_standards %}
+                        <li>{{ standard }}</li>
+                        {% endfor %}
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 px-0 mb-4">
+                <div class="card border-light shadow-sm">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col">
+                            <h2 class="h5">Key Terms:</h2>
+                            </div>
+                            <div class="col text-right">
+                                <a href="#" class="btn btn-sm btn-secondary">Add New</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                    <div class="tagcloud">
+                        {% for item in topic_list %}
+                        <a href="#" class="btn btn-sm btn-outline-secondary">{{ item.item }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="col-12 px-0 mb-4">
+                <div class="card border-light shadow-sm">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col">
+                            <h2 class="h5">Main Questions:</h2>
+                            </div>
+                            <div class="col text-right">
+                                <a href="#" class="btn btn-sm btn-secondary">Add New</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table align-items-center table-flush">
+                            <thead class="thead-light">
+                                {% for item in questions_selected %}
+                            <tr>
+                                <th scope="col">{{ forloop.counter }}. {{ item.question|title }}</th>
+                               
+                                
+                            </tr>
+                            {% endfor %}
+                            </thead>
+                      
+                        </table>
+                    </div>
+              
+                </div>
+                </div>
+            </div>
+          
+        </div>
+    </div>
+      <!-- Modal -->
+      <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Add New Lesson</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+            ...
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <footer class="footer section py-5">
+<div class="container-fluid">
+<div class="row">
+<div class="col-12 col-lg-6 mb-4 mb-lg-0">
+<p class="mb-0 text-center text-xl-left">Copyright © 2019-<span class="current-year"></span> <a class="text-primary font-weight-normal" href="https://themesberg.com" target="_blank">Themesberg</a></p>
+</div>
+
+<div class="col-12 col-lg-6">
+<!-- List -->
+<ul class="list-inline list-group-flush list-group-borderless text-center text-xl-right mb-0">
+<li class="list-inline-item px-0 px-sm-2">
+    <a href="https://themesberg.com/about">About</a>
+</li>
+<li class="list-inline-item px-0 px-sm-2">
+    <a href="https://themesberg.com/themes">Themes</a>
+</li>
+<li class="list-inline-item px-0 px-sm-2">
+    <a href="https://themesberg.com/blog">Blog</a>
+</li>
+<li class="list-inline-item px-0 px-sm-2">
+    <a href="https://themesberg.com/contact">Contact</a>
+</li>
+</ul>
+<!-- End List -->
+</div>
+</div>
+</div>
+</footer>
+</main>
+
+{% endblock %}
+

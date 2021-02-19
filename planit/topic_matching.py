@@ -341,45 +341,74 @@ def split_matched_activities(teacher_input, class_id, lesson_id, user_id):
 
 def match_lesson_questions(teacher_input, class_id, lesson_id):
         classroom_profile = classroom.objects.get(id=class_id)
-        standard_set = classroom_profile.standards_set
-        class_objectives = lessonObjective.objects.get(id=lesson_id)
-        subject = class_objectives.subject
+       
         grade_list = classroom_profile.grade_level.all()
+        standard_set = classroom_profile.standards_set
         
-        text = teacher_input
-        text = remove_tags(text)
-        teacher_input_stem = stemSentence(teacher_input)
-        text_tokens = word_tokenize(teacher_input_stem)
+        class_objectives = lessonObjective.objects.get(id=lesson_id)
+        topic_matches = class_objectives.objectives_topics.all()
+       
+        topics = topicInformation.objects.filter(id__in=topic_matches)
+        topic_count = topics.count()
+        results_list = []
+        for item in topics: 
+            result = item.item
+            results_list.append(result)
+       
+        subject = class_objectives.subject
+        grade_standards = []
+        teacher_input_full = teacher_input + str(results_list)
 
+        teacher_input_stem = teacher_input_full.lower()
+        teacher_input_stem = stemSentence(teacher_input_stem)
+        text_tokens = word_tokenize(teacher_input_stem)
         tokens_without_sw = [word for word in text_tokens if not word in stop_words]
-        
+
+        objective_title = get_objective_title(teacher_input, tokens_without_sw)
+        if class_objectives.objective_title:
+            pass
+        else:
+            class_objectives.objective_title = objective_title
+            class_objectives.save()
+
         for grade in grade_list:
                 
                 obj = topicQuestion.objects.filter(subject=subject, standard_set=standard_set, grade_level=grade)
-                
-
                 if obj:
 
                     objectives_list = []
                     for topic in obj:
-                        question = topic.Question
-                        answer = topic.Correct
-
-                        result = topic.id, (topic.item, topic.item)
-                        objectives_list.append(result) 
+                            question = topic.Question
+                            c_answer = topic.Correct
+                            quest_list = question, c_answer
+                            result = topic.id, quest_list
+                            objectives_list.append(result) 
                     
+
                     prediction = []
                     for standard_full in objectives_list:
-                            standard_full_join = ''.join([str(i) for i in standard_full[1]]).lower()
-                            standard_full_joined = stemSentence(standard_full_join)
-                            if any(word in standard_full_joined for word in tokens_without_sw):
-                                
-                                prediction.append(standard_full)
-       
-                    
-                    return(prediction)
+                            
+                            standard_full_join = ''.join([str(i) for i in standard_full]).lower()
+                            Document1 = ''.join([str(i) for i in teacher_input_full])
+                            Document2 = standard_full_join
+                            check_matched = check_matches_topics(Document2, Document1)
+                            if check_matched:
+
+                                corpus = [Document1,Document2]
+
+                                X_train_counts = count_vect.fit_transform(corpus)
+                                vectorizer = TfidfVectorizer()
+                                trsfm=vectorizer.fit_transform(corpus)
+                                result = cosine_similarity(trsfm[0:1], trsfm)
+                                result = result[0][1]
+                                total = standard_full, result
+                                prediction.append(total)
+                    prediction.sort(key=lambda x: x[1], reverse=True)
+                    return(prediction[:20])
                 else:
                     return(None)
+
+
 
 
 def match_textbook(teacher_input, class_id, lesson_id):

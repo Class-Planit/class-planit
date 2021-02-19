@@ -127,6 +127,12 @@ urlpatterns = [
         view=ActivityBuilder,
         name='activity_builder'), 
 
+
+    url(r'^practice-test/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<lesson_id>[\w-]+)/$',
+        view=PracticeTest,
+        name='practice_test'), 
+
+
     url(r'^lesson-activity/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<lesson_id>[\w-]+)/$',
         view=CreateActivity,
         name='lesson_activity'),
