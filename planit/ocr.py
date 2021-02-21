@@ -81,6 +81,7 @@ def pdf_core(filename):
 
  
 def pdf_pull_text(filename):  
+    
     # creating a pdf file object  
     pdfFileObj = parser.from_file(filename)   
 
