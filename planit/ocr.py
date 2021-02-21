@@ -6,6 +6,9 @@ import pytesseract
 
 import PyPDF2
 from PyPDF2 import PdfFileWriter, PdfFileReader
+
+import tika
+tika.initVM()
 from tika import parser
 import fitz
 from .models import *
