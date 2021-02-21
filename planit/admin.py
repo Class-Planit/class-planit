@@ -20,7 +20,9 @@ class textBookBackgroundAdmin(admin.ModelAdmin):
 
 admin.site.register(User)
 admin.site.register(school_user)
-
+admin.site.register(lessonImageUpload)
+admin.site.register(lessonPDFText)
+admin.site.register(lessonPDFImage)
 
 admin.site.register(standardSet)
 admin.site.register(gradeLevel)

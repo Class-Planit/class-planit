@@ -379,6 +379,57 @@ class lessonObjective(models.Model):
     def __str__(self):
         return "%s" % (self.id)
 
+
+class lessonImageUpload(models.Model):
+    matched_lesson = models.ForeignKey(lessonObjective,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    image_image = models.ImageField(upload_to='images/words/',
+                                       blank=True,
+                                       null=True)  
+    content = models.CharField(max_length=2000,
+                                       blank=True,
+                                       null=True)
+
+
+    def __str__(self):
+        return "%s" % (self.id)
+
+
+class lessonPDFImage(models.Model):
+    matched_lesson = models.ForeignKey(lessonObjective,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    image_image = models.ImageField(upload_to='images/words/',
+                                       blank=True,
+                                       null=True)  
+
+
+    def __str__(self):
+        return "%s" % (self.id)
+
+
+class lessonPDFText(models.Model):
+    matched_lesson = models.ForeignKey(lessonObjective,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    pdf_doc = models.FileField(upload_to='file/',
+                                       blank=True,
+                                       null=True)
+    pdf_images = models.ManyToManyField(lessonPDFImage,
+                                     blank=True)
+    content = models.CharField(max_length=2000,
+                                       blank=True,
+                                       null=True)
+
+
+    def __str__(self):
+        return "%s" % (self.id)
+
+
 class lessonText(models.Model):
     matched_lesson = models.ForeignKey(lessonObjective,
                                on_delete=models.SET_NULL,

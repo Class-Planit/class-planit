@@ -52,8 +52,8 @@ def label_activities(activity):
             y = line[4]
             for item in verbs.split():
                 if item in activity:
-                    mi = mi + int(x)
-                    blooms = blooms + int(y)   
+                    mi = int(x)
+                    blooms = int(y)   
                     total = total + 1    
                     result = item
                     verbs_list.append(result)
@@ -68,17 +68,15 @@ def label_activities(activity):
                     print(item.lower())
                     work_list.append(item.lower())
 
-    mi_results = mi/total
+
     if mi_results == 0:
-        mi_results = 100
-    else:
-        mi_results = 100 * mi_results
+        mi_results = 1
+
     
-    blooms = blooms/total
+
     if blooms == 0:
-        blooms = 100
-    else:
-        blooms = 100 * blooms
+        blooms = 1
+
     
     if verbs_list:
         results = mi_results, blooms, verbs_list

@@ -38,6 +38,21 @@ class teacherQuestionnaireForm(forms.ModelForm):
         model = teacherQuestionnaire
         fields = '__all__'
 
+class lessonPDFTextForm(forms.ModelForm):
+
+    class Meta:
+        model = lessonPDFText
+        fields = '__all__'
+
+
+
+class lessonImageUploadForm(forms.ModelForm):
+
+    class Meta:
+        model = lessonImageUpload
+        fields = '__all__'
+
+
 
 class selectedActivityForm(forms.ModelForm):
 

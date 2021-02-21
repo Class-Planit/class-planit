@@ -890,6 +890,61 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
 
 
 
+def LessonImageUpload(request, user_id=None, class_id=None, subject=None, lesson_id=None):
+    #second step to the standards upload process
+    #name="standards_upload"
+    matched_lesson = lessonObjective.objects.get(id=lesson_id)
+    user_profile = User.objects.filter(username=request.user.username).first()
+
+    if request.method == "POST":
+        form = lessonImageUploadForm(request.POST, request.FILES,)
+        if form.is_valid():
+            prev = form.save()
+            image = prev.image_image.url
+            get_text_image = pdf_core(image)
+            content = get_text_image
+
+            update_text = lessonImageUpload.objects.get(id=prev.id)
+            update_text.content = content
+            update_text.save()
+            return redirect('{}#keywords'.format(reverse('activity_builder', kwargs={'user_id':user_profile.id, 'class_id':class_id, 'subject':subject, 'lesson_id':lesson_id})))
+    else:
+        data = {'matched_lesson': matched_lesson}
+        form = lessonImageUploadForm(initial=data)
+        form.fields["matched_lesson"].queryset = lessonObjective.objects.filter(id=lesson_id)
+    return render(request, 'dashboard/lesson_image_upload.html', {'user_profile': user_profile, 'form': form})
+
+
+def LessonPDFUpload(request, user_id=None, class_id=None, subject=None, lesson_id=None):
+    #second step to the standards upload process
+    #name="standards_upload"
+    matched_lesson = lessonObjective.objects.get(id=lesson_id)
+    user_profile = User.objects.filter(username=request.user.username).first()
+
+    if request.method == "POST":
+        
+        form = lessonPDFTextForm(request.POST, request.FILES,)
+        if form.is_valid():
+            
+            prev = form.save()
+            pdf_doc = prev.pdf_doc.url
+            get_text_image = pdf_pull_text(pdf_doc)
+            content = get_text_image
+
+            update_text = lessonPDFText.objects.get(id=prev.id)
+            update_text.content = content
+            update_text.save()
+            pdf_image = update_text.pdf_doc.url
+            
+            pull_images = pdf_pull_images(prev.id, lesson_id, update_text.id)
+            return redirect('{}#keywords'.format(reverse('activity_builder', kwargs={'user_id':user_profile.id, 'class_id':class_id, 'subject':subject, 'lesson_id':lesson_id})))
+    else:
+        data = {'matched_lesson': matched_lesson}
+        form = lessonPDFTextForm(initial=data)
+        form.fields["matched_lesson"].queryset = lessonObjective.objects.filter(id=lesson_id)
+    return render(request, 'dashboard/lesson_image_upload.html', {'user_profile': user_profile, 'form': form})
+
+
 def PracticeTest(request, user_id=None, class_id=None, subject=None, lesson_id=None):
     current_week = date.today().isocalendar()[1] 
     user_profile = User.objects.get(id=user_id)
@@ -1558,6 +1613,7 @@ def QuestionUploadTwo(request):
 
     context = {'step': True}
     return render(request, template, context)
+
 
 
 

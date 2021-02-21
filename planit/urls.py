@@ -127,6 +127,15 @@ urlpatterns = [
         view=ActivityBuilder,
         name='activity_builder'), 
 
+    url(r'^upload-lesson-image/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<lesson_id>[\w-]+)/$',
+        view=LessonImageUpload,
+        name='lesson_image_upload'),
+
+    url(r'^upload-lesson-pdf/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<lesson_id>[\w-]+)/$',
+        view=LessonPDFUpload,
+        name='lesson_pdf_upload'),
+
+
 
     url(r'^practice-test/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<lesson_id>[\w-]+)/$',
         view=PracticeTest,
