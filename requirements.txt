@@ -70,7 +70,7 @@ h5py==2.10.0
 html5lib==1.1
 httplib2==0.19.0
 idna==2.10
-import-java==0.6
+
 importlib-metadata==3.1.1
 importlib-resources==3.3.0
 isodate==0.6.0

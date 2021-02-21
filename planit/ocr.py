@@ -1,8 +1,4 @@
-import java
 
-with java:
-     from java.lang import String
-     from java.nio.file import Files
 
 try:
     from PIL import Image
