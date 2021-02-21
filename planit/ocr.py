@@ -87,6 +87,6 @@ def pdf_pull_text(file_id):
 
     url = update_text.pdf_doc.url 
     # creating a pdf file object  
-    pdfFileObj = parser.from_file(url)   
+    results = image_to_string(Image.open(url))  
 
-    return(pdfFileObj['content'])
+    return(results)
