@@ -70,7 +70,6 @@ h5py==2.10.0
 html5lib==1.1
 httplib2==0.19.0
 idna==2.10
-
 importlib-metadata==3.1.1
 importlib-resources==3.3.0
 isodate==0.6.0
@@ -100,6 +99,8 @@ pandas==1.1.4
 pathlib==1.0.1
 pathy==0.3.5
 pbr==3.1.1
+pdfminer.six==20200517
+pdfplumber==0.5.26
 phonenumbers==8.12.14
 Pillow==8.0.1
 portalocker==2.0.0
@@ -113,6 +114,7 @@ psycopg2-binary==2.8.6
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pycparser==2.20
+pycryptodome==3.10.1
 pydantic==1.7.3
 pydload==1.0.9
 pydot==1.4.2
@@ -150,6 +152,7 @@ sentencepiece==0.1.94
 simplejson==3.17.2
 six==1.15.0
 smart-open==3.0.0
+sortedcontainers==2.3.0
 soupsieve==2.1
 spacy==3.0.1
 spacy-legacy==3.0.1
@@ -172,6 +175,7 @@ typer==0.3.2
 typing-extensions==3.7.4.3
 urllib3==1.26.2
 vine==5.0.0
+Wand==0.6.5
 wasabi==0.8.2
 wcwidth==0.2.5
 WeasyPrint==52.1

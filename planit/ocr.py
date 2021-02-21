@@ -5,16 +5,15 @@ try:
 except ImportError:
     import Image
 import pytesseract
-
+from pytesseract import image_to_string
 import PyPDF2
 from PyPDF2 import PdfFileWriter, PdfFileReader
+import requests
 
-import tika
-tika.initVM()
-from tika import parser
+
 import fitz
 from .models import *
-
+import pdfplumber
 from io import BytesIO
 from urllib.request import FancyURLopener
 from urllib.request import urlopen, Request
@@ -28,11 +27,16 @@ def pdf_pull_images(file_id, lesson_id, text_id):
     update_text = lessonPDFText.objects.get(id=file_id)
     lesson_match = lessonObjective.objects.get(id=lesson_id)
     url = update_text.pdf_doc.url
-    remoteFile = urlopen(Request(url)).read()
-    memoryFile = BytesIO(remoteFile)
-    pdfFile = PdfFileReader(memoryFile)
-    page0 = pdfFile.getPage(0)
-    pdf_file = fitz.open(url)
+    print(url)
+    rq = requests.get(url)
+    
+    try:
+        pdf = pdfplumber.load(BytesIO(rq.content))
+        first_page = pdf.pages[0]
+    except:
+        pass
+
+    pdf_file = fitz.open(rq.content)
     for page_index in range(len(pdf_file)):
     # get the page itself
         page = pdf_file[page_index]
@@ -66,27 +70,22 @@ def pdf_pull_images(file_id, lesson_id, text_id):
 
 
 
-def pdf_core(filename):
-    file_data = parser.from_file(filename)
-    # Create an image object of PIL library
-    
-    #image = Image.open(filename)
-    
-    # pass image into pytesseract module
-    # pytesseract is trained in many languages
-    #image_to_text = pytesseract.image_to_string(image, lang='eng')
-    
-    return(file_data['content'])
 
 
 
 
  
 def pdf_pull_text(file_id): 
+
     update_text = lessonPDFText.objects.get(id=file_id)
-
     url = update_text.pdf_doc.url 
-    # creating a pdf file object  
-    results = image_to_string(Image.open(url))  
+    rq = requests.get(url)
+    
+    try:
+        pdf = pdfplumber.load(BytesIO(rq.content))
+        first_page = pdf.pages[0]
+        
+    except:
+        pass
 
-    return(results)
+    return(first_page.extract_text())
