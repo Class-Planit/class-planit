@@ -27,9 +27,10 @@ def pdf_pull_images(file_id, lesson_id, text_id):
     update_text = lessonPDFText.objects.get(id=file_id)
     lesson_match = lessonObjective.objects.get(id=lesson_id)
     url = update_text.pdf_doc.url
+    rq = requests.get(url)
 
+    pdf_file =fitz.open(stream=BytesIO(rq.content), filetype="application/pdf")
 
-    pdf_file = fitz.open(url)
     for page_index in range(len(pdf_file)):
     # get the page itself
         page = pdf_file[page_index]
@@ -59,7 +60,7 @@ def pdf_pull_images(file_id, lesson_id, text_id):
             update_image = lessonPDFImage.objects.create(matched_lesson = lesson_match)
             update_image.image_image = ImageFile(open(image_title, "rb"))
             update_image.save()
-            image.delete(open(f"image{page_index+1}_{image_index}.{image_ext}", "wb")) 
+ 
 
 
 
