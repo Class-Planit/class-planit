@@ -1,3 +1,3 @@
-web: gunicorn base.wsgi tika-server/target/tika-server-1.13-SNAPSHOT.jar 
+web: gunicorn base.wsgi  
 worker: celery -A base worker -l info
 

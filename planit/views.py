@@ -927,8 +927,7 @@ def LessonPDFUpload(request, user_id=None, class_id=None, subject=None, lesson_i
         if form.is_valid():
             
             prev = form.save()
-            pdf_doc = prev.pdf_doc.url
-            get_text_image = pdf_pull_text(pdf_doc)
+            get_text_image = pdf_pull_text(prev.id)
             content = get_text_image
 
             update_text = lessonPDFText.objects.get(id=prev.id)

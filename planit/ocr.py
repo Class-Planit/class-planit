@@ -1,3 +1,4 @@
+import java
 try:
     from PIL import Image
 except ImportError:
@@ -80,9 +81,11 @@ def pdf_core(filename):
 
 
  
-def pdf_pull_text(filename):  
-    
+def pdf_pull_text(file_id): 
+    update_text = lessonPDFText.objects.get(id=file_id)
+
+    url = update_text.pdf_doc.url 
     # creating a pdf file object  
-    pdfFileObj = parser.from_file(filename)   
+    pdfFileObj = parser.from_file(url)   
 
     return(pdfFileObj['content'])
