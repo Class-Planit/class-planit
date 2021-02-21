@@ -27,16 +27,9 @@ def pdf_pull_images(file_id, lesson_id, text_id):
     update_text = lessonPDFText.objects.get(id=file_id)
     lesson_match = lessonObjective.objects.get(id=lesson_id)
     url = update_text.pdf_doc.url
-    print(url)
-    rq = requests.get(url)
-    
-    try:
-        pdf = pdfplumber.load(BytesIO(rq.content))
-        first_page = pdf.pages[0]
-    except:
-        pass
 
-    pdf_file = fitz.open(rq.content)
+
+    pdf_file = fitz.open(url)
     for page_index in range(len(pdf_file)):
     # get the page itself
         page = pdf_file[page_index]
