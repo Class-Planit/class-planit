@@ -10,7 +10,7 @@ import PyPDF2
 from PyPDF2 import PdfFileWriter, PdfFileReader
 import requests
 from PIL import Image, ImageFile, ImageDraw, ImageChops, ImageFilter, ImageEnhance
-
+pytesseract.pytesseract.tesseract_cmd = '/app/.apt/usr/bin/tesseract'
 import fitz
 from .models import *
 import pdfplumber
