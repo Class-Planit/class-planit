@@ -259,15 +259,14 @@
                                     </div>
                                   </div>
                                   <hr>
-                                  
+                                  <a href="{% url 'lesson_pdf_upload' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Upload Pdf</a>
+                               
                                   <div class="container bg-white">
                                
 
                                      
-                                    <a href="{% url 'lesson_image_upload' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Take Photo</a>
-                                    <a href="{% url 'lesson_pdf_upload' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Upload Pdf</a>
                                   
-                                    
+                                   
                                     <form method="POST">
                                     {% csrf_token %}
                                     
@@ -294,6 +293,15 @@
                                         {% endfor %}</li>
                                     {% endfor %}
                         
+                            <hr>
+                           {% for text in uploaded_text %}
+                           {{ text.content }}
+                           {% endfor %}
+                           {% for image in uploaded_images %}
+                           <div class="main_image">
+                            <img class="img-fluid" src="{{ image.image_image.url }}" alt="" width="200"/>
+                        </div>
+                            {% endfor %}
                             
                             </div>
                       

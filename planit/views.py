@@ -765,7 +765,8 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     first_topics = topicInformation.objects.filter(id__in=topic_matches).order_by('item')[0:one_end]
     second_topics = topicInformation.objects.filter(id__in=topic_matches).order_by('item')[one_end:two_end]
     third_topics = topicInformation.objects.filter(id__in=topic_matches).order_by('item')[two_end:three_end]
-
+    uploaded_images = lessonPDFImage.objects.filter(matched_lesson=lesson_match)
+    uploaded_text = lessonPDFText.objects.filter(matched_lesson=lesson_match)
     text_questions = get_question_text(lesson_id)
     text_questions_two_full = get_cluster_text(lesson_id)
     if text_questions_two_full:
@@ -885,7 +886,7 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     
     step = 4
 
-    return render(request, 'dashboard/activity_builder.html', {'user_profile': user_profile, 'generated_questions': generated_questions, 'question_lists': question_lists,  'first_topics': first_topics, 'second_topics': second_topics, 'third_topics': third_topics, 'topic_lists_matched': topic_lists_matched, 'sent_text': sent_text,  'topic_match': topic_match, 'match_textlines': match_textlines, 'text_questions': text_questions, 'selected_activities': selected_activities, 'not_selected_activities':not_selected_activities, 'question_list': question_list, 'lessons_wording': lessons_wording, 'question_lists': question_lists, 'text_update': text_update, 'lesson_results': lesson_results, 'topic_lists_selected': topic_lists_selected, 'topic_lists': topic_lists, 'keywords_selected': keywords_selected, 'youtube_matched': youtube_matched, 'questions_selected': questions_selected, 'topics_selected': topics_selected, 'keywords_matched': keywords_matched, 'step': step, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
+    return render(request, 'dashboard/activity_builder.html', {'user_profile': user_profile, 'uploaded_images': uploaded_images, 'uploaded_text': uploaded_text, 'generated_questions': generated_questions, 'question_lists': question_lists,  'first_topics': first_topics, 'second_topics': second_topics, 'third_topics': third_topics, 'topic_lists_matched': topic_lists_matched, 'sent_text': sent_text,  'topic_match': topic_match, 'match_textlines': match_textlines, 'text_questions': text_questions, 'selected_activities': selected_activities, 'not_selected_activities':not_selected_activities, 'question_list': question_list, 'lessons_wording': lessons_wording, 'question_lists': question_lists, 'text_update': text_update, 'lesson_results': lesson_results, 'topic_lists_selected': topic_lists_selected, 'topic_lists': topic_lists, 'keywords_selected': keywords_selected, 'youtube_matched': youtube_matched, 'questions_selected': questions_selected, 'topics_selected': topics_selected, 'keywords_matched': keywords_matched, 'step': step, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
 
 
 
@@ -1597,8 +1598,16 @@ def QuestionUploadTwo(request):
         Incorrect_One = line[10] 	
         Incorrect_Two = line[12] 		
         Incorrect_Three	= line[14] 
+        Story = line[15]
         explanation	= line[16]
         
+        
+        if Story:
+            add_story, created = storySection.objects.get_or_create(Section=Story)
+            q_title = str(Question) + '-' + str(subject) + str(add_story.id)
+            add_full, created = storyFull.objects.get_or_create(Title=q_title)
+            new_story = add_full.section.add(add_story)
+
         item = get_keywords(Question)
         standard_match = standardSet.objects.filter(Location=standard_set).first()
         matched_grade = gradeLevel.objects.filter(grade=grade_level, standards_set=standard_match).first()
@@ -1609,6 +1618,8 @@ def QuestionUploadTwo(request):
         new_question, created = topicQuestion.objects.get_or_create(subject=matched_subject, grade_level=matched_grade, standard_set=standard_match, item=item, question_type=question_type, question_points=question_points, Question=Question, Correct=Correct, Incorrect_One=Incorrect_One, Incorrect_Two=Incorrect_Two, Incorrect_Three=Incorrect_Three, explanation=explanation )
 
         add_topic = new_question.topic_type.add(topic_match)
+        if add_full:
+            add_new_story = new_question.topic_story.add(add_full)
 
     context = {'step': True}
     return render(request, template, context)

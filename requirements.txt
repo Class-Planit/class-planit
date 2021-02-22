@@ -99,6 +99,7 @@ pandas==1.1.4
 pathlib==1.0.1
 pathy==0.3.5
 pbr==3.1.1
+pdfminer==20191125
 pdfminer.six==20200517
 pdfplumber==0.5.26
 phonenumbers==8.12.14
