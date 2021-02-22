@@ -901,7 +901,7 @@ def LessonImageUpload(request, user_id=None, class_id=None, subject=None, lesson
         if form.is_valid():
             prev = form.save()
             image = prev.image_image.url
-            get_text_image = pdf_core(image)
+            get_text_image = pdf_core(prev.id)
             content = get_text_image
 
             update_text = lessonImageUpload.objects.get(id=prev.id)

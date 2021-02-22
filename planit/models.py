@@ -421,7 +421,7 @@ class lessonPDFText(models.Model):
                                        null=True)
     pdf_images = models.ManyToManyField(lessonPDFImage,
                                      blank=True)
-    content = models.CharField(max_length=2000,
+    content = models.CharField(max_length=25000,
                                        blank=True,
                                        null=True)
 

@@ -9,7 +9,7 @@ from pytesseract import image_to_string
 import PyPDF2
 from PyPDF2 import PdfFileWriter, PdfFileReader
 import requests
-
+from PIL import Image, ImageFile, ImageDraw, ImageChops, ImageFilter, ImageEnhance
 
 import fitz
 from .models import *
@@ -36,13 +36,9 @@ def pdf_pull_images(file_id, lesson_id, text_id):
         page = pdf_file[page_index]
         image_list = page.getImageList()
         # printing number of images found in this page
-        if image_list:
-            print(f"[+] Found  {len(image_list)} images in page {page_index}")
-        else:
-            print("[!] No images found on the given pdf page", page_index)
+
         for image_index, img in enumerate(page.getImageList(), start=1):
-            print(img)
-            print(image_index)
+
             # get the XREF of the image
             xref = img[0]
             # extract the image bytes
@@ -64,9 +60,20 @@ def pdf_pull_images(file_id, lesson_id, text_id):
 
 
 
+def pdf_core(file_id): 
+    update_text = lessonImageUpload.objects.get(id=file_id)
+    url = update_text.image_image.url
+    rq = requests.get(url) 
 
+    im = Image.open(BytesIO(rq.content)) # the second one 
+    im = im.filter(ImageFilter.MedianFilter())
+    enhancer = ImageEnhance.Contrast(im)
+    im = enhancer.enhance(2)
+    im = im.convert('1')
+    im.save('temp2.jpg')
+    text = pytesseract.image_to_string(Image.open('temp2.jpg'))
 
-
+    return(text)
 
  
 def pdf_pull_text(file_id): 
