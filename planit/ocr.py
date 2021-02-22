@@ -55,10 +55,10 @@ def pdf_pull_images(file_id, lesson_id, text_id):
             # load it to PIL
             image = Image.open(BytesIO(image_bytes))
             # save it to local disk
-            image.save(open(f"image{page_index+1}_{image_index}.{image_ext}.{text_id}", "wb")) 
+            image.save(open(f"image{page_index+1}_{image_index}_{text_id}.{image_ext}", "wb")) 
 
             p_index = str(int(page_index)+1)
-            image_title = "image%s_%s.%s.%s" % (p_index, str(image_index), str(image_ext), str(text_id))
+            image_title = "image%s_%s_%s.%s" % (p_index, str(image_index), str(text_id), str(image_ext))
             update_image = lessonPDFImage.objects.create(matched_lesson = lesson_match)
             update_image.image_image = ImageFile(open(image_title, "rb"))
             update_image.save()
