@@ -767,10 +767,8 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     third_topics = topicInformation.objects.filter(id__in=topic_matches).order_by('item')[two_end:three_end]
     uploaded_images = lessonPDFImage.objects.filter(matched_lesson=lesson_match)
     uploaded_text = lessonPDFText.objects.filter(matched_lesson=lesson_match)
-    
 
-    lesson_analytics = label_activities_analytics(lesson_id)
-    print(lesson_analytics)
+
     uploaded_text_lists = []
     uploaded_questions_lists = []
     for line in uploaded_text:
@@ -835,6 +833,12 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     selected_activities = selectedActivity.objects.filter(lesson_overview=lesson_match, is_selected=True)
     not_selected_activities = selectedActivity.objects.filter(lesson_overview=lesson_match, is_selected=False).order_by('bloom')
 
+    if selected_activities:
+        lesson_analytics = label_activities_analytics(lesson_id)
+    else:
+        lesson_analytics = []
+
+        
     if text_update.activities:
         split_activities = split_matched_activities(text_update.activities, class_id, lesson_id, user_id)
 
