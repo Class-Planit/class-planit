@@ -87,6 +87,7 @@
                                         </div>
                                         <br>
                                         <div class='row'>
+                                         
                                             {% for activity in selected_activities %}
                                             <div class='col-lg-4'>
                                                 <div class="card" style="width: 18rem;" border="1">
@@ -117,10 +118,10 @@
                                                         {% else %}
                                                         <span class="badge badge-primary">Know</span>
                                                         {% endif %}
-                                                        
+                                              
                                                         <!--Multiple Intelligences -->
                                                        {% if activity.mi >= 5 %}
-                                                        <span class="badge badge-success"><i class="fas fa-puzzle"></i></span>
+                                                        <span class="badge badge-success"><i class="fas fa-puzzle-piece"></i></span>
                                                         {% elif activity.mi >= 4 %}
                                                         <span class="badge badge-success"><i class="fas fa-walking"></i></span>
                                                         {% elif activity.mi >= 3 %}
@@ -128,7 +129,7 @@
                                                         {% elif activity.mi >= 2 %}
                                                         <span class="badge badge-success"><i class="fas fa-eye"></i></span>
                                                         {% else %}
-                                                        <span class="badge badge-success"><i class="fas fa-book-open"></i></span>
+                                                        <span class="badge badge-success"><i class="fas fa-book"></i></span>
                                                         {% endif %}
                                                         <div class="card-footer text-muted">
                                                             {% if activity.work_product %}
@@ -191,36 +192,43 @@
                                     
                                  </div>
                                  <hr>
-                                 <div class='container'>
+                              <div class='row'>
+                                  <div class='col'>
+                                    <div class='container'>
 
-                                    <h4><a data-toggle="modal" data-target="#exampleModal" data-toggle="tooltip" data-placement="top" title="Click to Add New Term" >Digital Activities:</a></h4>
-                                  
-                                    <li><a href="{% url 'digital_study_guide' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Study Guide</a></li>
+                                        <h4><a data-toggle="modal" data-target="#exampleModal" data-toggle="tooltip" data-placement="top" title="Click to Add New Term" >Digital Activities:</a></h4>
+                                      
+                                        <li><a href="{% url 'digital_study_guide' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Study Guide</a></li>
+    
+                                    </div>
+                                  </div>
+                                  <div class='col'>
+                                    <div class='container'>
 
+                                        <h4><a data-toggle="modal" data-target="#exampleModal" data-toggle="tooltip" data-placement="top" title="Click to Add New Term" >Digital Resources:</a></h4>
+                                        {% for vid in youtube_matched %}
+                                       <li><a href="https://www.youtube.com/embed/{{ vid.vid_id }}">Youtube: {{ vid.title }}</a></li>
+                                       {% endfor %}
+                                       
+                                   
+                                       
+                                    </div> 
                                 </div>
-                                  <hr>
-                                  <div class='container'>
+                                <div class='col'>
+                                    <div class='container'>
 
-                                    <h4><a data-toggle="modal" data-target="#exampleModal" data-toggle="tooltip" data-placement="top" title="Click to Add New Term" >Digital Resources:</a></h4>
-                                    {% for vid in youtube_matched %}
-                                   <li><a href="https://www.youtube.com/embed/{{ vid.vid_id }}">Youtube: {{ vid.title }}</a></li>
-                                   {% endfor %}
+                                        <h4><a data-toggle="modal" data-target="#exampleModal" data-toggle="tooltip" data-placement="top" title="Click to Add New Term" >Assessments:</a></h4>
+                                      
+                                        <li><a href="{% url 'digital_worksheet' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Digital Worksheet</a></li>
+                                        <li><a href="{% url 'practice_test' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Practice Test</a></li>
+                                       
                                    
-                               
-                                   
+                                       
+                                    </div>
                                 </div>
-                                  <hr>
-                                  <div class='container'>
-
-                                    <h4><a data-toggle="modal" data-target="#exampleModal" data-toggle="tooltip" data-placement="top" title="Click to Add New Term" >Assessments:</a></h4>
-                                  
-                                    <li><a href="{% url 'digital_worksheet' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Digital Worksheet</a></li>
-                                    <li><a href="{% url 'practice_test' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Practice Test</a></li>
-                                   
-                               
-                                   
-                                </div>
-                                  <hr>
+                              </div>
+                                
+              
                             </div>
                          
                         </div>
@@ -231,33 +239,39 @@
                         <div class="row justify-content-between align-items-center">
                             <div class="col-12">
 
-                                <div class="card" style="width: 18rem;">
-                                    <div class="card-body">
-                                      <h5 class="card-title">Study Guide</h5>
-                                     
-                                      <p class="card-text">Review Key Terms</p>
-                                      <a href="{% url 'digital_study_guide' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">View</a>
-                                     
+                                <div class='row'>
+                                    <div class='col'>
+                                        <div class="card" style="width: 18rem;">
+                                            <div class="card-body">
+                                            <h5 class="card-title">Study Guide</h5>
+                                            
+                                            <a href="{% url 'digital_study_guide' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">View</a>
+                                            
+                                            </div>
+                                        </div>
                                     </div>
-                                  </div>
-                                  <div class="card" style="width: 18rem;">
-                                    <div class="card-body">
-                                      <h5 class="card-title">Worksheet:</h5>
-                                     
-                                      <p class="card-text">Digital Worksheet:</p>
-                                      <a href="{% url 'digital_worksheet' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">View</a>
-                                     
+                                    <div class='col'>
+                                        
+                                        <div class="card" style="width: 18rem;">
+                                            <div class="card-body">
+                                            <h5 class="card-title">Worksheet:</h5>
+                                            
+                                            <a href="{% url 'digital_worksheet' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">View</a>
+                                            
+                                            </div>
+                                        </div>
                                     </div>
-                                  </div>
-                                  <div class="card" style="width: 18rem;">
-                                    <div class="card-body">
-                                      <h5 class="card-title">Practice Test:</h5>
-                                     
-                                      <p class="card-text">Practice Test:</p>
-                                      <a href="{% url 'practice_test' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">View</a>
-                                     
+                                    <div class='col'>
+                                        <div class="card" style="width: 18rem;">
+                                            <div class="card-body">
+                                            <h5 class="card-title">Practice Test:</h5>
+                                            
+                                            <a href="{% url 'practice_test' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">View</a>
+                                            
+                                            </div>
+                                        </div>
                                     </div>
-                                  </div>
+                                </div>
                                   <hr>
                                   <a href="{% url 'lesson_pdf_upload' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Upload Pdf</a>
                                
@@ -294,9 +308,21 @@
                                     {% endfor %}
                         
                             <hr>
-                           {% for text in uploaded_text %}
-                           {{ text.content }}
-                           {% endfor %}
+                            <li>{% for word in uploaded_text_list %}
+                           
+                                {% if 'NNP' in word.1 %}
+                                <span style="color:blue">{{ word.0 }}</span>
+                                {% else %}
+                                {{ word.0 }}
+                                {% endif %}
+                        
+                            {% endfor %}</li>
+                            <hr>
+                         {% for line in uploaded_questions_lists %}
+                            {% for item in line %}
+                            <li>{{ item }}</li>
+                            {% endfor %}
+                         {% endfor %}
                            {% for image in uploaded_images %}
                            <div class="main_image">
                             <img class="img-fluid" src="{{ image.image_image.url }}" alt="" width="200"/>
@@ -397,13 +423,14 @@
             <div class="col-12 px-0 mb-4">
                 <div class="card border-light shadow-sm">
                     <div class="card-body">
+                    
                         <h6>Differentiation:</h6>
                         <div class="progress">
                             <div
                               class="progress-bar bg-success"
                               role="progressbar"
-                              style="width: 25%"
-                              aria-valuenow="25"
+                              style="width: {{ lesson_analytics.3 }}%"
+                              aria-valuenow="{{ lesson_analytics.3 }}"
                               aria-valuemin="0"
                               aria-valuemax="100"
                             ></div>
@@ -413,8 +440,8 @@
                             <div
                               class="progress-bar bg-info"
                               role="progressbar"
-                              style="width: 50%"
-                              aria-valuenow="50"
+                              style="width: {{ lesson_analytics.1 }}%"
+                              aria-valuenow="{{ lesson_analytics.1 }}"
                               aria-valuemin="0"
                               aria-valuemax="100"
                             ></div>
@@ -424,8 +451,8 @@
                             <div
                               class="progress-bar bg-warning"
                               role="progressbar"
-                              style="width: 75%"
-                              aria-valuenow="75"
+                              style="width: {{ lesson_analytics.0 }}%"
+                              aria-valuenow="{{ lesson_analytics.0 }}"
                               aria-valuemin="0"
                               aria-valuemax="100"
                             ></div>
@@ -435,8 +462,8 @@
                             <div
                               class="progress-bar bg-danger"
                               role="progressbar"
-                              style="width: 100%"
-                              aria-valuenow="100"
+                              style="width: {{ lesson_analytics.3 }}%"
+                              aria-valuenow="{{ lesson_analytics.3 }}"
                               aria-valuemin="0"
                               aria-valuemax="100"
                             ></div>

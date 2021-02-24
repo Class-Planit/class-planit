@@ -1,4 +1,14 @@
 # Run in python console
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+from nltk.stem import WordNetLemmatizer
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+
 import nltk; nltk.download('stopwords')
 import re
 import numpy as np
@@ -35,7 +45,7 @@ from sklearn.metrics import pairwise_distances_argmin
 import nltk
 from nltk import tokenize
 
-
+count_vect = CountVectorizer()
 
 def label_activities(activity):
     mi = 0
@@ -65,12 +75,12 @@ def label_activities(activity):
             work_product = line[1]
             for item in work_product.split():
                 if item.lower() in activity:
-                    print(item.lower())
-                    work_list.append(item.lower())
+                    if item.lower() not in work_list:
+                        work_list.append(item.lower())
 
 
-    if mi_results == 0:
-        mi_results = 1
+    if mi == 0:
+        mi = 1
 
     
 
@@ -79,13 +89,68 @@ def label_activities(activity):
 
     
     if verbs_list:
-        results = mi_results, blooms, verbs_list
+        results = mi, blooms, verbs_list
     else:
-        results = mi_results, blooms, None
+        results = mi, blooms, None
 
     if work_list:
-        work_list = ''.join([str(i) for i in work_list])
+        work_list = ', '.join([str(i) for i in work_list])
     else:
         work_list = None
     final = results, work_list
     return(final)
+
+
+
+def label_activities_analytics(lesson_id):
+    class_objectives = lessonObjective.objects.get(id=lesson_id)
+    matched_activities = selectedActivity.objects.filter(lesson_overview=class_objectives)
+    class_standards = class_objectives.objectives_standards.all()
+    matched_standards = singleStandard.objects.filter(id__in=class_standards)
+    
+    stan_list = []
+    for stan in matched_standards:
+        stan_text = stan.standard_objective
+        stan_list.append(stan_text)
+
+
+    mi_list = []
+    bl_list = []
+    activity_list = []
+    for activity in matched_activities:
+        activity_text = activity.lesson_text
+        act_mi = int(activity.mi)
+        act_bl = int(activity.bloom)
+        mi_list.append(act_mi)
+        bl_list.append(act_bl)
+        activity_list.append(activity_text)
+
+    mi_list.sort() 
+    bl_list.sort()
+
+    mi_high = (mi_list[-1]/5) * 100 
+    bl_high = (bl_list[-1]/6) * 100 
+    mi_count = len(mi_list)
+    bl_count = len(bl_list)
+
+    mi_length = len(set(str(mi_count)))
+    bl_length = len(set(str(bl_count)))
+
+    unique_count = int(mi_length) + int(bl_length)
+
+    total_count = mi_count + bl_count
+
+    diff_count = (unique_count/total_count) * 100
+
+    Document1 = ''.join([str(i) for i in activity_list])
+    Document2 = ''.join([str(i) for i in stan_list])
+    corpus = [Document1,Document2]
+
+    X_train_counts = count_vect.fit_transform(corpus)
+    vectorizer = TfidfVectorizer()
+    trsfm=vectorizer.fit_transform(corpus)
+    result = cosine_similarity(trsfm[0:1], trsfm)
+    result = result[0][1] * 100
+    final = mi_high, bl_high, diff_count, result
+    return(final)
+    

@@ -26,10 +26,63 @@ from pdfminer.pdfdocument import PDFDocument
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.pdfpage import PDFPage
 from pdfminer.pdfparser import PDFParser
+from .textbook_matching import *
+
+def get_question_text(textlines):
+    text_list_join = ''.join([str(i) for i in textlines])
+    results = tokenize.sent_tokenize(text_list_join)
+    all_topic_lines = []
+    for sent in results:
+        sent = ' '.join(sent.split())
+        questions = ['What ', 'Where ', 'How ', 'When ', 'Which ', 'Explain ', 'Discuss ', 'Describe ']
+        for quest in questions:
+            if quest in sent:
+                all_topic_lines.append(sent)
+
+
+    return(all_topic_lines)
+
+def get_pdf_sent(match_textlines):
+    full_sent_list = []
+    text_list_join = ''.join([str(i) for i in match_textlines])
+    results = tokenize.sent_tokenize(text_list_join)
+
+    for sent in results:
+        sent = ' '.join(sent.split())
+        is_verb = False
+        is_noun = False
+        is_long = False
+        sent = sent.replace('|', ' ')
+        sent_blob = TextBlob(sent)
+        sent_tagger = sent_blob.pos_tags
+        for y in sent_tagger:
+            if len(y[1]) > 2:
+                is_long = True
+        for y in sent_tagger:
+            if 'V' in y[1]:
+                is_verb = True
+        for y in sent_tagger:
+            if 'NNP' in y[1]:
+                is_noun = True
+            elif 'NNPS' in y[1]:
+                is_noun = True
+        remove_list = ['illustrations', 'cartoon', 'Figure', 'they', 'those']
+        results = []
+        if is_verb and is_noun and is_long:
+            sent = re.sub(r'\(.*\)', '', sent)
+            sent = re.sub('Chapter', '', sent)
+            sent = re.sub('Rule Britannia!', '', sent)
+            if any(word in sent for word in remove_list):
+                pass
+            else:
+                if sent not in full_sent_list:
+                    full_sent_list.append(sent_tagger)
+    
+    return(full_sent_list)
 
 
 def pdf_pull_images(file_id, lesson_id, text_id):
-    print('STARTED ++++++++++++')
+
     update_text = lessonPDFText.objects.get(id=file_id)
     lesson_match = lessonObjective.objects.get(id=lesson_id)
     url = update_text.pdf_doc.url
@@ -104,6 +157,9 @@ def pdf_pull_text(file_id):
     for page in PDFPage.create_pages(doc):
         interpreter.process_page(page)
    
+ 
+    
+
     pdf = pdfplumber.open(BytesIO(rq.content))
     first_page = pdf.pages[0]
 

@@ -767,6 +767,31 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     third_topics = topicInformation.objects.filter(id__in=topic_matches).order_by('item')[two_end:three_end]
     uploaded_images = lessonPDFImage.objects.filter(matched_lesson=lesson_match)
     uploaded_text = lessonPDFText.objects.filter(matched_lesson=lesson_match)
+    
+
+    lesson_analytics = label_activities_analytics(lesson_id)
+    print(lesson_analytics)
+    uploaded_text_lists = []
+    uploaded_questions_lists = []
+    for line in uploaded_text:
+        full_content = line.content
+        clean_text = get_pdf_sent(full_content)
+        clean_questions = get_question_text(full_content)
+        uploaded_text_lists.append(clean_text)
+        uploaded_questions_lists.append(clean_questions)
+
+    uploaded_text_list = []
+    for item in uploaded_text_lists:
+        for word in item:
+            for y in word:
+                word = y[0]
+                
+                tag = y[1]
+                results = word, tag
+                if len(y[0]) > 1:
+                    uploaded_text_list.append(results)
+
+
     text_questions = get_question_text(lesson_id)
     text_questions_two_full = get_cluster_text(lesson_id)
     if text_questions_two_full:
@@ -838,7 +863,7 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     if question_match:
         for item in question_match:
             result_id = item[0][0]
-            print(result_id)
+
             topic = topicQuestion.objects.get(id=result_id)
     
             question_lists.append(topic )
@@ -886,7 +911,7 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     
     step = 4
 
-    return render(request, 'dashboard/activity_builder.html', {'user_profile': user_profile, 'uploaded_images': uploaded_images, 'uploaded_text': uploaded_text, 'generated_questions': generated_questions, 'question_lists': question_lists,  'first_topics': first_topics, 'second_topics': second_topics, 'third_topics': third_topics, 'topic_lists_matched': topic_lists_matched, 'sent_text': sent_text,  'topic_match': topic_match, 'match_textlines': match_textlines, 'text_questions': text_questions, 'selected_activities': selected_activities, 'not_selected_activities':not_selected_activities, 'question_list': question_list, 'lessons_wording': lessons_wording, 'question_lists': question_lists, 'text_update': text_update, 'lesson_results': lesson_results, 'topic_lists_selected': topic_lists_selected, 'topic_lists': topic_lists, 'keywords_selected': keywords_selected, 'youtube_matched': youtube_matched, 'questions_selected': questions_selected, 'topics_selected': topics_selected, 'keywords_matched': keywords_matched, 'step': step, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
+    return render(request, 'dashboard/activity_builder.html', {'user_profile': user_profile, 'lesson_analytics': lesson_analytics, 'uploaded_questions_lists': uploaded_questions_lists, 'uploaded_text_list': uploaded_text_list, 'uploaded_images': uploaded_images, 'uploaded_text': uploaded_text, 'generated_questions': generated_questions, 'question_lists': question_lists,  'first_topics': first_topics, 'second_topics': second_topics, 'third_topics': third_topics, 'topic_lists_matched': topic_lists_matched, 'sent_text': sent_text,  'topic_match': topic_match, 'match_textlines': match_textlines, 'text_questions': text_questions, 'selected_activities': selected_activities, 'not_selected_activities':not_selected_activities, 'question_list': question_list, 'lessons_wording': lessons_wording, 'question_lists': question_lists, 'text_update': text_update, 'lesson_results': lesson_results, 'topic_lists_selected': topic_lists_selected, 'topic_lists': topic_lists, 'keywords_selected': keywords_selected, 'youtube_matched': youtube_matched, 'questions_selected': questions_selected, 'topics_selected': topics_selected, 'keywords_matched': keywords_matched, 'step': step, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
 
 
 
@@ -1106,8 +1131,8 @@ def CreateActivity(request, user_id=None, class_id=None, subject=None, lesson_id
     grade_list = classroom_profile.grade_level.all()
 
     standard_match = standardSet.objects.get(id=classroom_profile.standards_set_id)
-    classroom_subjects = classroomSubjects.objects.filter(subject_classroom=classroom_profile).first()
-    subject_matches = standardSubjects.objects.filter(id__in=classroom_subjects.subjects.all())                                         
+    classroom_subjects = classroom_profile.subjects.all()
+    subject_matches = standardSubjects.objects.filter(id__in=classroom_subjects)                                         
     
     lesson_match = lessonObjective.objects.get(id=lesson_id)
     lesson_standards = singleStandard.objects.filter(id__in=lesson_match.objectives_standards.all())
@@ -1125,20 +1150,26 @@ def CreateActivity(request, user_id=None, class_id=None, subject=None, lesson_id
 
     text_questions = get_question_text(lesson_id)
     text_questions_two_full = get_cluster_text(lesson_id)
+    if text_questions_two_full:
+        match_textlines = text_questions_two_full[0]
+        topics_selected = text_questions_two_full[1]
+        topic_match = text_questions_two_full[2]
 
-    match_textlines = text_questions_two_full[0]
-    topics_selected = text_questions_two_full[1]
-    topic_match = text_questions_two_full[2]
+        topic_results = []
+        for item in topic_match:
+            for y in item[2]:
+                topic_results.append(y.id)
 
-    topic_results = []
-    for item in topic_match:
-        for y in item[2]:
-            topic_results.append(y.id)
+        topic_lists_matched = topicInformation.objects.filter(id__in=topic_results).order_by('item')
 
-    topic_lists_matched = topicInformation.objects.filter(id__in=topic_results).order_by('item')
+        summarize_text = summ_text(match_textlines)
+        sent_text = get_statment_sent(match_textlines)
+    else:
+        topic_lists_matched = []
+        sent_text = []
+        topic_match = []
+        match_textlines = []
 
-    summarize_text = summ_text(match_textlines)
-    sent_text = get_statment_sent(match_textlines)
     teacher_objective = lesson_match.teacher_objective
     
     lesson_results = []
