@@ -44,6 +44,18 @@ class lessonPDFTextForm(forms.ModelForm):
         model = lessonPDFText
         fields = '__all__'
 
+class LearningDemonstrationForm(forms.ModelForm):
+
+    class Meta:
+        model = LearningDemonstration
+        fields = '__all__'
+
+
+class topicInformationForm(forms.ModelForm):
+
+    class Meta:
+        model = topicInformation
+        fields = '__all__'
 
 
 class lessonImageUploadForm(forms.ModelForm):

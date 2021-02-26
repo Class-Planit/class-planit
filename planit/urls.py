@@ -106,6 +106,10 @@ urlpatterns = [
         view=SelectStandards,
         name='select_standards'),
 
+    url(r'^select_standards_two/(?P<user_id>[\w\s]+)/(?P<class_id>[\w\s]+)/(?P<subject>[\w\s]+)/(?P<lesson_id>[\w\s]+)/(?P<select_all>[\w\s]+)/',
+        view=SelectKeywordsTwo,
+        name='select_standards_two'),
+
     url(r'^classroom-planbook-edit-standard/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<lesson_id>[\w-]+)/(?P<standard_id>[\w-]+)/(?P<action>[\w-]+)/$',
         view=EditObjectiveStandards,
         name='edit_objective_standards'),
@@ -117,10 +121,6 @@ urlpatterns = [
     url(r'^classroom-planbook-select-related/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<lesson_id>[\w-]+)/(?P<type_id>[\w-]+)/(?P<item_id>[\w-]+)/(?P<action>[\w-]+)/$',
         view=SelectRelatedInformation,
         name='select_related'),
-
-    url(r'^classroom-planbook-keywords-two/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<lesson_id>[\w-]+)/$',
-        view=SelectKeywordsTwo,
-        name='select_keywords_two'),    
 
 
     url(r'^activity-builder/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<lesson_id>[\w-]+)/$',

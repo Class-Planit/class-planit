@@ -347,6 +347,15 @@ class topicInformation(models.Model):
     def __str__(self):
         return "%s" % (self.item)
 
+class LearningDemonstration(models.Model):  
+    content = models.CharField(max_length=1000,
+                                       blank=True,
+                                       null=True)
+
+
+    def __str__(self):
+        return "%s" % (self.content)
+
 
 class lessonObjective(models.Model):
     lesson_classroom = models.ForeignKey(classroom,
@@ -370,6 +379,10 @@ class lessonObjective(models.Model):
     objectives_standards = models.ManyToManyField(singleStandard,
                                      blank=True,
                                      related_name='objectives_standards',
+                               null=True)
+    objectives_demonstration = models.ManyToManyField(LearningDemonstration,
+                                     blank=True,
+                                     related_name='objectives_demonstration',
                                null=True)
     objectives_topics = models.ManyToManyField(topicInformation,
                                      blank=True,

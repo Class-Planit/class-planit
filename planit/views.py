@@ -420,7 +420,7 @@ def CreateObjective(request, user_id=None, week_of=None):
             prev.week_of = current_week
             subject = prev.subject_id
             selected_class = prev.lesson_classroom_id
-            print(selected_class)
+            
             prev.save()
            
             return redirect('select_standards', user_id=user_profile.id, class_id=selected_class, subject=subject, lesson_id=prev.id, select_all=False)
@@ -431,33 +431,81 @@ def CreateObjective(request, user_id=None, week_of=None):
 
 
     step = 1
-    return render(request, 'dashboard/create_objective.html', {'form': form, 'step': step, 'user_profile': user_profile, 'user_classrooms': user_classrooms, 'subjects': subjects  })
+    return render(request, 'dashboard/create_objective_1.html', {'form': form, 'step': step, 'user_profile': user_profile, 'user_classrooms': user_classrooms, 'subjects': subjects  })
 
 
 def SelectStandards(request, user_id=None, class_id=None, subject=None, lesson_id=None, select_all=None):
-   
+    #pull in current week and user data
     current_week = date.today().isocalendar()[1] 
     user_profile = User.objects.get(id=user_id)
 
+    # pull in class information 
     classroom_profile = classroom.objects.get(id=class_id)
-    subject_m = classroom_profile.subjects.all()
+    
     grade_list = classroom_profile.grade_level.all()
-
     standard_match = standardSet.objects.get(id=classroom_profile.standards_set_id)
-    subject_matches = standardSubjects.objects.filter(id__in=subject_m)
+
     subject = int(subject)
     current_subject = standardSubjects.objects.get(id=subject)
     
-    class_objectives = lessonObjective.objects.all().order_by('subject')
     
-    vocab_list = vocabularyList.objects.filter(lesson_plan__in=class_objectives)
-    lesson_activities = lessonFull.objects.filter(lesson_overview__in=class_objectives)
+
     lesson_match = lessonObjective.objects.get(id=lesson_id)
     current_standards = singleStandard.objects.filter(id__in=lesson_match.objectives_standards.all())
     teacher_objective = lesson_match.teacher_objective
     lesson_standards = singleStandard.objects.filter(id__in=lesson_match.objectives_standards.all())
     topic_matches = lesson_match.objectives_topics.all()
+    demo_matches = lesson_match.objectives_demonstration.all()
+    selected_demos = LearningDemonstration.objects.filter(id__in=demo_matches)
     recomendations = lessonStandardRecommendation.objects.filter(lesson_classroom=classroom_profile, objectives=lesson_match)
+
+
+    results = match_standard(teacher_objective, current_subject, class_id)
+    
+
+    for item in results:
+        grade = item[0]
+        standards = item[1]
+        for standard in standards:
+            standard_id = standard[0]
+            standard_match = singleStandard.objects.filter(id=standard_id).first()
+            create_objective, created = lessonStandardRecommendation.objects.get_or_create(lesson_classroom=classroom_profile, objectives=lesson_match, objectives_standard=standard_match)   
+
+    if request.method == "POST":
+        form = LearningDemonstrationForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            prev = form.save()
+            lesson_match.objectives_demonstration.add(prev)
+           
+            return redirect('select_standards', user_id=user_profile.id, class_id=classroom_profile.id, subject=subject, lesson_id=lesson_id, select_all=False)
+    else:
+        form = LearningDemonstrationForm()
+
+    return render(request, 'dashboard/create_objective_2.html', {'user_profile': user_profile, 'form': form, 'selected_demos': selected_demos, 'current_standards': current_standards, 'recomendations': recomendations, 'lesson_match': lesson_match, 'current_week': current_week, 'grade_list': grade_list, 'classroom_profile': classroom_profile })
+
+
+def SelectKeywordsTwo(request, user_id=None, class_id=None, subject=None, lesson_id=None, select_all=None):
+    #pull in current week and user data
+    current_week = date.today().isocalendar()[1] 
+    user_profile = User.objects.get(id=user_id)
+
+    # pull in class information 
+    classroom_profile = classroom.objects.get(id=class_id)
+    
+    grade_list = classroom_profile.grade_level.all()
+    standard_match = standardSet.objects.get(id=classroom_profile.standards_set_id)
+
+    subject = int(subject)
+    current_subject = standardSubjects.objects.get(id=subject)
+    
+    
+
+    lesson_match = lessonObjective.objects.get(id=lesson_id)
+    current_standards = singleStandard.objects.filter(id__in=lesson_match.objectives_standards.all())
+    teacher_objective = lesson_match.teacher_objective
+    lesson_standards = singleStandard.objects.filter(id__in=lesson_match.objectives_standards.all())
+    topic_matches = lesson_match.objectives_topics.all()
     
     matched_topics = match_topics(teacher_objective, class_id, lesson_id)
     text_result = group_topic_texts(lesson_id) #match_textbook_lines(topic_matches, class_id, lesson_id)
@@ -487,20 +535,23 @@ def SelectStandards(request, user_id=None, class_id=None, subject=None, lesson_i
                 update_lesson = lesson_match.objectives_topics.add(topic[0])
         return redirect('{}#youtube'.format(reverse('select_standards', kwargs={'user_id':user_profile.id, 'class_id':classroom_profile.id, 'subject':subject, 'lesson_id':lesson_id, 'select_all':False})))
         
+  
+    if request.method == "POST":
+        form = topicInformationForm(request.POST, request.FILES)
 
-    results = match_standard(teacher_objective, current_subject, class_id)
-    
+        if form.is_valid():
+            prev = form.save()
+            lesson_match.objectives_demonstration.add(prev)
+           
+            return redirect('select_standards', user_id=user_profile.id, class_id=classroom_profile.id, subject=subject, lesson_id=prev.id, select_all=False)
+    else:
+        form = topicInformationForm()
 
-    for item in results:
-        grade = item[0]
-        standards = item[1]
-        for standard in standards:
-            standard_id = standard[0]
-            standard_match = singleStandard.objects.filter(id=standard_id).first()
-            create_objective, created = lessonStandardRecommendation.objects.get_or_create(lesson_classroom=classroom_profile, objectives=lesson_match, objectives_standard=standard_match)   
 
-    step = 2
-    return render(request, 'dashboard/create_objective.html', {'user_profile': user_profile, 'topic_lists': topic_lists, 'step': step, 'current_standards': current_standards, 'recomendations': recomendations, 'lesson_match': lesson_match, 'subject_matches': subject_matches, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'vocab_list': vocab_list, 'current_week': current_week, 'grade_list': grade_list, 'classroom_profile': classroom_profile })
+   
+    return render(request, 'dashboard/create_objective_3.html', {'user_profile': user_profile, 'topic_lists': topic_lists, 'form': form, 'current_standards': current_standards, 'lesson_match': lesson_match, 'current_week': current_week, 'grade_list': grade_list, 'classroom_profile': classroom_profile })
+
+
 
 def EditObjectiveStandards(request, user_id=None, class_id=None, subject=None, lesson_id=None, standard_id=None, action=None):
     user_profile = User.objects.get(id=user_id)
@@ -656,7 +707,7 @@ def SelectRelatedInformation(request, user_id=None, class_id=None, subject=None,
             update_lesson = lesson_match.objectives_topics.remove(topic_match)
         else:
             update_lesson = lesson_match.objectives_topics.add(topic_match)
-        return redirect('{}#youtube'.format(reverse('select_standards', kwargs={'user_id':user_profile.id, 'class_id':classroom_profile.id, 'subject':subject, 'lesson_id':lesson_id, 'select_all':False})))
+        return redirect('{}#youtube'.format(reverse('select_standards_two', kwargs={'user_id':user_profile.id, 'class_id':classroom_profile.id, 'subject':subject, 'lesson_id':lesson_id, 'select_all':False})))
     elif type_id == 10:
         lesson_match = lessonObjective.objects.get(id=lesson_id)
         topic_match = selectedActivity.objects.get(id=item_id)
@@ -681,57 +732,6 @@ def SelectRelatedInformation(request, user_id=None, class_id=None, subject=None,
             keyword_match.save()
         return redirect('{}#keywords'.format(reverse('select_keywords', kwargs={'user_id':user_profile.id, 'class_id':classroom_profile.id, 'subject':subject, 'lesson_id':lesson_id})))
 
-
-
-
-def SelectKeywordsTwo(request, user_id=None, class_id=None, subject=None, lesson_id=None):
-    current_week = date.today().isocalendar()[1] 
-    user_profile = User.objects.get(id=user_id)
-
-    classroom_profile = classroom.objects.get(id=class_id)
-    grade_list = classroom_profile.grade_level.all()
-
-    standard_match = standardSet.objects.get(id=classroom_profile.standards_set_id)
-    classroom_subjects = classroomSubjects.objects.filter(subject_classroom=classroom_profile).first()
-    subjects_list = classroom_subjects.subjects.all()
-    subject_matches = standardSubjects.objects.filter(id__in=classroom_subjects.subjects.all())
-    
-    
-    class_objectives = lessonObjective.objects.all().order_by('subject')
-    vocab_list = vocabularyList.objects.filter(lesson_plan__in=class_objectives)
-    lesson_activities = lessonFull.objects.filter(lesson_overview__in=class_objectives)
-    lesson_match = lessonObjective.objects.get(id=lesson_id)
-    lesson_standards = singleStandard.objects.filter(id__in=lesson_match.objectives_standards.all())
-    teacher_objective = lesson_match.teacher_objective
-
-
-
-    questions_selected = googleRelatedQuestions.objects.filter(lesson_plan=lesson_match, is_selected=True)
-    topics_selected = googleSearchResult.objects.filter(lesson_plan=lesson_match, is_selected=True)
-
-    keywords_selected = keywordResults.objects.filter(lesson_plan=lesson_match, is_selected=True).order_by('-relevance')
-    keywords_matched = keywordResults.objects.filter(lesson_plan=lesson_match, is_selected=False).order_by('-relevance')
-
-    keywords = []
-    
-    matched_topics = match_topics(teacher_objective, class_id, lesson_id)
-   
-    topic_lists = []
-    for item in matched_topics:
-        topic = topicInformation.objects.get(id=item[0])
-        if lesson_match.objectives_topics.filter(id=item[0]).exists():
-            result = topic, 1
-        else:
-            result = topic, 0 
-            
-        if result in topic_lists:
-            pass
-        else:
-            topic_lists.append(result)
-    
-  
-    step = 4
-    return render(request, 'dashboard/create_objective.html', {'user_profile': user_profile, 'questions_selected': questions_selected, 'topic_lists': topic_lists, 'keywords_matched': keywords_matched, 'step': step, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
 
 
 
@@ -838,7 +838,7 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     else:
         lesson_analytics = []
 
-        
+
     if text_update.activities:
         split_activities = split_matched_activities(text_update.activities, class_id, lesson_id, user_id)
 
