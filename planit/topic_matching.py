@@ -187,7 +187,9 @@ def match_topics(teacher_input, class_id, lesson_id):
                                 result = cosine_similarity(trsfm[0:1], trsfm)
                                 result = result[0][1]
                                 total = standard_full, result
-                                prediction.append(total)
+                                if result >= .20:
+                                    prediction.append(total)
+                                
                     prediction.sort(key=lambda x: x[1], reverse=True)
                     return(prediction[:20])
                 else:
@@ -244,6 +246,7 @@ def match_lesson_topics(teacher_input, class_id, lesson_id):
                             prediction.append(total)
        
                     prediction.sort(key=lambda x: x[1], reverse=True)
+                    print(prediction[:10])
                     return(prediction)
                 else:
                     return(None)

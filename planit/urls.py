@@ -127,6 +127,11 @@ urlpatterns = [
         view=ActivityBuilder,
         name='activity_builder'), 
 
+    url(r'^activity-builder-worksheets/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<lesson_id>[\w-]+)/$',
+        view=DigitalActivities,
+        name='digital_activities'),
+
+
     url(r'^upload-lesson-image/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<lesson_id>[\w-]+)/$',
         view=LessonImageUpload,
         name='lesson_image_upload'),

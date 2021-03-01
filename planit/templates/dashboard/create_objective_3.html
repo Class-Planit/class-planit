@@ -18,11 +18,11 @@
     </div>
 
     <div class="row">
-        <div class="col-lg-3">
+        <div class="col-lg-2">
     
           
         </div>
-        <div class="col-lg-6 bg-white">
+        <div class="col-lg-8 bg-white">
             <br>
             <div class='row'>
                 <div class='col'>
@@ -63,15 +63,12 @@
                         
                 <h6>{{ lesson_match.teacher_objective }}</h6>
                 <br>
-                <h5>Your Standards:</h5>
-                {% for stand in lesson_match.objectives_standards.all %}
-                <h6>{{ stand }}</h6>
-                {% endfor %}
+              
 
              
                 <br>
 
-                      <h4> <center>3. Select Key Topics or Vocabulary:</center></h4>
+                      <h4> <center>4. Select Key Topics or Vocabulary:</center></h4>
                       <hr>
                       <p style="color:orange"> Help us generate relevant activities and resources, select at least three topics below.</p>
                         <div class="card-body">
@@ -102,7 +99,7 @@
                     </div>
                     <div class="col-lg-5">
                         
-                        <a href="{% url 'activity_builder' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id %}#heading" class="btn btn-success btn-block btn-has-icon" >Next: Lesson Builder </a>
+                        <a href="{% url 'select_standards' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id select_all='False' %}#heading" class="btn btn-success btn-block btn-has-icon" >Next: Select Key Topics </a>
                                      
                     </div>
                     </div>
@@ -112,7 +109,7 @@
            
             
         </div>
-        <div class="col-lg-3">
+        <div class="col-lg-2">
     
           
         </div>

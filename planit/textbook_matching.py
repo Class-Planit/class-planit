@@ -207,7 +207,7 @@ def get_statment_sent(match_textlines):
                     is_noun = True
                 elif 'NNPS' in y[1]:
                     is_noun = True
-            remove_list = ['illustrations', 'cartoon', 'Figure', 'they', 'those']
+            remove_list = ['illustrations', 'cartoon', 'Figure', 'they', 'those', 'Name ', 'Circle ']
 
             if is_verb and is_noun:
                 sent = re.sub(r'\(.*\)', '', sent)

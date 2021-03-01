@@ -1,6 +1,12 @@
 {% extends 'dashboard/base.html' %}
 {% load static %}
 {% block content %}
+<style>
+    .anyClass {
+  height:800px;
+  overflow-y: scroll;
+}
+</style>
 <main class="content">
 
  
@@ -25,7 +31,7 @@
             <nav>
                 <div class="nav nav-tabs flex-column flex-md-row bg-white shadow-soft border border-light justify-content-around rounded mb-lg-3 py-3" id="nav-tab" role="tablist">
                     <a class="nav-item nav-link rounded mr-md-3 active" id="nav-content-research-tab" data-toggle="tab" href="#nav-content-research" role="tab" aria-controls="nav-content-research" aria-selected="true"><span class="d-block"><span class="fas fa-file-alt mr-2"></span><span class="font-weight-normal">Lesson Plan</span></span></a>
-                    <a class="nav-item nav-link rounded mr-md-3" id="nav-rank-track-tab" data-toggle="tab" href="#nav-rank-track" role="tab" aria-controls="nav-rank-track" aria-selected="false"><span class="fas fa-list mr-2"></span><span class="font-weight-normal">Digital Activities</span></a>
+                    <a class="nav-item nav-link rounded mr-md-3" id="nav-rank-track-tab"  href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" aria-controls="nav-rank-track" aria-selected="false"><span class="fas fa-list mr-2"></span><span class="font-weight-normal">Digital Activities</span></a>
                     <a class="nav-item nav-link rounded mr-md-3" id="nav-web-monitor-tab" data-toggle="tab" href="#nav-web-monitor" role="tab" aria-controls="nav-web-monitor" aria-selected="false"><span class="fas fa-globe mr-2"></span><span class="font-weight-normal">Digital Resources</span></a>
                     <a class="nav-item nav-link rounded mr-md-3" id="nav-backlink-research-tab" data-toggle="tab" href="#nav-backlink-research" role="tab" aria-controls="nav-backlink-research" aria-selected="false"><span class="fas fa-chart-line mr-2"></span><span class="font-weight-normal">Assessments</span></a>
                   
@@ -296,9 +302,12 @@
                                   </form>
                                   </div>
                                  <hr>
-                                  
+                                
+                                    <div class="anyClass">
+                                        <div class="bg-white">
+                                  <h5>Click on the Statement or Question to add to your worksheet:</h5>
                                     {% for summ in sent_text %}
-                                        <li>{% for word in summ %}
+                                       <li> {{ forloop.counter }} {% for word in summ %}
                                             {% if 'NNP' in word.1 %}
                                             <span style="color:blue">{{ word.0 }}</span>
                                             {% else %}
@@ -306,31 +315,37 @@
                                             {% endif %}
                                         {% endfor %}</li>
                                     {% endfor %}
-                        
+                                
+
+                                    
                             <hr>
-                            <li>{% for word in uploaded_text_list %}
+                            {% for line in uploaded_questions_lists %}
+                            {% for item in line %}
+                            <li>{{ item }}</li>
+                            {% endfor %}
+                         {% endfor %}
+                            <hr>
+                            {% for summ in uploaded_text_list %}
+                  
+                            <li>
+                                
+                                {% for word in summ %}
                            
                                 {% if 'NNP' in word.1 %}
                                 <span style="color:blue">{{ word.0 }}</span>
                                 {% else %}
                                 {{ word.0 }}
                                 {% endif %}
-                        
-                            {% endfor %}</li>
+                            
+                            {% endfor %}
+                            </li>
+                            {% endfor %}
                             <hr>
-                         {% for line in uploaded_questions_lists %}
-                            {% for item in line %}
-                            <li>{{ item }}</li>
-                            {% endfor %}
-                         {% endfor %}
-                           {% for image in uploaded_images %}
-                           <div class="main_image">
-                            <img class="img-fluid" src="{{ image.image_image.url }}" alt="" width="200"/>
-                        </div>
-                            {% endfor %}
+                     
+                                </div>
                             
                             </div>
-                      
+                        </div>  
                         </div>
                     </div>
                     
@@ -496,6 +511,8 @@
                     </div>
                 </div>
             </div>
+
+            
             <div class="col-12 px-0 mb-4">
                 <div class="card border-light shadow-sm">
                     <div class="card-header">
@@ -538,8 +555,28 @@
                 </div>
                 </div>
             </div>
-     
-          
+            {% if uploaded_images %}
+            <div class="col-12 px-0 mb-4">
+                <div class="card border-light shadow-sm">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col">
+                            <h2 class="h5">Picture Library:</h2>
+                            </div>
+                            <div class="col text-right">
+                                <a href="#" class="btn btn-sm btn-secondary">Add New</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% for image in uploaded_images %}
+                    <div class="main_image">
+                     <img class="img-fluid" src="{{ image.image_image.url }}" alt="" width="200"/>
+                 </div>
+                     {% endfor %}
+                </div>
+            </div>
+            {% endif %}
         </div>
     </div>
       <!-- Modal -->
@@ -635,4 +672,5 @@
      })
 });
 </script>
+
 {% endblock %}

@@ -66,7 +66,7 @@ def get_pdf_sent(match_textlines):
                 is_noun = True
             elif 'NNPS' in y[1]:
                 is_noun = True
-        remove_list = ['illustrations', 'cartoon', 'Figure', 'they', 'those']
+        remove_list = ['illustrations', 'cartoon', 'Figure', 'they', 'those', 'Circle ']
         results = []
         if is_verb and is_noun and is_long:
             sent = re.sub(r'\(.*\)', '', sent)

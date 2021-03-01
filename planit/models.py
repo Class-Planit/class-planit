@@ -927,7 +927,7 @@ class topicQuestion(models.Model):
     question_points = models.IntegerField(default = 1,
                                blank=True,
                                null=True)		
-    Question = models.CharField(max_length=1500,
+    Question = models.CharField(max_length=2500,
                         blank=True,
                         null=True)	
     Question_Image = models.ImageField(upload_to='images/question/',
