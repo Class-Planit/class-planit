@@ -63,7 +63,7 @@ INSTALLED_APPS = [
     'storages',
     'phonenumber_field',
     'tinymce',
-    'multiselectfield',
+
 
     
 ]
