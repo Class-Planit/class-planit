@@ -234,6 +234,13 @@ class textBookTitle(models.Model):
                                on_delete=models.SET_NULL,
                                blank=True,
                                null=True)
+    uploaded_by = models.ForeignKey(User,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True)
+    lesson_id_num = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
 
     def __str__(self):
         return "%s" % (self.title)

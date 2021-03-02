@@ -2,15 +2,23 @@ from django import forms
 from django.conf import settings
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.forms.models import inlineformset_factory, BaseModelFormSet
-from django.forms import ModelChoiceField
+from django.forms import ModelChoiceField, RadioSelect
 from django.utils.translation import ugettext_lazy as _
 from django.db import transaction
 from .models import *
 import datetime
 from datetime import datetime
-
+from multiselectfield import MultiSelectField
 from phonenumber_field.formfields import PhoneNumberField
 from tinymce.widgets import TinyMCE
+
+
+
+class SelectQuestionsForm(forms.Form):
+    
+    selected_questions = forms.MultipleChoiceField(required=False, widget=forms.CheckboxSelectMultiple)
+
+
 
 class  lessonTextForm(forms.ModelForm):
 

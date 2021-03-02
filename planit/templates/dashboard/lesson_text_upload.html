@@ -42,111 +42,76 @@
                  <!-- Tab -->
                  <div class="tab-content mt-5 mt-lg-6 " id="nav-tabContent">
                     <!-- Content Research Tab -->
-                    <div class='row bg-white'>
-                        <div class='col'>
-                            <div class="card" style="width: 18rem;">
-                                <div class="card-body">
-                                <h5 class="card-title">Study Guide</h5>
-                                
-                                <a href="{% url 'digital_study_guide' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">View</a>
-                                
-                                </div>
-                            </div>
-                        </div>
-                        <div class='col'>
-                            
-                            <div class="card" style="width: 18rem;">
-                                <div class="card-body">
-                                <h5 class="card-title">Worksheet:</h5>
-                                
-                                <a href="{% url 'digital_worksheet' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">View</a>
-                                
-                                </div>
-                            </div>
-                        </div>
-                        <div class='col'>
-                            <div class="card" style="width: 18rem;">
-                                <div class="card-body">
-                                <h5 class="card-title">Practice Test:</h5>
-                                
-                                <a href="{% url 'practice_test' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">View</a>
-                                
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="tab-pane fade show active " id="nav-content-research" role="tabpanel" aria-labelledby="nav-content-research-tab">
+                    <div class="tab-pane fade show active bg-white" id="nav-content-research" role="tabpanel" aria-labelledby="nav-content-research-tab">
                         <br>
                         <div class='container'>
-                        <div class="row justify-content-between  align-items-center bg-white ">
+                        <div class="row justify-content-between  align-items-center">
                             <div class="col-12">
-                      
-                               <h5>Add relevant text to build a worksheet in minutes!</h5>
-                               <div class="btn-group" role="group" aria-label="Basic example">
-                                <a href="{% url 'lesson_pdf_upload' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" type="button" class="btn btn-outline-secondary">Upload Pdf</a>
-                                <a href="{% url 'lesson_pdf_upload' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" type="button" class="btn btn-outline-secondary">Copy and Paste</a>
-                                <a href="{% url 'lesson_pdf_upload' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" type="button" class="btn btn-outline-secondary">Pull from Website</a>
-                              </div>
-                              <hr>
-                              {% for vaule, text in activity_choices %}
-                              <div class="card hover-state border-bottom rounded-0 py-3">
-                                <a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 act_id=forloop.counter0 %}" >
-                                <div class="card-body d-sm-flex align-items-center flex-wrap flex-lg-nowrap py-0 pl-sm-0">
-                                   
-                                    <div class="col-10 col-lg-8 d-block px-0 mb-4 mb-md-0">
-                                        <div class="mb-2">
-                                            <h3 class="h5">
-                                                {% for word in text %}
-                                                {% if 'NNP' in word.1 %}
-                                                <span style="color:blue">{{ word.0 }}</span>
-                                                {% else %}
-                                                {{ word.0 }}
-                                                {% endif %}
-                                                {% endfor %}
 
-                                            </h3>
-                                           
+                                <div class='row'>
+                                    <div class='col'>
+                                        <div class="card" style="width: 18rem;">
+                                            <div class="card-body">
+                                            <h5 class="card-title">Study Guide</h5>
+                                            
+                                            <a href="{% url 'digital_study_guide' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">View</a>
+                                            
+                                            </div>
                                         </div>
-                                       
                                     </div>
-                                    <div class="col-10 col-sm-2 col-lg-2 col-xl-2 d-none d-lg-block d-xl-inline-flex align-items-center ml-lg-auto text-right justify-content-end px-md-0">
-                                        <div class="rating-star star-lg d-none d-lg-inline-block">
-                                            <input type="checkbox" id="InboxStar11" name="star"> 
-                                            <label class="rating-star-label" for="InboxStar11">
-                                                <span class="sr-only">Star</span>
-                                            </label>
+                                    <div class='col'>
+                                        
+                                        <div class="card" style="width: 18rem;">
+                                            <div class="card-body">
+                                            <h5 class="card-title">Worksheet:</h5>
+                                            
+                                            <a href="{% url 'digital_worksheet' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">View</a>
+                                            
+                                            </div>
                                         </div>
-                                        <div class="btn-group ml-md-3">
-                                            <button class="btn btn-link text-dark dropdown-toggle dropdown-toggle-split m-0 p-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                <span class="icon icon-sm">
-                                                    <span class="fas fa-ellipsis-h icon-dark"></span>
-                                                </span>
-                                                <span class="sr-only">Toggle Dropdown</span>
-                                            </button>
-                                            <div class="dropdown-menu dropdown-menu-right">
-                                                <a class="dropdown-item" href="#"><span class="fas fa-edit mr-2"></span> Edit</a>
-                                                <a class="dropdown-item text-warning" href="#"><span class="fas fa-star mr-2"></span>Important</a>
-                                                <a class="dropdown-item text-danger" href="#"><span class="fas fa-trash-alt mr-2"></span>Delete</a>
+                                    </div>
+                                    <div class='col'>
+                                        <div class="card" style="width: 18rem;">
+                                            <div class="card-body">
+                                            <h5 class="card-title">Practice Test:</h5>
+                                            
+                                            <a href="{% url 'practice_test' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">View</a>
+                                            
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                </a>
-                            </div>
-                           {% endfor %}
-                              <hr>
-                             
-                                
-                              
-                                      <!----End Form Option -->
+                                <h4> Add Information to Build a Worksheet:</h4>
+                                <p> Upload a Pdf or Copy and Paste text of questions. We will pull this information to create a digital worksheet for your students.</p>
+                                  <hr>
+                                  <a href="{% url 'lesson_pdf_upload' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Upload Pdf</a>
+                               
+                                  <div class="container bg-white">
+                               
+
+                                     
+                                  
+                                   
+                                    <form method="POST">
+                                    {% csrf_token %}
                                     
-                       
-                     
-                            </div>
-                            
+                                    <input type="submit" value="Save Progress">
+                                    
+                                  <div class="dfree-body mce-content-body" name='activities' id='activities' contenteditable="true" style="position: relative;" spellcheck="false">
+                                    <h4>Copy and Paste any Text Here to Generate Digital Worksheets:</h4>
+                                   <p></p>
+                                   <p></p>
+                                   <p></p>
+                                         <br>
+                                 </div>
+                                  </form>
+                                  </div>
+                                 <hr>
+                                
+                  
+                            </div>  
                         </div>
-                        </div>  
-                   
+                        </div>
                     </div>
                 </div>
                 <!-- End of tab -->

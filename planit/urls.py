@@ -106,6 +106,13 @@ urlpatterns = [
         view=SelectStandards,
         name='select_standards'),
 
+
+    url(r'^worksheet-builder/(?P<user_id>[\w\s]+)/(?P<class_id>[\w\s]+)/(?P<subject>[\w\s]+)/(?P<lesson_id>[\w\s]+)/(?P<worksheet_id>[\w\s]+)/',
+        view=WorksheetBuilder,
+        name='worksheet_builder'),
+
+
+
     url(r'^select_standards_two/(?P<user_id>[\w\s]+)/(?P<class_id>[\w\s]+)/(?P<subject>[\w\s]+)/(?P<lesson_id>[\w\s]+)/(?P<select_all>[\w\s]+)/',
         view=SelectKeywordsTwo,
         name='select_standards_two'),
@@ -127,7 +134,7 @@ urlpatterns = [
         view=ActivityBuilder,
         name='activity_builder'), 
 
-    url(r'^activity-builder-worksheets/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<lesson_id>[\w-]+)/$',
+    url(r'^activity-builder-worksheets/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<lesson_id>[\w-]+)/(?P<act_id>[\w-]+)/$',
         view=DigitalActivities,
         name='digital_activities'),
 

@@ -221,11 +221,15 @@ class Dashboard(TemplateView):
         else:
             active_week = int(week_of)
         user_profile = User.objects.filter(username=request.user.username).first()
-        classroom_profiles = classroom.objects.filter(main_teacher=user_profile)
+        if user_profile:
+            classroom_profiles = classroom.objects.filter(main_teacher=user_profile)
 
-        objective_matches = lessonObjective.objects.filter(week_of=active_week, lesson_classroom__in=classroom_profiles)
+            objective_matches = lessonObjective.objects.filter(week_of=active_week, lesson_classroom__in=classroom_profiles)
 
-        return render(request, 'dashboard/dashboard.html', {'user_profile': user_profile, 'current_week': current_week, 'active_week': active_week, 'objective_matches': objective_matches})
+            return render(request, 'dashboard/dashboard.html', {'user_profile': user_profile, 'current_week': current_week, 'active_week': active_week, 'objective_matches': objective_matches})
+        else:
+            return redirect('login_user')
+
 
 class ClassroomList(TemplateView):
     template_name = 'dashboard/classroom_list.html' 
@@ -794,20 +798,12 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
         uploaded_text_list.append(results_final)
 
     text_questions = get_question_text(lesson_id)
-    text_questions_two_full = get_cluster_text(lesson_id)
-    if text_questions_two_full:
-        match_textlines = text_questions_two_full[0]
-        topics_selected = text_questions_two_full[1]
-        topic_match = text_questions_two_full[2]
-    else:
-        match_textlines = []
-        topics_selected = []
-        topic_match = []
+    match_textlines = get_cluster_text(lesson_id)
+
 
     topic_results = []
-    for item in topic_match:
-        for y in item[2]:
-            topic_results.append(y.id)
+    for item in topic_lists_selected:
+        topic_results.append(item.id)
 
     topic_lists_matched = topicInformation.objects.filter(id__in=topic_results).order_by('item')
 
@@ -918,12 +914,12 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     
     step = 4
 
-    return render(request, 'dashboard/activity_builder.html', {'user_profile': user_profile, 'lesson_analytics': lesson_analytics, 'uploaded_questions_lists': uploaded_questions_lists, 'uploaded_text_list': uploaded_text_list, 'uploaded_images': uploaded_images, 'uploaded_text': uploaded_text, 'generated_questions': generated_questions, 'question_lists': question_lists,  'first_topics': first_topics, 'second_topics': second_topics, 'third_topics': third_topics, 'topic_lists_matched': topic_lists_matched, 'sent_text': sent_text,  'topic_match': topic_match, 'match_textlines': match_textlines, 'text_questions': text_questions, 'selected_activities': selected_activities, 'not_selected_activities':not_selected_activities, 'question_list': question_list, 'lessons_wording': lessons_wording, 'question_lists': question_lists, 'text_update': text_update, 'lesson_results': lesson_results, 'topic_lists_selected': topic_lists_selected, 'topic_lists': topic_lists, 'keywords_selected': keywords_selected, 'youtube_matched': youtube_matched, 'questions_selected': questions_selected, 'topics_selected': topics_selected, 'keywords_matched': keywords_matched, 'step': step, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
+    return render(request, 'dashboard/activity_builder.html', {'user_profile': user_profile, 'summarize_text': summarize_text, 'lesson_analytics': lesson_analytics, 'uploaded_questions_lists': uploaded_questions_lists, 'uploaded_text_list': uploaded_text_list, 'uploaded_images': uploaded_images, 'uploaded_text': uploaded_text, 'generated_questions': generated_questions, 'question_lists': question_lists,  'first_topics': first_topics, 'second_topics': second_topics, 'third_topics': third_topics, 'topic_lists_matched': topic_lists_matched, 'sent_text': sent_text,  'match_textlines': match_textlines, 'text_questions': text_questions, 'selected_activities': selected_activities, 'not_selected_activities':not_selected_activities, 'question_list': question_list, 'lessons_wording': lessons_wording, 'question_lists': question_lists, 'text_update': text_update, 'lesson_results': lesson_results, 'topic_lists_selected': topic_lists_selected, 'topic_lists': topic_lists, 'keywords_selected': keywords_selected, 'youtube_matched': youtube_matched, 'questions_selected': questions_selected, 'topics_selected': topics_selected, 'keywords_matched': keywords_matched, 'step': step, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
 
 
 
 
-def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson_id=None):
+def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson_id=None, act_id=None):
     current_week = date.today().isocalendar()[1] 
     user_profile = User.objects.get(id=user_id)
 
@@ -935,7 +931,7 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
     subjects_list = classroom_profile.subjects.all()
     subject_matches = standardSubjects.objects.filter(id__in=subjects_list )                                         
     
-    
+    worksheet_title = '%s: %s for week of %s' % (user_profile, classroom_profile, current_week) 
     class_objectives = lessonObjective.objects.all().order_by('subject')
     vocab_list = vocabularyList.objects.filter(lesson_plan__in=class_objectives)
     lesson_activities = lessonFull.objects.filter(lesson_overview__in=class_objectives)
@@ -982,20 +978,13 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
         uploaded_text_list.append(results_final)
 
     text_questions = get_question_text(lesson_id)
-    text_questions_two_full = get_cluster_text(lesson_id)
-    if text_questions_two_full:
-        match_textlines = text_questions_two_full[0]
-        topics_selected = text_questions_two_full[1]
-        topic_match = text_questions_two_full[2]
-    else:
-        match_textlines = []
-        topics_selected = []
-        topic_match = []
+    match_textlines = get_cluster_text(lesson_id)
+
 
     topic_results = []
-    for item in topic_match:
-        for y in item[2]:
-            topic_results.append(y.id)
+    for item in topic_lists_selected:
+
+        topic_results.append(item.id)
 
     topic_lists_matched = topicInformation.objects.filter(id__in=topic_results).order_by('item')
 
@@ -1103,11 +1092,97 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
     youtube_matched = youtubeSearchResult.objects.filter(lesson_plan=lesson_match, is_selected=True)
     
 
-    
-    step = 4
+    activity_choices = []
+    for item in uploaded_text_list:
 
-    return render(request, 'dashboard/activity_builder_2.html', {'user_profile': user_profile, 'lesson_analytics': lesson_analytics, 'uploaded_questions_lists': uploaded_questions_lists, 'uploaded_text_list': uploaded_text_list, 'uploaded_images': uploaded_images, 'uploaded_text': uploaded_text, 'generated_questions': generated_questions, 'question_lists': question_lists,  'first_topics': first_topics, 'second_topics': second_topics, 'third_topics': third_topics, 'topic_lists_matched': topic_lists_matched, 'sent_text': sent_text,  'topic_match': topic_match, 'match_textlines': match_textlines, 'text_questions': text_questions, 'selected_activities': selected_activities, 'not_selected_activities':not_selected_activities, 'question_list': question_list, 'lessons_wording': lessons_wording, 'question_lists': question_lists, 'text_update': text_update, 'lesson_results': lesson_results, 'topic_lists_selected': topic_lists_selected, 'topic_lists': topic_lists, 'keywords_selected': keywords_selected, 'youtube_matched': youtube_matched, 'questions_selected': questions_selected, 'topics_selected': topics_selected, 'keywords_matched': keywords_matched, 'step': step, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
+        sentence = []
+        for word in item:
+            word_one = word[0]
+            sentence.append(word_one)
+        sentence = ' '.join([str(i) for i in sentence])
+        result = str(sentence), item
+        if result not in activity_choices:
+            activity_choices.append(result)
 
+    for item in sent_text:
+        sentence = []
+        for word in item:
+            word_one = word[0]
+            sentence.append(word_one)
+        sentence = ' '.join([str(i) for i in sentence])
+        result = str(sentence), item
+        if result not in activity_choices:
+            activity_choices.append(result)
+
+    if 'False' in act_id:
+        pass
+    else:
+        act_id = int(act_id)
+        worksheet, create = worksheetFull.objects.get_or_create(created_by=user_profile, title=worksheet_title)
+        select_activity_choices = activity_choices[act_id]
+        new_question, created = topicQuestion.objects.get_or_create(Question=select_activity_choices[0])
+        update_worksheet = worksheet.questions.add(new_question)
+
+    return render(request, 'dashboard/activity_builder_2.html', {'user_profile': user_profile, 'activity_choices': activity_choices, 'lesson_analytics': lesson_analytics, 'uploaded_questions_lists': uploaded_questions_lists, 'uploaded_text_list': uploaded_text_list, 'uploaded_images': uploaded_images, 'uploaded_text': uploaded_text, 'generated_questions': generated_questions, 'question_lists': question_lists,  'first_topics': first_topics, 'second_topics': second_topics, 'third_topics': third_topics, 'topic_lists_matched': topic_lists_matched, 'sent_text': sent_text,  'match_textlines': match_textlines, 'text_questions': text_questions, 'selected_activities': selected_activities, 'not_selected_activities':not_selected_activities, 'question_list': question_list, 'lessons_wording': lessons_wording, 'question_lists': question_lists, 'text_update': text_update, 'lesson_results': lesson_results, 'topic_lists_selected': topic_lists_selected, 'topic_lists': topic_lists, 'keywords_selected': keywords_selected, 'youtube_matched': youtube_matched, 'questions_selected': questions_selected, 'topics_selected': topics_selected, 'keywords_matched': keywords_matched, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
+
+
+
+def WorksheetBuilder(request, user_id=None, class_id=None, subject=None, lesson_id=None, worksheet_id=None):
+    #second step to the standards upload process
+    #name="standards_upload"
+    matched_lesson = lessonObjective.objects.get(id=lesson_id)
+    user_profile = User.objects.filter(username=request.user.username).first()
+
+    if request.method == "POST":
+        
+        form = lessonPDFTextForm(request.POST, request.FILES,)
+        if form.is_valid():
+            
+            prev = form.save()
+            get_text_image = pdf_pull_text(prev.id)
+            content = get_text_image
+
+            update_text = lessonPDFText.objects.get(id=prev.id)
+            update_text.content = content
+            update_text.save()
+            pdf_image = update_text.pdf_doc.url
+            
+            pull_images = pdf_pull_images(prev.id, lesson_id, update_text.id)
+            return redirect('{}#keywords'.format(reverse('activity_builder', kwargs={'user_id':user_profile.id, 'class_id':class_id, 'subject':subject, 'lesson_id':lesson_id})))
+    else:
+        data = {'matched_lesson': matched_lesson}
+        form = lessonPDFTextForm(initial=data)
+        form.fields["matched_lesson"].queryset = lessonObjective.objects.filter(id=lesson_id)
+    return render(request, 'dashboard/create_worksheet.html', {'user_profile': user_profile, 'form': form})
+
+
+def CopyPasteLesson(request, user_id=None, class_id=None, subject=None, lesson_id=None):
+    #second step to the standards upload process
+    #name="standards_upload"
+    matched_lesson = lessonObjective.objects.get(id=lesson_id)
+    user_profile = User.objects.filter(username=request.user.username).first()
+
+    if request.method == "POST":
+        
+        form = lessonPDFTextForm(request.POST, request.FILES,)
+        if form.is_valid():
+            
+            prev = form.save()
+            get_text_image = pdf_pull_text(prev.id)
+            content = get_text_image
+
+            update_text = lessonPDFText.objects.get(id=prev.id)
+            update_text.content = content
+            update_text.save()
+            pdf_image = update_text.pdf_doc.url
+            
+            pull_images = pdf_pull_images(prev.id, lesson_id, update_text.id)
+            return redirect('{}#keywords'.format(reverse('activity_builder', kwargs={'user_id':user_profile.id, 'class_id':class_id, 'subject':subject, 'lesson_id':lesson_id})))
+    else:
+        data = {'matched_lesson': matched_lesson}
+        form = lessonPDFTextForm(initial=data)
+        form.fields["matched_lesson"].queryset = lessonObjective.objects.filter(id=lesson_id)
+    return render(request, 'dashboard/lesson_image_upload.html', {'user_profile': user_profile, 'form': form})
 
 
 def LessonImageUpload(request, user_id=None, class_id=None, subject=None, lesson_id=None):
@@ -1351,7 +1426,7 @@ def CreateActivity(request, user_id=None, class_id=None, subject=None, lesson_id
 
         topic_results = []
         for item in topic_match:
-            for y in item[2]:
+            for y in item:
                 topic_results.append(y.id)
 
         topic_lists_matched = topicInformation.objects.filter(id__in=topic_results).order_by('item')
