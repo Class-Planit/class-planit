@@ -24,7 +24,9 @@ admin.site.register(lessonImageUpload)
 admin.site.register(lessonPDFText)
 admin.site.register(lessonPDFImage)
 admin.site.register(worksheetFull)
-
+admin.site.register(textBookTitle)
+admin.site.register(LearningDemonstrationTemplate)
+admin.site.register(LearningDemonstration)
 
 admin.site.register(standardSet)
 admin.site.register(gradeLevel)

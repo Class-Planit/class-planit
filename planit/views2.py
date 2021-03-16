@@ -38,609 +38,20 @@ import tempfile
 from .tasks import *
 from .get_questions import *
 from .lesson_planner import *
+# Create your views here.
+# Create your views here.
 
 
-##################| Homepage Views |#####################
-#Homepage Landing Page
-def Homepage(request):
+
+
+
+
+
+
+
+
+
     
-
-    if request.method == "POST":
-        print(request)
-        form = TeacherForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            
-            user_email = form.cleaned_data.get('email')
-            my_number = form.cleaned_data.get('phone_number')
-            if '+1' in my_number:
-                pass
-            else:
-                my_number = '+1', my_number
-            raw_password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=raw_password)
-            user_id = user.id
-            
-            welcome_message = 'Welcome to Class Planit, %s! We will be in touch when your account is activated.' % (username)
-        
-            to = str(my_number)
-            if to:
-                try:
-                    client = Client(config('TWILIO_ACCOUNT_SID'), config('TWILIO_AUTH_TOKEN'))
-                    response = client.messages.create(
-                            body=str(welcome_message),
-                            to=to, from_=config('TWILIO_PHONE_NUMBER'))
-                    message = Mail(
-                            from_email='welcome@classplanit.co',
-                            to_emails=user_email,
-                            subject='Welcome to Class Planit',
-                            html_content= get_template('dashboard/welcome_to_class_planit.html').render({'user': user}))
-                except Exception as e:
-                    pass
-            try:
-                sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
-                response = sg.send(message)
-                print(response.status_code)
-                print(response.body)
-                print(response.headers)
-            except Exception as e:
-                pass
-            return redirect('thank_you', user_id=user_id)
-        else:
-            return redirect('registration_full', retry=True)
-        
-        
-
-    else:
-
-        form = TeacherForm()
-    
-    choice = random.choice([1, 2])
-    if choice == 1:
-        return render(request, 'homepage/index.html', {'form': form})
-    else:
-        return render(request, 'homepage/index2.html', {'form': form})
-
-#Full Form Regstration if error on pop up modal
-def FormFull(request, retry=None):
-    if retry:
-        message = 'Something Went Wrong! Please complete your registration again.'
-    else:
-        message = "Let's Get Started!"
-    if request.method == "POST":
-
-        form = TeacherForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            
-            user_email = form.cleaned_data.get('email')
-            my_number = form.cleaned_data.get('phone_number')
-            if '+1' in my_number:
-                pass
-            else:
-                my_number = '+1', my_number
-            raw_password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=raw_password)
-            user_id = user.id
-            
-            welcome_message = 'Welcome to Class Planit, %s! We will be in touch when your account is activated.' % (username)
-        
-            to = str(my_number)
-            if to:
-                try:
-                    client = Client(config('TWILIO_ACCOUNT_SID'), config('TWILIO_AUTH_TOKEN'))
-                    response = client.messages.create(
-                            body=str(welcome_message),
-                            to=to, from_=config('TWILIO_PHONE_NUMBER'))
-                    message = Mail(
-                            from_email='welcome@classplanit.co',
-                            to_emails=user_email,
-                            subject='Welcome to Class Planit',
-                            html_content= get_template('dashboard/welcome_to_class_planit.html').render({'user': user}))
-                except Exception as e:
-                    pass
-            try:
-                sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
-                response = sg.send(message)
-                print(response.status_code)
-                print(response.body)
-                print(response.headers)
-            except Exception as e:
-                pass
-            return redirect('thank_you', user_id=user_id)
-
-    else:
-
-        form = TeacherForm()
-    
-    return render(request, 'homepage/registration_full.html', {'form': form, 'message': message})
-
-#Teacher Questionnaire 
-def QuestionnaireFull(request):
-
-    if request.method == "POST":
-
-        form = teacherQuestionnaireForm(request.POST)
-        if form.is_valid():
-            form.save()
-            
-            return redirect('thank_you_questionnaire')
-    else:
-
-        form = teacherQuestionnaireForm()
-    
-    return render(request, 'homepage/teacher_questionnaire.html', {'form': form})
-
-#How it works page to explain the product 
-class HowItWorks(TemplateView):
-    template_name = 'homepage/how_it_works.html' 
-
-    def get(self,request):
-
-        return render(request, 'homepage/how_it_works.html', { })
-
-#?not sure what this view does, will test
-class Services(TemplateView):
-    template_name = 'homepage/services.html' 
-
-    def get(self,request):
-
-        return render(request, 'homepage/services.html', { })
-
-#Teams page 
-class AboutUs(TemplateView):
-    template_name = 'homepage/about.html' 
-
-    def get(self,request):
-
-        return render(request, 'homepage/about.html', { })
-
-#Thank for Registering Page, we will get back to you
-class ThankYou(TemplateView):
-    template_name = 'homepage/thank_you.html' 
-
-    def get(self,request,user_id):
-        user_profile = User.objects.get(id=user_id)
-        print(user_profile)
-        return render(request, 'homepage/thank_you.html', {'user_profile': user_profile })
-
-#Thanks for submitting the questionnaire
-class ThankYouQuestionnaire(TemplateView):
-    template_name = 'homepage/thank_you_questionnaire.html' 
-
-    def get(self,request):
-        return render(request, 'homepage/thank_you_questionnaire.html', {})
-
-#User Login 
-def login_user(request):
-
-    if request.method == "POST":
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('Dashboard', week_of='Current')
-        else:
-            pass
-  
-    return render(request, 'dashboard/sign-in.html', {})
-
-##################| End Homepage Views |#####################
-
-
-##########################################################
-##################| Dashboard Views |#####################
-
-#Main Dashboard View labeled as 'Overview'
-class Dashboard(TemplateView):
-    template_name = 'dashboard/dashboard.html' 
-
-    def get(self,request,week_of):
-        current_week = date.today().isocalendar()[1] 
-        if 'Current' in week_of:
-            active_week = current_week
-        else:
-            active_week = int(week_of)
-        user_profile = User.objects.filter(username=request.user.username).first()
-        if user_profile:
-            classroom_profiles = classroom.objects.filter(main_teacher=user_profile)
-
-            objective_matches = lessonObjective.objects.filter(week_of=active_week, lesson_classroom__in=classroom_profiles)
-
-            return render(request, 'dashboard/dashboard.html', {'user_profile': user_profile, 'current_week': current_week, 'active_week': active_week, 'objective_matches': objective_matches})
-        else:
-            return redirect('login_user')
-
-#user settings 
-def AccountSetup(request, user_id):
-    if request.method == "POST":
-        user_profile = User.objects.filter(username=request.user.username).first()
-        form = classroomForm(request.POST, request.FILES)
-
-        if form.is_valid():
-            prev = form.save(commit=False)
-            prev.main_teacher = user_profile
-            prev.is_active = True
-            prev.save()
-        
-        
-            return redirect('select_standards', user_id=user_profile.id, class_id=classroom_match, subject=subject, lesson_id=prev.id, select_all=False, topic_id='False')
-    else:
-        user_profile = User.objects.filter(username=request.user.username).first()
-        form = classroomForm()
-        step = 'One'
-        return render(request, 'dashboard/account_setup.html', {'user_profile': user_profile})
-
-#?not sure what this view does, will test
-class AccountSetupTwo(TemplateView):
-    template_name = 'dashboard/account_setup.html' 
-
-    def get(self,request,user_id):
-        if request.method == "POST":
-            user_profile = User.objects.filter(username=request.user.username).first()
-            form = classroomForm(request.POST, request.FILES)
-
-            if form.is_valid():
-                prev = form.save(commit=False)
-                prev.main_teacher = user_profile
-                prev.is_active = True
-                prev.save()
-            
-            
-                return redirect('select_standards', user_id=user_profile.id, class_id=classroom_match, subject=subject, lesson_id=prev.id, select_all=False, topic_id='False')
-        else:
-            user_profile = User.objects.filter(username=request.user.username).first()
-            form = classroomForm()
-            step = 'One'
-            return render(request, 'dashboard/account_setup.html', {'user_profile': user_profile})
-
-##################| Classroom Tabs Views |#####################
-#Main Classroom View labeled as 'Classrooms'
-class ClassroomList(TemplateView):
-    template_name = 'dashboard/classroom_list.html' 
-
-    def get(self,request):
-        current_week = date.today().isocalendar()[1] 
-        user_profile = User.objects.filter(username=request.user.username).first()
-        classroom_profiles = classroom.objects.filter(main_teacher=user_profile)
-        page = 'Classrooms'
-
-        return render(request, 'dashboard/classroom_list.html', {'user_profile': user_profile, 'classroom_profiles': classroom_profiles, 'page': page})
-
-#Create New Classroom 
-def CreateClassroom(request, user_id=None, class_id=None):
-    user_profile = User.objects.filter(username=request.user.username).first()
-    s_user = school_user.objects.filter(user_id=user_profile.id).first()
-    ay = academicYear.objects.filter(planning_teacher=user_profile).first()
-    
-    grade_levels = gradeLevel.objects.filter(standards_set=s_user.standards_set)
-    if request.method == "POST":
-        user_profile = User.objects.filter(username=request.user.username).first()
-        form = classroomForm(request.POST, request.FILES)
-
-        if form.is_valid():
-            grade_level = form.cleaned_data.get('grade_level')
-           
-            prev = form.save(commit=False)
-            prev.main_teacher = user_profile
-            prev.is_active = True
-            prev.standards_set = s_user.standards_set
-            prev.academic_year = ay
-            prev.save()
-            
-            update_classroom = classroom.objects.get(id=prev.id)
-            for gl in grade_level:
-                update_classroom.grade_level.add(gl)
-            return redirect('create_classroom_two', user_id=user_id, class_id=prev.id)
-    else:
-        user_profile = User.objects.filter(username=request.user.username).first()
-        form = classroomForm()
-        step = 'One'
-    
-    page = 'Classrooms'
-    return render(request, 'dashboard/create_classroom.html', {'user_profile': user_profile, 'form': form, 'page': page, 'grade_levels': grade_levels})
-
-#Add Subjects to New Classroom 
-def CreateClassroomTwo(request, user_id=None, class_id=None):
-    user_profile = User.objects.filter(username=request.user.username).first()
-    s_user = school_user.objects.filter(user_id=user_profile.id).first()
-    ay = academicYear.objects.filter(planning_teacher=user_profile).first()
-    class_match = classroom.objects.get(id=class_id)
-    grade_levels = gradeLevel.objects.filter(standards_set=s_user.standards_set)
-    cs = class_match.subjects.all()
-    current_subject = standardSubjects.objects.filter(id__in=cs)
-    matched_subject = standardSubjects.objects.filter(standards_set=class_match.standards_set).exclude(id__in=current_subject)
-
-    if request.method == "POST":
-        user_profile = User.objects.filter(username=request.user.username).first()
-        form = classroomForm(request.POST, request.FILES)
-
-        if form.is_valid():
-            prev = form.save(commit=False)
-            prev.main_teacher = user_profile
-            prev.is_active = True
-            prev.standards_set = s_user.standards_set
-            prev.academic_year = ay
-            prev.save()
-
-            return redirect('create_classroom_two', user_id=user_id, class_id=prev.id)
-    else:
-        user_profile = User.objects.filter(username=request.user.username).first()
-        form = classroomForm()
-        step = 'One'
-    
-    page = 'Classrooms'
-    return render(request, 'dashboard/create_classroom.html', {'user_profile': user_profile, 'class_match': class_match, 'form': form, 'page': page, 'grade_levels': grade_levels, 'current_subject': current_subject, 'matched_subject': matched_subject})
-
-
-#Add New Subject Redirect
-def addSubject(request, user_id=None, class_id=None, subject_id=None):
-    user_profile = User.objects.get(id=user_id)
-    classroom_profile = classroom.objects.get(id=class_id)
-    matched_subject = standardSubjects.objects.get(id=subject_id)
-    update_classroom = classroom_profile.subjects.add(matched_subject)
-    return redirect('{}#subjects'.format(reverse('create_classroom_two', kwargs={'user_id':user_id, 'class_id':class_id})))
-
-
-#View Single Classroom 
-class Classrooms(TemplateView):
-    template_name = 'dashboard/classrooms.html' 
-
-    def get(self,request,class_id):
-        user_profile = User.objects.filter(username=request.user.username).first()
-        class_match = classroom.objects.get(id=class_id)
-        cs = class_match.subjects.all()
-        current_subject = standardSubjects.objects.filter(id__in=cs)
-        matched_subject = standardSubjects.objects.filter(standards_set=class_match.standards_set).exclude(id__in=current_subject)
-        if request.method == "POST":
-            form = classroomForm(request.POST, request.FILES)
-
-            if form.is_valid():
-                prev = form.save(commit=False)
-                prev.main_teacher = user_profile
-                prev.is_active = True
-                prev.save()
-            
-                return redirect('select_standards', user_id=user_profile.id, class_id=classroom_match, subject=subject, lesson_id=prev.id, select_all=False, topic_id='False')
-        else:
-            
-            form = classroomForm()
-        
-        return render(request, 'dashboard/classrooms.html', {'user_profile': user_profile, 'class_match': class_match, 'current_subject': current_subject, 'matched_subject': matched_subject})
-
-
-##################| Build Worksheet Tabs Views |#####################
-
-#?not sure what this view does, will test
-class LessonPlanner(TemplateView):
-    template_name = 'dashboard/lesson_planner.html' 
-
-#?not sure what this view does, will test
-class SubjectPlanner(TemplateView):
-    template_name = 'dashboard/subject_planner.html'
-
-#Step One Teachers type in their Objective 
-def CreateObjective(request, user_id=None, week_of=None):
-    user_profile = User.objects.filter(username=request.user.username).first()
-    user_classrooms = classroom.objects.filter(main_teacher=user_profile)
-    
-
-
-    if 'Current' in week_of:
-        current_week = date.today().isocalendar()[1] 
-    else:
-        current_week = int(week_of)
-
-    if user_classrooms:
-        subjects = []
-        for classroom_m in user_classrooms:
-            s_match = classroom_m.subjects.all()
-            subject_match = standardSubjects.objects.filter(id__in=s_match)
-            subjects.append(subject_match)
-
-    else:
-        subjects = []
-
-
-    if request.method == "POST":
-        form = lessonObjectiveForm(request.POST, request.FILES)
-
-        if form.is_valid():
-            prev = form.save(commit=False)
-            prev.week_of = current_week
-            subject = prev.subject_id
-            selected_class = prev.lesson_classroom_id
-            
-            prev.save()
-           
-            return redirect('select_standards_two', user_id=user_profile.id, class_id=selected_class, subject=subject, lesson_id=prev.id, select_all=False)
-    else:
-        form = lessonObjectiveForm()
-  
-
-
-
-    step = 1
-    return render(request, 'dashboard/create_objective_1.html', {'form': form, 'step': step, 'user_profile': user_profile, 'user_classrooms': user_classrooms, 'subjects': subjects  })
-
-#Step Two: Select and Add Relevant Topics 
-#create_objective_3.html
-def SelectKeywordsTwo(request, user_id=None, class_id=None, subject=None, lesson_id=None, select_all=None):
-    #pull in current week and user data
-    current_week = date.today().isocalendar()[1] 
-    user_profile = User.objects.get(id=user_id)
-
-    # pull in class information 
-    classroom_profile = classroom.objects.get(id=class_id)
-    
-    grade_list = classroom_profile.grade_level.all()
-    standard_match = standardSet.objects.get(id=classroom_profile.standards_set_id)
-
-    subject = int(subject)
-    current_subject = standardSubjects.objects.get(id=subject)
-    
-    
-
-    lesson_match = lessonObjective.objects.get(id=lesson_id)
-    current_standards = singleStandard.objects.filter(id__in=lesson_match.objectives_standards.all())
-    teacher_objective = lesson_match.teacher_objective
-    lesson_standards = singleStandard.objects.filter(id__in=lesson_match.objectives_standards.all())
-    topic_matches = lesson_match.objectives_topics.all()
-    
-    matched_topics = match_topics(teacher_objective, class_id, lesson_id)
-    text_result = group_topic_texts(lesson_id) #match_textbook_lines(topic_matches, class_id, lesson_id)
-    
-
-    split_list = []
-    if matched_topics:
-        for item in matched_topics:
-            item_id = item[0][0]
-            if item_id not in split_list:
-                split_list.append(item_id)
-
-    topic_lists_one = []
-    topic_lists = []
-    for item in split_list:
-        topic = topicInformation.objects.get(id=item)
-        topic_word = topic.item
-        topic_descriptions = topic.description.all()
-        check_topics = topicInformation.objects.filter(id__in=split_list).exclude(id=topic.id)
-        for item in check_topics:
-            check_word = item.item
-            Ratio = levenshtein_ratio_and_distance(topic_word,check_word,ratio_calc = True)
-            if Ratio > .85:
-                for desc in topic_descriptions:
-                    item.description.add(desc)   
-                    if topic.id in split_list:
-                        split_list.remove(topic.id)
-            else:
-                if lesson_match.objectives_topics.filter(id=topic.id).exists():
-                        result = topic, 1
-                else:
-                    result = topic, 0 
-
-                if result in topic_lists:
-                    pass
-                else:
-                    topic_lists.append(result)
-
-
-    topic_lists.sort(key=lambda x: x[1], reverse=True)
-    select_all = str(select_all)
-    if 'True' in select_all:
-        for topic in topic_lists:
-            if topic[1] == 1:
-                pass
-            else:
-                update_lesson = lesson_match.objectives_topics.add(topic[0])
-        return redirect('{}#youtube'.format(reverse('select_standards', kwargs={'user_id':user_profile.id, 'class_id':classroom_profile.id, 'subject':subject, 'lesson_id':lesson_id, 'select_all':False, topic_id:'False'})))
-        
-  
-    if request.method == "POST":
-        form = topicInformationForm(request.POST, request.FILES)
-
-        if form.is_valid():
-            prev = form.save()
-            lesson_match.objectives_demonstration.add(prev)
-           
-            return redirect('select_standards', user_id=user_profile.id, class_id=classroom_profile.id, subject=subject, lesson_id=prev.id, select_all=False, topic_id='False')
-    else:
-        form = topicInformationForm()
-
-
-   
-    return render(request, 'dashboard/create_objective_3.html', {'user_profile': user_profile, 'topic_lists': topic_lists, 'form': form, 'current_standards': current_standards, 'lesson_match': lesson_match, 'current_week': current_week, 'grade_list': grade_list, 'classroom_profile': classroom_profile })
-
-#Step Three: Select Standards and Add Demo of Knowledge/Skill 
-#create_objective_2.html
-def SelectStandards(request, user_id=None, class_id=None, subject=None, lesson_id=None, select_all=None, topic_id=None):
-    #pull in current week and user data
-    current_week = date.today().isocalendar()[1] 
-    user_profile = User.objects.get(id=user_id)
-
-    # pull in class information 
-    classroom_profile = classroom.objects.get(id=class_id)
-    
-    grade_list = classroom_profile.grade_level.all()
-    standard_match = standardSet.objects.get(id=classroom_profile.standards_set_id)
-
-    subject = int(subject)
-    current_subject = standardSubjects.objects.get(id=subject)
-    
-    
-
-    lesson_match = lessonObjective.objects.get(id=lesson_id)
-    current_standards = singleStandard.objects.filter(id__in=lesson_match.objectives_standards.all())
-    teacher_objective = lesson_match.teacher_objective
-    lesson_standards = singleStandard.objects.filter(id__in=lesson_match.objectives_standards.all())
-    topic_matches = lesson_match.objectives_topics.all()
-    demo_matches = lesson_match.objectives_demonstration.all()
-    selected_demos = LearningDemonstration.objects.filter(id__in=demo_matches)
-    recomended_demos = find_ks_demos(class_id, lesson_id)
-
-
-    if 'False' in topic_id:
-        pass
-    else:
-        topic_id = int(topic_id)
-        update_reco_demo = recomended_demos[topic_id]
-        if update_reco_demo:
-            if user_profile.is_superuser:
-                new_demo, create = LearningDemonstration.objects.get_or_create(content=update_reco_demo , created_by=user_profile, topic_id=topic_id, is_admin=True) 
-            else:
-                new_demo, create = LearningDemonstration.objects.get_or_create(content=update_reco_demo , created_by=user_profile, topic_id=topic_id, is_admin=False) 
-
-        update_lesson = lesson_match.objectives_demonstration.add(new_demo)
-    
-
-    recomendations = lessonStandardRecommendation.objects.filter(lesson_classroom=classroom_profile, objectives=lesson_match)
-
-    results = match_standard(teacher_objective, current_subject, class_id)
-    
-
-    for item in results:
-        grade = item[0]
-        standards = item[1]
-        for standard in standards:
-            standard_id = standard[0]
-            standard_match = singleStandard.objects.filter(id=standard_id).first()
-            create_objective, created = lessonStandardRecommendation.objects.get_or_create(lesson_classroom=classroom_profile, objectives=lesson_match, objectives_standard=standard_match)   
-
-    if request.method == "POST":
-        form = LearningDemonstrationForm(request.POST, request.FILES)
-
-        if form.is_valid():
-            prev = form.save()
-            lesson_match.objectives_demonstration.add(prev)
-           
-            return redirect('select_standards', user_id=user_profile.id, class_id=classroom_profile.id, subject=subject, lesson_id=lesson_id, select_all=False, topic_id='False')
-    else:
-        form = LearningDemonstrationForm()
-
-    return render(request, 'dashboard/create_objective_2.html', {'user_profile': user_profile, 'recomended_demos': recomended_demos, 'form': form, 'selected_demos': selected_demos, 'current_standards': current_standards, 'recomendations': recomendations, 'lesson_match': lesson_match, 'current_week': current_week, 'grade_list': grade_list, 'classroom_profile': classroom_profile })
-
-#Adds or Removes Selected Standards
-def EditObjectiveStandards(request, user_id=None, class_id=None, subject=None, lesson_id=None, standard_id=None, action=None):
-    user_profile = User.objects.get(id=user_id)
-    classroom_profile = classroom.objects.get(id=class_id)
-    lesson_match = lessonObjective.objects.get(id=lesson_id)
-    standard_match = singleStandard.objects.get(id=standard_id)
-    recomendations = lessonStandardRecommendation.objects.get(lesson_classroom=classroom_profile, objectives_standard=standard_id, objectives=lesson_match )
-    action = int(action)
-    if action == 0:
-        lesson_match.objectives_standards.add(standard_match)
-        recomendations.is_selected = True
-        recomendations.save()
-    else:
-        lesson_match.objectives_standards.remove(standard_match)
-        recomendations.is_selected = False
-        recomendations.save()
-    return redirect('{}#standards'.format(reverse('select_standards', kwargs={'user_id':user_profile.id, 'class_id':classroom_profile.id, 'subject':subject, 'lesson_id':lesson_id, 'select_all':False, 'topic_id':'False'})))
-
-
 
 
 def SelectKeywords(request, user_id=None, class_id=None, subject=None, lesson_id=None):
@@ -822,10 +233,10 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     
     
     class_objectives = lessonObjective.objects.all().order_by('subject')
-
-
+    vocab_list = vocabularyList.objects.filter(lesson_plan__in=class_objectives)
+    lesson_activities = lessonFull.objects.filter(lesson_overview__in=class_objectives)
     lesson_match = lessonObjective.objects.get(id=lesson_id)
-
+    question_match = match_lesson_questions(lesson_match.teacher_objective, class_id, lesson_id)
     lesson_standards = singleStandard.objects.filter(id__in=lesson_match.objectives_standards.all())
     topic_matches = lesson_match.objectives_topics.all()
     topic_lists_selected = topicInformation.objects.filter(id__in=topic_matches).order_by('item')
@@ -838,12 +249,13 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     first_topics = topicInformation.objects.filter(id__in=topic_matches).order_by('item')[0:one_end]
     second_topics = topicInformation.objects.filter(id__in=topic_matches).order_by('item')[one_end:two_end]
     third_topics = topicInformation.objects.filter(id__in=topic_matches).order_by('item')[two_end:three_end]
+    uploaded_images = lessonPDFImage.objects.filter(matched_lesson=lesson_match)
+    uploaded_text = lessonPDFText.objects.filter(matched_lesson=lesson_match)
+
 
     text_questions = get_question_text(lesson_id)
-    match_textlines_one = get_cluster_text(lesson_id,user_id)
-    match_textlines = match_textlines_one[0]
-    match_topic_text = match_textlines_one[1]
-    print(match_topic_text)
+    match_textlines = get_cluster_text(lesson_id,user_id)
+
 
     topic_results = []
     for item in topic_lists_selected:
@@ -871,13 +283,10 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     
     text_update, created = lessonText.objects.get_or_create(matched_lesson=lesson_match)
     lessons_wording = text_update.activities
-    if topic_lists_selected:
-        lesson_activities_matched = get_lessons(lesson_id, user_id)
-    else:
-        lesson_activities_matched = []
+    lesson_activities_matched = get_lessons(lesson_id, user_id)
     
     selected_activities = selectedActivity.objects.filter(lesson_overview=lesson_match, is_selected=True)
-    not_selected_activities = selectedActivity.objects.filter(lesson_overview=lesson_match, is_selected=False).order_by('template_id')
+    not_selected_activities = selectedActivity.objects.filter(lesson_overview=lesson_match, is_selected=False).order_by('bloom')
 
     if selected_activities:
         lesson_analytics = label_activities_analytics(lesson_id)
@@ -908,6 +317,20 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
         
         question_list = []
     
+    
+    question_lists = []
+    if question_match:
+        for item in question_match:
+            result_id = item[0][0]
+
+            topic = topicQuestion.objects.get(id=result_id)
+    
+            question_lists.append(topic )
+    
+    if question_match:
+        pass
+    else:
+        question_match = []
 
     combined = matched_topics, text_match
     topic_lists = []
@@ -945,18 +368,9 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     
 
     
-    if request.method == "POST":
-        print('2---------------', request)
-        form = lessonTextForm(request.POST, request.FILES)
+    step = 4
 
-        if form.is_valid():
-            print('1-------------', form)
-            return redirect('create_classroom_two', user_id=user_id, class_id=prev.id)
-    else:
-
-        form = lessonTextForm()
-
-    return render(request, 'dashboard/activity_builder.html', {'user_profile': user_profile, 'match_topic_text': match_topic_text, 'form': form, 'summarize_text': summarize_text, 'lesson_analytics': lesson_analytics, 'generated_questions': generated_questions, 'first_topics': first_topics, 'second_topics': second_topics, 'third_topics': third_topics, 'topic_lists_matched': topic_lists_matched, 'sent_text': sent_text,  'match_textlines': match_textlines, 'text_questions': text_questions, 'selected_activities': selected_activities, 'not_selected_activities':not_selected_activities, 'question_list': question_list, 'lessons_wording': lessons_wording, 'text_update': text_update, 'lesson_results': lesson_results, 'topic_lists_selected': topic_lists_selected, 'topic_lists': topic_lists, 'keywords_selected': keywords_selected, 'youtube_matched': youtube_matched, 'questions_selected': questions_selected, 'topics_selected': topics_selected, 'keywords_matched': keywords_matched, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
+    return render(request, 'dashboard/activity_builder.html', {'user_profile': user_profile, 'summarize_text': summarize_text, 'lesson_analytics': lesson_analytics, 'generated_questions': generated_questions, 'question_lists': question_lists,  'first_topics': first_topics, 'second_topics': second_topics, 'third_topics': third_topics, 'topic_lists_matched': topic_lists_matched, 'sent_text': sent_text,  'match_textlines': match_textlines, 'text_questions': text_questions, 'selected_activities': selected_activities, 'not_selected_activities':not_selected_activities, 'question_list': question_list, 'lessons_wording': lessons_wording, 'question_lists': question_lists, 'text_update': text_update, 'lesson_results': lesson_results, 'topic_lists_selected': topic_lists_selected, 'topic_lists': topic_lists, 'keywords_selected': keywords_selected, 'youtube_matched': youtube_matched, 'questions_selected': questions_selected, 'topics_selected': topics_selected, 'keywords_matched': keywords_matched, 'step': step, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
 
 
 
@@ -1011,24 +425,10 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
             textbook = quest.linked_text_id
             text_results.append(textbook)
 
-    textbooks = []
-    for text in text_results:
-        matched_textbook_background = textBookBackground.objects.get(id=text)
-        title = matched_textbook_background.textbook_id
-        if title not in textbooks:
-           textbooks.append(title) 
 
-
-    text_titles_topic = []
-    for text in textbooks:
-        find_more_topics = find_match_topic_texts(subject_match_full.id, text)
-        if find_more_topics not in text_titles_topic:
-            text_titles_topic.append(find_more_topics)
-
-    
     matched_textbook_background = textBookBackground.objects.filter(id__in=text_results)
     uploaded_text_topics = match_topics_text_uploads(matched_textbook_background, class_id, lesson_id,)
-    
+    find_more_topics = find_match_topic_texts(subject_match_full.subject_title, text_id)
 
 
     first_topics = topicInformation.objects.filter(id__in=topic_matches).order_by('item')[0:one_end]
@@ -1039,9 +439,8 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
     uploaded_text = lessonPDFText.objects.filter(matched_lesson=lesson_match)
 
     text_questions = get_question_text(lesson_id)
-    match_textlines_one = get_cluster_text(lesson_id,user_id)
-    match_textlines = match_textlines_one[0]
-    match_topic_text = match_textlines_one[1]
+    match_textlines = get_cluster_text(lesson_id,user_id)
+    print('1-------', match_textlines)
 
     topic_results = []
     for item in topic_lists_selected:
@@ -1167,7 +566,7 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
             activity_choices.append(result)
 
 
-    return render(request, 'dashboard/activity_builder_2.html', {'user_profile': user_profile, 'match_topic_text': match_topic_text, 'subject_match_full': subject_match_full, 'matched_worksheet': matched_worksheet, 'activity_choices': activity_choices, 'lesson_analytics': lesson_analytics, 'generated_questions': generated_questions, 'first_topics': first_topics, 'second_topics': second_topics, 'third_topics': third_topics, 'topic_lists_matched': topic_lists_matched, 'sent_text': sent_text,  'match_textlines': match_textlines, 'text_questions': text_questions, 'selected_activities': selected_activities, 'not_selected_activities':not_selected_activities, 'question_list': question_list, 'lessons_wording': lessons_wording, 'question_lists': question_lists, 'text_update': text_update, 'lesson_results': lesson_results, 'topic_lists_selected': topic_lists_selected, 'topic_lists': topic_lists, 'keywords_selected': keywords_selected, 'youtube_matched': youtube_matched, 'questions_selected': questions_selected, 'topics_selected': topics_selected, 'keywords_matched': keywords_matched, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
+    return render(request, 'dashboard/activity_builder_2.html', {'user_profile': user_profile, 'subject_match_full': subject_match_full, 'matched_worksheet': matched_worksheet, 'uploaded_images': uploaded_images, 'activity_choices': activity_choices, 'lesson_analytics': lesson_analytics, 'generated_questions': generated_questions, 'question_lists': question_lists,  'first_topics': first_topics, 'second_topics': second_topics, 'third_topics': third_topics, 'topic_lists_matched': topic_lists_matched, 'sent_text': sent_text,  'match_textlines': match_textlines, 'text_questions': text_questions, 'selected_activities': selected_activities, 'not_selected_activities':not_selected_activities, 'question_list': question_list, 'lessons_wording': lessons_wording, 'question_lists': question_lists, 'text_update': text_update, 'lesson_results': lesson_results, 'topic_lists_selected': topic_lists_selected, 'topic_lists': topic_lists, 'keywords_selected': keywords_selected, 'youtube_matched': youtube_matched, 'questions_selected': questions_selected, 'topics_selected': topics_selected, 'keywords_matched': keywords_matched, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
 
 
 
@@ -1639,8 +1038,7 @@ def TextbookUploadTwo(request, textbook_id=None):
     text_id = textbook_match.id
 
     for line in csv.reader(io_string, delimiter=','):
-        get_lemma = stemSentence(line[0])
-        obj, created = textBookBackground.objects.get_or_create(textbook=textbook_match, line_text=line[0], line_lemma=get_lemma)
+        obj, created = textBookBackground.objects.get_or_create(textbook=textbook_match, line_text=line[0], line_lemma=line[1])
         obj.line_counter = int(str(text_id) + str(obj.id)) 
         obj.save()
 
@@ -1723,7 +1121,48 @@ def TopicUploadTwo(request):
     return render(request, template, context)
 
 
+def TopicUploadTwo(request):
+    #second step to the standards upload process
+    #name="standards_upload"
+    template = "administrator/upload_textbook.html"
 
+
+    prompt = {
+        'order': 'Order of the CSV should be first name, surname'   
+              }
+    # GET request returns the value of the data with the specified key.
+    if request.method == "GET":
+        return render(request, template, prompt)
+    csv_file = request.FILES['file']
+    # let's check if it is a csv file
+    if not csv_file.name.endswith('.csv'):
+        messages.error(request, 'THIS IS NOT A CSV FILE')
+    data_set = csv_file.read().decode('UTF-8')
+    # setup a stream which is when we loop through each line we are able to handle a data in a stream
+    io_string = io.StringIO(data_set)
+    next(io_string)
+
+    for line in csv.reader(io_string, delimiter=','):
+        Subject = line[0]
+        Grade_Level = line[1]
+        Standard_Set = line[2]
+        topic = line[3]
+        item = line[4]
+        Description = line[5]
+        topic_type = line[6]
+        image_name = line[7]
+        
+        standard_match = standardSet.objects.filter(Location=Standard_Set).first()
+        matched_grade = gradeLevel.objects.filter(grade=Grade_Level, standards_set=standard_match).first()
+        matched_subject = standardSubjects.objects.filter(subject_title=Subject, standards_set=standard_match, grade_level=matched_grade).first()
+        topic_match, created = topicTypes.objects.get_or_create(item=topic_type)
+        new_topic, created = topicInformation.objects.get_or_create(subject=matched_subject, grade_level=matched_grade, standard_set=standard_match, topic=topic, item=item, image_name=image_name)
+        new_description, created =  topicDescription.objects.get_or_create(description=Description) 
+        add_description = new_topic.description.add(new_description)
+        add_topic = new_topic.topic_type.add(topic_match)
+
+    context = {'step': True}
+    return render(request, template, context)
 
 def generate_studyguide_pdf(request):
 
@@ -1898,3 +1337,5 @@ def QuestionUploadTwo(request):
 
     context = {'step': True}
     return render(request, template, context)
+
+

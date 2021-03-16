@@ -14,11 +14,6 @@ from tinymce.widgets import TinyMCE
 
 
 
-class SelectQuestionsForm(forms.Form):
-
-    selected_questions = forms.MultipleChoiceField(required=False, widget=forms.CheckboxSelectMultiple)
-
-
 
 class  lessonTextForm(forms.ModelForm):
 

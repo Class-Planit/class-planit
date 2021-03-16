@@ -67,26 +67,12 @@
     <link type="text/css" href="{% static 'css/dashboard/rocket.css' %}" rel="stylesheet">
 
     <!-- NOTICE: You can use the _analytics.html partial to include production code specific code & trackers -->
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script src="{% static 'forms_ajaxified/js/forms_ajaxified.js' %}"></script>
     <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
-    <script type="text/javascript">
-    tinymce.init({
-      selector: '.myeditablediv',
-      inline: true,
-      menubar: false
-    });
-    </script>
-    <style>
-        .hide {
-        display: none;
-        }
 
-        .myDIV:hover + .hide {
-        display: block;
-        }
-    </style>
     </head>
 
 <body>
@@ -214,66 +200,7 @@ $(document).ready(function() {
     $('[data-class="form_ajaxified"]').formsAjaxified();
 });
 </script>
-<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
 
-<script>
-tinymce.init({
-    selector: 'textarea#basic-example',
-    height: 700,
-    menubar: false,
-    plugins: [
-        'advlist autolink lists link image charmap print preview anchor',
-        'searchreplace visualblocks code fullscreen',
-        'insertdatetime media table paste code help wordcount',
-        'noneditable'
-    ],
-    toolbar: 'undo redo | formatselect | ' +
-    'bold italic backcolor | alignleft aligncenter ' +
-    'alignright alignjustify | bullist numlist outdent indent | ' +
-    'removeformat | help',
-    content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
-    });
-</script>
-<script>
-var dfreeHeaderConfig = {
-    selector: '.dfree-header',
-    menubar: false,
-    inline: true,
-    toolbar: false,
-    plugins: [ 'quickbars' ],
-    quickbars_insert_toolbar: 'undo redo',
-    quickbars_selection_toolbar: 'italic underline',
-    };
-
-    var dfreeBodyConfig = {
-    selector: '.dfree-body',
-    menubar: false,
-    inline: true,
-    plugins: [
-        'autolink',
-        'codesample',
-        'link',
-        'lists',
-        'media',
-        'powerpaste',
-        'table',
-        'image',
-        'quickbars',
-        'codesample',
-        'help'
-    ],
-    toolbar: false,
-    quickbars_insert_toolbar: 'quicktable image media codesample',
-    quickbars_selection_toolbar: 'bold italic underline | formatselect | blockquote quicklink',
-    contextmenu: 'undo redo | inserttable | cell row column deletetable | help',
-    powerpaste_word_import: 'clean',
-    powerpaste_html_import: 'clean',
-    };
-
-    tinymce.init(dfreeHeaderConfig);
-    tinymce.init(dfreeBodyConfig);
-
-</script>
 
 <script src="https://cdn.tiny.cloud/1/0ak6ftt9ng9va9e98pl0iwxwwh0rb1tipwsg8it4mjmcbkjb/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
 <script src="{% static 'base/js/tinymce/tinymce.min.js' %}"></script>

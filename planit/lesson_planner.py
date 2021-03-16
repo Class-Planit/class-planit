@@ -54,6 +54,7 @@ def label_activities(activity):
     verbs_list = []
     path3 = 'planit/files/Multiple Intelligences and Bloom’s Verbs - Sheet5.csv'
     path4 = 'planit/files/work_product.csv'
+    #this is for the mi and blooms level assignment
     with open(path3) as f:
         for line in f:
             line = line.split(',')
@@ -69,6 +70,7 @@ def label_activities(activity):
                     verbs_list.append(result)
 
     work_list = []
+    #this is the workproduct 
     with open(path4) as f:
         for line in f:
             line = line.split(',')

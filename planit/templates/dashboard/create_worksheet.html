@@ -28,68 +28,12 @@
     <div class="row">
        
         <div class="col-lg-9">
-            <nav>
-                <div class="nav nav-tabs flex-column flex-md-row bg-white shadow-soft border border-light justify-content-around rounded mb-lg-3 py-3" id="nav-tab" role="tablist">
-                    <a class="nav-item nav-link rounded mr-md-3" id="nav-content-research-tab" data-toggle="tab"  href="#" role="tab" aria-controls="nav-content-research" aria-selected="true"><span class="d-block"><span class="fas fa-file-alt mr-2"></span><span class="font-weight-normal">Lesson Plan</span></span></a>
-                    <a class="nav-item nav-link rounded mr-md-3 active" id="nav-rank-track-tab"  href="#" aria-controls="nav-rank-track" aria-selected="false"><span class="fas fa-list mr-2"></span><span class="font-weight-normal">Digital Activities</span></a>
-                    <a class="nav-item nav-link rounded mr-md-3" id="nav-web-monitor-tab" data-toggle="tab" href="#nav-web-monitor" role="tab" aria-controls="nav-web-monitor" aria-selected="false"><span class="fas fa-globe mr-2"></span><span class="font-weight-normal">Digital Resources</span></a>
-                    <a class="nav-item nav-link rounded mr-md-3" id="nav-backlink-research-tab" data-toggle="tab" href="#nav-backlink-research" role="tab" aria-controls="nav-backlink-research" aria-selected="false"><span class="fas fa-chart-line mr-2"></span><span class="font-weight-normal">Assessments</span></a>
-                  
-                </div>
-            </nav>
+           
 
-
-                 <!-- Tab -->
-                 <div class="tab-content mt-5 mt-lg-6 " id="nav-tabContent">
-                    <!-- Content Research Tab -->
-                    <div class='row bg-white'>
-                        <div class='col'>
-                            <div class="card" style="width: 18rem;">
-                                <div class="card-body">
-                                <h5 class="card-title">Study Guide</h5>
-                                
-                                <a href="{% url 'digital_study_guide' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">View</a>
-                                
-                                </div>
-                            </div>
-                        </div>
-                        <div class='col'>
-                            
-                            <div class="card" style="width: 18rem;">
-                                <div class="card-body">
-                                <h5 class="card-title">Worksheet:</h5>
-                                
-                                <a href="{% url 'digital_worksheet' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">View</a>
-                                
-                                </div>
-                            </div>
-                        </div>
-                        <div class='col'>
-                            <div class="card" style="width: 18rem;">
-                                <div class="card-body">
-                                <h5 class="card-title">Practice Test:</h5>
-                                
-                                <a href="{% url 'practice_test' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">View</a>
-                                
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="tab-pane fade show active " id="nav-content-research" role="tabpanel" aria-labelledby="nav-content-research-tab">
-                        <br>
-                        <div class='container'>
-                        <div class="row justify-content-between  align-items-center bg-white ">
-                            <div class="col-12">
-
-                       
-                     <p>Worksheet Builder</p>
-                            
-                            </div>
-                        </div>  
-                        </div>
-                    </div>
-                </div>
-                <!-- End of tab -->
+    <p> {{ matched_worksheet }}</p>
+    {% for quest in matched_worksheet.questions.all %}
+    <li>{{ quest }}</li>
+    {% endfor %}
 
  
         </div>

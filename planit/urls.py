@@ -102,7 +102,7 @@ urlpatterns = [
         name='create_objective'),
     
 
-    url(r'^select_standards/(?P<user_id>[\w\s]+)/(?P<class_id>[\w\s]+)/(?P<subject>[\w\s]+)/(?P<lesson_id>[\w\s]+)/(?P<select_all>[\w\s]+)/',
+    url(r'^select_standards/(?P<user_id>[\w\s]+)/(?P<class_id>[\w\s]+)/(?P<subject>[\w\s]+)/(?P<lesson_id>[\w\s]+)/(?P<select_all>[\w\s]+)/(?P<topic_id>[\w\s]+)/',
         view=SelectStandards,
         name='select_standards'),
 

@@ -241,6 +241,7 @@ class textBookTitle(models.Model):
     lesson_id_num = models.IntegerField(default = 0,
                                blank=True,
                                null=True)
+    is_admin = models.BooleanField(default=False)
 
     def __str__(self):
         return "%s" % (self.title)
@@ -251,6 +252,9 @@ class textBookBackground(models.Model):
                                blank=True,
                                null=True)
     line_counter = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
+    page_counter = models.IntegerField(default = 0,
                                blank=True,
                                null=True)
     section = models.CharField(max_length=500,
@@ -268,6 +272,9 @@ class textBookBackground(models.Model):
 
     def __str__(self):
         return "%s" % (self.line_counter)
+
+
+
 
 class singleStandard(models.Model):
     standards_set = models.ForeignKey(standardSet,
@@ -354,11 +361,30 @@ class topicInformation(models.Model):
     def __str__(self):
         return "%s" % (self.item)
 
+
+class LearningDemonstrationTemplate(models.Model):  
+    content = models.CharField(max_length=1000,
+                                       blank=True,
+                                       null=True)
+    topic_type = models.ManyToManyField(topicTypes,
+                                     blank=True)
+
+    def __str__(self):
+        return "%s" % (self.content)
+
+
 class LearningDemonstration(models.Model):  
     content = models.CharField(max_length=1000,
                                        blank=True,
                                        null=True)
-
+    created_by = models.ForeignKey(User,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True)
+    topic_id = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
+    is_admin = models.BooleanField(default=False)
 
     def __str__(self):
         return "%s" % (self.content)
@@ -399,6 +425,25 @@ class lessonObjective(models.Model):
     def __str__(self):
         return "%s" % (self.id)
 
+
+class lessonPDFImage(models.Model):
+    textbook = models.ForeignKey(textBookTitle,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    page_counter = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
+    matched_lesson = models.ForeignKey(lessonObjective,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    image_image = models.ImageField(upload_to='images/words/',
+                                       blank=True,
+                                       null=True) 
+
+    def __str__(self):
+        return "%s" % (self.id)
 
 class lessonImageUpload(models.Model):
     matched_lesson = models.ForeignKey(lessonObjective,
@@ -464,6 +509,9 @@ class lessonText(models.Model):
                                null=True)
     lesson_terms = tinymce_models.HTMLField(blank=True,
                                null=True)
+    is_plural = models.BooleanField(default=False)
+    is_multi = models.BooleanField(default=False)
+
 
     def __str__(self):
         return "%s" % (self.id)
@@ -838,12 +886,20 @@ class lessonTemplates(models.Model):
     work_product = models.CharField(max_length=300,
                         blank=True,
                         null=True)
+    grouping = models.CharField(max_length=500,
+                        blank=True,
+                        null=True)
+    ks_demo = models.CharField(max_length=1000,
+                        blank=True,
+                        null=True)
     bloom = models.IntegerField(default = 0,
                                blank=True,
                                null=True)
     mi = models.IntegerField(default = 0,
                                blank=True,
                                null=True)
+    is_plural = models.BooleanField(default=False)
+    is_multi = models.BooleanField(default=False)
 
     def __str__(self):
         return "%s" % (self.wording)
@@ -870,10 +926,16 @@ class selectedActivity(models.Model):
     work_product = models.CharField(max_length=300,
                         blank=True,
                         null=True)
+    ks_demo = models.CharField(max_length=1000,
+                        blank=True,
+                        null=True)
     bloom = models.IntegerField(default = 0,
                                blank=True,
                                null=True)
     mi = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
+    template_id = models.IntegerField(default = 0,
                                blank=True,
                                null=True)
     is_admin = models.BooleanField(default=False)
@@ -920,10 +982,18 @@ class topicQuestion(models.Model):
                                on_delete=models.SET_NULL,
                                blank=True,
                                null=True)
+    created_by = models.ForeignKey(User,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True)
     topic_type = models.ManyToManyField(topicTypes,
                                      blank=True)	
     topic_story = models.ManyToManyField(storyFull,
                                      blank=True)
+    linked_text = models.ForeignKey(textBookBackground,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True) 
     item = models.CharField(max_length=200,
                                        blank=True,
                                        null=True)	

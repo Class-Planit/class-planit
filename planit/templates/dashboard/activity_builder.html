@@ -1,672 +1,581 @@
-{% extends 'dashboard/base.html' %}
 {% load static %}
-{% block content %}
-<style>
-    .anyClass {
-  height:800px;
-  overflow-y: scroll;
-}
-</style>
-<main class="content">
-
- 
-   
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
-        <div class="btn-toolbar">
-            <a href="#" class="btn btn-sm btn-outline-secondary"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
-
-
-        </div>
-        <div class="btn-group mr-2">
-            
-
-            <button  onclick="window.print();return false;" type="button" class="btn btn-sm btn-outline-secondary">Share</button>
-            <input type="button" class="btn btn-sm btn-outline-secondary" onclick="printDiv('print-content')" value="Export"/>
-
-        </div>
-    </div>
-    <div class="row">
-       
-        <div class="col-lg-9">
-            <nav>
-                <div class="nav nav-tabs flex-column flex-md-row bg-white shadow-soft border border-light justify-content-around rounded mb-lg-3 py-3" id="nav-tab" role="tablist">
-                    <a class="nav-item nav-link rounded mr-md-3 active" id="nav-content-research-tab" data-toggle="tab" href="#nav-content-research" role="tab" aria-controls="nav-content-research" aria-selected="true"><span class="d-block"><span class="fas fa-file-alt mr-2"></span><span class="font-weight-normal">Lesson Plan</span></span></a>
-                    <a class="nav-item nav-link rounded mr-md-3" id="nav-rank-track-tab"  href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 act_id='False' %}#heading" aria-controls="nav-rank-track" aria-selected="false"><span class="fas fa-list mr-2"></span><span class="font-weight-normal">Digital Activities</span></a>
-                    <a class="nav-item nav-link rounded mr-md-3" id="nav-web-monitor-tab" data-toggle="tab" href="#nav-web-monitor" role="tab" aria-controls="nav-web-monitor" aria-selected="false"><span class="fas fa-globe mr-2"></span><span class="font-weight-normal">Digital Resources</span></a>
-                    <a class="nav-item nav-link rounded mr-md-3" id="nav-backlink-research-tab" data-toggle="tab" href="#nav-backlink-research" role="tab" aria-controls="nav-backlink-research" aria-selected="false"><span class="fas fa-chart-line mr-2"></span><span class="font-weight-normal">Assessments</span></a>
-                  
-                </div>
-            </nav>
-
-
-                 <!-- Tab -->
-                 <div class="tab-content mt-5 mt-lg-6 " id="nav-tabContent">
-                    <!-- Content Research Tab -->
-                    <div class="tab-pane fade show active bg-white" id="nav-content-research" role="tabpanel" aria-labelledby="nav-content-research-tab">
-                        <br>
-                        <div class='container'>
-                        <div class="row justify-content-between  align-items-center">
-                            <div class="col-12">
-                                {% for item in keywords %}
-                                {% ifchanged item.0 %}
-                                <li>{{ item.0|title }} <br> {{ item.1 }}</li>
-                                {% endifchanged %}
-                                {% endfor %}
-                                {% if form.errors %}
-                                {% for field in form %}
-                                    {% for error in field.errors %}
-                                    <h3>Sign Up Error: <span class="badge badge-danger">{{ error }}</span></h3>
-                                    {% endfor %}
-                                {% endfor %}
-                                {% endif %}
-                                <div id="print-content">
-                                    <div class='container'>
-                                    <h2>
-                                        Lesson Plan: {{ week_of }}| {{ user.username }}
-                                    </h2>
-                                    <br>
-                                    <div>
-                                        <p style="text-align: center;">
-                                            <img title="TinyMCE Logo" src="{% static 'images/dashboard/icon.svg' %}" alt="TinyMCE Logo" width="110" height="97" />
-                                          </p>
-                                          <h3>Objective: {{ lesson_match.teacher_objective }}</h3>
-                                        <h4>Aligned Standards:</h4>
-                                          {% for standard in lesson_standards %}
-                                          <li>{{ standard }}</li>
-                                          {% endfor %}
-                                    
-                                    
-                                     
-                                    
-                                    </div>
-                                    </div>
-                                    <hr>
-                                
-                                    <div class="container">
-                                        <h4><a data-toggle="modal" data-target="#exampleModal2" data-toggle="tooltip" data-placement="top" title="Click to Add New Term" >Lesson Activities:</a></h4>
-                                        <div class="col text-right">
-                                            <a href="{% url 'lesson_activity' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="btn btn-sm btn-secondary">Add New</a>
-                                        </div>
-                                        <br>
-                                        <div class='row'>
-                                         
-                                            {% for activity in selected_activities %}
-                                            <div class='col-lg-4'>
-                                                <div class="card" style="width: 18rem;" border="1">
-                                                    <div class="card-body">
-                                                    
-                                                        <div class="dropdown">
-                                                        <button  class="card-title btn btn-light btn-block dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                            Activity {{ forloop.counter }}
-                                                        </button>
-                                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                            <a class="dropdown-item" href="#">Action</a>
-                                                            <a class="dropdown-item" href="#">Another action</a>
-                                                            <a class="dropdown-item" href="#">Something else here</a>
-                                                        </div>
-                                                        </div>
-                                                        <p class="card-text">{{ activity.lesson_text }}</p>
-                                                        <!--- Blooms -->
-                                                        {% if activity.bloom >= 6 %}
-                                                        <span class="badge badge-primary">Create</span>
-                                                        {% elif activity.bloom >= 5 %}
-                                                        <span class="badge badge-primary">Evaluate</span>
-                                                        {% elif activity.bloom >= 4 %}
-                                                        <span class="badge badge-primary">Analyze</span>
-                                                        {% elif activity.bloom >= 3 %}
-                                                        <span class="badge badge-primary">Apply</span>
-                                                        {% elif activity.bloom >= 2 %}
-                                                        <span class="badge badge-primary">Understand</span>
-                                                        {% else %}
-                                                        <span class="badge badge-primary">Know</span>
-                                                        {% endif %}
-                                              
-                                                        <!--Multiple Intelligences -->
-                                                       {% if activity.mi >= 5 %}
-                                                        <span class="badge badge-success"><i class="fas fa-puzzle-piece"></i></span>
-                                                        {% elif activity.mi >= 4 %}
-                                                        <span class="badge badge-success"><i class="fas fa-walking"></i></span>
-                                                        {% elif activity.mi >= 3 %}
-                                                        <span class="badge badge-success"><i class="fas fa-music"></i></span>
-                                                        {% elif activity.mi >= 2 %}
-                                                        <span class="badge badge-success"><i class="fas fa-eye"></i></span>
-                                                        {% else %}
-                                                        <span class="badge badge-success"><i class="fas fa-book"></i></span>
-                                                        {% endif %}
-                                                        <div class="card-footer text-muted">
-                                                            {% if activity.work_product %}
-                                                               <center>{{ activity.work_product|title }}</center>
-                                                            {% endif %}
-                                                        </div>
-                                                    </div>
-                                                    </div>
-                                       
-                                            </div>
-                                            {% endfor %}   
-                                        </div>
-                                        
-                                        
-                                        
-                                            <br>
-                                    </div>
-                                      
-
-                                </div>
-                                  <hr>
-                                  <div class='container'>
-                                    <h4><a data-toggle="modal" data-target="#exampleModal" data-toggle="tooltip" data-placement="top" title="Click to Add New Term" >Key Term, Place, People:</a></h4>
-                                    <div class="col text-right">
-                                        <a href="#" class="btn btn-sm btn-secondary">Add New</a>
-                                    </div>
-                                    <div class='row'>
-                                        <div class='col-lg-4'>
-                                            {% for term in first_topics %}
-                                            {% if term.item %}
-                                            {% ifchanged term.item %}
-                                            <li>{{ term.item }}</li>
-                                            {% endifchanged %}
-                                            {% endif %}
-
-                                            {% endfor %}
-                                        </div>
-                                        <div class='col-lg-4'>
-                                            {% for term in second_topics %}
-                                            {% if term.item %}
-                                            {% ifchanged term.item %}
-                                            <li>{{ term.item }}</li>
-                                            {% endifchanged %}
-                                            {% endif %}
-                                            {% endfor %}
-                                        </div>
-                                        <div class='col-lg-4'>
-                                            {% for term in third_topics %}
-                                            {% if term.item %}
-                                            {% ifchanged term.item %}
-                                            <li>{{ term.item }}</li>
-                                            {% endifchanged %}
-                                            {% endif %}
-                                            {% endfor %}
-                                        </div>
-                                    </div>
-
-                                    
-                                
-                                    
-                                 </div>
-                                 <hr>
-                              <div class='row'>
-                                  <div class='col'>
-                                    <div class='container'>
-
-                                        <h4><a data-toggle="modal" data-target="#exampleModal" data-toggle="tooltip" data-placement="top" title="Click to Add New Term" >Digital Activities:</a></h4>
-                                      
-                                        <li><a href="{% url 'digital_study_guide' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Study Guide</a></li>
-    
-                                    </div>
-                                  </div>
-                                  <div class='col'>
-                                    <div class='container'>
-
-                                        <h4><a data-toggle="modal" data-target="#exampleModal" data-toggle="tooltip" data-placement="top" title="Click to Add New Term" >Digital Resources:</a></h4>
-                                        {% for vid in youtube_matched %}
-                                       <li><a href="https://www.youtube.com/embed/{{ vid.vid_id }}">Youtube: {{ vid.title }}</a></li>
-                                       {% endfor %}
-                                       
-                                   
-                                       
-                                    </div> 
-                                </div>
-                                <div class='col'>
-                                    <div class='container'>
-
-                                        <h4><a data-toggle="modal" data-target="#exampleModal" data-toggle="tooltip" data-placement="top" title="Click to Add New Term" >Assessments:</a></h4>
-                                      
-                                        <li><a href="{% url 'digital_worksheet' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Digital Worksheet</a></li>
-                                        <li><a href="{% url 'practice_test' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Practice Test</a></li>
-                                       
-                                   
-                                       
-                                    </div>
-                                </div>
-                              </div>
-                                
-              
-                            </div>
-                         
-                        </div>
-                    </div>
-                    </div>
-                    <!-- Causes Tab -->
-                    <div class="tab-pane fade" id="nav-rank-track" role="tabpanel" aria-labelledby="nav-rank-track-tab">
-                        <div class="row justify-content-between align-items-center">
-                            <div class="col-12">
-
-                                <div class='row'>
-                                    <div class='col'>
-                                        <div class="card" style="width: 18rem;">
-                                            <div class="card-body">
-                                            <h5 class="card-title">Study Guide</h5>
-                                            
-                                            <a href="{% url 'digital_study_guide' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">View</a>
-                                            
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class='col'>
-                                        
-                                        <div class="card" style="width: 18rem;">
-                                            <div class="card-body">
-                                            <h5 class="card-title">Worksheet:</h5>
-                                            
-                                            <a href="{% url 'digital_worksheet' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">View</a>
-                                            
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class='col'>
-                                        <div class="card" style="width: 18rem;">
-                                            <div class="card-body">
-                                            <h5 class="card-title">Practice Test:</h5>
-                                            
-                                            <a href="{% url 'practice_test' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">View</a>
-                                            
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                  <hr>
-                                  <a href="{% url 'lesson_pdf_upload' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Upload Pdf</a>
-                               
-                                  <div class="container bg-white">
-                               
-
-                                     
-                                  
-                                   
-                                    <form method="POST">
-                                    {% csrf_token %}
-                                    
-                                    <input type="submit" value="Save Progress">
-                                    
-                                  <div class="dfree-body mce-content-body" name='activities' id='activities' contenteditable="true" style="position: relative;" spellcheck="false">
-                                    <h4>Copy and Paste any Text Here to Generate Digital Worksheets:</h4>
-                                   <p></p>
-                                   <p></p>
-                                   <p></p>
-                                         <br>
-                                 </div>
-                                  </form>
-                                  </div>
-                                 <hr>
-                                
-                                    <div class="anyClass">
-                                        <div class="bg-white">
-                                  <h5>Click on the Statement or Question to add to your worksheet:</h5>
-                                    {% for summ in sent_text %}
-                                       <li> {{ forloop.counter }} {% for word in summ %}
-                                            {% if 'NNP' in word.1 %}
-                                            <span style="color:blue">{{ word.0 }}</span>
-                                            {% else %}
-                                            {{ word.0 }}
-                                            {% endif %}
-                                        {% endfor %}</li>
-                                    {% endfor %}
-                                
-
-                                    
-                            <hr>
-                            {% for line in uploaded_questions_lists %}
-                            {% for item in line %}
-                            <li>{{ item }}</li>
-                            {% endfor %}
-                         {% endfor %}
-                            <hr>
-                            {% for summ in uploaded_text_list %}
-                  
-                            <li>
-                                
-                                {% for word in summ %}
-                           
-                                {% if 'NNP' in word.1 %}
-                                <span style="color:blue">{{ word.0 }}</span>
-                                {% else %}
-                                {{ word.0 }}
-                                {% endif %}
-                            
-                            {% endfor %}
-                            </li>
-                            {% endfor %}
-                            <hr>
-                     
-                                </div>
-                            
-                            </div>
-                        </div>  
-                        </div>
-                    </div>
-                    
-                    <!-- Effects Tab -->
-                    <div class="tab-pane fade" id="nav-web-monitor" role="tabpanel" aria-labelledby="nav-web-monitor-tab">
-                        <div class="row justify-content-between align-items-center">
-                            <div class="col-12">
-                                <div class="row">
-                                    {% for vid in youtube_matched %}
-                                    <!--Card-->
-                                    <div class="col-lg-4">
-                                        <div class="card">
-            
-                                            <a href="https://www.youtube.com/embed/{{ vid.vid_id }}" class="btn btn-secondary btn-sm btn-has-icon">https://www.youtube.com/embed/{{ vid.vid_id }}</a>
-                                            <!--Card image-->
-                                            <iframe
-                                                src="https://www.youtube.com/embed/{{ vid.vid_id }}">
-                                                </iframe>
-                                            <!--Card content-->
-                                            <div class="card-body">
-                                            <!--Title-->
-                                            <h4 class="card-title">{{ vid.title }}</h4>
-                                            <!--Text-->
-                                            <p class="card-text">{{ vid.description }}</p>
-                                            {% if vid.is_selected %}
-                                            <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=7 item_id=vid.id action=1 %}" class="btn btn-secondary btn-sm btn-has-icon"><i class="fa fa-check"></i> Selected</a>
-                                            {% else %}
-                                            <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=7 item_id=vid.id action=0 %}" class="btn btn-success btn-sm btn-has-icon"><i class="fa fa-check"></i> Relevant</a>
-                                            {% endif %}
-                                        </div>
-                                            </div>
-                                        </div>
-                                        <!--/.Card-->
-                                        {% endfor %}
-                        
-                
-                        
-                                </div>    
-                            </div>
-                         
-                        </div>
-                    </div>
-                    <!-- Effects Tab -->
-                    <div class="tab-pane fade" id="nav-backlink-research" role="tabpanel" aria-labelledby="nav-backlink-research-tab">
-                        <div class="row justify-content-between align-items-center">
-                            <div class="col-12">
-                                <div class="card border-light shadow-sm">
-                                       
-                                    <div class="table-responsive">
-                                        <table class="table align-items-center table-flush">
-                                            <thead class="thead-light">
-                                            <tr>
-                                                <th scope="col">Assessment</th>
-                                                <th scope="col">Due Date</th>
-                                                <th scope="col">Completion %</th>
-                                                <th scope="col">Student AVG</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr>
-                                                <th scope="row">
-                                                   Grammer Assessment
-                                                </th>
-                                                <td>
-                                                    Jan 04, 2020
-                                                </td>
-                                                <td>
-                                                    70%
-                                                </td>
-                                                <td>
-                                                    <span class="fas fa-arrow-up text-success mr-3"></span> 80%
-                                                </td>
-                                            </tr>
-                                      
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        
-                        </div>
-                    </div>
-          
-                </div>
-                <!-- End of tab -->
-
- 
-        </div>
-        <div class="col-lg-3">
-            <div class="col-12 px-0 mb-4">
-                <div class="card border-light shadow-sm">
-                    <div class="card-body">
-                    
-                        <h6>Differentiation:</h6>
-                        <div class="progress">
-                            <div
-                              class="progress-bar bg-success"
-                              role="progressbar"
-                              style="width: {{ lesson_analytics.3 }}%"
-                              aria-valuenow="{{ lesson_analytics.3 }}"
-                              aria-valuemin="0"
-                              aria-valuemax="100"
-                            ></div>
-                          </div>
-                          <h6>Difficulty:</h6>
-                          <div class="progress">
-                            <div
-                              class="progress-bar bg-info"
-                              role="progressbar"
-                              style="width: {{ lesson_analytics.1 }}%"
-                              aria-valuenow="{{ lesson_analytics.1 }}"
-                              aria-valuemin="0"
-                              aria-valuemax="100"
-                            ></div>
-                          </div>
-                          <h6>Engagement:</h6>
-                          <div class="progress">
-                            <div
-                              class="progress-bar bg-warning"
-                              role="progressbar"
-                              style="width: {{ lesson_analytics.0 }}%"
-                              aria-valuenow="{{ lesson_analytics.0 }}"
-                              aria-valuemin="0"
-                              aria-valuemax="100"
-                            ></div>
-                          </div>
-                          <h6>Alignment:</h6>
-                          <div class="progress">
-                            <div
-                              class="progress-bar bg-danger"
-                              role="progressbar"
-                              style="width: {{ lesson_analytics.3 }}%"
-                              aria-valuenow="{{ lesson_analytics.3 }}"
-                              aria-valuemin="0"
-                              aria-valuemax="100"
-                            ></div>
-                          </div>
-                 
-                     
-                    </div>
-                </div>
-            </div>
+<!DOCTYPE html>
+<html>
+<head>
+         <!-- Primary Meta Tags -->
+         <title>Class Planit</title>
+         <meta charset="utf-8">
+         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+         <meta name="title" content="Helping teachers create, share, and assess more engaging lessons">
+         <meta name="author" content="Class Planit">
+         <meta name="description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better lessons in minutes.">
+         <meta name="keywords" content="lesson plans, teacher pay teachers, worksheets" />
+         <link rel="canonical" href="www.classplanit.co">
          
-            <div class="col-12 px-0 mb-4">
-                <div class="card border-light shadow-sm">
-                    <div class="card-header">
-                        <div class="row align-items-center">
-                            <div class="col">
-                            <h2 class="h5">Recommended Activities:</h2>
+         <!-- Open Graph / Facebook -->
+         <meta property="og:type" content="website">
+         <meta property="og:url" content="www.classplanit.co">
+         <meta property="og:title" content="Class Planit - helping teachers create, share, and assess more engaging lessons.">
+         <meta property="og:description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better lessons in minutes.">
+         <meta property="og:image" content="www.classplanit.co">
+         
+         <!-- Twitter -->
+         <meta property="twitter:card" content="summary_large_image">
+         <meta property="twitter:url" content="www.classplanit.co">
+         <meta property="twitter:title" content="Class Planit - helping teachers create, share, and assess more engaging lessons.">
+         <meta property="twitter:description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better lessons in minutes.">
+         <meta property="twitter:image" content="{% static 'images/dashboard/twitter_image.png' %}">
+         
+         <!-- Favicon -->
+         <link rel="apple-touch-icon" sizes="120x120" href="{% static 'images/dashboard/icon_120.png' %}">
+         <link rel="icon" type="image/png" sizes="32x32" href="{% static 'mages/icon_40.png' %}">
+         <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/dashboard/icon_40.png' %}">
+         
+         <link rel="mask-icon" href="{% static 'images/dashboard/icon.svg' %}" color="#ffffff">
+         <meta name="msapplication-TileColor" content="#ffffff">
+         <meta name="theme-color" content="#ffffff">
+         
+         <!-- Fontawesome -->
+         <link type="text/css" href="{% static 'vendor/dashboard/fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+         
+         <!-- Prism -->
+         <link type="text/css" href="{% static 'vendor/dashboard/prismjs/themes/prism.css' %}" rel="stylesheet">
+         
+         <!-- VectorMap -->
+         <link rel="stylesheet" href="{% static 'vendor/dashboard/jqvmap/dist/jqvmap.min.css' %}">
+         
+         <!-- Rocket CSS -->
+         <link type="text/css" href="{% static 'css/dashboard/rocket.css' %}" rel="stylesheet">
+     
+  <script src="https://cdn.tiny.cloud/1/0ak6ftt9ng9va9e98pl0iwxwwh0rb1tipwsg8it4mjmcbkjb/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+
+</head>
+<body>
+    <div class="preloader bg-soft flex-column justify-content-center align-items-center">
+        <img class="loader-element" src="{% static 'images/dashboard/circle_logo.svg' %}" height="50" alt="Rocket logo">
+    </div>
+    
+            <nav class="navbar navbar-dark navbar-theme-primary col-12 d-md-none">
+        <a class="navbar-brand mr-lg-5" href="../../index.html">
+            <img class="navbar-brand-dark" src="../../assets/img/brand/light.svg" alt="Pixel logo" /> <img class="navbar-brand-light" src="../../assets/img/brand/dark.svg" alt="Pixel Logo Dark" />
+        </a>
+        <div class="d-flex align-items-center">
+            <button class="navbar-toggler d-md-none collapsed" type="button" data-toggle="collapse" data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+    </nav>
+    
+            <div class="container-fluid bg-soft">
+                <div class="row">
+                    <div class="col-12">
+    
+                        <!-- <nav id="sidebarMenu" class="sidebar col-md-4 col-lg-3 col-xl-2 d-md-block bg-primary text-white collapse"> -->
+                            <nav id="sidebarMenu" class="sidebar d-md-block bg-primary text-white collapse px-4">
+                                <div class="sidebar-sticky pt-4 mx-auto">
+                                  <div class="user-card d-flex align-items-center justify-content-between justify-content-md-center pb-4">
+                                    <div class="d-flex align-items-center">
+                                      <div class="user-avatar lg-avatar mr-4">
+                                        <img src="{% static 'images/dashboard/user_default.png' %}" class="card-img-top rounded-circle border-white" alt="user">
+                                      </div>
+                                      <div class="d-block">
+                                        <h2 class="h6">Hi, Audrey</h2>
+                                        <a href="../sign-in.html" class="btn btn-secondary btn-xs"><span class="mr-2"><span class="fas fa-sign-out-alt"></span></span>Sign Out</a>
+                                      </div>
+                                    </div>
+                                    <div class="collapse-close d-md-none">
+                                        <a href="#sidebarMenu" class="fas fa-times" data-toggle="collapse"
+                                            data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="true"
+                                            aria-label="Toggle navigation"></a>
+                                    </div>
+                                  </div>
+                                  <ul class="nav flex-column mt-4">
+                                      {% if 'Overview' in page %}
+                                    <li class="nav-item  active ">
+                                        {% else %}
+                                        <li class="nav-item">
+                                        {% endif %}
+                                      <a href="{% url 'Dashboard' week_of='Current' %}" class="nav-link">
+                                          <span class="sidebar-icon"><span class="fas fa-chart-pie"></span></span>
+                                          <span>Overview</span>
+                                      </a>
+                                    </li>
+                                    {% if 'Classrooms' in page %}
+                                    <li class="nav-item  active ">
+                                        {% else %}
+                                        <li class="nav-item">
+                                        {% endif %}
+                                      <a href="{% url 'classroom_list' %}" class="nav-link d-flex align-items-center justify-content-between">
+                                          <span>
+                                            <span class="sidebar-icon"><i class="fa fa-chalkboard-teacher"></i></span>
+                                            Classrooms
+                                          </span>
+                                          
+                                      </a>
+                                    </li>
+                              
+                                    {% if 'Standards' in page %}
+                                    <li class="nav-item  active ">
+                                        {% else %}
+                                        <li class="nav-item">
+                                        {% endif %}
+                                      <a href="../dashboard/traffic-sources.html" class="nav-link">
+                                          <span class="sidebar-icon"><span class="fas fa-chart-bar"></span></span>
+                                          <span>Standards Tracking</span>
+                                      </a>
+                                    </li>
+                                   
+                              
+                                    {% if 'Assignments' in page %}
+                                    <li class="nav-item  active ">
+                                        {% else %}
+                                        <li class="nav-item">
+                                        {% endif %}
+                                      <a href="../dashboard/tasks.html" class="nav-link">
+                                          <span class="sidebar-icon"><span class="fas fa-clipboard-list"></span></span>
+                                          <span>Assignments</span>
+                                      </a>
+                                    </li>
+                                    <li class="nav-item ">
+                                      <a href="../dashboard/settings.html" class="nav-link">
+                                          <span class="sidebar-icon"><span class="fas fa-cog"></span></span>
+                                          <span>Settings</span>
+                                      </a>
+                                    </li>
+                              
+                                    <li role="separator" class="dropdown-divider mt-4 mb-3 border-blue"></li>
+                                    <li class="nav-item">
+                                      <a href="https://themesberg.com/docs/rocket/getting-started/quick-start/" target="_blank" class="nav-link">
+                                        <span class="sidebar-icon"><span class="fas fa-book"></span></span>
+                                        <span>Tutorials</span>
+                                      </a>
+                                    </li>
+                                    <li class="nav-item">
+                                      <a href="../../index.html" class="nav-link d-flex align-items-center">
+                                        <span class="sidebar-icon">
+                                          <img src="{% static 'images/dashboard/circle_logo.svg' %}" height="26" width="26" alt="Rocket Logo">
+                                        </span>
+                                        <span>Contact Us</span>
+                                      </a>
+                                    </li>
+                                  
+                               
+                                  </ul>
+                                </div>
+                              </nav>
+    
+    
+    <main class="content bg-white">
+        <div class="row">
+       
+            <div class="col-lg-9">
+                <form  method="POST">
+                    {% csrf_token %}
+                    <input type="submit" value="Add" class="btn btn-info">
+                    <textarea id="permanent-pen">
+                        <p style="text-align: center;">
+                          <img title="TinyMCE Logo" src="{% static 'images/dashboard/icon.svg' %}" alt="TinyMCE Logo" width="110" height="97" />
+                        </p>
+                      
+                        <h2 style="text-align: center;">Lesson Plan: {{ user.username }} | {{ classroom_profile }}</h2>
+                      
+                         <h2>Objective: {{ lesson_match.teacher_objective }}</h2>
+                      
+                        <ul>
+                          <li>Our <a href="https://www.tiny.cloud/docs/">documentation</a> is a great resource for learning how to configure TinyMCE.</li>
+                          <li>Have a specific question? Try the <a href="https://stackoverflow.com/questions/tagged/tinymce" target="_blank" rel="noopener"><code>tinymce</code> tag at Stack Overflow</a>.</li>
+                          <li>We also offer enterprise grade support as part of <a href="https://www.tiny.cloud/pricing">TinyMCE premium plans</a>.</li>
+                        </ul>
+                      
+                        <h2>A simple table to play with</h2>
+                      
+                        <table style="border-collapse: collapse; width: 100%;" border="1">
+                          <thead>
+                            <tr>
+                              <th>Product</th>
+                              <th>Cost</th>
+                              <th>Really?</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>TinyMCE</td>
+                              <td>Free</td>
+                              <td>YES!</td>
+                            </tr>
+                            <tr>
+                              <td>Plupload</td>
+                              <td>Free</td>
+                              <td>YES!</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      
+                        <h2>Found a bug?</h2>
+                      
+                        <p>
+                          If you think you have found a bug please create an issue on the <a href="https://github.com/tinymce/tinymce/issues">GitHub repo</a> to report it to the developers.
+                        </p>
+                      
+                        <h2>Finally ...</h2>
+                      
+                        <p>
+                          Don't forget to check out our other product <a href="http://www.plupload.com" target="_blank">Plupload</a>, your ultimate upload solution featuring HTML5 upload support.
+                        </p>
+                        <p>
+                          Thanks for supporting TinyMCE! We hope it helps you and your users create great content.<br>All the best from the TinyMCE team.
+                        </p>
+                      </textarea>
+                <div class='demo-dfree'>
+                    <h2 class="dfree-header mce-content-body" contenteditable="true" style="position: relative;" spellcheck="false">
+                        Lesson Plan: {{ user.username }} | {{ classroom_profile }}
+                    </h2>
+                    <br/>
+                    <div class="dfree-body mce-content-body custom-toolbar-menu-butto" contenteditable="true" style="position: relative;" spellcheck="false">
+                      <p><img src="{% static 'images/dashboard/icon.svg' %}" style="display: block; margin-left: auto; margin-right: auto; width: 15%;" data-mce-style="display: block; margin-left: auto; margin-right: auto;" data-mce-selected="1"></p>
+                      <br/>
+                      <h3>Objective: {{ lesson_match.teacher_objective }}</h3>
+                
+                      <p>
+                        Aligned Standards:
+                      </p>
+                      {% for standard in lesson_standards %}
+                      <li>{{ standard }}</li>
+                      {% endfor %}
+                    <h5>Lesson Activities</h5>     
+                    <li> </li> 
+                   <div class='row'>
+                      {% for activity in selected_activities %}
+                      <div class='col-lg-4'>
+                          <div class="card" style="width: 18rem;" border="1">
+                              <div class="card-body">
+                              
+                                  <div class="dropdown">
+                                  <button  class="card-title btn btn-light btn-block dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                      Activity {{ forloop.counter }}
+                                  </button>
+                                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                      <a class="dropdown-item" href="#">Action</a>
+                                      <a class="dropdown-item" href="#">Another action</a>
+                                      <a class="dropdown-item" href="#">Something else here</a>
+                                  </div>
+                                  </div>
+                                  <p class="card-text">{{ activity.lesson_text }}</p>
+                                  <!--- Blooms -->
+                                  {% if activity.bloom >= 6 %}
+                                  <span class="badge badge-primary">Create</span>
+                                  {% elif activity.bloom >= 5 %}
+                                  <span class="badge badge-primary">Evaluate</span>
+                                  {% elif activity.bloom >= 4 %}
+                                  <span class="badge badge-primary">Analyze</span>
+                                  {% elif activity.bloom >= 3 %}
+                                  <span class="badge badge-primary">Apply</span>
+                                  {% elif activity.bloom >= 2 %}
+                                  <span class="badge badge-primary">Understand</span>
+                                  {% else %}
+                                  <span class="badge badge-primary">Know</span>
+                                  {% endif %}
+                        
+                                  <!--Multiple Intelligences -->
+                                 {% if activity.mi >= 5 %}
+                                  <span class="badge badge-success"><i class="fas fa-puzzle-piece"></i></span>
+                                  {% elif activity.mi >= 4 %}
+                                  <span class="badge badge-success"><i class="fas fa-walking"></i></span>
+                                  {% elif activity.mi >= 3 %}
+                                  <span class="badge badge-success"><i class="fas fa-music"></i></span>
+                                  {% elif activity.mi >= 2 %}
+                                  <span class="badge badge-success"><i class="fas fa-eye"></i></span>
+                                  {% else %}
+                                  <span class="badge badge-success"><i class="fas fa-book"></i></span>
+                                  {% endif %}
+                                  <div class="card-footer text-muted">
+                                      {% if activity.work_product %}
+                                         <center>{{ activity.work_product|title }}</center>
+                                      {% endif %}
+                                  </div>
+                              </div>
+                              </div>
+                 
+                      </div>
+                      {% endfor %} 
+                    </div>  
+                    </div>
+                    
+                  </div>
+               
+                  </form>
+            </div>
+    
+            <div class="col-lg-3">
+                <div class="col-12 px-0 mb-4">
+                    <div class="card border-light shadow-sm">
+                        <div class="card-header">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                <h2 class="h5">Links:</h2>
+                                </div>
                             </div>
                         </div>
+                        <div class="card-body">
+                            <li><a href="{% url 'digital_study_guide' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Study Guide</a></li>
+                            {% for vid in youtube_matched %}
+                            <li><a href="https://www.youtube.com/embed/{{ vid.vid_id }}">Youtube: {{ vid.title }}</a></li>
+                            {% endfor %}
+                            <li><a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 act_id='False' %}#heading" class="card-link">Digital Worksheet</a></li>
+                            <li><a href="{% url 'practice_test' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Practice Test</a></li>
+                            <li><a href="{% url 'digital_study_guide' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Student Performance</a></li>
+                            <li><a href="{% url 'digital_study_guide' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Standards Tracking</a></li>
+    
                     </div>
-                    <div class="card-body">
-                     
-                        {% for item in not_selected_activities|slice:"5" %}
-                        {% ifchanged item.bloom %}
-                       <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=10 item_id=item.id action=0 %}#heading" >
-                        {{ item.lesson_text }}</a>
-                        <hr>
-                        {% endifchanged %}
-                        {% endfor %}
-
                     </div>
                 </div>
-            </div>
-
-            
-            <div class="col-12 px-0 mb-4">
-                <div class="card border-light shadow-sm">
-                    <div class="card-header">
-                        <div class="row align-items-center">
-                            <div class="col">
-                            <h2 class="h5">Key Terms:</h2>
-                            </div>
-                            <div class="col text-right">
-                                <a href="#" class="btn btn-sm btn-secondary">Add New</a>
-                            </div>
+             
+                <div class="col-12 px-0 mb-4">
+                    <div class="card border-light shadow-sm">
+                        <div class="card-body">
+                        
+                            <h6>Differentiation:</h6>
+                            <div class="progress">
+                                <div
+                                  class="progress-bar bg-success"
+                                  role="progressbar"
+                                  style="width: {{ lesson_analytics.3 }}%"
+                                  aria-valuenow="{{ lesson_analytics.3 }}"
+                                  aria-valuemin="0"
+                                  aria-valuemax="100"
+                                ></div>
+                              </div>
+                              <h6>Depth of Understanding:</h6>
+                              <div class="progress">
+                                <div
+                                  class="progress-bar bg-info"
+                                  role="progressbar"
+                                  style="width: {{ lesson_analytics.1 }}%"
+                                  aria-valuenow="{{ lesson_analytics.1 }}"
+                                  aria-valuemin="0"
+                                  aria-valuemax="100"
+                                ></div>
+                              </div>
+                              <h6>Retention Rate:</h6>
+                              <div class="progress">
+                                <div
+                                  class="progress-bar bg-warning"
+                                  role="progressbar"
+                                  style="width: {{ lesson_analytics.0 }}%"
+                                  aria-valuenow="{{ lesson_analytics.0 }}"
+                                  aria-valuemin="0"
+                                  aria-valuemax="100"
+                                ></div>
+                              </div>
+                              <h6>Standards Alignment:</h6>
+                              <div class="progress">
+                                <div
+                                  class="progress-bar bg-danger"
+                                  role="progressbar"
+                                  style="width: {{ lesson_analytics.3 }}%"
+                                  aria-valuenow="{{ lesson_analytics.3 }}"
+                                  aria-valuemin="0"
+                                  aria-valuemax="100"
+                                ></div>
+                              </div>
+                     
+                         
                         </div>
                     </div>
-                    <div class="card-body">
-                    <div class="tagcloud">
-                        {% for topic in topic_lists_selected %}
-                        {% ifchanged topic.item %}
-                        <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=6 item_id=topic.id action=0 %}" data-toggle="tooltip" data-placement="top" title="{{ topic }} - {% for item in topic.description.all%}{{item }} ; {% endfor %}" class="btn btn-sm btn-outline-success">{{ topic.item }}</a>
-                      
-                        {% endifchanged %}
-                        {% endfor %}
-                        {% if topic_match %}
-                            {% for line in topic_lists_matched %}
-                                {% if line.item %}
-                                {% ifchanged line.item %}
-                                <a class="btn btn-sm btn-outline-secondary selecttopic" id="like{{line.id}}" href="#" data-topid="{{ line.id }}" data-lessid="{{ lesson_match.id }}" data-toggle="tooltip" data-placement="top" title="{{ line.item }} - {% for item in line.description.all%}{{item }} ; {% endfor %}" >{{ line.item }}</a>
-                                {% endifchanged %}
-                                {% endif %}
+                </div>
+             
+                <div class="col-12 px-0 mb-4">
+                    <div class="card border-light shadow-sm">
+                        <div class="card-header">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                <h2 class="h5">Recommended Activities:</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                         
+                            {% for item in not_selected_activities %}
+                           {% ifchanged item.template_id %}
+                           <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=10 item_id=item.id action=0 %}#heading" >
+                            {{ item.lesson_text }}</a>
+                            <hr>
+                           {% endifchanged %}
                             {% endfor %}
-                        {% else %}
-                            {% for topic in topic_lists %}
-                            {% ifchanged topic.0.id %}
-                        
-                            <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=6 item_id=topic.0.id action=1 %}" class="btn btn-sm btn-outline-secondary" data-toggle="tooltip" data-placement="top" title="{{ topic.0 }} - {% for item in topic.0.description.all%}{{item }} ; {% endfor %}" >{{ topic.0.item }}</a>
-                        
+    
+                        </div>
+                    </div>
+                </div>
+    
+                
+                <div class="col-12 px-0 mb-4">
+                    <div class="card border-light shadow-sm">
+                        <div class="card-header">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                <h2 class="h5">Key Terms:</h2>
+                                </div>
+                                <div class="col text-right">
+                                    <a href="#" class="btn btn-sm btn-secondary">Add New</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                        <div class="tagcloud">
+                            {% for topic in topic_lists_selected %}
+                            {% ifchanged topic.item %}
+                            <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=6 item_id=topic.id action=0 %}" data-toggle="tooltip" data-placement="top" title="{{ topic }} - {% for item in topic.description.all%}{{item }} ; {% endfor %}" class="btn btn-sm btn-outline-success">{{ topic.item }}</a>
+                          
                             {% endifchanged %}
                             {% endfor %}
-                        {% endif %}
-                        
-                    </div>
-                </div>
-                </div>
-            </div>
-            {% if uploaded_images %}
-            <div class="col-12 px-0 mb-4">
-                <div class="card border-light shadow-sm">
-                    <div class="card-header">
-                        <div class="row align-items-center">
-                            <div class="col">
-                            <h2 class="h5">Picture Library:</h2>
-                            </div>
-                            <div class="col text-right">
-                                <a href="#" class="btn btn-sm btn-secondary">Add New</a>
-                            </div>
+                            {% if topic_match %}
+                                {% for line in topic_lists_matched %}
+                                    {% if line.item %}
+                                    {% ifchanged line.item %}
+                                    <a class="btn btn-sm btn-outline-secondary selecttopic" id="like{{line.id}}" href="#" data-topid="{{ line.id }}" data-lessid="{{ lesson_match.id }}" data-toggle="tooltip" data-placement="top" title="{{ line.item }} - {% for item in line.description.all%}{{item }} ; {% endfor %}" >{{ line.item }}</a>
+                                    {% endifchanged %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                {% for topic in topic_lists %}
+                                {% ifchanged topic.0.id %}
+                            
+                                <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=6 item_id=topic.0.id action=1 %}" class="btn btn-sm btn-outline-secondary" data-toggle="tooltip" data-placement="top" title="{{ topic.0 }} - {% for item in topic.0.description.all%}{{item }} ; {% endfor %}" >{{ topic.0.item }}</a>
+                            
+                                {% endifchanged %}
+                                {% endfor %}
+                            {% endif %}
+    
+                            {% if match_topic_text %}
+                                {% for section in match_topic_text %}
+                                    {% for line in section %}
+                                        {% if line.item %}
+                                        {% ifchanged line.id %}
+                                        <a class="btn btn-sm btn-outline-secondary selecttopic" id="like{{line.id}}" href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=6 item_id=line.id action=1 %}" data-topid="{{ line.id }}" data-lessid="{{ lesson_match.id }}" data-toggle="tooltip" data-placement="top" title="{{ line.item }} - {% for item in line.description.all%}{{item }} ; {% endfor %}" >{{ line.item }}</a>
+                                        {% endifchanged %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endif %}
                         </div>
                     </div>
-
-                    {% for image in uploaded_images %}
-                    <div class="main_image">
-                     <img class="img-fluid" src="{{ image.image_image.url }}" alt="" width="200"/>
-                 </div>
-                     {% endfor %}
+                    </div>
                 </div>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-      <!-- Modal -->
-      <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Add New Key Word</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            </div>
-            <div class="modal-body">
-            ...
-            </div>
-            <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
-        </div>
-        </div>
-    </div>
-     <!-- Modal -->
-     <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModal2Label" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-            <h5 class="modal-title" id="exampleModal2Label">Add New Activities</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            </div>
-            <div class="modal-body">
-               ...
-            </div>
-            <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
+             
+                {% if uploaded_images %}
+                <div class="col-12 px-0 mb-4">
+                    <div class="card border-light shadow-sm">
+                        <div class="card-header">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                <h2 class="h5">Picture Library:</h2>
+                                </div>
+                                <div class="col text-right">
+                                    <a href="#" class="btn btn-sm btn-secondary">Add New</a>
+                                </div>
+                            </div>
+                        </div>
+    
+                        {% for image in uploaded_images %}
+                        <div class="main_image">
+                         <img class="img-fluid" src="{{ image.image_image.url }}" alt="" width="200"/>
+                     </div>
+                         {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </div>
+   
+      <br>
+      <footer class="footer section py-5">
+        <div class="container-fluid">
+        <div class="row">
+        <div class="col-12 col-lg-6 mb-4 mb-lg-0">
+        <p class="mb-0 text-center text-xl-left">Copyright © 2019-<span class="current-year"></span> <a class="text-primary font-weight-normal" href="https://themesberg.com" target="_blank">Themesberg</a></p>
         </div>
-    </div>
-
-    <footer class="footer section py-5">
-<div class="container-fluid">
-<div class="row">
-<div class="col-12 col-lg-6 mb-4 mb-lg-0">
-<p class="mb-0 text-center text-xl-left">Copyright © 2019-<span class="current-year"></span> <a class="text-primary font-weight-normal" href="https://themesberg.com" target="_blank">Themesberg</a></p>
-</div>
-
-<div class="col-12 col-lg-6">
-<!-- List -->
-<ul class="list-inline list-group-flush list-group-borderless text-center text-xl-right mb-0">
-<li class="list-inline-item px-0 px-sm-2">
-    <a href="https://themesberg.com/about">About</a>
-</li>
-<li class="list-inline-item px-0 px-sm-2">
-    <a href="https://themesberg.com/themes">Themes</a>
-</li>
-<li class="list-inline-item px-0 px-sm-2">
-    <a href="https://themesberg.com/blog">Blog</a>
-</li>
-<li class="list-inline-item px-0 px-sm-2">
-    <a href="https://themesberg.com/contact">Contact</a>
-</li>
-</ul>
-<!-- End List -->
-</div>
-</div>
-</div>
-</footer>
-</main>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-    <script type="text/javascript">
-    $('.selecttopic').click(function(){
-    var topid;
-    topid = $(this).attr("data-topid");
-    var lessid;
-    lessid = $(this).attr("data-lessid");
-    $.ajax(
-    {
-        type:"GET",
-        url: "/sel-topic",
-        data:{
-                 topic_id: topid,
-                 lesson_id: lessid
+        
+        <div class="col-12 col-lg-6">
+        <!-- List -->
+        <ul class="list-inline list-group-flush list-group-borderless text-center text-xl-right mb-0">
+        <li class="list-inline-item px-0 px-sm-2">
+            <a href="https://themesberg.com/about">About</a>
+        </li>
+        <li class="list-inline-item px-0 px-sm-2">
+            <a href="https://themesberg.com/themes">Themes</a>
+        </li>
+        <li class="list-inline-item px-0 px-sm-2">
+            <a href="https://themesberg.com/blog">Blog</a>
+        </li>
+        <li class="list-inline-item px-0 px-sm-2">
+            <a href="https://themesberg.com/contact">Contact</a>
+        </li>
+        </ul>
+        <!-- End List -->
+        </div>
+        </div>
+        </div>
+        </footer>
+        </main>
+  <script>
+    tinymce.init({
+        selector: 'textarea#permanent-pen',
+        plugins: 'permanentpen code',
+        contextmenu: 'configurepermanentpen',
+        toolbar: 'permanentpen code',
+        menubar: 'file edit view format table tools help',
+        menu: {
+            format: {
+            title: 'Format',
+            items: 'configurepermanentpen | bold italic underline strikethrough ' +
+                'superscript subscript codeformat | formats blockformats fontformats ' +
+                'fontsizes align | forecolor backcolor | removeformat'
+            }
         },
-        success: function( data ) 
-        {
-            $( '#like'+ topid ).remove();
-            $( '#message' ).text(data);
-        }
-     })
-});
-</script>
+        permanentpen_properties: {
+            fontname: 'arial,helvetica,sans-serif',
+            forecolor: '#E74C3C',
+            fontsize: '12pt',
+            hilitecolor: '',
+            bold: true,
+            italic: false,
+            strikethrough: false,
+            underline: false
+        },
+        height: 500,
+        content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+        });
+  </script>
 
-{% endblock %}
+  <script src="{% static 'base/js/tinymce/tinymce.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'base/js/tinymce/custom.js' %}" ></script>
+  <!-- Core -->
+  <script src="{% static 'vendor/dashboard/jquery/dist/jquery.min.js' %}"></script>
+  <script src="{% static 'vendor/dashboard/popper.js/dist/umd/popper.min.js' %}"></script>
+  <script src="{% static 'vendor/dashboard/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'vendor/dashboard/headroom.js/dist/headroom.min.js' %}"></script>
+  
+  <!-- Vendor JS -->
+  <script src="{% static 'vendor/dashboard/countup.js/dist/countUp.min.js' %}"></script>
+  <script src="{% static 'vendor/dashboard/jquery-countdown/dist/jquery.countdown.min.js' %}"></script>
+  <script src="{% static 'vendor/dashboard/smooth-scroll/dist/smooth-scroll.polyfills.min.js' %}"></script>
+  <script src="{% static 'vendor/dashboard/prismjs/prism.js' %}"></script>
+  
+  <!-- Chartist -->
+  <script src="{% static 'vendor/dashboard/chartist/dist/chartist.min.js' %}"></script>
+  <script src="{% static 'vendor/dashboard/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js' %}"></script>
+  
+  <!-- Vector Maps -->
+  <script src="{% static 'vendor/dashboard/jqvmap/dist/jquery.vmap.min.js' %}"></script>
+  <script src="{% static 'vendor/dashboard/jqvmap/dist/maps/jquery.vmap.world.js' %}"></script>
+  
+  <!-- Rocket JS -->
+  <script src="{% static 'js/dashboard/rocket.js' %}"></script>
+      <!-- NOTICE: You can use the _analytics.html partial to include production code specific code & trackers -->
+  
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+  <script src="{% static 'forms_ajaxified/js/forms_ajaxified.js' %}"></script>
+
+</body>
+</html>

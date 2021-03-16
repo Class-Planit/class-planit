@@ -25,7 +25,10 @@
         <div class="col-lg-8 bg-white">
             <br>
             <div class='row'>
-                <div class='col'>
+                <div class='col-1'>
+
+                </div>
+                <div class='col-3'>
                     <div class="card" >
                         <img class="card-img-top" src="{% static 'images/dashboard/objective.png' %}" alt="Card image cap">
                         <div class="card-body">
@@ -35,7 +38,7 @@
                         </div>
                       </div>
                 </div>
-                <div class='col'>
+                <div class='col-3'>
                     <div class="card" >
                         <img class="card-img-top" src="{% static 'images/dashboard/standard.png' %}" alt="Card image cap">
                         <div class="card-body">
@@ -45,16 +48,19 @@
                         </div>
                       </div>
                 </div>
-                <div class='col'>
+                <div class='col-3'>
                     <div class="card" >
                         <img class="card-img-top" src="{% static 'images/dashboard/topics.png' %}" alt="Card image cap">
                         <div class="card-body">
                             <div class="progress">
-                                <div class="progress-bar" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                               </div>
                         </div>
                       </div>
                 </div>
+            </div>
+            <div class='col-1'>
+                    
             </div>
             <hr>
             <div class="container">
@@ -68,13 +74,13 @@
              
                 <br>
 
-                      <h4> <center>4. Select Key Topics or Vocabulary:</center></h4>
+                      <h4> <center>2. Select Key Topics or Vocabulary:</center></h4>
                       <hr>
                       <p style="color:orange"> Help us generate relevant activities and resources, select at least three topics below.</p>
                         <div class="card-body">
                             <div class="tagcloud">
                                 <a class="btn btn-sm btn-danger" data-toggle="modal" data-target="#exampleModal"><i class="fas fa-plus"></i> Add Key Topic</a>
-                                <a href="{% url 'select_standards' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id  select_all=True %}#heading" class="btn btn-sm btn-outline-primary"><i class="fas fa-check"></i> Select All</a>
+                                <a href="{% url 'select_standards' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id  select_all=True topic_id='False' %}#heading" class="btn btn-sm btn-outline-primary"><i class="fas fa-check"></i> Select All</a>
                                     {% for topic in topic_lists %}
                                     {% ifchanged topic.0 %}
                                             {% if topic.1 == 1 %}
@@ -99,7 +105,7 @@
                     </div>
                     <div class="col-lg-5">
                         
-                        <a href="{% url 'select_standards' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id select_all='False' %}#heading" class="btn btn-success btn-block btn-has-icon" >Next: Select Key Topics </a>
+                        <a href="{% url 'select_standards' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id select_all='False' topic_id='False' %}#heading" class="btn btn-success btn-block btn-has-icon" >Next: Select Key Topics </a>
                                      
                     </div>
                     </div>
