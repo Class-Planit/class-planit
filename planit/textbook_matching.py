@@ -174,15 +174,20 @@ def get_question_text(lesson_id):
     all_topic_lines = []
     for topic in topics: 
         text_lines = topic.text_index.all()
-        textlines = textBookBackground.objects.filter(line_counter__in=text_lines)
+        textlines = textBookBackground.objects.filter(id__in=text_lines)
+
         lr = []
         for line in textlines:
             
             text = line.line_text
-            questions = ['What ', 'Where ', 'How ', 'When ', 'Which ']
-            for quest in questions:
-                if quest in text:
-                    all_topic_lines.append(text)
+            remove_list = ['illustrations', 'cartoon', 'Figure', 'they', 'those', 'Name ', 'Circle ', 'Education.com ', 'The McGraw-Hill']
+            if any(word in text for word in remove_list):
+                pass
+            else:
+                questions = ['What ', 'Where ', 'How ', 'When ', 'Which ']
+                for quest in questions:
+                    if quest in text:
+                        all_topic_lines.append(text)
 
 
     return(all_topic_lines)

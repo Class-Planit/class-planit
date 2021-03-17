@@ -65,276 +65,319 @@
             </button>
         </div>
     </nav>
-    
+ 
             <div class="container-fluid bg-soft">
                 <div class="row">
                     <div class="col-12">
     
-                        <!-- <nav id="sidebarMenu" class="sidebar col-md-4 col-lg-3 col-xl-2 d-md-block bg-primary text-white collapse"> -->
-                            <nav id="sidebarMenu" class="sidebar d-md-block bg-primary text-white collapse px-4">
-                                <div class="sidebar-sticky pt-4 mx-auto">
-                                  <div class="user-card d-flex align-items-center justify-content-between justify-content-md-center pb-4">
-                                    <div class="d-flex align-items-center">
-                                      <div class="user-avatar lg-avatar mr-4">
-                                        <img src="{% static 'images/dashboard/user_default.png' %}" class="card-img-top rounded-circle border-white" alt="user">
-                                      </div>
-                                      <div class="d-block">
-                                        <h2 class="h6">Hi, Audrey</h2>
-                                        <a href="../sign-in.html" class="btn btn-secondary btn-xs"><span class="mr-2"><span class="fas fa-sign-out-alt"></span></span>Sign Out</a>
-                                      </div>
-                                    </div>
-                                    <div class="collapse-close d-md-none">
-                                        <a href="#sidebarMenu" class="fas fa-times" data-toggle="collapse"
-                                            data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="true"
-                                            aria-label="Toggle navigation"></a>
-                                    </div>
-                                  </div>
-                                  <ul class="nav flex-column mt-4">
-                                      {% if 'Overview' in page %}
-                                    <li class="nav-item  active ">
-                                        {% else %}
-                                        <li class="nav-item">
-                                        {% endif %}
-                                      <a href="{% url 'Dashboard' week_of='Current' %}" class="nav-link">
-                                          <span class="sidebar-icon"><span class="fas fa-chart-pie"></span></span>
-                                          <span>Overview</span>
-                                      </a>
-                                    </li>
-                                    {% if 'Classrooms' in page %}
-                                    <li class="nav-item  active ">
-                                        {% else %}
-                                        <li class="nav-item">
-                                        {% endif %}
-                                      <a href="{% url 'classroom_list' %}" class="nav-link d-flex align-items-center justify-content-between">
-                                          <span>
-                                            <span class="sidebar-icon"><i class="fa fa-chalkboard-teacher"></i></span>
-                                            Classrooms
-                                          </span>
-                                          
-                                      </a>
-                                    </li>
-                              
-                                    {% if 'Standards' in page %}
-                                    <li class="nav-item  active ">
-                                        {% else %}
-                                        <li class="nav-item">
-                                        {% endif %}
-                                      <a href="../dashboard/traffic-sources.html" class="nav-link">
-                                          <span class="sidebar-icon"><span class="fas fa-chart-bar"></span></span>
-                                          <span>Standards Tracking</span>
-                                      </a>
-                                    </li>
-                                   
-                              
-                                    {% if 'Assignments' in page %}
-                                    <li class="nav-item  active ">
-                                        {% else %}
-                                        <li class="nav-item">
-                                        {% endif %}
-                                      <a href="../dashboard/tasks.html" class="nav-link">
-                                          <span class="sidebar-icon"><span class="fas fa-clipboard-list"></span></span>
-                                          <span>Assignments</span>
-                                      </a>
-                                    </li>
-                                    <li class="nav-item ">
-                                      <a href="../dashboard/settings.html" class="nav-link">
-                                          <span class="sidebar-icon"><span class="fas fa-cog"></span></span>
-                                          <span>Settings</span>
-                                      </a>
-                                    </li>
-                              
-                                    <li role="separator" class="dropdown-divider mt-4 mb-3 border-blue"></li>
-                                    <li class="nav-item">
-                                      <a href="https://themesberg.com/docs/rocket/getting-started/quick-start/" target="_blank" class="nav-link">
-                                        <span class="sidebar-icon"><span class="fas fa-book"></span></span>
-                                        <span>Tutorials</span>
-                                      </a>
-                                    </li>
-                                    <li class="nav-item">
-                                      <a href="../../index.html" class="nav-link d-flex align-items-center">
-                                        <span class="sidebar-icon">
-                                          <img src="{% static 'images/dashboard/circle_logo.svg' %}" height="26" width="26" alt="Rocket Logo">
-                                        </span>
-                                        <span>Contact Us</span>
-                                      </a>
-                                    </li>
-                                  
-                               
-                                  </ul>
-                                </div>
-                              </nav>
+    <div class="bg-white">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+            <div class="btn-toolbar">
+                <a href="{% url 'Dashboard' week_of='Current' %}" class="btn btn-sm btn-outline-secondary"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
     
     
-    <main class="content bg-white">
+            </div>
+            <div class="btn-group mr-2">
+                
+    
+                <button  onclick="window.print();return false;" type="button" class="btn btn-sm btn-outline-secondary">Share with Colleague</button>
+           
+    
+            </div>
+        </div>
         <div class="row">
        
-            <div class="col-lg-9">
+            <div class="col-lg-6">
                 <form  method="POST">
                     {% csrf_token %}
-                    <input type="submit" value="Add" class="btn btn-info">
-                    <textarea id="permanent-pen">
+                    <button type="submit" class="btn btn-default">
+                        <i class="fas fa-save"></i> Save Lesson Progress
+                    </button>
+<br>
+                    <textarea id="permanent-pen" name="overview">
                         <p style="text-align: center;">
                           <img title="TinyMCE Logo" src="{% static 'images/dashboard/icon.svg' %}" alt="TinyMCE Logo" width="110" height="97" />
                         </p>
-                      
-                        <h2 style="text-align: center;">Lesson Plan: {{ user.username }} | {{ classroom_profile }}</h2>
+                       <h2 style="text-align: center;">Lesson Plan: {{ user.username }} | {{ classroom_profile }}</h2>
                       
                          <h2>Objective: {{ lesson_match.teacher_objective }}</h2>
-                      
+                         <h5>
+                            Aligned Standards:
+                         </h5>
+                       
                         <ul>
-                          <li>Our <a href="https://www.tiny.cloud/docs/">documentation</a> is a great resource for learning how to configure TinyMCE.</li>
-                          <li>Have a specific question? Try the <a href="https://stackoverflow.com/questions/tagged/tinymce" target="_blank" rel="noopener"><code>tinymce</code> tag at Stack Overflow</a>.</li>
-                          <li>We also offer enterprise grade support as part of <a href="https://www.tiny.cloud/pricing">TinyMCE premium plans</a>.</li>
+                            {% for standard in lesson_standards %}
+                            <li>{{ standard }}</li>
+                            {% endfor %}
                         </ul>
                       
-                        <h2>A simple table to play with</h2>
+                        <h2>Lesson Activities:</h2>
+
+                      <li id='activity'>-</li>
+                      {% for activity in selected_activities %}
+                      <li id='activity'><h3>{{ activity.lesson_text }}</h3></li>
+                        {% endfor %}
+
                       
                         <table style="border-collapse: collapse; width: 100%;" border="1">
                           <thead>
                             <tr>
-                              <th>Product</th>
-                              <th>Cost</th>
-                              <th>Really?</th>
+                              <th>Key Term</th>
+                              <th>Description</th>
+                             
                             </tr>
                           </thead>
                           <tbody>
                             <tr>
-                              <td>TinyMCE</td>
-                              <td>Free</td>
-                              <td>YES!</td>
-                            </tr>
+                                <td> ...</td>
+                                 <td>  </td>
+                              </tr>
+                            {% for topic in topic_lists_selected %}
+                            {% ifchanged topic.item %}
+
                             <tr>
-                              <td>Plupload</td>
-                              <td>Free</td>
-                              <td>YES!</td>
+                              <td>{{ topic.item }}</td>
+                               <td> {% for word in topic.description.all %}
+                                {{ word }}
+                                {% endfor %}</td>
                             </tr>
+                            {% endifchanged %}
+                            {% endfor %}
                           </tbody>
                         </table>
-                      
-                        <h2>Found a bug?</h2>
-                      
-                        <p>
-                          If you think you have found a bug please create an issue on the <a href="https://github.com/tinymce/tinymce/issues">GitHub repo</a> to report it to the developers.
-                        </p>
-                      
-                        <h2>Finally ...</h2>
-                      
-                        <p>
-                          Don't forget to check out our other product <a href="http://www.plupload.com" target="_blank">Plupload</a>, your ultimate upload solution featuring HTML5 upload support.
-                        </p>
-                        <p>
-                          Thanks for supporting TinyMCE! We hope it helps you and your users create great content.<br>All the best from the TinyMCE team.
-                        </p>
+
                       </textarea>
-                <div class='demo-dfree'>
-                    <h2 class="dfree-header mce-content-body" contenteditable="true" style="position: relative;" spellcheck="false">
-                        Lesson Plan: {{ user.username }} | {{ classroom_profile }}
-                    </h2>
-                    <br/>
-                    <div class="dfree-body mce-content-body custom-toolbar-menu-butto" contenteditable="true" style="position: relative;" spellcheck="false">
-                      <p><img src="{% static 'images/dashboard/icon.svg' %}" style="display: block; margin-left: auto; margin-right: auto; width: 15%;" data-mce-style="display: block; margin-left: auto; margin-right: auto;" data-mce-selected="1"></p>
-                      <br/>
-                      <h3>Objective: {{ lesson_match.teacher_objective }}</h3>
-                
-                      <p>
-                        Aligned Standards:
-                      </p>
-                      {% for standard in lesson_standards %}
-                      <li>{{ standard }}</li>
-                      {% endfor %}
-                    <h5>Lesson Activities</h5>     
-                    <li> </li> 
-                   <div class='row'>
-                      {% for activity in selected_activities %}
-                      <div class='col-lg-4'>
-                          <div class="card" style="width: 18rem;" border="1">
-                              <div class="card-body">
-                              
-                                  <div class="dropdown">
-                                  <button  class="card-title btn btn-light btn-block dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                      Activity {{ forloop.counter }}
-                                  </button>
-                                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                      <a class="dropdown-item" href="#">Action</a>
-                                      <a class="dropdown-item" href="#">Another action</a>
-                                      <a class="dropdown-item" href="#">Something else here</a>
-                                  </div>
-                                  </div>
-                                  <p class="card-text">{{ activity.lesson_text }}</p>
-                                  <!--- Blooms -->
-                                  {% if activity.bloom >= 6 %}
-                                  <span class="badge badge-primary">Create</span>
-                                  {% elif activity.bloom >= 5 %}
-                                  <span class="badge badge-primary">Evaluate</span>
-                                  {% elif activity.bloom >= 4 %}
-                                  <span class="badge badge-primary">Analyze</span>
-                                  {% elif activity.bloom >= 3 %}
-                                  <span class="badge badge-primary">Apply</span>
-                                  {% elif activity.bloom >= 2 %}
-                                  <span class="badge badge-primary">Understand</span>
-                                  {% else %}
-                                  <span class="badge badge-primary">Know</span>
-                                  {% endif %}
-                        
-                                  <!--Multiple Intelligences -->
-                                 {% if activity.mi >= 5 %}
-                                  <span class="badge badge-success"><i class="fas fa-puzzle-piece"></i></span>
-                                  {% elif activity.mi >= 4 %}
-                                  <span class="badge badge-success"><i class="fas fa-walking"></i></span>
-                                  {% elif activity.mi >= 3 %}
-                                  <span class="badge badge-success"><i class="fas fa-music"></i></span>
-                                  {% elif activity.mi >= 2 %}
-                                  <span class="badge badge-success"><i class="fas fa-eye"></i></span>
-                                  {% else %}
-                                  <span class="badge badge-success"><i class="fas fa-book"></i></span>
-                                  {% endif %}
-                                  <div class="card-footer text-muted">
-                                      {% if activity.work_product %}
-                                         <center>{{ activity.work_product|title }}</center>
-                                      {% endif %}
-                                  </div>
-                              </div>
-                              </div>
-                 
-                      </div>
-                      {% endfor %} 
-                    </div>  
-                    </div>
-                    
-                  </div>
+       
                
                   </form>
             </div>
-    
             <div class="col-lg-3">
-                <div class="col-12 px-0 mb-4">
+                <div class='col-lg-12' id="stanDiv" style="display:none;">
+                    <button type="button" onclick="hideStanDiff() " class="btn btn-light btn-sm"> <i class="fas fa-window-close"></i></button>
+                   
                     <div class="card border-light shadow-sm">
-                        <div class="card-header">
-                            <div class="row align-items-center">
-                                <div class="col">
-                                <h2 class="h5">Links:</h2>
+                        <div class="card-body">
+                            <div class="row d-block d-xl-flex align-items-center">
+                                <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
+                                    <div class="icon icon-shape icon-lg icon-shape-primary rounded mr-4 mr-sm-0">20%</div>
+                                    <div class="d-sm-none">
+                                        <h2 class="h5">Standards Alignment</h2>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-xl-7 px-xl-0">
+                                    <div class="d-none d-sm-block">
+                                        <h2 class="h5">Standards Alignment</h2>
+                                    </div>
+                                
+                                    <small>Feb 1 - Apr 1,  <span class="icon icon-small"></span> Last Addressed</small> 
+                                    <div class="small mt-2">                               
+                                        <span class="fas fa-angle-up text-success"></span>                                   
+                                        <span class="text-success font-weight-bold">18.2%</span> <br>previous student performance
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+        <br>
+                <div class='col-lg-12' id="rateDiv" style="display:none;">
+                    <button type="button" onclick="hideRateDiff() " class="btn btn-light btn-sm"> <i class="fas fa-window-close"></i></button>
+                   
+                    <div class="card border-light shadow-sm">
                         <div class="card-body">
-                            <li><a href="{% url 'digital_study_guide' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Study Guide</a></li>
-                            {% for vid in youtube_matched %}
-                            <li><a href="https://www.youtube.com/embed/{{ vid.vid_id }}">Youtube: {{ vid.title }}</a></li>
-                            {% endfor %}
+                            <div class="row d-block d-xl-flex align-items-center">
+                                <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
+                                    <div class="icon icon-shape icon-lg icon-shape-success rounded mr-4 mr-sm-0">85%</div>
+                                    <div class="d-sm-none">
+                                        <h2 class="h5">Retention Rate</h2>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-xl-7 px-xl-0">
+                                    <div class="d-none d-sm-block">
+                                        <h2 class="h5">Retention Rate</h2>
+                                    </div>
+                                
+                                    <p>Your activities have a higher retention rate because you included:</p>
+                                    <li>Group Discussions</li>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+           <br>
+           
+                <div class="col-12 mb-4" id="depthDiv"  style="display:none;"  >
+                    <button type="button" onclick="hideDepthDiff()" class="btn btn-light btn-sm"> <i class="fas fa-window-close"></i></button>
+                   
+                    <div class="card border-light shadow-sm">
+                        <div class="card-body">
+                                <div class="row d-block d-md-flex align-items-center">
+    
+                                    <div class="col-12">
+                                        <h2 class="h5 mb-1">Blooms Summary</h2>
+                                    
+                                        <div class="row d-flex align-items-center mb-2">
+                                            <div class="col-3 text-gray font-weight-bold px-0 small">
+                                                Create
+                                            </div>
+                                            <div class="col-8 px-0">
+                                                <div class="progress progress-lg rounded mb-0">
+                                                    <div class="progress-bar bg-success rounded" role="progressbar" aria-valuenow="51" aria-valuemin="0" aria-valuemax="100" style="width: 51%;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- end row -->
+                                        <div class="row d-flex align-items-center mb-2">
+                                            <div class="col-3 text-gray font-weight-bold px-0 small">
+                                                Evaluate
+                                            </div>
+                                            <div class="col-8 px-0">
+                                                <div class="progress progress-lg rounded mb-0">
+                                                    <div class="progress-bar bg-cyan rounded" role="progressbar" aria-valuenow="31" aria-valuemin="0" aria-valuemax="100" style="width: 31%;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- end row -->
+                                        <div class="row d-flex align-items-center mb-2">
+                                            <div class="col-3 text-gray font-weight-bold px-0 small">
+                                                Analyze
+                                            </div>
+                                            <div class="col-8 px-0">
+                                                <div class="progress progress-lg rounded mb-0">
+                                                    <div class="progress-bar bg-warning rounded" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- end row -->
+                                        <div class="row d-flex align-items-center mb-2">
+                                            <div class="col-3 text-gray font-weight-bold px-0 small">
+                                                Understand
+                                            </div>
+                                            <div class="col-8 px-0">
+                                                <div class="progress progress-lg rounded mb-0">
+                                                    <div class="progress-bar bg-orange rounded" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width: 10%;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- end row -->
+                                        <div class="row d-flex align-items-center mb-2">
+                                            <div class="col-3 text-gray font-weight-bold px-0 small">
+                                                Remember
+                                            </div>
+                                            <div class="col-8 px-0">
+                                                <div class="progress progress-lg rounded mb-0">
+                                                    <div class="progress-bar bg-danger rounded" role="progressbar" aria-valuenow="6" aria-valuemin="0" aria-valuemax="100" style="width: 6%;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- end row -->
+                                    </div>
+         
+                                </div>
+                        </div>
+                        </div>
+                </div>
+             <br>
+                <div class="col-12" id="diffDiv" style="display:none;">
+                    <button type="button" onclick="hideDivDiff()" class="btn btn-light btn-sm"> <i class="fas fa-window-close"></i></button>
+                   
+                    <div class="card border-light shadow-sm">
+                        
+                        <div class="container" style="max-height: 500px">
+                            <br>
+                            
+                            <div id="container-2"></div>
+                            <script src="https://code.highcharts.com/highcharts.src.js"></script>
+                            <script>
+                                Highcharts.chart('container-2', {
+                                    chart: {
+                                        plotBackgroundColor: null,
+                                        plotBorderWidth: null,
+                                        plotShadow: false,
+                                        type: 'pie'
+                                    },
+                                    title: {
+                                        text: 'Learning Styles:'
+                                    },
+                                    tooltip: {
+                                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                                    },
+                                    accessibility: {
+                                        point: {
+                                            valueSuffix: '%'
+                                        }
+                                    },
+                                    plotOptions: {
+                                        pie: {
+                                            allowPointSelect: true,
+                                            cursor: 'pointer',
+                                            dataLabels: {
+                                                enabled: true,
+                                                format: '<b>{point.name}</b>'
+                                            }
+                                        }
+                                    },
+                                    series: [{
+                                        name: 'Learning Styles',
+                                        colorByPoint: true,
+                                        data: [{
+                                            name: 'Logical',
+                                            y: 10.85
+                                        }, {
+                                            name: 'Verbal',
+                                            y: 4.67
+                                        }, {
+                                            name: 'Musical',
+                                            y: 4.18
+                                        }, {
+                                            name: 'Visual',
+                                            y: 1.64
+                                        }, {
+                                            name: 'Movement',
+                                            y: 1.6
+                                        }, {
+                                            name: 'Group',
+                                            y: 1.2
+                                        }, {
+                                            name: 'Independent',
+                                            y: 2.61
+                                        }]
+                                    }]
+                                });
+                            </script>
+                    
+                        </div>
+                        <br>
+                        <br>
+                        <br>
+                    </div>
+                </div>
+                <br>
+         
+                </div>
+            <div class="col-lg-3">
+                <div class="col-12 px-0 mb-4">
+                    <div class="card border-light shadow-sm">
+                       
+                        <div class="card-body">
+                            <h2 class="h5">Links:</h2>
+                            <li><a href="{% url 'activity_builder' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 page=0 %}#heading" class="card-link">Lesson Plan</a></li>
+                           
                             <li><a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 act_id='False' %}#heading" class="card-link">Digital Worksheet</a></li>
-                            <li><a href="{% url 'practice_test' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Practice Test</a></li>
+                           
                             <li><a href="{% url 'digital_study_guide' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Student Performance</a></li>
                             <li><a href="{% url 'digital_study_guide' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Standards Tracking</a></li>
     
                     </div>
                     </div>
                 </div>
-             
+            
                 <div class="col-12 px-0 mb-4">
                     <div class="card border-light shadow-sm">
                         <div class="card-body">
-                        
-                            <h6>Differentiation:</h6>
+                    
+                            <button type="button" class="btn btn-link" onclick="showDivDiff()"><i class="fas fa-angle-left"></i> Differentiation:</button>
+                            <br>
                             <div class="progress">
                                 <div
                                   class="progress-bar bg-success"
@@ -345,7 +388,8 @@
                                   aria-valuemax="100"
                                 ></div>
                               </div>
-                              <h6>Depth of Understanding:</h6>
+                             
+                              <button type="button" class="btn btn-link" onclick="showDepthDiff()" ><i class="fas fa-angle-left"></i> Depth of Understanding:</button>
                               <div class="progress">
                                 <div
                                   class="progress-bar bg-info"
@@ -356,7 +400,7 @@
                                   aria-valuemax="100"
                                 ></div>
                               </div>
-                              <h6>Retention Rate:</h6>
+                              <button type="button" class="btn btn-link" onclick="showRateDiff()"><i class="fas fa-angle-left"></i> Retention Rate:</button>
                               <div class="progress">
                                 <div
                                   class="progress-bar bg-warning"
@@ -367,7 +411,7 @@
                                   aria-valuemax="100"
                                 ></div>
                               </div>
-                              <h6>Standards Alignment:</h6>
+                              <button type="button" class="btn btn-link" onclick="showStanDiff()" ><i class="fas fa-angle-left"></i> Standards Alignment:</button>
                               <div class="progress">
                                 <div
                                   class="progress-bar bg-danger"
@@ -488,41 +532,14 @@
         </div>
    
       <br>
-      <footer class="footer section py-5">
-        <div class="container-fluid">
-        <div class="row">
-        <div class="col-12 col-lg-6 mb-4 mb-lg-0">
-        <p class="mb-0 text-center text-xl-left">Copyright © 2019-<span class="current-year"></span> <a class="text-primary font-weight-normal" href="https://themesberg.com" target="_blank">Themesberg</a></p>
-        </div>
-        
-        <div class="col-12 col-lg-6">
-        <!-- List -->
-        <ul class="list-inline list-group-flush list-group-borderless text-center text-xl-right mb-0">
-        <li class="list-inline-item px-0 px-sm-2">
-            <a href="https://themesberg.com/about">About</a>
-        </li>
-        <li class="list-inline-item px-0 px-sm-2">
-            <a href="https://themesberg.com/themes">Themes</a>
-        </li>
-        <li class="list-inline-item px-0 px-sm-2">
-            <a href="https://themesberg.com/blog">Blog</a>
-        </li>
-        <li class="list-inline-item px-0 px-sm-2">
-            <a href="https://themesberg.com/contact">Contact</a>
-        </li>
-        </ul>
-        <!-- End List -->
-        </div>
-        </div>
-        </div>
-        </footer>
-        </main>
+
+    </div>
   <script>
     tinymce.init({
         selector: 'textarea#permanent-pen',
-        plugins: 'permanentpen code',
+        plugins: 'permanentpen print',
         contextmenu: 'configurepermanentpen',
-        toolbar: 'permanentpen code',
+        toolbar: 'permanentpen print',
         menubar: 'file edit view format table tools help',
         menu: {
             format: {
@@ -542,12 +559,38 @@
             strikethrough: false,
             underline: false
         },
-        height: 500,
+        height: 1300,
         content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
         });
   </script>
+  <script>
+    function showDivDiff() {
+        document.getElementById('diffDiv').style.display = "block";
+    }
+    function hideDivDiff() {
+        document.getElementById('diffDiv').style.display = "none";
+    }
+    function showDepthDiff() {
+        document.getElementById('depthDiv').style.display = "block";
+    }
+    function hideDepthDiff() {
+        document.getElementById('depthDiv').style.display = "none";
+    }
+   function showRateDiff() {
+        document.getElementById('rateDiv').style.display = "block";
+   }
+   function hideRateDiff() {
+        document.getElementById('rateDiv').style.display = "none";
+    }
+   function showStanDiff() {
+        document.getElementById('stanDiv').style.display = "block";
+    }
+    function hideStanDiff() {
+        document.getElementById('stanDiv').style.display = "none";
+    }
 
-  <script src="{% static 'base/js/tinymce/tinymce.min.js' %}"></script>
+  </script>
+ <script src="{% static 'base/js/tinymce/tinymce.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'base/js/tinymce/custom.js' %}" ></script>
   <!-- Core -->
   <script src="{% static 'vendor/dashboard/jquery/dist/jquery.min.js' %}"></script>

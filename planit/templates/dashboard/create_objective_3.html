@@ -1,6 +1,13 @@
 {% extends 'dashboard/base.html' %}
 {% load static %}
 {% block content %}
+<style>
+.active
+    {
+    color:orange
+    }
+</style>
+
 <main class="content">
 
  
@@ -76,20 +83,23 @@
 
                       <h4> <center>2. Select Key Topics or Vocabulary:</center></h4>
                       <hr>
+                      <script>autorefresh()</script>
                       <p style="color:orange"> Help us generate relevant activities and resources, select at least three topics below.</p>
-                        <div class="card-body">
-                            <div class="tagcloud">
+                        <div class="card-body console">
+                            <div class="tagcloud data">
                                 <a class="btn btn-sm btn-danger" data-toggle="modal" data-target="#exampleModal"><i class="fas fa-plus"></i> Add Key Topic</a>
                                 <a href="{% url 'select_standards' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id  select_all=True topic_id='False' %}#heading" class="btn btn-sm btn-outline-primary"><i class="fas fa-check"></i> Select All</a>
-                                    {% for topic in topic_lists %}
-                                    {% ifchanged topic.0 %}
-                                            {% if topic.1 == 1 %}
-                                            <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=8 item_id=topic.0.id action=0 %}#heading" data-toggle="tooltip" data-placement="top" title="{{ topic.0 }} - {% for item in topic.0.description.all %}{{item }} ; {% endfor %}" class="btn btn-sm btn-outline-success">{{ topic.0 }}</a>
-                                            {% else %}
-                                            <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=8 item_id=topic.0.id action=1 %}#heading" data-toggle="tooltip" data-placement="top" title="{{ topic.0 }} - {% for item in topic.0.description.all %}{{item }} ; {% endfor %}" class="btn btn-sm btn-outline-secondary">{{ topic.0 }}</a>
-                                            {% endif %}
-                                        {% endifchanged %}
-                                    {% endfor %}
+                    
+                                {% for topic in selected_lists %} 
+                                    {% ifchanged topic.id %}
+                                            <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=8 item_id=topic.id action=0 %}#heading" data-toggle="tooltip" data-placement="top" title="{{ topic.id }} - {% if topic.description %} {{ topic.description }} ; {% endif %}" class="btn btn-sm btn-secondary">{{ topic.term  }}</a>
+                                    {% endifchanged %}
+                                {% endfor %}
+                                {% for topic in topic_lists %}
+                                    {% ifchanged topic.id %}
+                                    <a class="btn btn-sm btn-outline-secondary selecttopic" id="like{{topic.id }}" href="#" data-topid="{{ topic.id }}" data-lessid="{{ lesson_match.id}}" data-toggle="tooltip" data-placement="top" title="{{ topic.id }} - {% if topic.description %} {{ topic.description }} ; {% endif %}" >{{ topic.term }}</a>
+                                {% endifchanged %}
+                                {% endfor %}
                                    
             
                             </div>
@@ -184,5 +194,30 @@
 </div>
 </footer>
 </main>
-               
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script type="text/javascript">
+    $('.selecttopic').click(function(){
+    var elm = $(this);
+    var id = elm.data('id');
+    var topid;
+    topid = $(this).attr("data-topid");
+    var lessid;
+    lessid = $(this).attr("data-lessid");
+    $.ajax(
+    {
+        type:"GET",
+        url: "/sel-topic",
+        data:{
+                 topic_id: topid,
+                 lesson_id: lessid
+        },
+        success: function (data) {
+            elm.addClass("active");
+        }
+
+     })
+});
+</script>    
+
+       
 {% endblock %}

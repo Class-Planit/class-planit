@@ -93,6 +93,10 @@ urlpatterns = [
         view=SelectTopic,
         name='select_topic'),
 
+    url(r'^up-topic/(?P<lesson_id>[\w\s]+)/',
+        view=UpdateTopics,
+        name='up_topic'),
+
     url(r'^account-setip/(?P<user_id>[\w\s]+)/',
         view=AccountSetup,
         name='account_setup'),
@@ -130,7 +134,7 @@ urlpatterns = [
         name='select_related'),
 
 
-    url(r'^activity-builder/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<lesson_id>[\w-]+)/$',
+    url(r'^activity-builder/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<lesson_id>[\w-]+)/(?P<page>[\w-]+)/$',
         view=ActivityBuilder,
         name='activity_builder'), 
 
