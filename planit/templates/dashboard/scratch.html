@@ -4,7 +4,7 @@
         <nav>
             <div class="nav nav-tabs flex-column flex-md-row bg-white shadow-soft border border-light justify-content-around rounded mb-lg-3 py-3" id="nav-tab" role="tablist">
                     <a class="nav-item nav-link rounded mr-md-3" id="nav-content-research-tab" href="{% url 'activity_builder' user_id=1 class_id=lesson_match.lesson_classroom_id lesson_id=lesson_match.id subject=lesson_match.subject_id page=0 %}#heading" role="tab" aria-controls="nav-content-research" aria-selected="true"><span class="d-block"><span class="fas fa-file-alt mr-2"></span><span class="font-weight-normal">Lesson Plan</span></span></a>
-                    <a class="nav-item nav-link rounded mr-md-3 active" id="nav-rank-track-tab"  href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 act_id='False' %}#heading" aria-controls="nav-rank-track" aria-selected="false"><span class="fas fa-list mr-2"></span><span class="font-weight-normal">Digital Activities</span></a>
+                    <a class="nav-item nav-link rounded mr-md-3 active" id="nav-rank-track-tab"  href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 act_id='False' question_id=0 %}#heading" aria-controls="nav-rank-track" aria-selected="false"><span class="fas fa-list mr-2"></span><span class="font-weight-normal">Digital Activities</span></a>
                     <a class="nav-item nav-link rounded mr-md-3" id="nav-web-monitor-tab" data-toggle="tab" href="#nav-web-monitor" role="tab" aria-controls="nav-web-monitor" aria-selected="false"><span class="fas fa-globe mr-2"></span><span class="font-weight-normal">Student Performance</span></a>
                     <a class="nav-item nav-link rounded mr-md-3" id="nav-backlink-research-tab" data-toggle="tab" href="#nav-backlink-research" role="tab" aria-controls="nav-backlink-research" aria-selected="false"><span class="fas fa-chart-line mr-2"></span><span class="font-weight-normal">Standards Tracking</span></a>
                   
@@ -100,9 +100,9 @@
                                     {% endif %}
                                    
                                     {% if selected == 1 %}
-                                    <a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id act_id=value %}" class="btn btn-sm btn-success">Add to Worksheet</a>
+                                    <a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id act_id=value question_id=0 %}" class="btn btn-sm btn-success">Add to Worksheet</a>
                                     {% else %}
-                                    <a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id act_id=value %}" class="btn btn-sm btn-outline-success">Add to Worksheet</a>
+                                    <a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id act_id=value question_id=0 %}" class="btn btn-sm btn-outline-success">Add to Worksheet</a>
                                     {% endif %}
                                 </div>
                                

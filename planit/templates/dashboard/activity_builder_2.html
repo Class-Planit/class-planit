@@ -101,7 +101,124 @@
                     <a href="{% url 'lesson_pdf_upload' user_id=user_profile.id  class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id %}#heading" type="button" class="btn btn-outline-secondary">Pull from Website</a>
                     </div>
                     <hr>
-               
+                    
+                    <form>
+                        <div class="row">
+                            {% if question_match.Question_Image %}
+                            <div class='col-4'>
+                                
+                                <figure><img class="xv-superimage" style="max-height:200px;max-width:200px;" src="{{ question_match.Question_Image.url }}" alt=""></figure>
+                                
+                            </div>
+                            <div class='col-8'>
+                                {% else %}
+                                <div class='col-12'>
+                                {% endif %} 
+
+                                
+                                <div class="form-group">
+                                    <label for="exampleFormControlTextarea1"><h4>Question: | <span class="badge badge-primary"><a href="{% url 'lesson_pdf_upload' user_id=user_profile.id  class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id %}#heading"><i class="fas fa-image"></i></a></span></h4></label>
+                                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="5">{{ question_match.Question }}</textarea>
+                                  </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            {% if question_match.correct_image %}
+                            <div class='col-4'>
+                                
+                                <figure><img class="xv-superimage" style="max-height:200px;max-width:200px;" src="{{ question_match.correct_image.url }}" alt=""></figure>
+                                
+                            </div>
+                            <div class='col-8'>
+                                <br>
+                                <br>
+                                {% else %}
+                                <div class='col-12'>
+                                {% endif %} 
+
+                                
+                                <label ><h5>Correct Answer | <span class="badge badge-success"><a href="{% url 'lesson_pdf_upload' user_id=user_profile.id  class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id %}#heading"><i class="fas fa-image"></i></a></span></h5></label>
+                                <div class="input-group mb-3">
+                                    
+                                    <input type="text" class="form-control" placeholder="" aria-label="" value='{{ question_match.Correct }}' aria-describedby="basic-addon1">
+                                 
+                                  </div>
+                            </div>
+                        </div>
+                   
+                        <hr>
+                        <div class="row">
+                           {% if question_match.in_one_image %} 
+                           <div class='col-4'>
+                                
+                                <figure><img class="xv-superimage" style="max-height:200px;max-width:200px;" src="{{ question_match.in_one_image.url }}" alt=""></figure>
+                                
+                            </div>
+                            <div class='col-8'>
+                                <br>
+                                <br>
+                                {% else %}
+                                <div class='col-12'>
+                                {% endif %} 
+                             
+                                <label ><h5>Incorrect Option One | <span class="badge badge-secondary"><a href="{% url 'lesson_pdf_upload' user_id=user_profile.id  class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id %}#heading"><i class="fas fa-image"></i></a></span></h5></label>
+                                <div class="input-group mb-3">
+                                    
+                                    <input type="text" class="form-control" placeholder="" aria-label="" value='{% if question_match.Incorrect_One %}{{ question_match.Incorrect_One }}{% endif %}' aria-describedby="basic-addon1">
+                                  
+                                  </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            {% if question_match.in_two_image %}
+                            <div class='col-4'>
+                               
+                                <figure><img class="xv-superimage" style="max-height:200px;max-width:200px;" src="{{ question_match.in_two_image.url }}" alt=""></figure>
+                            
+                            </div>
+                            <div class='col-8'>
+                                <br>
+                                <br>
+                                {% else %}
+                                <div class='col-12'>
+                                {% endif %} 
+                              
+                                <label ><h5>Incorrect Option Two | <span class="badge badge-secondary"><a href="{% url 'lesson_pdf_upload' user_id=user_profile.id  class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id %}#heading"><i class="fas fa-image"></i></a></span></h5></label>
+                                <div class="input-group mb-3">
+                                    
+                                    <input type="text" class="form-control" placeholder="" aria-label="" value='{% if question_match.Incorrect_Two %}{{ question_match.Incorrect_Two }}{% endif %}' aria-describedby="basic-addon1">
+                                 
+                                  </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            {% if question_match.in_three_image %}
+                            <div class='col-4'>
+                                
+                                <figure><img class="xv-superimage" style="max-height:200px;max-width:200px;" src="{{ question_match.in_three_image.url }}" alt=""></figure>
+                             
+                            </div>
+                            <div class='col-8'>
+                                <br>
+                                <br>
+                                {% else %}
+                                <div class='col-12'>
+                                {% endif %}
+                                
+                                <label ><h5>Incorrect Option Three | <span class="badge badge-secondary"><a href="{% url 'lesson_pdf_upload' user_id=user_profile.id  class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id %}#heading"><i class="fas fa-image"></i></a></span></h5></label>
+                                <div class="input-group mb-3">
+                                    
+                                    <input type="text" class="form-control" placeholder="" aria-label="" value='{% if question_match.Incorrect_Three %}{{ question_match.Incorrect_Three }}{% endif %}' aria-describedby="basic-addon1">
+                                   
+                                  </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">Add to Worksheet </button>
+                      </form>
 
                     {% if matched_worksheet %}
                     <a href="{% url 'worksheet_builder' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id worksheet_id=matched_worksheet.id %}#heading" type="button" class="btn btn-outline-secondary">Create Worksheet</a>
@@ -139,9 +256,9 @@
                             {% endif %}
                             
                             {% if selected == 1 %}
-                            <a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id act_id=value %}" class="btn btn-sm btn-success">Add to Worksheet</a>
+                            <a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id act_id=value question_id=0 %}" class="btn btn-sm btn-success">Add to Worksheet</a>
                             {% else %}
-                            <a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id act_id=value %}" class="btn btn-sm btn-outline-success">Add to Worksheet</a>
+                            <a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id act_id=value question_id=0 %}" class="btn btn-sm btn-outline-success">Add to Worksheet</a>
                             {% endif %}
                         </div>
                         
@@ -167,18 +284,40 @@
                     <button type="button"  class="btn btn-light btn-sm"> <i class="fas fa-window-close"></i></button>
                    
                     <div class="card border-light shadow-sm">
+                        <div class="card-header"><h5>Multiple Choice:</h5></div>
+                        <div class="card-body">
+
+  
+                        {% for quest in question_lists %}
+                        {% ifchanged quest.Question %}
+                        <li><a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 act_id='False' question_id=quest.id %}#heading" class="card-link">{{ quest.Question }}</a> </li>
+                        <h5><small style="color:orange">Answer: {{ quest.Correct }}</small></h5>
+                        {{ quest.Question_Image }}
+                        {{ quest.correct_image }}
+                        <br>
+
+                        {% endifchanged %}
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="col-12">
+                    <button type="button"  class="btn btn-light btn-sm"> <i class="fas fa-window-close"></i></button>
+                   
+                    <div class="card border-light shadow-sm">
                         <div class="card-header"><h5>Short Answer:</h5></div>
                         <div class="card-body">
 
                         {% for quest in text_questions %}
-                        <li>{{ quest }}</li>
+                        <li><a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 act_id='False' question_id=quest.id %}#heading" class="card-link">{{ quest.Question }}</a></li>
                         <br>
                         {% endfor %}
                         </div>
                     </div>
                  
                 </div>
-            
+                <br>
                 <div class="col-12">
                     <button type="button"  class="btn btn-light btn-sm"> <i class="fas fa-window-close"></i></button>
                    
@@ -189,7 +328,7 @@
   
                         {% for quest in generated_questions %}
                        
-                        <li>{% if quest.2 %}{{ quest.2 }} - {% endif %} {{ quest.0 }} (<small style="color:orange">{{ quest.1 }}</small>)</li>
+                        <li><a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 act_id='False' question_id=quest.id %}#heading" class="card-link">{{ quest.Question }} (<small style="color:orange">{{ quest.Correct }}</small>)</a></li>
                         <br>
                         {% endfor %}
                         </div>
@@ -205,7 +344,7 @@
                             <h2 class="h5">Links:</h2>
                             <li><a href="{% url 'activity_builder' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 page=0 %}#heading" class="card-link">Lesson Plan</a></li>
                            
-                            <li><a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 act_id='False' %}#heading" class="card-link">Digital Worksheet</a></li>
+                            <li><a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 act_id='False' question_id=0 %}#heading" class="card-link">Digital Worksheet</a></li>
                         
                             <li><a href="{% url 'digital_study_guide' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Student Performance</a></li>
                             <li><a href="{% url 'digital_study_guide' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Standards Tracking</a></li>

@@ -35,7 +35,7 @@ def get_question_text_ocr(textlines):
     all_topic_lines = []
     for sent in results:
         sent = ' '.join(sent.split())
-        questions = ['What ', 'Where ', 'How ', 'When ', 'Which ', 'Explain ', 'Discuss ', 'Describe ']
+        questions = ['What ', 'Where ', 'How ', 'When was', 'When were', 'Which ', 'Explain ', 'Discuss ', 'Describe ']
         for quest in questions:
             if quest in sent:
                 all_topic_lines.append(sent)

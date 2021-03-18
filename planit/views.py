@@ -1028,13 +1028,13 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
 
 
 
-def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson_id=None, act_id=None):
+def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson_id=None, act_id=None, question_id=None):
     current_week = date.today().isocalendar()[1] 
     user_profile = User.objects.get(id=user_id)
 
     classroom_profile = classroom.objects.get(id=class_id)
     grade_list = classroom_profile.grade_level.all()
-
+    grade_match = gradeLevel.objects.filter(id__in=grade_list).first()
     standard_match = standardSet.objects.get(id=classroom_profile.standards_set_id)
 
 
@@ -1063,7 +1063,7 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
         get_text = textBookBackground.objects.get(id=act_id)
         
         context = get_text.line_text
-        get_question, created = topicQuestion.objects.get_or_create(linked_text=get_text, subject=subject_match_full, Question=context, standard_set= standard_match, created_by=user_profile)
+        get_question, created = topicQuestion.objects.get_or_create(linked_text=get_text, grade_level=grade_match, subject=subject_match_full, Question=context, standard_set= standard_match, created_by=user_profile)
         if get_worksheet.questions.filter(id=get_question.id).exists():
             pass
         else:
@@ -1105,7 +1105,13 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
 
     uploaded_text = lessonPDFText.objects.filter(matched_lesson=lesson_match)
 
-    text_questions = get_question_text(lesson_id)
+    text_questions_one = get_question_text(lesson_id)
+
+    quest_match, created = questionType.objects.get_or_create(item='short_answer')
+    text_questions = []
+    for quest in text_questions_one:
+        get_question, created = topicQuestion.objects.get_or_create(subject=subject_match_full, is_admin = False, grade_level=grade_match, Question=quest, question_type=quest_match, standard_set= standard_match, created_by=user_profile)
+        text_questions.append(get_question)
 
     match_textlines_one = get_cluster_text(lesson_id,user_id)
     match_textlines = match_textlines_one[0]
@@ -1177,10 +1183,22 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
     if question_match:
         for item in question_match:
             result_id = item[0][0]
-
             topic = topicQuestion.objects.get(id=result_id)
-    
-            question_lists.append(topic )
+            topic_question = topic.Question
+            question_type = topic.question_type_id
+            type_match = questionType.objects.get(id=question_type)
+            type_name = type_match.item
+            if 'multi_choice' in type_name: 
+                if topicQuestion.objects.filter(original_num=result_id, created_by=user_profile).exists():
+                    topic = topicQuestion.objects.filter(original_num=result_id, created_by=user_profile).first()
+                else:
+                    topic.pk = None 
+                    topic.id = None 
+                    topic.is_admin = False
+                    topic.created_by = user_profile
+                    topic.original_num = result_id
+                    topic.save()
+                question_lists.append(topic)
 
     combined = uploaded_text_topics + text_match + matched_topics 
 
@@ -1206,10 +1224,23 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
 
     topic_lists.sort(key=lambda x: x[1])
 
+    generated_questions = []
     if topic_lists_matched:
-        generated_questions = generate_questions_topic(topic_lists_matched)
-    else:
-        generated_questions = []
+        generated_questions_one = generate_questions_topic(topic_lists_matched)
+
+        quest_match, created = questionType.objects.get_or_create(item='fill_in_blank')
+        for quest in generated_questions_one:
+            one = quest[0]
+            two = quest[1]
+            three = quest[2]
+            
+            if three:
+                sentence = '%s - %s' % (three, one)
+            else:
+                sentence = str(one)
+            get_question, created = topicQuestion.objects.get_or_create(subject=subject_match_full, is_admin = False, grade_level=grade_match, Question=sentence, Correct=two, question_type=quest_match, standard_set= standard_match, created_by=user_profile)
+            generated_questions.append(get_question)
+
 
     youtube_matched = youtubeSearchResult.objects.filter(lesson_plan=lesson_match, is_selected=True)
     
@@ -1224,8 +1255,12 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
         if result not in activity_choices:
             activity_choices.append(result)
 
-
-    return render(request, 'dashboard/activity_builder_2.html', {'user_profile': user_profile, 'match_topic_text': match_topic_text, 'subject_match_full': subject_match_full, 'matched_worksheet': matched_worksheet, 'activity_choices': activity_choices, 'lesson_analytics': lesson_analytics, 'generated_questions': generated_questions, 'first_topics': first_topics, 'second_topics': second_topics, 'third_topics': third_topics, 'topic_lists_matched': topic_lists_matched, 'sent_text': sent_text,  'match_textlines': match_textlines, 'text_questions': text_questions, 'selected_activities': selected_activities, 'not_selected_activities':not_selected_activities, 'question_list': question_list, 'lessons_wording': lessons_wording, 'question_lists': question_lists, 'text_update': text_update, 'lesson_results': lesson_results, 'topic_lists_selected': topic_lists_selected, 'topic_lists': topic_lists, 'keywords_selected': keywords_selected, 'youtube_matched': youtube_matched, 'questions_selected': questions_selected, 'topics_selected': topics_selected, 'keywords_matched': keywords_matched, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
+    question_id = int(question_id)
+    if question_id == 0:
+        pass
+    else:
+        question_match = topicQuestion.objects.get(id=question_id)
+    return render(request, 'dashboard/activity_builder_2.html', {'user_profile': user_profile, 'question_match': question_match, 'match_topic_text': match_topic_text, 'subject_match_full': subject_match_full, 'matched_worksheet': matched_worksheet, 'activity_choices': activity_choices, 'lesson_analytics': lesson_analytics, 'generated_questions': generated_questions, 'first_topics': first_topics, 'second_topics': second_topics, 'third_topics': third_topics, 'topic_lists_matched': topic_lists_matched, 'sent_text': sent_text,  'match_textlines': match_textlines, 'text_questions': text_questions, 'selected_activities': selected_activities, 'not_selected_activities':not_selected_activities, 'question_list': question_list, 'lessons_wording': lessons_wording, 'question_lists': question_lists, 'text_update': text_update, 'lesson_results': lesson_results, 'topic_lists_selected': topic_lists_selected, 'topic_lists': topic_lists, 'keywords_selected': keywords_selected, 'youtube_matched': youtube_matched, 'questions_selected': questions_selected, 'topics_selected': topics_selected, 'keywords_matched': keywords_matched, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
 
 
 
@@ -1952,8 +1987,7 @@ def QuestionUploadTwo(request):
         new_question, created = topicQuestion.objects.get_or_create(subject=matched_subject, grade_level=matched_grade, standard_set=standard_match, item=item, question_type=question_type, question_points=question_points, Question=Question, Correct=Correct, Incorrect_One=Incorrect_One, Incorrect_Two=Incorrect_Two, Incorrect_Three=Incorrect_Three, explanation=explanation )
 
         add_topic = new_question.topic_type.add(topic_match)
-        if add_full:
-            add_new_story = new_question.topic_story.add(add_full)
+        
 
     context = {'step': True}
     return render(request, template, context)
