@@ -22,6 +22,13 @@ class  lessonTextForm(forms.ModelForm):
         fields = '__all__'
 
 
+class  topicQuestionForm(forms.ModelForm):
+
+    class Meta:
+        model = topicQuestion
+        fields = '__all__'
+
+
 class lessonObjectiveForm(forms.ModelForm):
 
     class Meta:

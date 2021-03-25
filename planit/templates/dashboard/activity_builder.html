@@ -363,7 +363,7 @@
                             <h2 class="h5">Links:</h2>
                             <li><a href="{% url 'activity_builder' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 page=0 %}#heading" class="card-link">Lesson Plan</a></li>
                            
-                            <li><a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 act_id='False' question_id=0 %}#heading" class="card-link">Digital Worksheet</a></li>
+                            <li><a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 page='Preview' worksheet_id=0 act_id='False' question_id=0 %}#heading" class="card-link">Digital Worksheet</a></li>
                            
                             <li><a href="{% url 'digital_study_guide' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Student Performance</a></li>
                             <li><a href="{% url 'digital_study_guide' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Standards Tracking</a></li>

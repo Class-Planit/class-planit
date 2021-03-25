@@ -39,7 +39,7 @@ import tempfile
 from .tasks import *
 from .get_questions import *
 from .lesson_planner import *
-
+import random
 
 ##################| Homepage Views |#####################
 #Homepage Landing Page
@@ -612,7 +612,7 @@ def SelectStandards(request, user_id=None, class_id=None, subject=None, lesson_i
     else:
         results = match_standard(teacher_objective, current_subject, class_id)
         
-
+        recomendations = []
         for item in results:
             grade = item[0]
             standards = item[1]
@@ -620,6 +620,7 @@ def SelectStandards(request, user_id=None, class_id=None, subject=None, lesson_i
                 standard_id = standard[0]
                 standard_match = singleStandard.objects.filter(id=standard_id).first()
                 create_objective, created = lessonStandardRecommendation.objects.get_or_create(lesson_classroom=classroom_profile, objectives=lesson_match, objectives_standard=standard_match)   
+                recomendations.append(create_objective)
 
     if request.method == "POST":
         form = LearningDemonstrationForm(request.POST, request.FILES)
@@ -1028,7 +1029,7 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
 
 
 
-def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson_id=None, act_id=None, question_id=None):
+def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson_id=None, worksheet_id=None, page=None, act_id=None, question_id=None):
     current_week = date.today().isocalendar()[1] 
     user_profile = User.objects.get(id=user_id)
 
@@ -1037,8 +1038,9 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
     grade_match = gradeLevel.objects.filter(id__in=grade_list).first()
     standard_match = standardSet.objects.get(id=classroom_profile.standards_set_id)
 
-
+    
     worksheet_title = '%s: %s for week of %s' % (user_profile, classroom_profile, current_week) 
+    get_worksheet, created = worksheetFull.objects.get_or_create(created_by=user_profile, title=worksheet_title)
     class_objectives = lessonObjective.objects.all().order_by('subject')
     vocab_list = vocabularyList.objects.filter(lesson_plan__in=class_objectives)
     lesson_activities = lessonFull.objects.filter(lesson_overview__in=class_objectives)
@@ -1054,49 +1056,6 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
     one_end = chunks
     two_end = one_end + chunks 
     three_end = two_end + chunks 
-
-    if 'False' in act_id:
-        pass
-    else:
-        act_id = int(act_id)
-        get_worksheet, created = worksheetFull.objects.get_or_create(created_by=user_profile, title=worksheet_title)
-        get_text = textBookBackground.objects.get(id=act_id)
-        
-        context = get_text.line_text
-        get_question, created = topicQuestion.objects.get_or_create(linked_text=get_text, grade_level=grade_match, subject=subject_match_full, Question=context, standard_set= standard_match, created_by=user_profile)
-        if get_worksheet.questions.filter(id=get_question.id).exists():
-            pass
-        else:
-            update_worksheet = get_worksheet.questions.add(get_question)
-    
-    matched_worksheet = worksheetFull.objects.filter(created_by=user_profile, title=worksheet_title).first()
-    text_results = []
-    if matched_worksheet:
-        all_question = matched_worksheet.questions.all()
-        
-        for quest in all_question:
-            textbook = quest.linked_text_id
-            text_results.append(textbook)
-
-    textbooks = []
-    for text in text_results:
-        matched_textbook_background = textBookBackground.objects.get(id=text)
-        title = matched_textbook_background.textbook_id
-        if title not in textbooks:
-           textbooks.append(title) 
-
-
-    text_titles_topic = []
-    for text in textbooks:
-        find_more_topics = find_match_topic_texts(subject_match_full.id, text)
-        if find_more_topics not in text_titles_topic:
-            text_titles_topic.append(find_more_topics)
-
-    
-    matched_textbook_background = textBookBackground.objects.filter(id__in=text_results)
-    uploaded_text_topics = match_topics_text_uploads(matched_textbook_background, class_id, lesson_id,)
-    
-
 
     first_topics = topicInformation.objects.filter(id__in=topic_matches).order_by('item')[0:one_end]
     second_topics = topicInformation.objects.filter(id__in=topic_matches).order_by('item')[one_end:two_end]
@@ -1200,7 +1159,7 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
                     topic.save()
                 question_lists.append(topic)
 
-    combined = uploaded_text_topics + text_match + matched_topics 
+    combined = text_match + matched_topics 
 
     topic_lists = []
     if combined:
@@ -1255,12 +1214,74 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
         if result not in activity_choices:
             activity_choices.append(result)
 
+    
+    worksheet_id = int(worksheet_id)
+
+    if worksheet_id == 0:
+        all_questions = list(chain(text_questions, generated_questions, question_lists))
+        random.shuffle(all_questions)
+        worksheet_preview_one = all_questions[:10]
+        matched_worksheet, created = worksheetFull.objects.get_or_create(created_by=user_profile, title=worksheet_title)
+        if created:
+            for quest in worksheet_preview_one:
+                if matched_worksheet.questions.filter(id=quest.id).exists():
+                    pass
+                else:
+                    update_worksheet = matched_worksheet.questions.add(quest)
+        else:
+            for quest in worksheet_preview_one:
+                if matched_worksheet.questions.filter(id=quest.id).exists():
+                    pass
+                else:
+                    update_worksheet = matched_worksheet.questions.add(quest)
+
+            matched_questions = matched_worksheet.questions.all()
+        
+        all_questions = topicQuestion.objects.filter(id__in=matched_questions)
+        worksheet_id = matched_worksheet.id
+        
+        
+    else:
+        matched_worksheet = worksheetFull.objects.get(id=worksheet_id)
+        matched_questions = matched_worksheet.questions.all()
+        all_questions = topicQuestion.objects.filter(id__in=matched_questions)
+        worksheet_id = matched_worksheet.id
+
+    worksheet_preview = all_questions[:10]
+    
+    worksheet_id = matched_worksheet.id
+
     question_id = int(question_id)
     if question_id == 0:
-        pass
+        
+        if request.method == "POST":
+                
+            form = lessonPDFTextForm(request.POST, request.FILES)
+            if form.is_valid():
+                
+                prev = form.save()
+
+                return redirect('{}#keywords'.format(reverse('digital_activities', kwargs={'user_id':user_id, 'class_id':class_id, 'lesson_id':lesson_id, 'subject':subject, 'page':'Current', 'worksheet_id':matched_worksheet.id, 'act_id':0, 'question_id':0})))
+        else:
+
+            form = lessonPDFTextForm()
     else:
         question_match = topicQuestion.objects.get(id=question_id)
-    return render(request, 'dashboard/activity_builder_2.html', {'user_profile': user_profile, 'question_match': question_match, 'match_topic_text': match_topic_text, 'subject_match_full': subject_match_full, 'matched_worksheet': matched_worksheet, 'activity_choices': activity_choices, 'lesson_analytics': lesson_analytics, 'generated_questions': generated_questions, 'first_topics': first_topics, 'second_topics': second_topics, 'third_topics': third_topics, 'topic_lists_matched': topic_lists_matched, 'sent_text': sent_text,  'match_textlines': match_textlines, 'text_questions': text_questions, 'selected_activities': selected_activities, 'not_selected_activities':not_selected_activities, 'question_list': question_list, 'lessons_wording': lessons_wording, 'question_lists': question_lists, 'text_update': text_update, 'lesson_results': lesson_results, 'topic_lists_selected': topic_lists_selected, 'topic_lists': topic_lists, 'keywords_selected': keywords_selected, 'youtube_matched': youtube_matched, 'questions_selected': questions_selected, 'topics_selected': topics_selected, 'keywords_matched': keywords_matched, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
+
+        worksheet_id = int(worksheet_id)
+        if request.method == "POST":
+   
+            form = topicQuestionForm(request.POST, request.FILES, instance=question_match)
+            if form.is_valid():
+                topicQuestion.objects.get_or_create(subject=subject_match_full, is_admin = False, grade_level=grade_match, Question=sentence, Correct=two, question_type=quest_match, standard_set= standard_match, created_by=user_profile)
+                prev = form.save()
+
+                return redirect('{}#keywords'.format(reverse('digital_activities', kwargs={'user_id':user_id, 'class_id':class_id, 'lesson_id':lesson_id, 'subject':subject, 'page':'Current', 'worksheet_id':matched_worksheet.id, 'act_id':0, 'question_id':0})))
+        else:
+
+            form = topicQuestionForm(instance=question_match)
+
+    return render(request, 'dashboard/activity_builder_2.html', {'user_profile': user_profile, 'worksheet_preview': worksheet_preview, 'page': page, 'form': form, 'question_match': question_match, 'worksheet_id': worksheet_id, 'match_topic_text': match_topic_text, 'subject_match_full': subject_match_full, 'matched_worksheet': matched_worksheet, 'activity_choices': activity_choices, 'lesson_analytics': lesson_analytics, 'generated_questions': generated_questions, 'first_topics': first_topics, 'second_topics': second_topics, 'third_topics': third_topics, 'topic_lists_matched': topic_lists_matched, 'sent_text': sent_text,  'match_textlines': match_textlines, 'text_questions': text_questions, 'selected_activities': selected_activities, 'not_selected_activities':not_selected_activities, 'question_list': question_list, 'lessons_wording': lessons_wording, 'question_lists': question_lists, 'text_update': text_update, 'lesson_results': lesson_results, 'topic_lists_selected': topic_lists_selected, 'topic_lists': topic_lists, 'keywords_selected': keywords_selected, 'youtube_matched': youtube_matched, 'questions_selected': questions_selected, 'topics_selected': topics_selected, 'keywords_matched': keywords_matched, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
 
 
 

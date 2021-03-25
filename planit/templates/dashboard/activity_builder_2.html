@@ -93,15 +93,93 @@
             <div class='container'>
             <div class="row justify-content-between  align-items-center bg-white ">
                 <div class="col-12">
-            
-                    <h5>Add relevant text to build a worksheet in minutes!</h5>
                     <div class="btn-group" role="group" aria-label="Basic example">
-                    <a href="{% url 'lesson_pdf_upload' user_id=user_profile.id  class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id %}#heading" type="button" class="btn btn-outline-secondary">Upload Pdf</a>
-                    <a href="{% url 'lesson_pdf_upload' user_id=user_profile.id  class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id %}#heading" type="button" class="btn btn-outline-secondary">Copy and Paste</a>
-                    <a href="{% url 'lesson_pdf_upload' user_id=user_profile.id  class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id %}#heading" type="button" class="btn btn-outline-secondary">Pull from Website</a>
+                        {% if 'Preview' in page %}
+                        <a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 page='Preview' worksheet_id=0 act_id='False' question_id=0 %}#heading" type="button" class="btn btn-primary">Worksheet Preview</a>
+                        <a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 page='Current' worksheet_id=0 act_id='False' question_id=0 %}#heading" type="button" class="btn btn-outline-primary">Add New Question</a>
+                        {% else %}
+                        <a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 page='Preview' worksheet_id=0 act_id='False' question_id=0 %}#heading" type="button" class="btn btn-outline-primary">Worksheet Preview</a>
+                        <a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 page='Current' worksheet_id=0 act_id='False' question_id=0 %}#heading" type="button" class="btn btn-primary">Add New Question</a>
+                        
+                        {% endif %}
+                        <a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 page='Current' worksheet_id=0 act_id='False' question_id=0 %}#heading" type="button" class="btn btn-success"><i class="fas fa-check"></i> Assign to Classroom</a>
+                        
                     </div>
-                    <hr>
                     
+                    <hr>
+                   
+                    {% if 'Preview' in page %}
+                            {% for quest in worksheet_preview %}
+                        
+
+                            {% if quest.Incorrect_One %}
+                             <!-----------| Multiple CHoice |------->
+                             <div class="dropdown">
+                                <button class="btn btn-link dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    {{ forloop.counter }} <span style="color:purple"><i class="fas fa-cog"></i></span>
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                  <a class="dropdown-item" href="#">Delete</a>
+                                  <a class="dropdown-item" href="#">Move</a>
+                                  <a class="dropdown-item" href="#">Edit</a>
+                                </div>
+                              </div>
+                                <h5>{{ quest.Question }} </h5>
+
+                                <div class='row'>
+                                    <div class='col'>
+                                    <p>A. {{ quest.Correct }}</p>  
+                                    </div>
+                                    <div class='col'>
+                                        p>B. {{ quest.Incorrect_One }}</p> 
+                                    </div>
+                                </div>
+                                        {% if quest.Incorrect_Two %}
+                                        <div class='row'>
+                                            <div class='col'>
+                                                p>C. {{ quest.Incorrect_Two }}</p> 
+                                            </div>
+                                            <div class='col'>
+                                                p>D. {{ quest.Incorrect_Three }}</p> 
+                                            </div>
+                                        </div>
+                                        <br>
+                                    {% endif %}
+                            {% elif quest.Correct %}
+                            <!-----------| FIll in Blank/ Short Asnwer  |------->
+                            <div class="dropdown">
+                                <button class="btn btn-link dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    {{ forloop.counter }} <span style="color:purple"><i class="fas fa-cog"></i></span>
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                  <a class="dropdown-item" href="#">Delete</a>
+                                  <a class="dropdown-item" href="#">Move</a>
+                                  <a class="dropdown-item" href="#">Edit</a>
+                                </div>
+                              </div>
+                            <h5>{{ quest.Question }} (<small style="color:orange">{{ quest.Correct }}</small>)</h5>
+
+                             <br>
+                             {% else  %}
+                             <div class="dropdown">
+                                <button class="btn btn-link dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    {{ forloop.counter }} <span style="color:purple"><i class="fas fa-cog"></i></span>
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                  <a class="dropdown-item" href="#">Delete</a>
+                                  <a class="dropdown-item" href="#">Move</a>
+                                  <a class="dropdown-item" href="#">Edit</a>
+                                </div>
+                              </div>
+                            <!-----------| Short Answer Not Answer |------->
+                            <h5>{{ quest.Question }}</h5>
+                            <br>
+                            <!-----------| End Short Answer |------->
+                              <!-------------========================-->
+                             {% endif %}
+                            
+                            {% endfor %}
+                    {% else %}
                     <form>
                         <div class="row">
                             {% if question_match.Question_Image %}
@@ -220,54 +298,10 @@
                         <button type="submit" class="btn btn-primary btn-block">Add to Worksheet </button>
                       </form>
 
-                    {% if matched_worksheet %}
-                    <a href="{% url 'worksheet_builder' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id worksheet_id=matched_worksheet.id %}#heading" type="button" class="btn btn-outline-secondary">Create Worksheet</a>
-                    {% endif %}
-                    {% for value, text, selected in activity_choices %}
-                    <div class="card hover-state border-bottom rounded-0 py-3">
-                        
-                        <div class="card-body d-sm-flex align-items-center flex-wrap flex-lg-nowrap py-0 pl-sm-0">
-                        
-                        <div class="col-10 col-lg-10 d-block px-0 mb-4 mb-md-0">
-                            <div class="mb-2">
-                                <h3 class="h5">
-                                    
-                                    {% for word in text %}
-                                        
-                            
-                                    {% if 'NNP' in word.1 %}
-                                    <span>{{ word.0 }}</span>
-                                    {% else %}
-                                    {{ word.0 }}
-                                    {% endif %}
-                                        
-                                    {% endfor %}
-                                
-                                </h3>
-                                
-                            </div>
-                            
-                        </div>
-                        <div class="col-10 col-sm-2 col-lg-2 col-xl-2 d-none d-lg-block d-xl-inline-flex align-items-center ml-lg-auto text-right justify-content-end px-md-0">
-                            {% if selected_two == 1 %}
-                            <a href="#" class="btn btn-sm btn-secondary">Add to Key Words</a>
-                            {% else %}
-                            <a href="#" class="btn btn-sm btn-outline-secondary">Add to Key Words</a>
-                            {% endif %}
-                            
-                            {% if selected == 1 %}
-                            <a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id act_id=value question_id=0 %}" class="btn btn-sm btn-success">Add to Worksheet</a>
-                            {% else %}
-                            <a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id act_id=value question_id=0 %}" class="btn btn-sm btn-outline-success">Add to Worksheet</a>
-                            {% endif %}
-                        </div>
-                        
-                    </div>
-                    
-                </div>
-                {% endfor %}
+                  
+                   
                     <hr>
-
+                    {% endif %}
                             <!----End Form Option -->
                         
             
@@ -280,8 +314,128 @@
   
             </div>
             <div class="col-lg-4">
+                {% if 'Upload' in page %}
                 <div class="col-12">
-                    <button type="button"  class="btn btn-light btn-sm"> <i class="fas fa-window-close"></i></button>
+                    <button type="button" class="btn btn-light btn-sm"> <i class="fas fa-window-close"></i></button>
+                   
+                    <div class="card border-light shadow-sm">
+                        <div class="card-header"><h5>Multiple Choice:</h5></div>
+                        <div class="card-body">
+                            <h5>Add relevant text to build a worksheet in minutes!</h5>
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                <a href="{% url 'lesson_pdf_upload' user_id=user_profile.id  class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id %}#heading" type="button" class="btn btn-outline-secondary">Upload Pdf</a>
+                                <a href="{% url 'lesson_pdf_upload' user_id=user_profile.id  class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id %}#heading" type="button" class="btn btn-outline-secondary">Copy and Paste</a>
+                                <a href="{% url 'lesson_pdf_upload' user_id=user_profile.id  class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id %}#heading" type="button" class="btn btn-outline-secondary">Pull from Website</a>
+                                </div>
+                                <hr>
+                            {% for value, text, selected in activity_choices %}
+                            <div class="card hover-state border-bottom rounded-0 py-3">
+                                
+                                <div class="card-body d-sm-flex align-items-center flex-wrap flex-lg-nowrap py-0 pl-sm-0">
+                                
+                                <div class="col-10 col-lg-10 d-block px-0 mb-4 mb-md-0">
+                                    <div class="mb-2">
+                                        <h3 class="h5">
+                                            
+                                            {% for word in text %}
+                                                
+                                    
+                                            {% if 'NNP' in word.1 %}
+                                            <span>{{ word.0 }}</span>
+                                            {% else %}
+                                            {{ word.0 }}
+                                            {% endif %}
+                                                
+                                            {% endfor %}
+                                        
+                                        </h3>
+                                        
+                                    </div>
+                                    
+                                </div>
+                                <div class="col-10 col-sm-2 col-lg-2 col-xl-2 d-none d-lg-block d-xl-inline-flex align-items-center ml-lg-auto text-right justify-content-end px-md-0">
+                                    {% if selected_two == 1 %}
+                                    <a href="#" class="btn btn-sm btn-secondary">Add to Key Words</a>
+                                    {% else %}
+                                    <a href="#" class="btn btn-sm btn-outline-secondary">Add to Key Words</a>
+                                    {% endif %}
+                                    
+                                    {% if selected == 1 %}
+                                    <a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id page='Current' worksheet_id=worksheet_id act_id=value question_id=0 %}" class="btn btn-sm btn-success">Add to Worksheet</a>
+                                    {% else %}
+                                    <a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id page='Current' worksheet_id=worksheet_id act_id=value question_id=0 %}" class="btn btn-sm btn-outline-success">Add to Worksheet</a>
+                                    {% endif %}
+                                </div>
+                                
+                            </div>
+                            
+                        </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                <div class="col-12" id="newcontenctDiv"  style="display:none;">
+                    <button type="button"  onclick="hidenewcontenctDiv()" class="btn btn-light btn-sm"> <i class="fas fa-window-close"></i></button>
+                   
+                    <div class="card border-light shadow-sm">
+                        <div class="card-header"><h5>Multiple Choice:</h5></div>
+                        <div class="card-body">
+                            <h5>Add relevant text to build a worksheet in minutes!</h5>
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                <a href="{% url 'lesson_pdf_upload' user_id=user_profile.id  class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id %}#heading" type="button" class="btn btn-outline-secondary">Upload Pdf</a>
+                                <a href="{% url 'lesson_pdf_upload' user_id=user_profile.id  class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id %}#heading" type="button" class="btn btn-outline-secondary">Copy and Paste</a>
+                                <a href="{% url 'lesson_pdf_upload' user_id=user_profile.id  class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id %}#heading" type="button" class="btn btn-outline-secondary">Pull from Website</a>
+                                </div>
+                                <hr>
+                            {% for value, text, selected in activity_choices %}
+                            <div class="card hover-state border-bottom rounded-0 py-3">
+                                
+                                <div class="card-body d-sm-flex align-items-center flex-wrap flex-lg-nowrap py-0 pl-sm-0">
+                                
+                                <div class="col-10 col-lg-10 d-block px-0 mb-4 mb-md-0">
+                                    <div class="mb-2">
+                                        <h3 class="h5">
+                                            
+                                            {% for word in text %}
+                                                
+                                    
+                                            {% if 'NNP' in word.1 %}
+                                            <span>{{ word.0 }}</span>
+                                            {% else %}
+                                            {{ word.0 }}
+                                            {% endif %}
+                                                
+                                            {% endfor %}
+                                        
+                                        </h3>
+                                        
+                                    </div>
+                                    
+                                </div>
+                                <div class="col-10 col-sm-2 col-lg-2 col-xl-2 d-none d-lg-block d-xl-inline-flex align-items-center ml-lg-auto text-right justify-content-end px-md-0">
+                                    {% if selected_two == 1 %}
+                                    <a href="#" class="btn btn-sm btn-secondary">Add to Key Words</a>
+                                    {% else %}
+                                    <a href="#" class="btn btn-sm btn-outline-secondary">Add to Key Words</a>
+                                    {% endif %}
+                                    
+                                    {% if selected == 1 %}
+                                    <a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id page='Current' worksheet_id=worksheet_id act_id=value question_id=0 %}" class="btn btn-sm btn-success">Add to Worksheet</a>
+                                    {% else %}
+                                    <a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id page='Current' worksheet_id=worksheet_id act_id=value question_id=0 %}" class="btn btn-sm btn-outline-success">Add to Worksheet</a>
+                                    {% endif %}
+                                </div>
+                                
+                            </div>
+                            
+                        </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12" id="mcDiv"  style="display:none;">
+                    <button type="button"  onclick="hidemcDiv()" class="btn btn-light btn-sm"> <i class="fas fa-window-close"></i></button>
                    
                     <div class="card border-light shadow-sm">
                         <div class="card-header"><h5>Multiple Choice:</h5></div>
@@ -290,7 +444,7 @@
   
                         {% for quest in question_lists %}
                         {% ifchanged quest.Question %}
-                        <li><a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 act_id='False' question_id=quest.id %}#heading" class="card-link">{{ quest.Question }}</a> </li>
+                        <li><a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 page='Current' worksheet_id=worksheet_id act_id='False' question_id=quest.id %}#heading" class="card-link">{{ quest.Question }}</a> </li>
                         <h5><small style="color:orange">Answer: {{ quest.Correct }}</small></h5>
                         {{ quest.Question_Image }}
                         {{ quest.correct_image }}
@@ -302,15 +456,15 @@
                     </div>
                 </div>
                 <br>
-                <div class="col-12">
-                    <button type="button"  class="btn btn-light btn-sm"> <i class="fas fa-window-close"></i></button>
+                <div class="col-12" id="saDiv"  style="display:none;">
+                    <button type="button"  onclick="hidesaDiv()" class="btn btn-light btn-sm"> <i class="fas fa-window-close"></i></button>
                    
                     <div class="card border-light shadow-sm">
                         <div class="card-header"><h5>Short Answer:</h5></div>
                         <div class="card-body">
 
                         {% for quest in text_questions %}
-                        <li><a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 act_id='False' question_id=quest.id %}#heading" class="card-link">{{ quest.Question }}</a></li>
+                        <li><a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 page='Current' worksheet_id=worksheet_id act_id='False' question_id=quest.id %}#heading" class="card-link">{{ quest.Question }}</a></li>
                         <br>
                         {% endfor %}
                         </div>
@@ -318,8 +472,8 @@
                  
                 </div>
                 <br>
-                <div class="col-12">
-                    <button type="button"  class="btn btn-light btn-sm"> <i class="fas fa-window-close"></i></button>
+                <div class="col-12" id="filDiv" style="display:none;">
+                    <button type="button" onclick="hidefilDiv()" class="btn btn-light btn-sm"> <i class="fas fa-window-close"></i></button>
                    
                     <div class="card border-light shadow-sm">
                         <div class="card-header"><h5>Fill in The Blanks:</h5></div>
@@ -328,9 +482,20 @@
   
                         {% for quest in generated_questions %}
                        
-                        <li><a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 act_id='False' question_id=quest.id %}#heading" class="card-link">{{ quest.Question }} (<small style="color:orange">{{ quest.Correct }}</small>)</a></li>
+                        <li><a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 page='Current' worksheet_id=worksheet_id act_id='False' question_id=quest.id %}#heading" class="card-link">{{ quest.Question }} (<small style="color:orange">{{ quest.Correct }}</small>)</a></li>
                         <br>
                         {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="col-12" id="tfDiv" style="display:none;">
+                    <button type="button" onclick="hidetfDiv()" class="btn btn-light btn-sm"> <i class="fas fa-window-close"></i></button>
+                   
+                    <div class="card border-light shadow-sm">
+                        <div class="card-header"><h5>True or False:</h5></div>
+                        <div class="card-body">
+                         <p>None</p>
                         </div>
                     </div>
                 </div>
@@ -344,7 +509,7 @@
                             <h2 class="h5">Links:</h2>
                             <li><a href="{% url 'activity_builder' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 page=0 %}#heading" class="card-link">Lesson Plan</a></li>
                            
-                            <li><a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 act_id='False' question_id=0 %}#heading" class="card-link">Digital Worksheet</a></li>
+                            <li><a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 page='Preview' worksheet_id=worksheet_id act_id='False' question_id=0 %}#heading" class="card-link">Digital Worksheet</a></li>
                         
                             <li><a href="{% url 'digital_study_guide' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Student Performance</a></li>
                             <li><a href="{% url 'digital_study_guide' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Standards Tracking</a></li>
@@ -356,15 +521,19 @@
                     <div class="card border-light shadow-sm">
                         <div class="card-body">
                     
-                            <button type="button" class="btn btn-link" onclick="showDivDiff()"><i class="fas fa-angle-left"></i> Short Answer (3)</button>
+                            <button type="button" class="btn btn-link" onclick="showsaDiv()"><i class="fas fa-angle-left"></i> Short Answer (3)</button>
                          
                              <hr>
-                            <button type="button" class="btn btn-link" onclick="showDepthDiff()" ><i class="fas fa-angle-left"></i> Fill in the Blank (1)</button>
+                            <button type="button" class="btn btn-link" onclick="showfilDiv()" ><i class="fas fa-angle-left"></i> Fill in the Blank (1)</button>
                             <hr>
-                            <button type="button" class="btn btn-link" onclick="showRateDiff()"><i class="fas fa-angle-left"></i> Multiple Choice (2)</button>
+                            <button type="button" class="btn btn-link" onclick="showmcDiv()"><i class="fas fa-angle-left"></i> Multiple Choice (2)</button>
                             <hr>
-                            <button type="button" class="btn btn-link" onclick="showStanDiff()" ><i class="fas fa-angle-left"></i> True or False (5)</button>
+                            <button type="button" class="btn btn-link" onclick="showtfDiv()" ><i class="fas fa-angle-left"></i> True or False (0)</button>
+                            <hr>
+                            <button type="button" class="btn btn-link" onclick="shownewcontenctDiv()" ><i class="fas fa-angle-left"></i> Add Text from PDF or Website</button>
                         
+
+                            
                             <hr>
                          
                         </div>
@@ -482,31 +651,38 @@
         });
   </script>
   <script>
-    function showDivDiff() {
-        document.getElementById('diffDiv').style.display = "block";
+    function showsaDiv() {
+        document.getElementById('saDiv').style.display = "block";
     }
-    function hideDivDiff() {
-        document.getElementById('diffDiv').style.display = "none";
+    function hidesaDiv() {
+        document.getElementById('saDiv').style.display = "none";
     }
-    function showDepthDiff() {
-        document.getElementById('depthDiv').style.display = "block";
+    function showfilDiv() {
+        document.getElementById('filDiv').style.display = "block";
     }
-    function hideDepthDiff() {
-        document.getElementById('depthDiv').style.display = "none";
+    function hidefilDiv() {
+        document.getElementById('filDiv').style.display = "none";
     }
-   function showRateDiff() {
-        document.getElementById('rateDiv').style.display = "block";
+   function showmcDiv() {
+        document.getElementById('mcDiv').style.display = "block";
    }
-   function hideRateDiff() {
-        document.getElementById('rateDiv').style.display = "none";
+   function hidemcDiv() {
+        document.getElementById('mcDiv').style.display = "none";
     }
-   function showStanDiff() {
-        document.getElementById('stanDiv').style.display = "block";
+   function showtfDiv() {
+        document.getElementById('tfDiv').style.display = "block";
     }
-    function hideStanDiff() {
-        document.getElementById('stanDiv').style.display = "none";
+    function hidetfDiv() {
+        document.getElementById('tfDiv').style.display = "none";
     }
 
+    function shownewcontenctDiv() {
+        document.getElementById('newcontenctDiv').style.display = "block";
+    }
+    function hidenewcontenctDiv() {
+        document.getElementById('newcontenctDiv').style.display = "none";
+    }
+    
   </script>
  <script src="{% static 'base/js/tinymce/tinymce.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'base/js/tinymce/custom.js' %}" ></script>

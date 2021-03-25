@@ -138,7 +138,7 @@ urlpatterns = [
         view=ActivityBuilder,
         name='activity_builder'), 
 
-    url(r'^activity-builder-worksheets/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<lesson_id>[\w-]+)/(?P<act_id>[\w-]+)/(?P<question_id>[\w-]+)/$',
+    url(r'^activity-builder-worksheets/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<lesson_id>[\w-]+)/(?P<page>[\w-]+)/(?P<worksheet_id>[\w-]+)/(?P<act_id>[\w-]+)/(?P<question_id>[\w-]+)/$',
         view=DigitalActivities,
         name='digital_activities'),
 

@@ -1,341 +1,40 @@
-<div class="row">
-       
-    <div class="col-lg-9">
-        <nav>
-            <div class="nav nav-tabs flex-column flex-md-row bg-white shadow-soft border border-light justify-content-around rounded mb-lg-3 py-3" id="nav-tab" role="tablist">
-                    <a class="nav-item nav-link rounded mr-md-3" id="nav-content-research-tab" href="{% url 'activity_builder' user_id=1 class_id=lesson_match.lesson_classroom_id lesson_id=lesson_match.id subject=lesson_match.subject_id page=0 %}#heading" role="tab" aria-controls="nav-content-research" aria-selected="true"><span class="d-block"><span class="fas fa-file-alt mr-2"></span><span class="font-weight-normal">Lesson Plan</span></span></a>
-                    <a class="nav-item nav-link rounded mr-md-3 active" id="nav-rank-track-tab"  href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 act_id='False' question_id=0 %}#heading" aria-controls="nav-rank-track" aria-selected="false"><span class="fas fa-list mr-2"></span><span class="font-weight-normal">Digital Activities</span></a>
-                    <a class="nav-item nav-link rounded mr-md-3" id="nav-web-monitor-tab" data-toggle="tab" href="#nav-web-monitor" role="tab" aria-controls="nav-web-monitor" aria-selected="false"><span class="fas fa-globe mr-2"></span><span class="font-weight-normal">Student Performance</span></a>
-                    <a class="nav-item nav-link rounded mr-md-3" id="nav-backlink-research-tab" data-toggle="tab" href="#nav-backlink-research" role="tab" aria-controls="nav-backlink-research" aria-selected="false"><span class="fas fa-chart-line mr-2"></span><span class="font-weight-normal">Standards Tracking</span></a>
-                  
-                </div>
-          
-        </nav>
+<!--
 
-
-             <!-- Tab -->
-             <div class="tab-content mt-5 mt-lg-6 " id="nav-tabContent">
-                <!-- Content Research Tab -->
-                <div class='row bg-white'>
-                    <div class='col'>
-                        <div class="card" style="width: 18rem;">
-                            <div class="card-body">
-                            <h5 class="card-title">Study Guide</h5>
-                            
-                            <a href="{% url 'digital_study_guide' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">View</a>
-                            
-                            </div>
-                        </div>
-                    </div>
-                    <div class='col'>
-                        
-                        <div class="card" style="width: 18rem;">
-                            <div class="card-body">
-                            <h5 class="card-title">Worksheet:</h5>
-                            
-                            <a href="{% url 'digital_worksheet' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">View</a>
-                            
-                            </div>
-                        </div>
-                    </div>
-                    <div class='col'>
-                        <div class="card" style="width: 18rem;">
-                            <div class="card-body">
-                            <h5 class="card-title">Practice Test:</h5>
-                            
-                            <a href="{% url 'practice_test' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">View</a>
-                            
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="tab-pane fade show active " id="nav-content-research" role="tabpanel" aria-labelledby="nav-content-research-tab">
-                    <br>
-                    <div class='container'>
-                    <div class="row justify-content-between  align-items-center bg-white ">
-                        <div class="col-12">
-                  
-                           <h5>Add relevant text to build a worksheet in minutes!</h5>
-                           <div class="btn-group" role="group" aria-label="Basic example">
-                            <a href="{% url 'lesson_pdf_upload' user_id=user_profile.id  class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id %}#heading" type="button" class="btn btn-outline-secondary">Upload Pdf</a>
-                            <a href="{% url 'lesson_pdf_upload' user_id=user_profile.id  class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id %}#heading" type="button" class="btn btn-outline-secondary">Copy and Paste</a>
-                            <a href="{% url 'lesson_pdf_upload' user_id=user_profile.id  class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id %}#heading" type="button" class="btn btn-outline-secondary">Pull from Website</a>
-                          </div>
-                          <hr>
-
-
-                          {% if matched_worksheet %}
-                          <a href="{% url 'worksheet_builder' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id worksheet_id=matched_worksheet.id %}#heading" type="button" class="btn btn-outline-secondary">Create Worksheet</a>
-                          {% endif %}
-                          {% for value, text, selected in activity_choices %}
-                          <div class="card hover-state border-bottom rounded-0 py-3">
-                              
-                                <div class="card-body d-sm-flex align-items-center flex-wrap flex-lg-nowrap py-0 pl-sm-0">
-                               
-                                <div class="col-10 col-lg-10 d-block px-0 mb-4 mb-md-0">
-                                    <div class="mb-2">
-                                        <h3 class="h5">
-                                            
-                                            {% for word in text %}
-                                             
-                                   
-                                            {% if 'NNP' in word.1 %}
-                                            <span>{{ word.0 }}</span>
-                                            {% else %}
-                                            {{ word.0 }}
-                                            {% endif %}
-                                             
-                                            {% endfor %}
-                                     
-                                        </h3>
-                                       
-                                    </div>
-                                   
-                                </div>
-                                <div class="col-10 col-sm-2 col-lg-2 col-xl-2 d-none d-lg-block d-xl-inline-flex align-items-center ml-lg-auto text-right justify-content-end px-md-0">
-                                    {% if selected_two == 1 %}
-                                    <a href="#" class="btn btn-sm btn-secondary">Add to Key Words</a>
-                                    {% else %}
-                                    <a href="#" class="btn btn-sm btn-outline-secondary">Add to Key Words</a>
-                                    {% endif %}
-                                   
-                                    {% if selected == 1 %}
-                                    <a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id act_id=value question_id=0 %}" class="btn btn-sm btn-success">Add to Worksheet</a>
-                                    {% else %}
-                                    <a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id act_id=value question_id=0 %}" class="btn btn-sm btn-outline-success">Add to Worksheet</a>
-                                    {% endif %}
-                                </div>
-                               
-                            </div>
-                         
-                        </div>
-                       {% endfor %}
-                          <hr>
-
-                                  <!----End Form Option -->
-                                
-                   
-                 
-                        </div>
-                        
-                    </div>
-                    </div>  
-               
-                </div>
-            </div>
-            <!-- End of tab -->
-
-
-    </div>
-    <div class="col-lg-3">
-        <div class="col-12 px-0 mb-4">
-            <div class="card border-light shadow-sm">
-                <div class="card-body">
-                
-                    <h6>Differentiation:</h6>
-                    <div class="progress">
-                        <div
-                          class="progress-bar bg-success"
-                          role="progressbar"
-                          style="width: {{ lesson_analytics.3 }}%"
-                          aria-valuenow="{{ lesson_analytics.3 }}"
-                          aria-valuemin="0"
-                          aria-valuemax="100"
-                        ></div>
-                      </div>
-                      <h6>Difficulty:</h6>
-                      <div class="progress">
-                        <div
-                          class="progress-bar bg-info"
-                          role="progressbar"
-                          style="width: {{ lesson_analytics.1 }}%"
-                          aria-valuenow="{{ lesson_analytics.1 }}"
-                          aria-valuemin="0"
-                          aria-valuemax="100"
-                        ></div>
-                      </div>
-                      <h6>Engagement:</h6>
-                      <div class="progress">
-                        <div
-                          class="progress-bar bg-warning"
-                          role="progressbar"
-                          style="width: {{ lesson_analytics.0 }}%"
-                          aria-valuenow="{{ lesson_analytics.0 }}"
-                          aria-valuemin="0"
-                          aria-valuemax="100"
-                        ></div>
-                      </div>
-                      <h6>Alignment:</h6>
-                      <div class="progress">
-                        <div
-                          class="progress-bar bg-danger"
-                          role="progressbar"
-                          style="width: {{ lesson_analytics.3 }}%"
-                          aria-valuenow="{{ lesson_analytics.3 }}"
-                          aria-valuemin="0"
-                          aria-valuemax="100"
-                        ></div>
-                      </div>
-             
-                 
-                </div>
-            </div>
-        </div>
-     
-        <div class="col-12 px-0 mb-4">
-            <div class="card border-light shadow-sm">
-                <div class="card-header">
-                    <div class="row align-items-center">
-                        <div class="col">
-                        <h2 class="h5">Recommended Activities:</h2>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                 
-                    {% for item in not_selected_activities|slice:"5" %}
-                    {% ifchanged item.bloom %}
-                   <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=10 item_id=item.id action=0 %}#heading" >
-                    {{ item.lesson_text }}</a>
-                    <hr>
-                    {% endifchanged %}
-                    {% endfor %}
-
-                </div>
-            </div>
-        </div>
-
+    if 'False' in act_id:
+        pass
+    else:
+        act_id = int(act_id)
         
-        <div class="col-12 px-0 mb-4">
-            <div class="card border-light shadow-sm">
-                <div class="card-header">
-                    <div class="row align-items-center">
-                        <div class="col">
-                        <h2 class="h5">Key Terms:</h2>
-                        </div>
-                        <div class="col text-right">
-                            <a href="#" class="btn btn-sm btn-secondary">Add New</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                <div class="tagcloud">
-                    {% for topic in topic_lists_selected %}
-                    {% ifchanged topic.item %}
-                    <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=6 item_id=topic.id action=0 %}" data-toggle="tooltip" data-placement="top" title="{{ topic }} - {% for item in topic.description.all%}{{item }} ; {% endfor %}" class="btn btn-sm btn-outline-success">{{ topic.item }}</a>
-                  
-                    {% endifchanged %}
-                    {% endfor %}
-                    {% if topic_match %}
-                        {% for line in topic_lists_matched %}
-                            {% if line.item %}
-                            {% ifchanged line.item %}
-                            <a class="btn btn-sm btn-outline-secondary selecttopic" id="like{{line.id}}" href="#" data-topid="{{ line.id }}" data-lessid="{{ lesson_match.id }}" data-toggle="tooltip" data-placement="top" title="{{ line.item }} - {% for item in line.description.all%}{{item }} ; {% endfor %}" >{{ line.item }}</a>
-                            {% endifchanged %}
-                            {% endif %}
-                        {% endfor %}
-                    {% else %}
-                        {% for topic in topic_lists %}
-                        {% ifchanged topic.0.id %}
-                    
-                        <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=6 item_id=topic.0.id action=1 %}" class="btn btn-sm btn-outline-secondary" data-toggle="tooltip" data-placement="top" title="{{ topic.0 }} - {% for item in topic.0.description.all%}{{item }} ; {% endfor %}" >{{ topic.0.item }}</a>
-                    
-                        {% endifchanged %}
-                        {% endfor %}
-                    {% endif %}
-                    {% if match_topic_text %}
-                        {% for section in match_topic_text %}
-                            {% for line in section %}
-                                {% if line.item %}
-                                {% ifchanged line.item %}
-                                <a class="btn btn-sm btn-outline-secondary selecttopic" id="like{{line.id}}" href="#" data-topid="{{ line.id }}" data-lessid="{{ lesson_match.id }}" data-toggle="tooltip" data-placement="top" title="{{ line.item }} - {% for item in line.description.all%}{{item }} ; {% endfor %}" >{{ line.item }}</a>
-                                {% endifchanged %}
-                                {% endif %}
-                            {% endfor %}
-                        {% endfor %}
-                    {% endif %}
-                </div>
-            </div>
-            </div>
-        </div>
+        get_text = textBookBackground.objects.get(id=act_id)
+        
+        context = get_text.line_text
+        get_question, created = topicQuestion.objects.get_or_create(linked_text=get_text, grade_level=grade_match, subject=subject_match_full, Question=context, standard_set= standard_match, created_by=user_profile)
+        if get_worksheet.questions.filter(id=get_question.id).exists():
+            pass
+        else:
+            update_worksheet = get_worksheet.questions.add(get_question)
+    
+    matched_worksheet = worksheetFull.objects.filter(created_by=user_profile, title=worksheet_title).first()
+    text_results = []
+    if matched_worksheet:
+        all_question = matched_worksheet.questions.all()
+        
+        for quest in all_question:
+            textbook = quest.linked_text_id
+            text_results.append(textbook)
 
-        {% if uploaded_images %}
-        <div class="col-12 px-0 mb-4">
-            <div class="card border-light shadow-sm">
-                <div class="card-header">
-                    <div class="row align-items-center">
-                        <div class="col">
-                        <h2 class="h5">Picture Library:</h2>
-                        </div>
-                        <div class="col text-right">
-                            <a href="#" class="btn btn-sm btn-secondary">Add New</a>
-                        </div>
-                    </div>
-                </div>
-
-                {% for image in uploaded_images %}
-                <div class="main_image">
-                 <img class="img-fluid" src="{{ image.image_image.url }}" alt="" width="200"/>
-             </div>
-                 {% endfor %}
-            </div>
-        </div>
-        {% endif %}
-    </div>
-</div>
+    textbooks = []
+    if text_results:
+        for text in text_results:
+            matched_textbook_background = textBookBackground.objects.get(id=text)
+            title = matched_textbook_background.textbook_id
+            if title not in textbooks:
+                textbooks.append(title) 
 
 
-
-
-
-
-
-
-
-<div class='row'>
-    {% for activity in selected_activities %}
-    <div class='col-lg-12'>
-        <div class="card" border="1">
-            <div class="card-body">
-            <h5>Activity {{ forloop.counter }}</h5>
-          
-                <p class="card-text">{{ activity.lesson_text }}</p>
-                <!--- Blooms -->
-                <h4>{% if activity.bloom >= 6 %}
-                <span class="badge badge-primary">Create</span>
-                {% elif activity.bloom >= 5 %}
-                <span class="badge badge-primary">Evaluate</span>
-                {% elif activity.bloom >= 4 %}
-                <span class="badge badge-primary">Analyze</span>
-                {% elif activity.bloom >= 3 %}
-                <span class="badge badge-primary">Apply</span>
-                {% elif activity.bloom >= 2 %}
-                <span class="badge badge-primary">Understand</span>
-                {% else %}
-                <span class="badge badge-primary">Know</span>
-                {% endif %}
-      
-                <!--Multiple Intelligences -->
-               {% if activity.mi >= 5 %}
-                <span class="badge badge-success"><i class="fas fa-puzzle-piece"></i></span>
-                {% elif activity.mi >= 4 %}
-                <span class="badge badge-success"><i class="fas fa-walking"></i></span>
-                {% elif activity.mi >= 3 %}
-                <span class="badge badge-success"><i class="fas fa-music"></i></span>
-                {% elif activity.mi >= 2 %}
-                <span class="badge badge-success"><i class="fas fa-eye"></i></span>
-                {% else %}
-                <span class="badge badge-success"><i class="fas fa-book"></i></span>
-                {% endif %}</h4>
-                <div class="card-footer text-muted">
-                    {% if activity.work_product %}
-                       <center>{{ activity.work_product|title }}</center>
-                    {% endif %}
-                </div>
-            </div>
-            </div>
-
-    </div>
-    <hr>
-    {% endfor %} 
-  </div> 
+    text_titles_topic = []
+    for text in textbooks:
+        find_more_topics = find_match_topic_texts(subject_match_full.id, text)
+        if find_more_topics not in text_titles_topic:
+            text_titles_topic.append(find_more_topics)
+-->
