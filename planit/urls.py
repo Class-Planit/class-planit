@@ -180,6 +180,23 @@ urlpatterns = [
         view=login_user,
         name='login_user'),
 
+    url(r'^login-student/(?P<worksheet_id>[\w-]+)/$',
+        view=LoginStudent,
+        name='login_student'),
+
+    url(r'^register-student/(?P<worksheet_id>[\w-]+)/$',
+        view=RegisterStudent,
+        name='register_student'),
+
+
+    url(r'^student-dashboard/(?P<student_id>[\w-]+)/(?P<pin>[\w-]+)/$',
+        view=StudentDashboard,
+        name='student_dashboard'),
+
+    url(r'^worksheet-start/(?P<student_id>[\w-]+)/(?P<pin>[\w-]+)/(?P<worksheet_id>[\w-]+)/$',
+        view=StudentWorksheetStart,
+        name='worksheet_start'),
+
 
     url(r'^question_upload/$',
         view=QuestionUploadTwo,

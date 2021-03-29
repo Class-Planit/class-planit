@@ -219,13 +219,21 @@ def get_cluster_text(lesson_id,user_id):
 
     total_clusters = []
     topic_clusters = []
+
+    
     for item in sorted_clusters[:3]:
-       
 
         for x, y in clusters.items():
+            y_length = len(y)
             if item == x:
                 low = y[0]
-                high = y[1]
+                if y_length == 2:
+                    high = y[1]
+                else:
+                    high = low + 20
+
+                print(high, low)
+
                 if high > low:
                     match_textlines = textBookBackground.objects.filter(line_counter__range=[low,high])
                     topic_match = topicInformation.objects.filter(text_index__in=match_textlines).exclude(id__in=topics_selected)
@@ -239,9 +247,9 @@ def get_cluster_text(lesson_id,user_id):
     if topics_selected_two:
         cluster_result = []
         for item in topics_selected_two:
-            match_textlines = textBookBackground.objects.filter(id=item.id)
-            topic_match = topicInformation.objects.filter(text_index__in=text_match).exclude(id__in=topics_selected)
-            result = text_match, topic_match
+            match_textlines = textBookBackground.objects.get(id=item.id)
+            topic_match = topicInformation.objects.filter(text_index=match_textlines).exclude(id__in=topics_selected)
+            result = match_textlines, topic_match
             if match_textlines not in total_clusters:
                 total_clusters.append(match_textlines)
             if topic_match not in topic_clusters:
@@ -252,20 +260,21 @@ def get_cluster_text(lesson_id,user_id):
         
 def summ_text(match_textlines):
     summ_results = []
+
     for text_list in match_textlines:
         if text_list:
             line_group = []
-            for line in text_list:
-                text_info = line.line_text
+            if text_list:
+                text_info = text_list.line_text
                 line_group.append(text_info)
 
-
-            text_list_join = ''.join([str(i) for i in line_group])
-            try:
-                summ_words = summarize(text_list_join , word_count = 100) 
-                summ_results.append(summ_words)
-            except:
-                pass
+            if line_group:
+                text_list_join = ''.join([str(i) for i in line_group])
+                try:
+                    summ_words = summarize(text_list_join , word_count = 100) 
+                    summ_results.append(summ_words)
+                except:
+                    pass
 
     return(summ_results) 
 
@@ -278,39 +287,39 @@ def get_statment_sent(match_textlines):
     for text_list in match_textlines:
 
         if text_list:
-            for row in text_list:
-                text_info = row.line_text
-                text_list_join = ''.join([str(i) for i in text_info])
-                results = tokenize.sent_tokenize(text_list_join)
-            
-                for sent in results:
 
-                    is_verb = False
-                    is_noun = False
-                    sent = sent.replace('|', ' ')
-                    sent_blob = TextBlob(sent)
-                    sent_tagger = sent_blob.pos_tags
-                    for y in sent_tagger:
-                        if 'V' in y[1]:
-                            is_verb = True
-                    for y in sent_tagger:
-                        if 'NNP' in y[1]:
-                            is_noun = True
-                        elif 'NNPS' in y[1]:
-                            is_noun = True
-                    remove_list = ['illustrations', 'cartoon', 'Figure', 'they', 'those', 'Name ', 'Circle ', 'Education.com ', 'The McGraw-Hill']
+            text_info = text_list.line_text
+            text_list_join = ''.join([str(i) for i in text_info])
+            results = tokenize.sent_tokenize(text_list_join)
+        
+            for sent in results:
 
-                    if is_verb and is_noun:
-                        sent = re.sub(r'\(.*\)', '', sent)
-                        sent = re.sub('Chapter', '', sent)
-                        sent = re.sub('Rule Britannia!', '', sent)
-                        sent = re.sub('Description', ' ', sent)
-                        if any(word in sent for word in remove_list):
-                            pass
-                        else:
-                            result = sent_tagger, row.id
-                            if result not in full_sent_list:
-                                full_sent_list.append(result)
+                is_verb = False
+                is_noun = False
+                sent = sent.replace('|', ' ')
+                sent_blob = TextBlob(sent)
+                sent_tagger = sent_blob.pos_tags
+                for y in sent_tagger:
+                    if 'V' in y[1]:
+                        is_verb = True
+                for y in sent_tagger:
+                    if 'NNP' in y[1]:
+                        is_noun = True
+                    elif 'NNPS' in y[1]:
+                        is_noun = True
+                remove_list = ['illustrations', 'cartoon', 'Figure', 'they', 'those', 'Name ', 'Circle ', 'Education.com ', 'The McGraw-Hill']
+
+                if is_verb and is_noun:
+                    sent = re.sub(r'\(.*\)', '', sent)
+                    sent = re.sub('Chapter', '', sent)
+                    sent = re.sub('Rule Britannia!', '', sent)
+                    sent = re.sub('Description', ' ', sent)
+                    if any(word in sent for word in remove_list):
+                        pass
+                    else:
+                        result = sent_tagger, text_list.id
+                        if result not in full_sent_list:
+                            full_sent_list.append(result)
 
 
     return(full_sent_list)   

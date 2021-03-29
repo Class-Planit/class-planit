@@ -142,6 +142,9 @@ class studentProfiles(models.Model):
     gender = models.CharField(max_length=30,
                               blank=True,
                               null=True,)
+    student_pin = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
     is_enrolled = models.BooleanField(default=False)
     is_suspended = models.BooleanField(default=False)
     is_deleted = models.BooleanField(default=False)
@@ -163,7 +166,7 @@ class studentProfiles(models.Model):
         # This to check if it creates a new or updates an old instance
         if self.pk is None:
             self.student_ref = token_generator.make_token(8)
-        super(student_profiles, self).save(*args, **kwargs)
+        super(studentProfiles, self).save(*args, **kwargs)
 
     def __str__(self):
         return '%s %s' % (self.first_name, self.last_name)
@@ -248,7 +251,7 @@ class textBookTitle(models.Model):
 
 class textBookBackground(models.Model):
     textbook = models.ForeignKey(textBookTitle,
-                               on_delete=models.SET_NULL,
+                               on_delete=models.CASCADE,
                                blank=True,
                                null=True)
     line_counter = models.IntegerField(default = 0,
@@ -357,6 +360,11 @@ class topicInformation(models.Model):
                                        null=True) 
     text_index	= models.ManyToManyField(textBookBackground,
                                      blank=True)
+    created_by = models.ForeignKey(User,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True)
+    is_admin = models.BooleanField(default=True)
 
     def __str__(self):
         return "%s" % (self.item)

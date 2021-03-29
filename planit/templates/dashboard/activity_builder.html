@@ -112,10 +112,10 @@
                         </ul>
                       
                         <h2>Lesson Activities:</h2>
-
-                      <li id='activity'>-</li>
+                        
+                      <li id='activity' class='New'>-</li>
                       {% for activity in selected_activities %}
-                      <li id='activity'><h3>{{ activity.lesson_text }}</h3></li>
+                      <li id='activity' class='{{ activity.id }}'><h3>{{ activity.lesson_text }}</h3></li>
                         {% endfor %}
 
                       
@@ -129,15 +129,15 @@
                           </thead>
                           <tbody>
                             <tr>
-                                <td> ...</td>
-                                 <td>  </td>
+                                <td id='term' class='New'> ...</td>
+                                 <td id='description'>  </td>
                               </tr>
                             {% for topic in topic_lists_selected %}
                             {% ifchanged topic.item %}
 
                             <tr>
-                              <td>{{ topic.item }}</td>
-                               <td> {% for word in topic.description.all %}
+                              <td id='term' class='{{ topic.id }}'>{{ topic.item }}</td>
+                               <td id='description'>{% for word in topic.description.all %}
                                 {{ word }}
                                 {% endfor %}</td>
                             </tr>
@@ -459,9 +459,7 @@
                                 <div class="col">
                                 <h2 class="h5">Key Terms:</h2>
                                 </div>
-                                <div class="col text-right">
-                                    <a href="#" class="btn btn-sm btn-secondary">Add New</a>
-                                </div>
+                                
                             </div>
                         </div>
                         <div class="card-body">
@@ -534,6 +532,11 @@
       <br>
 
     </div>
+
+
+
+                
+
   <script>
     tinymce.init({
         selector: 'textarea#permanent-pen',

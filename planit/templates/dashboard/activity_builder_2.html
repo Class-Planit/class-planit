@@ -323,7 +323,8 @@
                         <div class="card-body">
                             <h5>Add relevant text to build a worksheet in minutes!</h5>
                                 <div class="btn-group" role="group" aria-label="Basic example">
-                                <a href="{% url 'lesson_pdf_upload' user_id=user_profile.id  class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id %}#heading" type="button" class="btn btn-outline-secondary">Upload Pdf</a>
+                                    
+                                <a href="#" data-toggle="modal" data-target="#exampleModal" type="button" class="btn btn-outline-secondary">Upload Pdf</a>
                                 <a href="{% url 'lesson_pdf_upload' user_id=user_profile.id  class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id %}#heading" type="button" class="btn btn-outline-secondary">Copy and Paste</a>
                                 <a href="{% url 'lesson_pdf_upload' user_id=user_profile.id  class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id %}#heading" type="button" class="btn btn-outline-secondary">Pull from Website</a>
                                 </div>
@@ -383,7 +384,7 @@
                         <div class="card-body">
                             <h5>Add relevant text to build a worksheet in minutes!</h5>
                                 <div class="btn-group" role="group" aria-label="Basic example">
-                                <a href="{% url 'lesson_pdf_upload' user_id=user_profile.id  class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id %}#heading" type="button" class="btn btn-outline-secondary">Upload Pdf</a>
+                                    <a href="#" data-toggle="modal" data-target="#exampleModal" type="button" class="btn btn-outline-secondary">Upload Pdf</a>
                                 <a href="{% url 'lesson_pdf_upload' user_id=user_profile.id  class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id %}#heading" type="button" class="btn btn-outline-secondary">Copy and Paste</a>
                                 <a href="{% url 'lesson_pdf_upload' user_id=user_profile.id  class_id=classroom_profile.id lesson_id=lesson_match.id subject=subject_match_full.id %}#heading" type="button" class="btn btn-outline-secondary">Pull from Website</a>
                                 </div>
@@ -446,8 +447,8 @@
                         {% ifchanged quest.Question %}
                         <li><a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 page='Current' worksheet_id=worksheet_id act_id='False' question_id=quest.id %}#heading" class="card-link">{{ quest.Question }}</a> </li>
                         <h5><small style="color:orange">Answer: {{ quest.Correct }}</small></h5>
-                        {{ quest.Question_Image }}
-                        {{ quest.correct_image }}
+           
+                        <figure><img class="xv-superimage" style="max-height:200px;max-width:200px;" src="{{ quest.correct_image.url }}" alt=""></figure>
                         <br>
 
                         {% endifchanged %}
@@ -621,6 +622,41 @@
       <br>
 
     </div>
+     <!-- Modal -->
+ <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Upload a PDF Worksheet</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        <div class="modal-body">
+            {% if form2.errors %}
+            {% for field in form2 %}
+                {% for error in field.errors %}
+                    <h4 style="color:#cb6318"> {{ error }} </h4>
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
+        {% if form2 %}
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <p>Add PDF Document:</p>
+            {{ form2.pdf_doc.errors }}
+            {{ form2.pdf_doc }}
+            <div class="mt-3">
+                <button type="submit" class="btn btn-primary">Upload</button>
+            </div>
+        </form>
+        {% endif %}
+        </div>
+
+    </div>
+    </div>
+</div>
+
   <script>
     tinymce.init({
         selector: 'textarea#permanent-pen',

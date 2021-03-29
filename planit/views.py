@@ -158,6 +158,63 @@ def FormFull(request, retry=None):
     
     return render(request, 'homepage/registration_full.html', {'form': form, 'message': message})
 
+
+def RegisterStudent(request, worksheet_id=None):
+    
+
+    if request.method == "POST":
+
+        form = studentProfilesForm(request.POST)
+        if form.is_valid():
+            prev = form.save(commit=False)
+            student_pin = prev.student_pin
+            prev.save()
+            worksheet_id = int(worksheet_id)
+            if worksheet_id == 0:
+                return redirect('student_dashboard', student_id=prev.id, pin=student_pin)
+            else:
+                return redirect('worksheet_start', student_id=prev.id, pin=student_pin, worksheet_id=worksheet_id)
+    else:
+
+        form = studentProfilesForm()
+    return render(request, 'dashboard/student_register.html', {'form': form, 'worksheet_id': worksheet_id})
+
+
+
+def LoginStudent(request, worksheet_id=None):
+    
+
+    if request.method == "POST":
+
+        form = studentProfilesForm(request.POST)
+        if form.is_valid():
+            prev = form.save(commit=False)
+            student_pin = prev.student_pin
+            prev.save()
+
+            worksheet_id = int(worksheet_id)
+            if worksheet_id == 0:
+                return redirect('student_dashboard', student_id=prev.id, pin=student_pin)
+            else:
+                return redirect('worksheet_start', student_id=prev.id, pin=student_pin, worksheet_id=worksheet_id)
+
+    else:
+
+        form = studentProfilesForm()
+    return render(request, 'dashboard/student_register.html', {'form': form, 'worksheet_id': worksheet_id})
+
+
+def StudentDashboard(request, student_id=None, pin=None):
+    matched_students = studentProfiles.objects.filter(id=student_id, pin=pin).first()
+
+    return render(request, 'dashboard/student_dashboard.html', {})
+
+
+def StudentWorksheetStart(request, student_id=None, pin=None, worksheet_id=None):
+    matched_students = studentProfiles.objects.filter(id=student_id, pin=pin).first()
+    worksheet_match = worksheetFull.objects.get(id=worksheet_id)
+    return render(request, 'dashboard/student_worksheet.html', {'matched_students': matched_students, 'worksheet_match': worksheet_match})
+
 #Teacher Questionnaire 
 def QuestionnaireFull(request):
 
@@ -604,7 +661,8 @@ def SelectStandards(request, user_id=None, class_id=None, subject=None, lesson_i
 
         update_lesson = lesson_match.objectives_demonstration.add(new_demo)
     
-    
+    recomended_demos = find_ks_demos(class_id, lesson_id)
+    random.shuffle(recomended_demos)
     recomendations = lessonStandardRecommendation.objects.filter(lesson_classroom=classroom_profile, objectives=lesson_match)
 
     if recomendations:
@@ -859,6 +917,7 @@ def SelectRelatedInformation(request, user_id=None, class_id=None, subject=None,
         lesson_match = lessonObjective.objects.get(id=lesson_id)
         topic_match = selectedActivity.objects.get(id=item_id)
         action = int(action)
+        print(topic_match)
         if action == 0:
             topic_match.is_selected = True 
             topic_match.save()
@@ -885,7 +944,7 @@ def SelectRelatedInformation(request, user_id=None, class_id=None, subject=None,
 def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_id=None, page=None):
     current_week = date.today().isocalendar()[1] 
     user_profile = User.objects.get(id=user_id)
-
+    
     classroom_profile = classroom.objects.get(id=class_id)
     grade_list = classroom_profile.grade_level.all()
 
@@ -943,21 +1002,19 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     keywords_matched = keywordResults.objects.filter(lesson_plan=lesson_match, is_selected=False).order_by('-relevance')
     matched_topics = match_topics(teacher_objective, class_id, lesson_id)
     
-    text_update, created = lessonText.objects.get_or_create(matched_lesson=lesson_match)
-    lessons_wording = text_update.activities
-    if topic_lists_selected:
-        lesson_activities_matched = get_lessons(lesson_id, user_id)
-    else:
-        lesson_activities_matched = []
-    
     selected_activities = selectedActivity.objects.filter(lesson_overview=lesson_match, is_selected=True)
+    print('Selected-Activities', selected_activities)
     not_selected_activities = selectedActivity.objects.filter(lesson_overview=lesson_match, is_selected=False).order_by('template_id')
 
-    if selected_activities:
-        lesson_analytics = label_activities_analytics(lesson_id)
+    text_update = lessonText.objects.filter(matched_lesson=lesson_match).first()
+    
+    if text_update:
+        pass
     else:
-        lesson_analytics = []
-
+        text_update = lessonText.objects.create(matched_lesson=lesson_match)
+    
+    if text_update.overview:
+        classify_text = get_lesson_sections(text_update.overview, class_id, lesson_id, user_id)
 
     if text_update.activities:
         split_activities = split_matched_activities(text_update.activities, class_id, lesson_id, user_id)
@@ -982,6 +1039,16 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
         
         question_list = []
     
+    if selected_activities:
+        lesson_analytics = label_activities_analytics(lesson_id)
+    else:
+        lesson_analytics = []
+
+    lessons_wording = text_update.activities
+    if topic_lists_selected:
+        lesson_activities_matched = get_lessons(lesson_id, user_id)
+    else:
+        lesson_activities_matched = []
 
     combined = matched_topics, text_match
     topic_lists = []
@@ -1010,18 +1077,21 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
 
     youtube_matched = youtubeSearchResult.objects.filter(lesson_plan=lesson_match, is_selected=True)
     
-
     
     if request.method == "POST":
 
-        form = lessonTextForm(request.POST, request.FILES)
+        form = lessonTextForm(request.POST, request.FILES, instance=text_update)
 
         if form.is_valid():
-            form.save()
+            
+            prev = form.save()
+            prev.is_initial = False
+            prev.matched_lesson = lesson_match
+            prev.save()
             return redirect('{}#keywords'.format(reverse('activity_builder', kwargs={'user_id':user_profile.id, 'class_id':classroom_profile.id, 'subject':subject, 'lesson_id':lesson_id, 'page': 0})))
     else:
 
-        form = lessonTextForm()
+        form = lessonTextForm(instance=text_update)
 
     page = int(page)
     return render(request, 'dashboard/activity_builder.html', {'user_profile': user_profile, 'page': page, 'match_topic_text': match_topic_text, 'form': form, 'summarize_text': summarize_text, 'lesson_analytics': lesson_analytics, 'generated_questions': generated_questions, 'first_topics': first_topics, 'second_topics': second_topics, 'third_topics': third_topics, 'topic_lists_matched': topic_lists_matched, 'sent_text': sent_text,  'match_textlines': match_textlines, 'text_questions': text_questions, 'selected_activities': selected_activities, 'not_selected_activities':not_selected_activities, 'question_list': question_list, 'lessons_wording': lessons_wording, 'text_update': text_update, 'lesson_results': lesson_results, 'topic_lists_selected': topic_lists_selected, 'topic_lists': topic_lists, 'keywords_selected': keywords_selected, 'youtube_matched': youtube_matched, 'questions_selected': questions_selected, 'topics_selected': topics_selected, 'keywords_matched': keywords_matched, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
@@ -1130,7 +1200,10 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
                 else:
                     pass
         text_match = match_lesson_topics(text_update.overview, class_id, lesson_id) 
-        
+        if text_match:
+            pass 
+        else:
+            text_match = []
     else:
         split_text = []
         text_match = [] 
@@ -1204,15 +1277,7 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
     youtube_matched = youtubeSearchResult.objects.filter(lesson_plan=lesson_match, is_selected=True)
     
     activity_choices = []
-    for item in sent_text:
-        
-        if item[1] in text_results:
-            selected = 1
-        else:
-            selected = 0 
-        result = item[1], item[0], selected
-        if result not in activity_choices:
-            activity_choices.append(result)
+
 
     
     worksheet_id = int(worksheet_id)
@@ -1255,16 +1320,28 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
     if question_id == 0:
         
         if request.method == "POST":
+   
+            form = topicQuestionForm(request.POST, request.FILES)
+            form2 = lessonPDFTextForm(request.POST, request.FILES)
+
+            if form2.is_valid():
+          
+                prev = form2.save()
                 
-            form = lessonPDFTextForm(request.POST, request.FILES)
+                get_text_image = build_textbook(prev.id, user_id, class_id, lesson_id, current_week)
+
+                return redirect('{}#keywords'.format(reverse('lesson_pdf_upload', kwargs={'user_id':user_id, 'class_id':class_id, 'lesson_id':lesson_id, 'subject':subject})))
+
             if form.is_valid():
-                
+                topicQuestion.objects.get_or_create(subject=subject_match_full, is_admin = False, grade_level=grade_match, Question=sentence, Correct=two, question_type=quest_match, standard_set= standard_match, created_by=user_profile)
                 prev = form.save()
 
                 return redirect('{}#keywords'.format(reverse('digital_activities', kwargs={'user_id':user_id, 'class_id':class_id, 'lesson_id':lesson_id, 'subject':subject, 'page':'Current', 'worksheet_id':matched_worksheet.id, 'act_id':0, 'question_id':0})))
         else:
-
-            form = lessonPDFTextForm()
+            form = topicQuestionForm()
+            data = {'matched_lesson': lesson_match}
+            form2 = lessonPDFTextForm(initial=data)
+            form2.fields["matched_lesson"].queryset = lessonObjective.objects.filter(id=lesson_id)
     else:
         question_match = topicQuestion.objects.get(id=question_id)
 
@@ -1272,16 +1349,27 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
         if request.method == "POST":
    
             form = topicQuestionForm(request.POST, request.FILES, instance=question_match)
+            form2 = lessonPDFTextForm(request.POST, request.FILES,)
+
+            if form2.is_valid():
+                prev = form2.save()
+                
+                get_text_image = build_textbook(prev.id, user_id, class_id, lesson_id, current_week)
+
+                return redirect('{}#keywords'.format(reverse('lesson_pdf_upload', kwargs={'user_id':user_id, 'class_id':class_id, 'lesson_id':lesson_id, 'subject':subject})))
+        
             if form.is_valid():
                 topicQuestion.objects.get_or_create(subject=subject_match_full, is_admin = False, grade_level=grade_match, Question=sentence, Correct=two, question_type=quest_match, standard_set= standard_match, created_by=user_profile)
                 prev = form.save()
 
                 return redirect('{}#keywords'.format(reverse('digital_activities', kwargs={'user_id':user_id, 'class_id':class_id, 'lesson_id':lesson_id, 'subject':subject, 'page':'Current', 'worksheet_id':matched_worksheet.id, 'act_id':0, 'question_id':0})))
         else:
-
             form = topicQuestionForm(instance=question_match)
+            data = {'matched_lesson': lesson_match}
+            form2 = lessonPDFTextForm(initial=data)
+            form2.fields["matched_lesson"].queryset = lessonObjective.objects.filter(id=lesson_id)
 
-    return render(request, 'dashboard/activity_builder_2.html', {'user_profile': user_profile, 'worksheet_preview': worksheet_preview, 'page': page, 'form': form, 'question_match': question_match, 'worksheet_id': worksheet_id, 'match_topic_text': match_topic_text, 'subject_match_full': subject_match_full, 'matched_worksheet': matched_worksheet, 'activity_choices': activity_choices, 'lesson_analytics': lesson_analytics, 'generated_questions': generated_questions, 'first_topics': first_topics, 'second_topics': second_topics, 'third_topics': third_topics, 'topic_lists_matched': topic_lists_matched, 'sent_text': sent_text,  'match_textlines': match_textlines, 'text_questions': text_questions, 'selected_activities': selected_activities, 'not_selected_activities':not_selected_activities, 'question_list': question_list, 'lessons_wording': lessons_wording, 'question_lists': question_lists, 'text_update': text_update, 'lesson_results': lesson_results, 'topic_lists_selected': topic_lists_selected, 'topic_lists': topic_lists, 'keywords_selected': keywords_selected, 'youtube_matched': youtube_matched, 'questions_selected': questions_selected, 'topics_selected': topics_selected, 'keywords_matched': keywords_matched, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
+    return render(request, 'dashboard/activity_builder_2.html', {'user_profile': user_profile, 'worksheet_preview': worksheet_preview, 'page': page, 'form': form, 'form2': form2, 'question_match': question_match, 'worksheet_id': worksheet_id, 'match_topic_text': match_topic_text, 'subject_match_full': subject_match_full, 'matched_worksheet': matched_worksheet, 'activity_choices': activity_choices, 'lesson_analytics': lesson_analytics, 'generated_questions': generated_questions, 'first_topics': first_topics, 'second_topics': second_topics, 'third_topics': third_topics, 'topic_lists_matched': topic_lists_matched, 'sent_text': sent_text,  'match_textlines': match_textlines, 'text_questions': text_questions, 'selected_activities': selected_activities, 'not_selected_activities':not_selected_activities, 'question_list': question_list, 'lessons_wording': lessons_wording, 'question_lists': question_lists, 'text_update': text_update, 'lesson_results': lesson_results, 'topic_lists_selected': topic_lists_selected, 'topic_lists': topic_lists, 'keywords_selected': keywords_selected, 'youtube_matched': youtube_matched, 'questions_selected': questions_selected, 'topics_selected': topics_selected, 'keywords_matched': keywords_matched, 'lesson_standards': lesson_standards, 'lesson_match': lesson_match, 'lesson_activities': lesson_activities, 'class_objectives': class_objectives, 'current_week': current_week, 'classroom_profile': classroom_profile})
 
 
 
@@ -1355,22 +1443,10 @@ def LessonPDFUpload(request, user_id=None, class_id=None, subject=None, lesson_i
     current_week = date.today().isocalendar()[1] 
     matched_lesson = lessonObjective.objects.get(id=lesson_id)
     user_profile = User.objects.filter(username=request.user.username).first()
-
-    if request.method == "POST":
-        
-        form = lessonPDFTextForm(request.POST, request.FILES,)
-        if form.is_valid():
-            
-            prev = form.save()
-            
-            get_text_image = build_textbook(prev.id, user_id, class_id, lesson_id, current_week)
-
-            return redirect('{}#keywords'.format(reverse('activity_builder', kwargs={'user_id':user_profile.id, 'class_id':class_id, 'subject':subject, 'lesson_id':lesson_id, 'page': 0})))
-    else:
-        data = {'matched_lesson': matched_lesson}
-        form = lessonPDFTextForm(initial=data)
-        form.fields["matched_lesson"].queryset = lessonObjective.objects.filter(id=lesson_id)
-    return render(request, 'dashboard/lesson_image_upload.html', {'user_profile': user_profile, 'form': form})
+    macthed_textbooks = textBookTitle.objects.filter(uploaded_by=user_profile, lesson_id_num=lesson_id)
+    matched_lines = textBookBackground.objects.filter(textbook__in=macthed_textbooks)
+    matched_questions = build_questions(matched_lines)
+    return render(request, 'dashboard/lesson_image_upload.html', {'user_profile': user_profile, 'matched_lines': matched_lines})
 
 
 def PracticeTest(request, user_id=None, class_id=None, subject=None, lesson_id=None):

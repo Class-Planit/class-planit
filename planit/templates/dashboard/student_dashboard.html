@@ -1,0 +1,275 @@
+{% load static %}
+
+<!--
+
+=========================================================
+* Rocket - SaaS Bootstrap Template
+=========================================================
+
+* Product Page: https://themesberg.com/product/bootstrap-themes/rocket-saas-bootstrap-template
+* Copyright 2020 Themesberg (https://www.themesberg.com)
+* License (https://themesberg.com/licensing)
+
+* Coded by https://themesberg.com
+
+=========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+    <head> 
+        <!-- Primary Meta Tags -->
+    <title>Class Planit</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="title" content="Helping teachers create, share, and assess more engaging lessons">
+    <meta name="author" content="Class Planit">
+    <meta name="description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better lessons in minutes.">
+    <meta name="keywords" content="lesson plans, teacher pay teachers, worksheets" />
+    <link rel="canonical" href="www.classplanit.co">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="www.classplanit.co">
+    <meta property="og:title" content="Class Planit - helping teachers create, share, and assess more engaging lessons.">
+    <meta property="og:description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better lessons in minutes.">
+    <meta property="og:image" content="www.classplanit.co">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="www.classplanit.co">
+    <meta property="twitter:title" content="Class Planit - helping teachers create, share, and assess more engaging lessons.">
+    <meta property="twitter:description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better lessons in minutes.">
+    <meta property="twitter:image" content="{% static 'images/dashboard/twitter_image.png' %}">
+    
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="120x120" href="{% static 'images/dashboard/icon_120.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'mages/icon_40.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/dashboard/icon_40.png' %}">
+    
+    <link rel="mask-icon" href="{% static 'images/dashboard/icon.svg' %}" color="#ffffff">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="theme-color" content="#ffffff">
+    
+    <!-- Fontawesome -->
+    <link type="text/css" href="{% static 'vendor/dashboard/fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+    
+    <!-- Prism -->
+    <link type="text/css" href="{% static 'vendor/dashboard/prismjs/themes/prism.css' %}" rel="stylesheet">
+    
+    <!-- VectorMap -->
+    <link rel="stylesheet" href="{% static 'vendor/dashboard/jqvmap/dist/jqvmap.min.css' %}">
+    
+    <!-- Rocket CSS -->
+    <link type="text/css" href="{% static 'css/dashboard/rocket.css' %}" rel="stylesheet">
+
+    <!-- NOTICE: You can use the _analytics.html partial to include production code specific code & trackers -->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="{% static 'forms_ajaxified/js/forms_ajaxified.js' %}"></script>
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+
+    </head>
+
+<body>
+
+        <div class="preloader bg-soft flex-column justify-content-center align-items-center">
+    <img class="loader-element" src="{% static 'images/dashboard/circle_logo.svg' %}" height="50" alt="Rocket logo">
+</div>
+                
+<main class="content">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+        <div class="btn-toolbar">
+            <button class="btn btn-primary btn-sm mr-2 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="fas fa-plus mr-2"></span>New Task
+            </button>
+            <div class="dropdown-menu dashboard-dropdown dropdown-menu-left mt-2">
+                <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-tasks mr-2"></span>New Task</a>
+                <a class="dropdown-item font-weight-bold" href="#">
+                    Upload Files</a>
+                <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-user-shield mr-2"></span>Preview Security</a>
+                <div role="separator" class="dropdown-divider"></div>
+                <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-rocket text-danger mr-2"></span>Upgrade to Pro</a>
+            </div>
+        </div>
+        <div class="btn-group mr-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+        </div>
+    </div>
+    <section class="section section-md ">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-2">
+                    <button type="button" class="btn btn-sm btn-block btn-outline-secondary">Previous Week</button>
+                </div>
+                <div class="col-sm-8">
+                    
+                </div>
+                <div class="col-sm-2">
+                    <button type="button" class="btn btn-sm btn-block btn-outline-secondary">Next Week</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-2">
+                    
+                </div>
+                <div class="col-lg-8">
+                    <h2 class="h4 mb-4"><center>Student Profile</center></h2>
+                </div>
+                <div class="col-lg-2">
+                    
+                </div>
+            </div>
+            <div class="table-settings mb-4">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-12 col-md-6 col-lg-3 align-items-center d-none d-md-flex">
+                        <div class="form-group mb-0 mr-3">
+                            <select class="custom-select" id="inlineFormCustomSelectMesages">
+                                <option selected="selected">Subject</option>
+                                <option value="1">English</option>
+                                <option value="2">Math</option>
+                                
+                            </select>
+                        </div>
+                        <div class="form-group mb-0 mr-3">
+                            <select class="custom-select" id="inlineFormCustomSelectMesages">
+                                <option selected="selected">Classroom</option>
+                                <option value="1">1-B</option>
+                                <option value="2">2-B</option>
+                                
+                            </select>
+                        </div>
+                        
+                    </div>
+                    <div class="col col-md-4 col-lg-3 col-xl-2 ml-auto">
+                        <div class="input-group">
+                            <div class="input-group-prepend"><span class="input-group-text"><span class="fas fa-search"></span></span></div>
+                            <input class="form-control" id="searchInputdashboard1" placeholder="Search" type="text" aria-label="Dashboard user search">
+                        </div>
+                    </div>
+                    <div class="col-2 pl-0 d-none d-lg-flex">
+                        <div class="form-group mb-0">
+                            <select class="custom-select" id="inlineFormCustomSelectMesages2">
+                                <option selected="selected">All</option>
+                                <option value="1">Active</option>
+                                <option value="2">Inactive</option>
+                                <option value="3">Pending</option>
+                                <option value="3">Canceled</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-4 col-md-2 col-xl-1 pl-md-0 text-right">
+                        <div class="btn-group mr-2">
+                            <button class="btn btn-link text-dark dropdown-toggle dropdown-toggle-split m-0 p-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="icon icon-sm icon-gray">
+                                    <span class="fas fa-sliders-h"></span>
+                                </span>
+                                <span class="sr-only">Toggle Dropdown</span>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <span class="dropdown-item font-weight-bold text-dark">Show</span>
+                                <a class="dropdown-item d-flex font-weight-bold" href="#">10 <span class="icon icon-small ml-auto"><span class="fas fa-check"></span></span></a>
+                                <a class="dropdown-item font-weight-bold" href="#">20</a>
+                                <a class="dropdown-item font-weight-bold" href="#">30</a>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-12 col-sm-6 col-xl-4 mb-4">
+                    <a href="#" class="card border-light animate-up-3 shadow-soft p-0 p-lg-4">     
+                        <div class="card-body">
+                            <div class="row d-block d-xl-flex align-items-center">
+                                <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
+                                    <div class="icon icon-shape icon-md icon-shape-primary rounded mr-4 mr-sm-0">
+                                        <i class="fas fa-plus"></i>
+                                    </div>
+                                    <div class="d-sm-none">
+                                        <h2 class="h5"> </h2>
+                                        <h3 class="mb-1">Worksheet Assignment</h3>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-xl-7 px-xl-0">
+                                    <div class="d-none d-sm-block">
+                                        <h2 class="h5"> </h2>
+                                        <h3 class="mb-1">Worksheet Assignment</h3>
+                                    </div>
+                                    
+                                    
+                                    
+                                </div>
+                            
+                            </div>
+                            
+                        </div>
+                    </a>
+                
+                </div>
+            
+          
+            </div>
+        </div>
+    </section>
+</main>
+</body>
+<script>
+    $(document).ready(function() {
+        $('[data-class="form_ajaxified"]').formsAjaxified();
+    });
+    </script>
+    
+    
+    <script src="https://cdn.tiny.cloud/1/0ak6ftt9ng9va9e98pl0iwxwwh0rb1tipwsg8it4mjmcbkjb/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="{% static 'base/js/tinymce/tinymce.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'base/js/tinymce/custom.js' %}" ></script>
+    <!-- Core -->
+    <script src="{% static 'vendor/dashboard/jquery/dist/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/dashboard/popper.js/dist/umd/popper.min.js' %}"></script>
+    <script src="{% static 'vendor/dashboard/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'vendor/dashboard/headroom.js/dist/headroom.min.js' %}"></script>
+    
+    <!-- Vendor JS -->
+    <script src="{% static 'vendor/dashboard/countup.js/dist/countUp.min.js' %}"></script>
+    <script src="{% static 'vendor/dashboard/jquery-countdown/dist/jquery.countdown.min.js' %}"></script>
+    <script src="{% static 'vendor/dashboard/smooth-scroll/dist/smooth-scroll.polyfills.min.js' %}"></script>
+    <script src="{% static 'vendor/dashboard/prismjs/prism.js' %}"></script>
+    
+    <!-- Chartist -->
+    <script src="{% static 'vendor/dashboard/chartist/dist/chartist.min.js' %}"></script>
+    <script src="{% static 'vendor/dashboard/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js' %}"></script>
+    
+    <!-- Vector Maps -->
+    <script src="{% static 'vendor/dashboard/jqvmap/dist/jquery.vmap.min.js' %}"></script>
+    <script src="{% static 'vendor/dashboard/jqvmap/dist/maps/jquery.vmap.world.js' %}"></script>
+    
+    <!-- Rocket JS -->
+    <script src="{% static 'js/dashboard/rocket.js' %}"></script>
+    
+    </body>
+    
+    <script type="text/javascript">
+    function printDiv(divName) {
+    var printContents = document.getElementById(divName).innerHTML;
+    w=window.open();
+    w.document.write(printContents);
+    w.print();
+    w.close();
+    }
+    </script>
+    
+    </html>
+    
+    
+    
+    
+    
+    
+    
+    

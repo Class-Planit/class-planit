@@ -323,55 +323,59 @@ def match_topics_text_uploads(text_query, class_id, lesson_id):
 
 
 def match_lesson_topics(teacher_input, class_id, lesson_id):
-        classroom_profile = classroom.objects.get(id=class_id)
-        standard_set = classroom_profile.standards_set
-        class_objectives = lessonObjective.objects.get(id=lesson_id)
-        subject = class_objectives.subject
-        grade_list = classroom_profile.grade_level.all()
-        matched_text = lessonText.objects.filter(matched_lesson=lesson_id).first()
-        text = matched_text.activities
-        text = remove_tags(text)
-        teacher_input_stem = stemSentence(text)
-        text_tokens = word_tokenize(teacher_input_stem)
+    pass
 
-        tokens_without_sw = [word for word in text_tokens if not word in stop_words]
-        prediction = []
-        for grade in grade_list:
-                
-            obj = topicInformation.objects.filter(subject=subject, standard_set=standard_set, grade_level=grade)
+
+def extra_function():
+    classroom_profile = classroom.objects.get(id=class_id)
+    standard_set = classroom_profile.standards_set
+    class_objectives = lessonObjective.objects.get(id=lesson_id)
+    subject = class_objectives.subject
+    grade_list = classroom_profile.grade_level.all()
+    matched_text = lessonText.objects.filter(matched_lesson=lesson_id).first()
+    text = matched_text.activities
+    text = remove_tags(text)
+    teacher_input_stem = stemSentence(text)
+    text_tokens = word_tokenize(teacher_input_stem)
+
+    tokens_without_sw = [word for word in text_tokens if not word in stop_words]
+    prediction = []
+    for grade in grade_list:
             
+        obj = topicInformation.objects.filter(subject=subject, standard_set=standard_set, grade_level=grade)
+        
 
-            if obj:
+        if obj:
 
-                objectives_list = []
-                for topic in obj:
-                        descriptions = topic.description.all()
-                        desc_list = []
-                        for item in descriptions:
-                            result = item.description
-                            desc_list.append(result)
-                        result = topic.id, (topic.item, topic.item)
-                        objectives_list.append(result) 
-                
-                
-                for standard_full in objectives_list:
-                        standard_full_join = ''.join([str(i) for i in standard_full[1]]).lower()
-                        standard_full_joined = stemSentence(standard_full_join)
-                        
-                        Document1 = ''.join([str(i) for i in tokens_without_sw]).lower()
-                        Document2 = standard_full_joined
-                        corpus = [Document1,Document2]
-                        X_train_counts = count_vect.fit_transform(corpus)
-                        vectorizer = TfidfVectorizer()
-                        trsfm=vectorizer.fit_transform(corpus)
-                        result = cosine_similarity(trsfm[0:1], trsfm)
-                        result = result[0][1]
-                        total = standard_full, result
-                        prediction.append(total)
-       
-        prediction.sort(key=lambda x: x[1], reverse=True)
+            objectives_list = []
+            for topic in obj:
+                    descriptions = topic.description.all()
+                    desc_list = []
+                    for item in descriptions:
+                        result = item.description
+                        desc_list.append(result)
+                    result = topic.id, (topic.item, topic.item)
+                    objectives_list.append(result) 
+            
+            
+            for standard_full in objectives_list:
+                    standard_full_join = ''.join([str(i) for i in standard_full[1]]).lower()
+                    standard_full_joined = stemSentence(standard_full_join)
+                    
+                    Document1 = ''.join([str(i) for i in tokens_without_sw]).lower()
+                    Document2 = standard_full_joined
+                    corpus = [Document1,Document2]
+                    X_train_counts = count_vect.fit_transform(corpus)
+                    vectorizer = TfidfVectorizer()
+                    trsfm=vectorizer.fit_transform(corpus)
+                    result = cosine_similarity(trsfm[0:1], trsfm)
+                    result = result[0][1]
+                    total = standard_full, result
+                    prediction.append(total)
+    
+    prediction.sort(key=lambda x: x[1], reverse=True)
 
-        return(prediction)
+    return(prediction)
 
 
 
@@ -980,5 +984,5 @@ def find_ks_demos(class_id, lesson_id):
                             if content not in final_results:
                                 final_results.append(content)
 
-    random.shuffle(final_results)
+    
     return(final_results[:4])

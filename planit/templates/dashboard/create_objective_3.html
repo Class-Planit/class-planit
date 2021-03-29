@@ -92,12 +92,12 @@
                     
                                 {% for topic in selected_lists %} 
                                     {% ifchanged topic.id %}
-                                            <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=8 item_id=topic.id action=0 %}#heading" data-toggle="tooltip" data-placement="top" title="{{ topic.id }} - {% if topic.description %} {{ topic.description }} ; {% endif %}" class="btn btn-sm btn-secondary">{{ topic.term  }}</a>
+                                            <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=8 item_id=topic.id action=0 %}#heading" data-toggle="tooltip" data-placement="top" title="{% if topic.description %} {{ topic.description }} ; {% endif %}" class="btn btn-sm btn-secondary">{{ topic.term  }}</a>
                                     {% endifchanged %}
                                 {% endfor %}
                                 {% for topic in topic_lists %}
                                     {% ifchanged topic.id %}
-                                    <a class="btn btn-sm btn-outline-secondary selecttopic" id="like{{topic.id }}" href="#" data-topid="{{ topic.id }}" data-lessid="{{ lesson_match.id}}" data-toggle="tooltip" data-placement="top" title="{{ topic.id }} - {% if topic.description %} {{ topic.description }} ; {% endif %}" >{{ topic.term }}</a>
+                                    <a class="btn btn-sm btn-outline-secondary selecttopic" id="like{{topic.id }}" href="#" data-topid="{{ topic.id }}" data-lessid="{{ lesson_match.id}}" data-toggle="tooltip" data-placement="top" title="{% if topic.description %} {{ topic.description }} ; {% endif %}" >{{ topic.term }}</a>
                                 {% endifchanged %}
                                 {% endfor %}
                                    
@@ -115,7 +115,7 @@
                     </div>
                     <div class="col-lg-5">
                         
-                        <a href="{% url 'select_standards' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id select_all='False' topic_id='False' %}#heading" class="btn btn-success btn-block btn-has-icon" >Next: Select Key Topics </a>
+                        <a href="{% url 'select_standards' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id select_all='False' topic_id='False' %}#heading" class="btn btn-success btn-block btn-has-icon" >Next: Align Standards</a>
                                      
                     </div>
                     </div>
