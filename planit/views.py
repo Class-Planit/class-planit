@@ -961,6 +961,41 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
 
     lesson_standards = singleStandard.objects.filter(id__in=lesson_match.objectives_standards.all())
     topic_matches = lesson_match.objectives_topics.all()
+    
+    text_update = lessonText.objects.filter(matched_lesson=lesson_match).first()
+    
+    if text_update:
+        pass
+    else:
+        text_update = lessonText.objects.create(matched_lesson=lesson_match)
+    
+    if text_update.overview:
+        classify_text = get_lesson_sections(text_update.overview, class_id, lesson_id, user_id)
+
+    if text_update.activities:
+        split_activities = split_matched_activities(text_update.activities, class_id, lesson_id, user_id)
+
+    if text_update.overview:
+        split_text = split_matched_text(text_update.overview) 
+        split_terms = split_matched_terms(text_update.lesson_terms, class_id, lesson_id) 
+        question_list = []
+        for line_topic in topic_matches:
+            for description_item in line_topic.description.all():
+                sentence = line_topic.item + ' - ' + description_item.description
+                results = genQuestion(sentence, line_topic.item)
+                if results:
+                    question_list.append(results)
+                else:
+                    pass
+        text_match = match_lesson_topics(text_update.overview, class_id, lesson_id) 
+        
+    else:
+        split_text = []
+        text_match = [] 
+        
+        question_list = []
+    
+    
     topic_lists_selected = topicInformation.objects.filter(id__in=topic_matches).order_by('item')
     topic_count = topic_lists_selected.count()
     chunks = topic_count/3
@@ -1003,41 +1038,10 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     matched_topics = match_topics(teacher_objective, class_id, lesson_id)
     
     selected_activities = selectedActivity.objects.filter(lesson_overview=lesson_match, is_selected=True)
-    print('Selected-Activities', selected_activities)
+
     not_selected_activities = selectedActivity.objects.filter(lesson_overview=lesson_match, is_selected=False).order_by('template_id')
 
-    text_update = lessonText.objects.filter(matched_lesson=lesson_match).first()
-    
-    if text_update:
-        pass
-    else:
-        text_update = lessonText.objects.create(matched_lesson=lesson_match)
-    
-    if text_update.overview:
-        classify_text = get_lesson_sections(text_update.overview, class_id, lesson_id, user_id)
-
-    if text_update.activities:
-        split_activities = split_matched_activities(text_update.activities, class_id, lesson_id, user_id)
-
-    if text_update.overview:
-        split_text = split_matched_text(text_update.overview) 
-        split_terms = split_matched_terms(text_update.lesson_terms, class_id, lesson_id) 
-        question_list = []
-        for line_topic in topic_matches:
-            for description_item in line_topic.description.all():
-                sentence = line_topic.item + ' - ' + description_item.description
-                results = genQuestion(sentence, line_topic.item)
-                if results:
-                    question_list.append(results)
-                else:
-                    pass
-        text_match = match_lesson_topics(text_update.overview, class_id, lesson_id) 
-        
-    else:
-        split_text = []
-        text_match = [] 
-        
-        question_list = []
+   
     
     if selected_activities:
         lesson_analytics = label_activities_analytics(lesson_id)

@@ -616,15 +616,16 @@ def get_multiple_types_activity(topic_list):
     wordfreq.sort(key=lambda x: x[1], reverse=True)
 
     wording_list = []
-    if wordfreq[0][1] > 1:
-        result = wordfreq[0][0]
-        sent_blob = TextBlob(result)
-        sent_tagger = sent_blob.pos_tags
+    if wordfreq:
+        if wordfreq[0][1] > 1:
+            result = wordfreq[0][0]
+            sent_blob = TextBlob(result)
+            sent_tagger = sent_blob.pos_tags
 
-        for y in sent_tagger:
-            if 'NN' in y[1]:
-                wording = 'describe the parts of the ' +  y[0]
-                wording_list.append(wording)
+            for y in sent_tagger:
+                if 'NN' in y[1]:
+                    wording = 'describe the parts of the ' +  y[0]
+                    wording_list.append(wording)
         
 
 

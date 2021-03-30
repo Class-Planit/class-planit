@@ -225,25 +225,40 @@ def get_lesson_activities(text_overview, class_id, lesson_id, user_id, class_obj
 
 
 def get_lesson_key_terms(key_term_pair, class_id, lesson_id, user_id, grade_level, subject, standard_set, topic_lists_selected, class_objectives):
-
+    class_objectives.objectives_topics.clear()
+    
     for item in key_term_pair:
+        
         term_id = item[0][1]
         term = item[0][0]
         description = item[1]
 
         if 'New' in term_id: 
-            match_term = topicInformation.objects.filter(subject = subject, grade_level = grade_level, standard_set = standard_set , item = term).first()
+            match_term = topicInformation.objects.filter(subject = subject, created_by=user_id, grade_level = grade_level, standard_set = standard_set , item = term).first()
             if match_term:
                 pass
             else:
-                match_term, created = topicInformation.objects.get_or_create(subject = subject, grade_level = grade_level, standard_set = standard_set , item = term)
+                match_term, created = topicInformation.objects.get_or_create(subject = subject, created_by=user_id, grade_level = grade_level, standard_set = standard_set , item = term)
         else:
-            match_term = topicInformation.objects.get(id=term_id)
+            match_term = topicInformation.objects.filter(id=term_id).first()
+            
+            if match_term:
+            
+                if match_term.created_by == user_id:
+                    match_term.item = term
+                    match_term.is_admin = False      
+                    match_term.save()
+                else:
+                    match_term.pk = None
+                    match_term.id = None
+                    match_term.created_by = user_id
+                    match_term.item =  term
+                    match_term.is_admin = False
+                    match_term.save()
 
-        match_term.pk = 0
-        match_term.created_by = user_id
-        match_term.is_admin = False
-        match_term.save()
+            else:
+                match_term, created = topicInformation.objects.get_or_create(subject = subject, created_by=user_id, grade_level = grade_level, standard_set = standard_set , item = term)
+
 
         create_description, created = topicDescription.objects.get_or_create(description=description) 
         match_term.description.clear()
@@ -331,7 +346,12 @@ def get_lesson_sections(text_overview, class_id, lesson_id, user_id):
 
         descriptions = []
         for key_description in key_descriptions:
-            descriptions.append(key_description.text)
+            description = key_description.text
+            if description:
+                pass
+            else:
+                description = '- '
+            descriptions.append(description)
 
 
         key_term_pair = zip(terms, descriptions)
