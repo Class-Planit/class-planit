@@ -447,10 +447,10 @@
                         {% ifchanged quest.Question %}
                         <li><a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 page='Current' worksheet_id=worksheet_id act_id='False' question_id=quest.id %}#heading" class="card-link">{{ quest.Question }}</a> </li>
                         <h5><small style="color:orange">Answer: {{ quest.Correct }}</small></h5>
-           
-                        <figure><img class="xv-superimage" style="max-height:200px;max-width:200px;" src="{{ quest.correct_image.url }}" alt=""></figure>
-                        <br>
-
+                            {% if quest.correct_image %}
+                            <figure><img class="xv-superimage" style="max-height:200px;max-width:200px;" src="{{ quest.correct_image.url }}" alt=""></figure>
+                            <br>
+                            {% endif %}
                         {% endifchanged %}
                         {% endfor %}
                         </div>
