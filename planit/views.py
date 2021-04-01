@@ -1260,6 +1260,8 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
 
     topic_lists.sort(key=lambda x: x[1])
 
+
+
     generated_questions = []
     if topic_lists_matched:
         generated_questions_one = generate_questions_topic(topic_lists_matched)
@@ -1278,6 +1280,7 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
             generated_questions.append(get_question)
 
 
+
     youtube_matched = youtubeSearchResult.objects.filter(lesson_plan=lesson_match, is_selected=True)
     
     activity_choices = []
@@ -1288,6 +1291,7 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
 
     if worksheet_id == 0:
         all_questions = list(chain(text_questions, generated_questions, question_lists))
+        
         random.shuffle(all_questions)
         worksheet_preview_one = all_questions[:10]
         matched_worksheet, created = worksheetFull.objects.get_or_create(created_by=user_profile, title=worksheet_title)
@@ -1315,6 +1319,7 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
         matched_questions = matched_worksheet.questions.all()
         all_questions = topicQuestion.objects.filter(id__in=matched_questions)
         worksheet_id = matched_worksheet.id
+
 
     worksheet_preview = all_questions[:10]
     
@@ -1450,7 +1455,7 @@ def LessonPDFUpload(request, user_id=None, class_id=None, subject=None, lesson_i
     macthed_textbooks = textBookTitle.objects.filter(uploaded_by=user_profile, lesson_id_num=lesson_id)
     matched_lines = textBookBackground.objects.filter(textbook__in=macthed_textbooks)
     matched_questions = build_questions(matched_lines)
-    return render(request, 'dashboard/lesson_image_upload.html', {'user_profile': user_profile, 'matched_lines': matched_lines})
+    return render(request, 'dashboard/lesson_image_upload.html', {'user_profile': user_profile, 'matched_lines': matched_lines, 'matched_questions': matched_questions})
 
 
 def PracticeTest(request, user_id=None, class_id=None, subject=None, lesson_id=None):

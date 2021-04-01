@@ -56,59 +56,69 @@ def generate_fib(line):
     sent = line_text.replace('|', ' ')
     sent = ' '.join(sent.split())
     sent_blob = TextBlob(sent)
-    sent_tagger = sent_blob.pos_tags
-    nouns = []
-    for y in sent_tagger:
-        if 'V' in y[1]:
-            is_verb = True
-    for y in sent_tagger:
-        if len(y[1]) > 2:
-            is_long = True
-    for y in sent_tagger:
-        word_index = sent_tagger.index(y)
-        if 'NNP' in y[1]:
-            is_noun = True
-            result = y[0], word_index
-            nouns.append(result)
-        elif 'NNPS' in y[1]:
-            is_noun = True
-            result = y[0], word_index
-            nouns.append(result)
 
-    results = []
-    if is_verb and is_noun and is_long:
-        sent = re.sub(r'\(.*\)', '', sent)
-        sent = re.sub('Chapter', '', sent)
-        sent = re.sub('Rule Britannia!', '', sent)
-        sent = re.sub('Description', '', sent)
-        if sent not in results:
-            last_noun = nouns[-1]
-            for item, index in nouns:
-                print('Last Noun --------', last_noun[1])
-                last_num = last_noun[1]
+    sent_count = len(sent_blob)
+    if sent_count > 35:
+        sent_tagger = sent_blob.pos_tags
+        nouns = []
+        for y in sent_tagger:
+            if 'V' in y[1]:
+                is_verb = True
+        for y in sent_tagger:
+            if len(y[1]) > 2:
+                is_long = True
+        for y in sent_tagger:
+            word_index = sent_tagger.index(y)
+            if 'NNP' in y[1]:
+                is_noun = True
+                result = y[0], word_index
+                nouns.append(result)
+            elif 'NNPS' in y[1]:
+                is_noun = True
+                result = y[0], word_index
+                nouns.append(result)
 
-                current = index
-                next_noun = index + 1
-                third_noun = index + 2
-                noun_ranges = item
-                if next_noun < last_num:
-                    next_noun_word = nouns[index + 1]
-                    if (int(next_noun_word[1]) - index) == 1:
-                        noun_ranges = item, next_noun_word[0]
+        results = []
 
-                        if third_noun < last_num:
-                            third_noun_word = nouns[index + 2]
-                            if (int(third_noun_word[1]) - index) == 1:
-                                noun_ranges = item, next_noun_word[0], third_noun_word[0]
-                        else:
-                            noun_ranges = item, next_noun_word[0]
-                    else:
-                        noun_ranges = item
-                        
-                results.append(noun_ranges)
+        remove_list = ['illustrations', 'assignment', 'assignments', 'cartoon', 'Figure', 'they', 'those', 'Circle ', 'Education.com', 'the following ']
+        results = []
+        if is_verb and is_noun and is_long:
+            sent = re.sub(r'\(.*\)', '', sent)
+            sent = re.sub('Chapter', '', sent)
+            sent = re.sub('Rule Britannia!', '', sent)
+            sent = re.sub('Description', '', sent)
+            if any(word in sent for word in remove_list):
+                pass
+            else:
+                last_noun = nouns[-1]
+                for item, index in nouns:
+                    last_num = last_noun[1]
+                    last_index = nouns.index(last_noun)
+                    current = index
+                    next_noun = index + 1
+                    third_noun = index + 2
+                    noun_ranges = item
+                    if next_noun != last_index:
+                        try:
+                            next_noun_word = nouns[next_noun]
+                            if (int(next_noun_word[1]) - index) == 1:
+                                noun_ranges = item, next_noun_word[0]
 
-    print(results)
-    return(results)
+                                if third_noun < last_num:
+                                    third_noun_word = nouns[index + 2]
+                                    if (int(third_noun_word[1]) - index) == 1:
+                                        noun_ranges = item, next_noun_word[0], third_noun_word[0]
+                                else:
+                                    noun_ranges = item, next_noun_word[0]
+                            else:
+                                noun_ranges = item
+                        except:
+                            pass
+
+                    new_wording = sent.replace(noun_ranges, '_____________ ')
+                    result = new_wording, noun_ranges  
+
+            return(result)
 
 
 def generate_spelling(line):
@@ -126,7 +136,7 @@ def generate_short_answer(line):
     result = None
     for quest in questions:
         if quest in sent:
-            result = sent
+            result = sent, None
 
     return(result)
 
@@ -137,6 +147,7 @@ def generate_questions_text(line):
 
 
 def generate_questions_topic(topic_lists):
+
     word_bank = []
     descriptions = []
     for topic in topic_lists:
@@ -149,10 +160,12 @@ def generate_questions_topic(topic_lists):
             item_id = item.id
             descriptions.append(item_id)
 
+   
     matched_desriptions = topicDescription.objects.filter(id__in=descriptions)
     results = []
     for word in word_bank:
         for item in matched_desriptions:
+           
             item_id = item.id
             topic_match = topicInformation.objects.filter(description=item_id).first()
             topic_item = topic_match.item
@@ -166,10 +179,12 @@ def generate_questions_topic(topic_lists):
                 else:
                     quest = new_description, word, topic_item
 
-                results.append(quest)
+                
             else:
-                pass
-        
+                new_description = '%s - %s' % ('_____________ ', description)
+                quest = new_description, topic_item, None
+            
+            results.append(quest)
     return(results)
 
 def get_db_questions(lesson_id):
@@ -179,21 +194,21 @@ def build_questions(matched_lines):
     all_questions = []
     for line in matched_lines:
         question = generate_short_answer(line)
- 
         if question:
             pass
         else:
             question = generate_fib(line)
+        
 
         if question:
             all_questions.append(question)
 
-    print(all_questions)
 
+    return(all_questions)
 
 def get_lesson_activities(text_overview, class_id, lesson_id, user_id, class_objectives):
 
-    print(text_overview)
+
     for item in text_overview:
         activity_match = item.text
         if len(activity_match) <= 3:
@@ -211,7 +226,7 @@ def get_lesson_activities(text_overview, class_id, lesson_id, user_id, class_obj
             else:
                 activity_id = item['class']
                 activity_match = selectedActivity.objects.filter(id=activity_id[0]).first()
-                print(activity_match)
+               
                 if activity_match:
                     activity_match.lesson_text = item.text
                     activity_match.is_selected = True 

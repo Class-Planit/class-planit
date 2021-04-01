@@ -99,9 +99,11 @@
                         
                     </div>
                     
-                    {% for line in matched_lines %}
-                <li>{{ line.line_text }}</li>
-                {% endfor %}
+                    {% for line in matched_questions %}
+                       
+                        <li>{{ line.0 }} <small>({{ line.1 }})</small></li>
+                      
+                    {% endfor %}
                    
                           
             
