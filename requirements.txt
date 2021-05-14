@@ -153,7 +153,7 @@ pyPdf==1.13
 PyPDF2==1.26.0
 Pyphen==0.10.0
 pytesseract==0.3.7
-pytextrank==3.1.1
+pytextrank==2.1.0
 python-dateutil==2.8.1
 python-decouple==3.3
 python-http-client==3.3.1
