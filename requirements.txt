@@ -182,7 +182,7 @@ six==1.15.0
 smart-open==3.0.0
 sortedcontainers==2.3.0
 soupsieve==2.1
-spacy==3.0.1
+spacy==2.3.0
 spacy-legacy==3.0.1
 sqlparse==0.4.1
 srsly==2.4.0
