@@ -321,9 +321,17 @@ class questionType(models.Model):
         return "%s" % (self.item)
 
 class topicDescription(models.Model):
+    topic_id = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
     description = models.CharField(max_length=1000,
                                        blank=True,
                                        null=True)	
+    created_by = models.ForeignKey(User,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True)
+    is_admin = models.BooleanField(default=True)
     
     def __str__(self):
         return "%s" % (self.description)
@@ -368,6 +376,7 @@ class topicInformation(models.Model):
 
     def __str__(self):
         return "%s" % (self.item)
+
 
 
 class LearningDemonstrationTemplate(models.Model):  
@@ -432,6 +441,7 @@ class lessonObjective(models.Model):
 
     def __str__(self):
         return "%s" % (self.id)
+
 
 
 class lessonPDFImage(models.Model):
@@ -912,6 +922,8 @@ class lessonTemplates(models.Model):
     def __str__(self):
         return "%s" % (self.wording)
 
+
+
 class selectedActivity(models.Model):
     created_by = models.ForeignKey(User,
                                on_delete=models.CASCADE,
@@ -953,6 +965,10 @@ class selectedActivity(models.Model):
     def __str__(self):
         return "%s - %s" % (self.verb, self.work_product)
 
+
+
+
+
 class storySection(models.Model):
     Title = models.CharField(max_length=1000,
                         blank=True,
@@ -977,7 +993,13 @@ class storyFull(models.Model):
     def __str__(self):
         return "%s" % (self.Title)
 
+
+
 class topicQuestion(models.Model):
+    lesson_overview = models.ForeignKey(lessonObjective,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
     subject	= models.ForeignKey(standardSubjects,
                                on_delete=models.SET_NULL,
                                blank=True,
@@ -999,6 +1021,10 @@ class topicQuestion(models.Model):
     topic_story = models.ManyToManyField(storyFull,
                                      blank=True)
     linked_text = models.ForeignKey(textBookBackground,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True) 
+    linked_topic = models.ForeignKey(topicInformation,
                                on_delete=models.SET_NULL,
                                blank=True,
                                null=True) 
@@ -1069,8 +1095,62 @@ class worksheetSection(models.Model):
     def __str__(self):
         return "%s" % (self.section_title)
 
+class userNickname(models.Model):
+    name = models.CharField(max_length=30,
+                        blank=True,
+                        null=True)
+    is_firstname = models.BooleanField(default=True)
+
+    def __str__(self):
+        return "%s" % (self.name)
+
+class userImageUpload(models.Model):
+    title	= models.CharField(max_length=20,
+                        blank=True,
+                        null=True)
+    uploaded_image = models.ImageField(upload_to='images/question/',
+                                        blank=True,
+                                        null=True) 
+
+    def __str__(self):
+        return "%s" % (self.title)
+
+class worksheetTheme(models.Model):
+    demo_image = models.ForeignKey(userImageUpload,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True,
+                               related_name='demo_image')
+    background_image = models.ForeignKey(userImageUpload,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True,
+                               related_name='background_image')
+    icon_image = models.ManyToManyField(userImageUpload,
+                                     blank=True,
+                                     related_name='icon_image')
+    first_name = models.ManyToManyField(userNickname,
+                                     blank=True,
+                                     related_name='first_name')
+    last_name = models.ManyToManyField(userNickname,
+                                     blank=True,
+                                     related_name='last_name')
+    primary	= models.CharField(max_length=12,
+                        blank=True,
+                        null=True)
+    secondary = models.CharField(max_length=12,
+                        blank=True,
+                        null=True)
+    link = models.CharField(max_length=12,
+                        blank=True,
+                        null=True)
+
 class worksheetFull(models.Model):
     created_by = models.ForeignKey(User,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True)
+    worksheet_theme = models.ForeignKey(worksheetTheme,
                                on_delete=models.CASCADE,
                                blank=True,
                                null=True)
@@ -1086,3 +1166,71 @@ class worksheetFull(models.Model):
 
     def __str__(self):
         return "%s" % (self.title)
+
+
+class matchedTopics(models.Model):
+    lesson_overview = models.ForeignKey(lessonObjective,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    objectives_topics = models.ManyToManyField(topicInformation,
+                                     blank=True,
+                                     related_name='objectives_activity_topic',
+                                     null=True)
+
+    def __str__(self):
+        return "%s" % (self.id)
+
+class studentQuestionAnswer(models.Model):
+    worksheet_assignment = models.ForeignKey(worksheetFull,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True)
+    student = models.ForeignKey(User,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True)
+    nickname = models.CharField(max_length=200,
+                        blank=True,
+                        null=True)
+    question_num = models.ForeignKey(topicQuestion,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True)
+    question = models.CharField(max_length=200,
+                        blank=True,
+                        null=True)
+    correct = models.CharField(max_length=200,
+                        blank=True,
+                        null=True)
+    answer = models.CharField(max_length=200,
+                        blank=True,
+                        null=True)
+    is_graded = models.BooleanField(default=False)
+    is_correct = models.BooleanField(default=False)
+
+    def __str__(self):
+        return "%s" % (self.id)
+
+class studentWorksheetAnswerFull(models.Model):
+    worksheet_assignment = models.ForeignKey(worksheetFull,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True)
+    student = models.ForeignKey(User,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True)
+    nickname = models.CharField(max_length=200,
+                        blank=True,
+                        null=True)
+    student_answers = models.ManyToManyField(studentQuestionAnswer,
+                                     blank=True,
+                                     related_name='student_answers',
+                                     null=True)
+    is_graded = models.BooleanField(default=False)
+    is_passing = models.BooleanField(default=False)
+    is_submitted = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return "%s" % (self.id)

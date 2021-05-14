@@ -114,3 +114,22 @@ class TeacherForm(UserCreationForm):
         user.save()
         teacher = school_user.objects.create(user=user)
         return user
+
+class StudentForm(UserCreationForm):
+    username = forms.CharField()
+    first_name = forms.CharField()
+    last_name = forms.CharField()
+    email = forms.EmailField()
+    phone_number = forms.CharField()
+
+    class Meta(UserCreationForm.Meta):
+        model = User
+        fields = ('username', 'first_name', 'last_name', 'email', 'phone_number', 'password1', 'password2')
+
+    @transaction.atomic
+    def save(self):
+        user = super().save(commit=False)
+        user.is_student = True
+        user.save()
+        teacher = school_user.objects.create(user=user)
+        return user

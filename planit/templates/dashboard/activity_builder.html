@@ -1,3 +1,4 @@
+
 {% load static %}
 <!DOCTYPE html>
 <html>
@@ -48,7 +49,85 @@
          <link type="text/css" href="{% static 'css/dashboard/rocket.css' %}" rel="stylesheet">
      
   <script src="https://cdn.tiny.cloud/1/0ak6ftt9ng9va9e98pl0iwxwwh0rb1tipwsg8it4mjmcbkjb/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
+<style>
+.demo-dfree {
+  position: relative;
+
+  box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.2);
+  text-align: left;
+  color: #626262;
+  font-size: 14px;
+  padding: 20px;
+}
+.demo-dfree *[contentEditable="true"]:hover {
+  outline: 1px solid #1976D2;
+}
+.demo-dfree h1 {
+  color: #1976D2;
+  font-size: 2em;
+}
+.demo-dfree h2 {
+  color: #1976D2;
+  font-size: 2em;
+}
+.demo-dfree h3 {
+  font-size: 1.5em;
+  color: #403f42;
+  color: inherit;
+}
+.demo-dfree h2,
+.demo-dfree h3 {
+  margin-bottom: 0px;
+  margin-top: 0px;
+  line-height: 40px;
+}
+.demo-dfree ul,
+.demo-dfree ol {
+  padding-left: 20px;
+}
+.demo-dfree ul {
+  list-style: disc;
+}
+.demo-dfree ol {
+  list-style: decimal;
+}
+.demo-dfree a {
+  text-decoration: underline;
+}
+.demo-dfree textarea {
+  display: none;
+}
+.demo-dfree .dfree-header {
+  font-size: 2.4em;
+  text-align: center;
+  margin: 10px;
+}
+.demo-dfree .dfree-body {
+  padding: 20px;
+  padding-top: 0px;
+}
+.demo-dfree .dfree-body p {
+  margin-bottom: 10px;
+}
+.demo-dfree .dfree-body blockquote {
+  margin-left: 30px;
+  padding-left: 10px;
+  margin-right: 40px;
+  font-style: italic;
+  border-left: 1px solid #696969;
+}
+.demo-dfree .dfree-body a {
+  text-decoration: underline;
+}
+.demo-dfree .dfree-body td,
+.demo-dfree .dfree-body tr {
+  border: 1px solid #696969;
+}
+
+
+</style>
 </head>
 <body>
     <div class="preloader bg-soft flex-column justify-content-center align-items-center">
@@ -78,85 +157,128 @@
     
             </div>
             <div class="btn-group mr-2">
-                
-    
                 <button  onclick="window.print();return false;" type="button" class="btn btn-sm btn-outline-secondary">Share with Colleague</button>
            
     
             </div>
         </div>
         <div class="row">
-       
+            
             <div class="col-lg-6">
+                <div id="time-update"></div>
+                <div class="btn-group float-right" role="group" aria-label="Basic example">
+                    <button type="button" class="btn btn-warning btn-sm savetext"><i class="material-icons" style="color:white">save</i></button>
+                    <button type="button" class="btn btn-warning btn-sm"><i class="material-icons" style="color:white">print</i></button>
+                  </div>
+                
+                <br>
                 <form  method="POST">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-default">
-                        <i class="fas fa-save"></i> Save Lesson Progress
-                    </button>
-<br>
-                    <textarea id="permanent-pen" name="overview">
-                        <p style="text-align: center;">
-                          <img title="TinyMCE Logo" src="{% static 'images/dashboard/icon.svg' %}" alt="TinyMCE Logo" width="110" height="97" />
-                        </p>
-                       <h2 style="text-align: center;">Lesson Plan: {{ user.username }} | {{ classroom_profile }}</h2>
-                      
-                         <h2>Objective: {{ lesson_match.teacher_objective }}</h2>
-                         <h5>
-                            Aligned Standards:
-                         </h5>
-                       
-                        <ul>
-                            {% for standard in lesson_standards %}
-                            <li>{{ standard }}</li>
-                            {% endfor %}
-                        </ul>
-                      
-                        <h2>Lesson Activities:</h2>
+                    
+                    {% if new_text.is_initial %}
+                    <div class='demo-dfree myDivToPrint' id='demo-dfree'>
                         
-                      <li id='activity' class='New'>-</li>
-                      {% for activity in selected_activities %}
-                      <li id='activity' class='{{ activity.id }}'><h3>{{ activity.lesson_text }}</h3></li>
-                        {% endfor %}
+                        <h2 class="dfree-header mce-content-body" id='objective' contenteditable="true" style="position: relative;" spellcheck="false">
+                        {{ lesson_match.subject }} | {{ user_profile.first_name }} {{ user_profile.last_name }}
+                        </h2>
+                        <br/>
 
-                      
-                        <table style="border-collapse: collapse; width: 100%;" border="1">
-                          <thead>
-                            <tr>
-                              <th>Key Term</th>
-                              <th>Description</th>
-                             
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                                <td id='term' class='New'> ...</td>
-                                 <td id='description'>  </td>
-                              </tr>
-                            {% for topic in topic_lists_selected %}
-                            {% ifchanged topic.item %}
-
-                            <tr>
-                              <td id='term' class='{{ topic.id }}'>{{ topic.item }}</td>
-                               <td id='description'>{% for word in topic.description.all %}
-                                {{ word }}
-                                {% endfor %}</td>
-                            </tr>
-                            {% endifchanged %}
+                        <div class="dfree-body mce-content-body" contenteditable="true" style="position: relative;" spellcheck="false">
+                       
+                        <br/>
+                        <h4>
+                            {{ lesson_match.teacher_objective }}
+                        </h4>
+                        <p id="standard">
+                            {% for stand in lesson_match.objectives_standards.all %}
+                            <li id='standard-item'>{{stand }}</li>
                             {% endfor %}
-                          </tbody>
-                        </table>
+                        </p>
+                    
+                       
+                        
+                        <h3>Activities</h3>
+                        <h5>
+                            <ul id='activity-div'>
+                                <li id='activity'> </li>
+                                {% for act in selected_activities %}
+                                <li id='activity'> {{ act.lesson_text }}</li>
+                                {% endfor %}    
+                            </ul>      
+                        </h5>
 
-                      </textarea>
-       
-               
-                  </form>
+                        <hr>
+                            <div>
+                            <h3>Key Terms:</h3>
+                            <table class="table" >
+                                <thead>
+                                  <tr>
+                                    <th scope="col">Term</th>
+                                    <th scope="col">Description</th>
+                                  </tr>
+                                </thead>
+                                <tbody id="key-term-section">
+                                    <tr>
+                                        <th scope="row"></th>
+                                        <td>
+                                          
+                                        </td>
+                                  
+                                      </tr>
+                                    {% for term in lesson_topics %}
+                                  <tr>
+                                    <th scope="row">{{ term.item }}</th>
+                                    <td>
+                                        {% for item in term.description.all %} 
+                                            {% ifchanged item.id %}
+                                            <li id='description'>{{ item }}</li>
+                                            {% endifchanged %}
+                                        {% endfor %}
+                                    </td>
+                              
+                                  </tr>
+                                  {% endfor %}
+                                </tbody>
+                            </table>
+                  
+                            </div>
+                        <hr>
+                        </div>
+
+                    </div>
+                    {% else %}
+                    <div class='demo-dfree myDivToPrint' id='demo-dfree'>
+                        
+                       {{ new_text.overview|safe }}
+                    </div>
+                    {% endif %}
+                </form>
             </div>
             <div class="col-lg-3">
+                <div id='standard-list'>
+                {% if standards_matches %}
+                {% else %}
+                {% if standards_select %}
+                    <h5>Select a Relavent Standard:</h5>
+                    {% for item in standards_select %}
+                        {% ifchanged item.id %}
+                        <li><a class="sel-standard" id="like{{item.id}}" href="#" data-standid="{{ item.id }}">{{ item }}</a></li>
+                        
+                        {% endifchanged %}
+                    {% endfor %}
+                {% endif %}
+                {% endif %}
+                </div>
                 <div class='col-lg-12' id="stanDiv" style="display:none;">
-                    <button type="button" onclick="hideStanDiff() " class="btn btn-light btn-sm"> <i class="fas fa-window-close"></i></button>
-                   
+                    
                     <div class="card border-light shadow-sm">
+                        <div>
+                            <button type="button" onclick="hideStanDiff()" class="btn btn-link btn-sm"> 
+                                <i class="material-icons" style="color:lightgray">close</i>
+                            </button>
+                        </div>
                         <div class="card-body">
+                            {% if standards_matches %}
                             <div class="row d-block d-xl-flex align-items-center">
                                 <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
                                     <div class="icon icon-shape icon-lg icon-shape-primary rounded mr-4 mr-sm-0">20%</div>
@@ -165,6 +287,7 @@
                                     </div>
                                 </div>
                                 <div class="col-12 col-xl-7 px-xl-0">
+                                 
                                     <div class="d-none d-sm-block">
                                         <h2 class="h5">Standards Alignment</h2>
                                     </div>
@@ -174,182 +297,79 @@
                                         <span class="fas fa-angle-up text-success"></span>                                   
                                         <span class="text-success font-weight-bold">18.2%</span> <br>previous student performance
                                     </div>
+                                    
+                                   
                                 </div>
                             </div>
+                         
+                        {% endif %}
                         </div>
                     </div>
                 </div>
         <br>
                 <div class='col-lg-12' id="rateDiv" style="display:none;">
-                    <button type="button" onclick="hideRateDiff() " class="btn btn-light btn-sm"> <i class="fas fa-window-close"></i></button>
                    
+                    
                     <div class="card border-light shadow-sm">
-                        <div class="card-body">
-                            <div class="row d-block d-xl-flex align-items-center">
-                                <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
-                                    <div class="icon icon-shape icon-lg icon-shape-success rounded mr-4 mr-sm-0">85%</div>
-                                    <div class="d-sm-none">
-                                        <h2 class="h5">Retention Rate</h2>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-xl-7 px-xl-0">
-                                    <div class="d-none d-sm-block">
-                                        <h2 class="h5">Retention Rate</h2>
-                                    </div>
-                                
-                                    <p>Your activities have a higher retention rate because you included:</p>
-                                    <li>Group Discussions</li>
-                                </div>
-                            </div>
-                        </div>
+                        <div>
+                            <button type="button" onclick="hideRateDiff()" class="btn btn-link btn-sm"> 
+                                <i class="material-icons" style="color:lightgray">close</i>
+                            </button>
+                        </div>  
+                        <div id='retention-rate'></div>
+                        
                     </div>
                 </div>
            <br>
            
                 <div class="col-12 mb-4" id="depthDiv"  style="display:none;"  >
-                    <button type="button" onclick="hideDepthDiff()" class="btn btn-light btn-sm"> <i class="fas fa-window-close"></i></button>
+                   
                    
                     <div class="card border-light shadow-sm">
+                        <div>
+                            <button type="button" onclick="hideDepthDiff()" class="btn btn-link btn-sm"> 
+                                <i class="material-icons" style="color:lightgray">close</i>
+                            </button>
+                        </div>
                         <div class="card-body">
                                 <div class="row d-block d-md-flex align-items-center">
     
-                                    <div class="col-12">
-                                        <h2 class="h5 mb-1">Blooms Summary</h2>
+                                    <div class="col-12" id='bloomsDiv'>
+                                        <h2 class="h5 mb-1" style="text-align:right;">Blooms Summary</h2>
                                     
-                                        <div class="row d-flex align-items-center mb-2">
-                                            <div class="col-3 text-gray font-weight-bold px-0 small">
-                                                Create
-                                            </div>
-                                            <div class="col-8 px-0">
-                                                <div class="progress progress-lg rounded mb-0">
-                                                    <div class="progress-bar bg-success rounded" role="progressbar" aria-valuenow="51" aria-valuemin="0" aria-valuemax="100" style="width: 51%;"></div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                       
+                                        <div id='blooms-summ'></div>
+                                       
                                         <!-- end row -->
-                                        <div class="row d-flex align-items-center mb-2">
-                                            <div class="col-3 text-gray font-weight-bold px-0 small">
-                                                Evaluate
-                                            </div>
-                                            <div class="col-8 px-0">
-                                                <div class="progress progress-lg rounded mb-0">
-                                                    <div class="progress-bar bg-cyan rounded" role="progressbar" aria-valuenow="31" aria-valuemin="0" aria-valuemax="100" style="width: 31%;"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- end row -->
-                                        <div class="row d-flex align-items-center mb-2">
-                                            <div class="col-3 text-gray font-weight-bold px-0 small">
-                                                Analyze
-                                            </div>
-                                            <div class="col-8 px-0">
-                                                <div class="progress progress-lg rounded mb-0">
-                                                    <div class="progress-bar bg-warning rounded" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%;"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- end row -->
-                                        <div class="row d-flex align-items-center mb-2">
-                                            <div class="col-3 text-gray font-weight-bold px-0 small">
-                                                Understand
-                                            </div>
-                                            <div class="col-8 px-0">
-                                                <div class="progress progress-lg rounded mb-0">
-                                                    <div class="progress-bar bg-orange rounded" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width: 10%;"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- end row -->
-                                        <div class="row d-flex align-items-center mb-2">
-                                            <div class="col-3 text-gray font-weight-bold px-0 small">
-                                                Remember
-                                            </div>
-                                            <div class="col-8 px-0">
-                                                <div class="progress progress-lg rounded mb-0">
-                                                    <div class="progress-bar bg-danger rounded" role="progressbar" aria-valuenow="6" aria-valuemin="0" aria-valuemax="100" style="width: 6%;"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- end row -->
-                                    </div>
-         
+                                      
+                                </div>
                                 </div>
                         </div>
                         </div>
                 </div>
              <br>
                 <div class="col-12" id="diffDiv" style="display:none;">
-                    <button type="button" onclick="hideDivDiff()" class="btn btn-light btn-sm"> <i class="fas fa-window-close"></i></button>
-                   
-                    <div class="card border-light shadow-sm">
-                        
-                        <div class="container" style="max-height: 500px">
-                            <br>
-                            
-                            <div id="container-2"></div>
-                            <script src="https://code.highcharts.com/highcharts.src.js"></script>
-                            <script>
-                                Highcharts.chart('container-2', {
-                                    chart: {
-                                        plotBackgroundColor: null,
-                                        plotBorderWidth: null,
-                                        plotShadow: false,
-                                        type: 'pie'
-                                    },
-                                    title: {
-                                        text: 'Learning Styles:'
-                                    },
-                                    tooltip: {
-                                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-                                    },
-                                    accessibility: {
-                                        point: {
-                                            valueSuffix: '%'
-                                        }
-                                    },
-                                    plotOptions: {
-                                        pie: {
-                                            allowPointSelect: true,
-                                            cursor: 'pointer',
-                                            dataLabels: {
-                                                enabled: true,
-                                                format: '<b>{point.name}</b>'
-                                            }
-                                        }
-                                    },
-                                    series: [{
-                                        name: 'Learning Styles',
-                                        colorByPoint: true,
-                                        data: [{
-                                            name: 'Logical',
-                                            y: 10.85
-                                        }, {
-                                            name: 'Verbal',
-                                            y: 4.67
-                                        }, {
-                                            name: 'Musical',
-                                            y: 4.18
-                                        }, {
-                                            name: 'Visual',
-                                            y: 1.64
-                                        }, {
-                                            name: 'Movement',
-                                            y: 1.6
-                                        }, {
-                                            name: 'Group',
-                                            y: 1.2
-                                        }, {
-                                            name: 'Independent',
-                                            y: 2.61
-                                        }]
-                                    }]
-                                });
-                            </script>
                     
+                    <div class="card border-light shadow-sm">
+                        <div>
+                            <button type="button" onclick="hideDivDiff()" class="btn btn-link btn-sm"> 
+                                <i class="material-icons" style="color:lightgray">close</i>
+                            </button>
                         </div>
-                        <br>
-                        <br>
-                        <br>
+                        <div class="card-body">
+                            <div class="row d-block d-md-flex align-items-center">
+
+                                <div class="col-12" id='miDiv'>
+                                    <h2 class="h5 mb-1" style="text-align:right;">Learning Styles</h2>
+                                
+                                   
+                                    <div id='mi-summ'></div>
+                                   
+                                    <!-- end row -->
+                                  
+                            </div>
+                            </div>
+                    </div>
                     </div>
                 </div>
                 <br>
@@ -365,8 +385,8 @@
                            
                             <li><a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 page='Preview' worksheet_id=0 act_id='False' question_id=0 %}#heading" class="card-link">Digital Worksheet</a></li>
                            
-                            <li><a href="{% url 'digital_study_guide' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Student Performance</a></li>
-                            <li><a href="{% url 'digital_study_guide' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Standards Tracking</a></li>
+                            <li><a href="#" class="card-link">Student Performance</a></li>
+                            <li><a href="#" class="card-link">Standards Tracking</a></li>
     
                     </div>
                     </div>
@@ -378,9 +398,10 @@
                     
                             <button type="button" class="btn btn-link" onclick="showDivDiff()"><i class="fas fa-angle-left"></i> Differentiation:</button>
                             <br>
+                          
                             <div class="progress">
                                 <div
-                                  class="progress-bar bg-success"
+                                  class="progress-bar  bg-success"
                                   role="progressbar"
                                   style="width: {{ lesson_analytics.3 }}%"
                                   aria-valuenow="{{ lesson_analytics.3 }}"
@@ -412,18 +433,18 @@
                                 ></div>
                               </div>
                               <button type="button" class="btn btn-link" onclick="showStanDiff()" ><i class="fas fa-angle-left"></i> Standards Alignment:</button>
-                              <div class="progress">
-                                <div
-                                  class="progress-bar bg-danger"
-                                  role="progressbar"
-                                  style="width: {{ lesson_analytics.3 }}%"
-                                  aria-valuenow="{{ lesson_analytics.3 }}"
-                                  aria-valuemin="0"
-                                  aria-valuemax="100"
-                                ></div>
-                              </div>
-                     
-                         
+                              
+                              
+                                <div class="progress">
+                                    <div
+                                    class="progress-bar bg-danger"
+                                    role="progressbar"
+                                    style="width: {{ lesson_analytics.3 }}%"
+                                    aria-valuenow="{{ lesson_analytics.3 }}"
+                                    aria-valuemin="0"
+                                    aria-valuemax="100"
+                                    ></div>
+                                </div>
                         </div>
                     </div>
                 </div>
@@ -440,11 +461,11 @@
                         <div class="card-body">
                          
                             {% for item in not_selected_activities %}
-                           {% ifchanged item.template_id %}
-                           <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=10 item_id=item.id action=0 %}#heading" >
-                            {{ item.lesson_text }}</a>
-                            <hr>
-                           {% endifchanged %}
+                                {% ifchanged item.template_id %}
+                                <a class="selectactivity" id="like{{item.id}}" href="#" data-actid="{{ item.id }}" data-lessid="{{ lesson_match.id }}">
+                                    {{ item.lesson_text }}</a>
+                                    <hr>
+                                {% endifchanged %}
                             {% endfor %}
     
                         </div>
@@ -464,41 +485,28 @@
                         </div>
                         <div class="card-body">
                         <div class="tagcloud">
-                            {% for topic in topic_lists_selected %}
-                            {% ifchanged topic.item %}
-                            <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=6 item_id=topic.id action=0 %}" data-toggle="tooltip" data-placement="top" title="{{ topic }} - {% for item in topic.description.all%}{{item }} ; {% endfor %}" class="btn btn-sm btn-outline-success">{{ topic.item }}</a>
-                          
-                            {% endifchanged %}
-                            {% endfor %}
-                            {% if topic_match %}
-                                {% for line in topic_lists_matched %}
-                                    {% if line.item %}
-                                    {% ifchanged line.item %}
-                                    <a class="btn btn-sm btn-outline-secondary selecttopic" id="like{{line.id}}" href="#" data-topid="{{ line.id }}" data-lessid="{{ lesson_match.id }}" data-toggle="tooltip" data-placement="top" title="{{ line.item }} - {% for item in line.description.all%}{{item }} ; {% endfor %}" >{{ line.item }}</a>
-                                    {% endifchanged %}
-                                    {% endif %}
-                                {% endfor %}
-                            {% else %}
-                                {% for topic in topic_lists %}
-                                {% ifchanged topic.0.id %}
-                            
-                                <a href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=6 item_id=topic.0.id action=1 %}" class="btn btn-sm btn-outline-secondary" data-toggle="tooltip" data-placement="top" title="{{ topic.0 }} - {% for item in topic.0.description.all%}{{item }} ; {% endfor %}" >{{ topic.0.item }}</a>
+                            {% for topic in lesson_topics %}
+                                {% ifchanged topic.item %}
+                                <a href="#" data-toggle="tooltip" data-placement="top" title="{{ topic }} - {% for item in topic.description.all%}{{item }} ; {% endfor %}" class="btn btn-sm btn-outline-success">{{ topic.item }}</a>
                             
                                 {% endifchanged %}
-                                {% endfor %}
-                            {% endif %}
+                            {% endfor %}
+                           
+                           {% if matched_activities_topics %}
+                           {% for line in matched_activities_topics %}
+                               {% if line.item %}
+                               
+                               {% ifchanged line.item %}
+
+                               <a class="btn btn-sm btn-outline-secondary selecttopic" id="like{{line.id}}" href="#" data-topid="{{ line.id }}" data-lessid="{{ lesson_match.id }}" data-toggle="tooltip" data-placement="top" title="{{ line.item }} - {% for item in line.description.all%}{{item }} ; {% endfor %}" >{{ line.item }}</a>
+                               {% endifchanged %}
+                               {% endif %}
+                           {% endfor %}
+                      {% endif %}
+
+                           
     
-                            {% if match_topic_text %}
-                                {% for section in match_topic_text %}
-                                    {% for line in section %}
-                                        {% if line.item %}
-                                        {% ifchanged line.id %}
-                                        <a class="btn btn-sm btn-outline-secondary selecttopic" id="like{{line.id}}" href="{% url 'select_related' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id type_id=6 item_id=line.id action=1 %}" data-topid="{{ line.id }}" data-lessid="{{ lesson_match.id }}" data-toggle="tooltip" data-placement="top" title="{{ line.item }} - {% for item in line.description.all%}{{item }} ; {% endfor %}" >{{ line.item }}</a>
-                                        {% endifchanged %}
-                                        {% endif %}
-                                    {% endfor %}
-                                {% endfor %}
-                            {% endif %}
+                      
                         </div>
                     </div>
                     </div>
@@ -536,57 +544,382 @@
 
 
                 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 
-  <script>
-    tinymce.init({
-        selector: 'textarea#permanent-pen',
-        plugins: 'permanentpen print',
-        contextmenu: 'configurepermanentpen',
-        toolbar: 'permanentpen print',
-        menubar: 'file edit view format table tools help',
-        menu: {
-            format: {
-            title: 'Format',
-            items: 'configurepermanentpen | bold italic underline strikethrough ' +
-                'superscript subscript codeformat | formats blockformats fontformats ' +
-                'fontsizes align | forecolor backcolor | removeformat'
+
+<!--| highcharts |-->
+<script>
+    Highcharts.chart('container-2', {
+        chart: {
+            
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+        },
+        title: {
+            text: 'Learning Styles:'
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        accessibility: {
+            point: {
+                valueSuffix: '%'
             }
         },
-        permanentpen_properties: {
-            fontname: 'arial,helvetica,sans-serif',
-            forecolor: '#E74C3C',
-            fontsize: '12pt',
-            hilitecolor: '',
-            bold: true,
-            italic: false,
-            strikethrough: false,
-            underline: false
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>'
+                }
+            }
         },
-        height: 1300,
-        content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+        series: [{
+            name: 'Learning Styles',
+            colorByPoint: true,
+            data: [{
+                name: 'Logical',
+                y: {{ lesson_analytics.4.Logical|safe }}
+            }, {
+                name: 'Verbal',
+                y: {{ lesson_analytics.4.Verbal|safe }}
+            }, {
+                name: 'Musical',
+                y: {{ lesson_analytics.4.Musical|safe }}
+            }, {
+                name: 'Visual',
+                y: {{ lesson_analytics.4.Visual|safe }}
+            }, {
+                name: 'Movement',
+                y: {{ lesson_analytics.4.Movement|safe }}
+            }]
+        }]
+    });
+</script>
+
+<!----| Select Interval Save TinyMce Text |-->
+<script type="text/javascript">
+    setInterval(function(){
+   
+    var overview = document.getElementById('demo-dfree');
+    htmlContent = overview.innerHTML,
+    $.ajax(
+    {
+        type:"GET",
+        url: "/save-text/{{ lesson_match.id }}",
+        data:{
+            overview: htmlContent,
+        },
+        success: function (response) {
+        $('#time-update').empty();
+        $("#time-update").append('<h6> Last Saved: ' + response.data + '</h6>');
+        }
+
+    })
+}, 4000);
+</script> 
+<!----| Select TinyMce Text |-->
+<script type="text/javascript">
+    $('.savetext').click(function(){
+   
+    var overview = document.getElementById('demo-dfree');
+    htmlContent = overview.innerHTML,
+    $.ajax({
+        type:"GET",
+        url: "/save-text/{{ lesson_match.id }}",
+        data:{
+            overview: htmlContent,
+        },
+        success: function (response) {
+        $('#time-update').empty();
+        $("#time-update").append('<h6> Last Saved: ' + response.data + '</h6>');
+        }
+
+    })
+});
+</script> 
+<!----| Select Activity |-->
+<script type="text/javascript">
+    $('.selectactivity').click(function(){
+    var elm = $(this);
+    var id = elm.data('id');
+    var actpid;
+    actid = $(this).attr("data-actid");
+    var lessid;
+    lessid = $(this).attr("data-lessid");
+    $.ajax(
+    {
+        type:"GET",
+        url: "/sel-activity",
+        data:{
+                activity_id: actid,
+                lesson_id: lessid
+        },
+        success: function(response) {
+        elm.remove();
+        $("#activity-div").append("<li id='activity'>" + response.text + "</li>");
+    }
+
+})
+});
+
+</script> 
+
+<!----| Select Standard |-->
+<script type="text/javascript">
+    $('.sel-standard').click(function(){
+    var elm = $(this);
+    var id = elm.data('id');
+    var standid;
+    standid = $(this).attr("data-standid");
+
+    $.ajax(
+    {
+        type:"GET",
+        url: "/sel-standard/{{ lesson_match.id }}/",
+        data:{
+                stand_id: standid,
+        },
+        success: function(response) {
+        document.getElementById('standard-list').style.display = "none";
+        $("#standard").append(
+            "<li id='standard-item'>"  + response.data + "</li>"
+         
+        );
+         
+    }
+
+    })
+});
+</script> 
+
+<!----| Select Topic |-->
+<script type="text/javascript">
+        $('.selecttopic').click(function(){
+        var elm = $(this);
+        var id = elm.data('id');
+        var topid;
+        topid = $(this).attr("data-topid");
+        var lessid;
+        lessid = $(this).attr("data-lessid");
+        $.ajax(
+        {
+            type:"GET",
+            url: "/sel-topic",
+            data:{
+                    topic_id: topid,
+                    lesson_id: lessid
+            },
+            success: function(response) {
+            elm.remove();
+            $("#key-term-section").append(
+                "<tr><th scope='row'>"  + response.term + "</th><td><li id='description'>" + response.description + "</li></td></tr>"
+                
+            );
+                
+        }
+
+        })
+    });
+</script> 
+
+<!----| Update Blooms |-->
+<script type="text/javascript">
+    setInterval(function(){
+    var overview = document.getElementById('blooms-summ');
+    htmlContent = overview.innerHTML,
+    $.ajax(
+    {
+        type:"GET",
+        url: "/get-blooms/{{ lesson_match.id}}",
+        
+        success: function(response) {
+        $("#blooms-summ").empty(); 
+        $.each(response.data, function (i, item) {
+        
+    	$("#blooms-summ").append(
+
+            '<h6>' + item.name + '</h6> \
+            <div class="progress"> \
+                <div \
+                    class="progress-bar ' + item.color + 
+                    ' role="progressbar" \
+                    style="width: ' + item.count + '%" \
+                    aria-valuenow="' + item.count + '" \
+                    aria-valuemin="0" \
+                    aria-valuemax="100" \
+                ></div> \
+                </div>');
+        
         });
-  </script>
+    }
+
+    })
+}, 4000);
+</script> 
+
+<!----| Update MI |-->
+<script type="text/javascript">
+    setInterval(function(){
+    var overview = document.getElementById('mi-summ');
+    htmlContent = overview.innerHTML,
+    $.ajax(
+    {
+        type:"GET",
+        url: "/get-mi/{{ lesson_match.id}}",
+        
+        success: function(response) {
+        $("#mi-summ").empty(); 
+        $.each(response.data, function (i, item) {
+        
+    	$("#mi-summ").append(
+
+            '<h6>' + item.name + '</h6> \
+            <div class="progress"> \
+                <div \
+                    class="progress-bar ' + item.color + 
+                    ' role="progressbar" \
+                    style="width: ' + item.count + '%" \
+                    aria-valuenow="' + item.count + '" \
+                    aria-valuemin="0" \
+                    aria-valuemax="100" \
+                ></div> \
+                </div>');
+        
+        });
+    }
+
+    })
+}, 4005);
+</script> 
+
+<!----| Update Retention |-->
+<script type="text/javascript">
+    setInterval(function(){
+    var overview = document.getElementById('retention-rate');
+    htmlContent = overview.innerHTML,
+    $.ajax(
+    {
+        type:"GET",
+        url: "/get-retention/{{ lesson_match.id}}",
+        
+        success: function(response) {
+        $("#retention-rate").empty(); 
+        
+    	$("#retention-rate").append(
+            '<div class="card-body"> \
+            <div class="row d-block d-xl-flex align-items-center"> \
+                <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center"> \
+                    <div class="icon icon-shape icon-lg icon-shape-success rounded mr-4 mr-sm-0">'
+                        + response.data.avg + '%</div> \
+                    <div class="d-sm-none"> \
+                        <h2 class="h5">Retention Rate</h2> \
+                    </div> \
+                </div> \
+                <div class="col-12 col-xl-7 px-xl-0"> \
+                    <div class="d-none d-sm-block"> \
+                        <h2 class="h5">Retention Rate</h2> \
+                    </div> \
+                    <p>' + response.data.text + 
+                '</p></div> \
+            </div> \
+        </div> \
+        <div class="progress" style="height: 20px;"> \
+            <div class="progress-bar bg-danger" role="progressbar" style="width: '
+            + response.data.passive + '%" aria-valuenow="'
+            + response.data.passive + '" aria-valuemin="0" aria-valuemax="100">Passive</div> \
+            <div class="progress-bar bg-warning" role="progressbar" style="width: '
+            + response.data.middle + '%" aria-valuenow="'
+            + response.data.middle + '" aria-valuemin="0" aria-valuemax="100"></div> \
+            <div class="progress-bar bg-success" role="progressbar" style="width:'
+            + response.data.active + '%" aria-valuenow="' 
+            + response.data.active + '" aria-valuemin="0" aria-valuemax="100">Active</div> \
+        </div>');
+        
+        
+    }
+
+    })
+}, 4003);
+</script>
+<!----| TinyMce Scripts |-->
+ <script>
+
+var dfreeHeaderConfig = {
+  selector: '.dfree-header',
+  menubar: false,
+  inline: true,
+  toolbar: false,
+  plugins: [ 'quickbars', 'print' ],
+  quickbars_insert_toolbar: 'undo redo',
+  quickbars_selection_toolbar: 'italic underline',
+};
+
+var dfreeBodyConfig = {
+  selector: '.dfree-body',
+  menubar: false,
+  inline: true,
+  plugins: [
+    'autolink',
+    'codesample',
+    'link',
+    'lists',
+    'media',
+    'powerpaste',
+    'table',
+    'image',
+    'quickbars',
+    'codesample',
+    'help',
+    'print'
+  ],
+  toolbar: false,
+  quickbars_insert_toolbar: 'quicktable image media codesample',
+  quickbars_selection_toolbar: 'bold italic underline | formatselect | blockquote quicklink',
+  contextmenu: 'undo redo | inserttable | cell row column deletetable | help print',
+  powerpaste_word_import: 'clean',
+  powerpaste_html_import: 'clean',
+};
+
+tinymce.init(dfreeHeaderConfig);
+tinymce.init(dfreeBodyConfig);
+tinymce.init({
+  selector: '.dfree-body',  // change this value according to your HTML
+  plugins: 'save print',
+  toolbar: 'save print'
+});
+ </script>
+ <!----| Show Divs |-->
+
   <script>
     function showDivDiff() {
         document.getElementById('diffDiv').style.display = "block";
+        document.getElementById('diffDiv').scrollIntoView();
     }
     function hideDivDiff() {
         document.getElementById('diffDiv').style.display = "none";
     }
     function showDepthDiff() {
         document.getElementById('depthDiv').style.display = "block";
+        document.getElementById('depthDiv').scrollIntoView();
     }
     function hideDepthDiff() {
         document.getElementById('depthDiv').style.display = "none";
     }
    function showRateDiff() {
         document.getElementById('rateDiv').style.display = "block";
+        document.getElementById('rateDiv').scrollIntoView();
    }
    function hideRateDiff() {
         document.getElementById('rateDiv').style.display = "none";
     }
    function showStanDiff() {
         document.getElementById('stanDiv').style.display = "block";
+        document.getElementById('stanDiv').scrollIntoView();
     }
     function hideStanDiff() {
         document.getElementById('stanDiv').style.display = "none";

@@ -27,7 +27,7 @@ admin.site.register(worksheetFull)
 admin.site.register(textBookTitle)
 admin.site.register(LearningDemonstrationTemplate)
 admin.site.register(LearningDemonstration)
-
+admin.site.register(matchedTopics)
 admin.site.register(standardSet)
 admin.site.register(gradeLevel)
 admin.site.register(academicYear)
@@ -60,9 +60,9 @@ admin.site.register(mainQuestion)
 admin.site.register(topicDescription)
 admin.site.register(selectedActivity)
 admin.site.register(teacherQuestionnaire)
-
-
-
-
-
+admin.site.register(userNickname)
+admin.site.register(worksheetTheme)
+admin.site.register(userImageUpload)
+admin.site.register(studentQuestionAnswer)
+admin.site.register(studentWorksheetAnswerFull)
 

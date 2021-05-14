@@ -94,28 +94,43 @@
                       <hr>
                       <h4> <center>2. Identify Demonstration of Knowledge or Skill:</center></h4>
                       <p style="color:orange">What should the students do at  the end of the week?</p>
-                        {% for line in selected_demos %}
-                      <h6><i class="fas fa-check"></i>{{ line.content }}</h6>
-                      {% endfor %}
-                      <hr>
-                      {% for line in recomended_demos %}
-                      <li><a href="{% url 'select_standards' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id select_all='False' topic_id=forloop.counter0 %}#heading" >{{ line }}</a></li>
-                      {% endfor %}
-                      <br>
-                      <form  method="POST"> 
-                        {% csrf_token %} 
-                        <div class='row'>
-                            <div class='col-9'>
-                                <textarea class="form-control border border-light-gray mb-4" id="content" name='content' placeholder="Students will be able to...." rows="1" required></textarea>
-                            </div>
-                            <div class='col-3'>
-                                <button type="submit" class="btn  btn-secondary btn-block">Add</button>
-                            </div>
-                         
+                      <div class='row'>
+                          <div class='col-lg-6'>
+                            {% for line in selected_demos %}
+                            <h6><i class="fas fa-check"></i>{{ line.content }}</h6>
+                            {% endfor %}
+                          </div>
+                          <div class='col-lg-6'>
+                            {% for sel in selected_demos %}
+                                {% for line in recomended_demos %} 
+                                    {% ifchanged line %}
+                                        {% if line in sel.content %}
+                                        {% else %}
+                                        <li><a href="{% url 'select_standards' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id select_all='False' topic_id=forloop.counter0 %}#heading" >{{ line }}</a></li>
+                                        {% endif %}
+                                    {% endifchanged %}
+                                {% endfor %}
+                            {% endfor %}
+                            <br>
+                            <form  method="POST"> 
+                              {% csrf_token %} 
+                              <div class='row'>
+                                  <div class='col-9'>
+                                      <textarea class="form-control border border-light-gray mb-4" id="content" name='content' placeholder="Students will be able to...." rows="1" required></textarea>
+                                  </div>
+                                  <div class='col-3'>
+                                      <button type="submit" class="btn  btn-secondary btn-block">Add</button>
+                                  </div>
+                               
+                              </div>
+                          
+                             
+                          </form> 
                         </div>
-                    
-                       
-                    </form>
+                      </div>
+                        
+                      
+                     
                         
          
             <br>

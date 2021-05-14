@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'planit',
     'storages',
     'phonenumber_field',
+    'django_material_icons',
     'tinymce',
 
 

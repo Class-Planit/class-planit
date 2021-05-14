@@ -1,0 +1,248 @@
+
+ {% load static %}
+ <!DOCTYPE html>
+ <html>
+ <head>
+          <!-- Primary Meta Tags -->
+          <title>Class Planit</title>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+          <meta name="title" content="Helping teachers create, share, and assess more engaging lessons">
+          <meta name="author" content="Class Planit">
+          <meta name="description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better lessons in minutes.">
+          <meta name="keywords" content="lesson plans, teacher pay teachers, worksheets" />
+          <link rel="canonical" href="www.classplanit.co">
+          
+          <!-- Open Graph / Facebook -->
+          <meta property="og:type" content="website">
+          <meta property="og:url" content="www.classplanit.co">
+          <meta property="og:title" content="Class Planit - helping teachers create, share, and assess more engaging lessons.">
+          <meta property="og:description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better lessons in minutes.">
+          <meta property="og:image" content="www.classplanit.co">
+          
+          <!-- Twitter -->
+          <meta property="twitter:card" content="summary_large_image">
+          <meta property="twitter:url" content="www.classplanit.co">
+          <meta property="twitter:title" content="Class Planit - helping teachers create, share, and assess more engaging lessons.">
+          <meta property="twitter:description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better lessons in minutes.">
+          <meta property="twitter:image" content="{% static 'images/dashboard/twitter_image.png' %}">
+          
+          <!-- Favicon -->
+          <link rel="apple-touch-icon" sizes="120x120" href="{% static 'images/dashboard/icon_120.png' %}">
+          <link rel="icon" type="image/png" sizes="32x32" href="{% static 'mages/icon_40.png' %}">
+          <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/dashboard/icon_40.png' %}">
+          
+          <link rel="mask-icon" href="{% static 'images/dashboard/icon.svg' %}" color="#ffffff">
+          <meta name="msapplication-TileColor" content="#ffffff">
+          <meta name="theme-color" content="#ffffff">
+          
+          <!-- Fontawesome -->
+          <link type="text/css" href="{% static 'vendor/dashboard/fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+          
+          <!-- Prism -->
+          <link type="text/css" href="{% static 'vendor/dashboard/prismjs/themes/prism.css' %}" rel="stylesheet">
+          
+          <!-- VectorMap -->
+          <link rel="stylesheet" href="{% static 'vendor/dashboard/jqvmap/dist/jqvmap.min.css' %}">
+          
+          <!-- Rocket CSS -->
+          <link type="text/css" href="{% static 'css/dashboard/rocket.css' %}" rel="stylesheet">
+      
+   <script src="https://cdn.tiny.cloud/1/0ak6ftt9ng9va9e98pl0iwxwwh0rb1tipwsg8it4mjmcbkjb/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+ <style>
+     a.hovertest:hover
+ {
+ text-decoration:underline;
+ }
+ </style>
+ <style>
+ .carousel .item {
+     padding: @padding (@padding * 12) (@padding * 4) (@padding * 12);
+     font-size: (@font-size * 1.5);
+ }
+ 
+ @media(max-width: 767px) {
+     .carousel .item {	
+         font-size: @base-font-size;
+         padding:   @padding (@padding * 3) (@padding * 4) (@padding * 3);
+     }
+ }
+ </style>
+ </head>
+ <body>
+     <div class="preloader bg-soft flex-column justify-content-center align-items-center">
+         <img class="loader-element" src="{% static 'images/dashboard/circle_logo.svg' %}" height="50" alt="Rocket logo">
+     </div>
+     
+             <nav class="navbar navbar-dark navbar-theme-primary col-12 d-md-none">
+         <a class="navbar-brand mr-lg-5" href="../../index.html">
+             <img class="navbar-brand-dark" src="../../assets/img/brand/light.svg" alt="Pixel logo" /> <img class="navbar-brand-light" src="../../assets/img/brand/dark.svg" alt="Pixel Logo Dark" />
+         </a>
+         <div class="d-flex align-items-center">
+             <button class="navbar-toggler d-md-none collapsed" type="button" data-toggle="collapse" data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+               <span class="navbar-toggler-icon"></span>
+             </button>
+         </div>
+     </nav>
+  
+             <div class="container-fluid bg-soft">
+                 <div class="row">
+                     <div class="col-12">
+     
+     <div class="bg-white">
+         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+             <div class="btn-toolbar">
+                 
+             </div>
+             <div class="btn-group mr-2">
+                 
+                 {% if user_profile %}
+                 <button data-toggle="modal" data-target="#exampleModal" type="button" class="btn btn-sm btn-outline-secondary">My Profile</button>
+                 {% else %}
+                 <button data-toggle="modal" data-target="#exampleModal" type="button" class="btn btn-sm btn-outline-secondary">Login</button>
+                 {% endif %}
+     
+             </div>
+         </div>
+         <div class="row">
+        
+             <div class="col-lg-9">
+ 
+              
+             <div class='container'>
+             <div class="row justify-content-between  align-items-center bg-white ">
+                 <div class="col-12">
+                  <h5>Main</h5>
+                 </div>
+                 
+             </div>
+             </div>  
+                        
+   
+             </div>
+ 
+             <div class="col-lg-3">
+                 <div class="col-12 px-0 mb-4">
+                     <div class="card border-light shadow-sm">
+                        
+                         <div class="card-body">
+                             <h2 class="h5">Assignments:</h2>
+   
+                             <li><a href="#" class="card-link">Worksheet</a></li>
+ 
+                         </div>
+                     </div>
+                    
+                 </div>
+                 <div class="col-12 px-0 mb-4">
+                     <div class="card border-light shadow-sm">
+ 
+                             <div class="card border-light shadow-sm">
+                        
+                                 <div class="card-body">
+                                     <h2 class="h5">Study Guides:</h2>
+           
+                                     <li><a href="#" class="card-link">Flashcards</a></li>
+                                     <li><a href="#" class="card-link">Spelling Practice</a></li>
+             
+                                 </div>
+                             </div>
+ 
+                     </div>
+                 </div>
+                
+              
+             </div>
+         </div>
+    
+       <br>
+ 
+     </div>
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+     <div class="modal-dialog" role="document">
+     <div class="modal-content">
+         <div class="modal-header">
+         <h5 class="modal-title" id="exampleModalLabel">Login</h5>
+         
+         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+             <span aria-hidden="true">&times;</span>
+         </button>
+         </div>
+         <div class="modal-body">
+             <button data-toggle="modal" data-target="#exampleModal2" type="button" class="btn btn-sm btn-outline-secondary">Sign Up</button>
+         </div>
+         <div class="modal-footer">
+         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+         <button type="button" class="btn btn-primary">Save changes</button>
+         </div>
+     </div>
+     </div>
+ </div>
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+     <div class="modal-dialog" role="document">
+     <div class="modal-content">
+         <div class="modal-header">
+         <h5 class="modal-title" id="exampleModalLabel">Sign Up</h5>
+         
+         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+             <span aria-hidden="true">&times;</span>
+         </button>
+         </div>
+         <div class="modal-body">
+             <form action="{% url 'student_registration' lesson_id='None' worksheet_id='None' %}" method="POST" enctype="multipart/form-data">
+                 {% csrf_token %}
+                 {% for field in form %}
+                 {% for error in field.errors %}
+                       <p style="color: red">{{ error }}</p>
+                 {% endfor %}
+ 
+                 <p>{{ field.label_tag }}<br>
+                 {{ field }}</p>
+                     <hr>
+                     
+                   
+                 {% endfor %}
+                 
+                 <button type="submit">Sign Up</button>
+               </form>
+             </div>
+     </div>
+     </div>
+ </div>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+ 
+
+  <script src="{% static 'base/js/tinymce/tinymce.min.js' %}"></script>
+   <script type="text/javascript" src="{% static 'base/js/tinymce/custom.js' %}" ></script>
+   <!-- Core -->
+   <script src="{% static 'vendor/dashboard/jquery/dist/jquery.min.js' %}"></script>
+   <script src="{% static 'vendor/dashboard/popper.js/dist/umd/popper.min.js' %}"></script>
+   <script src="{% static 'vendor/dashboard/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+   <script src="{% static 'vendor/dashboard/headroom.js/dist/headroom.min.js' %}"></script>
+   
+   <!-- Vendor JS -->
+   <script src="{% static 'vendor/dashboard/countup.js/dist/countUp.min.js' %}"></script>
+   <script src="{% static 'vendor/dashboard/jquery-countdown/dist/jquery.countdown.min.js' %}"></script>
+   <script src="{% static 'vendor/dashboard/smooth-scroll/dist/smooth-scroll.polyfills.min.js' %}"></script>
+   <script src="{% static 'vendor/dashboard/prismjs/prism.js' %}"></script>
+   
+   <!-- Chartist -->
+   <script src="{% static 'vendor/dashboard/chartist/dist/chartist.min.js' %}"></script>
+   <script src="{% static 'vendor/dashboard/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js' %}"></script>
+   
+   <!-- Vector Maps -->
+   <script src="{% static 'vendor/dashboard/jqvmap/dist/jquery.vmap.min.js' %}"></script>
+   <script src="{% static 'vendor/dashboard/jqvmap/dist/maps/jquery.vmap.world.js' %}"></script>
+   
+   <!-- Rocket JS -->
+   <script src="{% static 'js/dashboard/rocket.js' %}"></script>
+       <!-- NOTICE: You can use the _analytics.html partial to include production code specific code & trackers -->
+   
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+   <script src="{% static 'forms_ajaxified/js/forms_ajaxified.js' %}"></script>
+ 
+ </body>
+ </html>

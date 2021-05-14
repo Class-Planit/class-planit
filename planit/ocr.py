@@ -27,7 +27,7 @@ from pdfminer.pdfdocument import PDFDocument
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.pdfpage import PDFPage
 from pdfminer.pdfparser import PDFParser
-from .textbook_matching import *
+
 
 def get_question_text_ocr(textlines):
     text_list_join = ''.join([str(i) for i in textlines])
