@@ -57,7 +57,7 @@
                                             <div class="card-body">
                                             <h5 class="card-title">Study Guide</h5>
                                             
-                                            <a href="{% url 'digital_study_guide' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">View</a>
+                                            <a href="{% url 'digital_study_guide' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">View</a>
                                             
                                             </div>
                                         </div>
@@ -68,7 +68,7 @@
                                             <div class="card-body">
                                             <h5 class="card-title">Worksheet:</h5>
                                             
-                                            <a href="{% url 'digital_worksheet' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">View</a>
+                                            <a href="{% url 'digital_worksheet' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">View</a>
                                             
                                             </div>
                                         </div>
@@ -78,7 +78,7 @@
                                             <div class="card-body">
                                             <h5 class="card-title">Practice Test:</h5>
                                             
-                                            <a href="{% url 'practice_test' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">View</a>
+                                            <a href="{% url 'practice_test' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">View</a>
                                             
                                             </div>
                                         </div>
@@ -87,7 +87,7 @@
                                 <h4> Add Information to Build a Worksheet:</h4>
                                 <p> Upload a Pdf or Copy and Paste text of questions. We will pull this information to create a digital worksheet for your students.</p>
                                   <hr>
-                                  <a href="{% url 'lesson_pdf_upload' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Upload Pdf</a>
+                                  <a href="{% url 'lesson_pdf_upload' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 %}#heading" class="card-link">Upload Pdf</a>
                                
                                   <div class="container bg-white">
                                

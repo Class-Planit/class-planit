@@ -106,7 +106,7 @@
                                     {% ifchanged line %}
                                         {% if line in sel.content %}
                                         {% else %}
-                                        <li><a href="{% url 'select_standards' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id select_all='False' topic_id=forloop.counter0 %}#heading" >{{ line }}</a></li>
+                                        <li><a href="{% url 'select_standards' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id select_all='False' topic_id=forloop.counter0 %}#heading" >{{ line }}</a></li>
                                         {% endif %}
                                     {% endifchanged %}
                                 {% endfor %}
@@ -141,7 +141,7 @@
                         
                     </div>
                     <div class="col-lg-5">
-                        <a href="{% url 'activity_builder' user_id=1 class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id page=0 %}#heading" class="btn btn-success btn-block btn-has-icon" >Next: Lesson Builder </a>
+                        <a href="{% url 'activity_builder' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=lesson_match.subject_id page=0 %}#heading" class="btn btn-success btn-block btn-has-icon" >Next: Lesson Builder </a>
                            
                                  
                     </div>

@@ -401,7 +401,7 @@ def SelectStandards(request, lesson_id):
 
 def GetBloomsAnalytics(request, lesson_id):
     if request.method == 'GET':
-        user_profile = User.objects.filter(id=1).first()
+        user_profile = User.objects.filter(id=request.user.id).first()
         get_bl_data = label_blooms_activities_analytics(lesson_id)
         get_mi_data = label_mi_activities_analytics(lesson_id)
         context = {"data": get_bl_data, "message": "your message"}
@@ -411,7 +411,7 @@ def GetBloomsAnalytics(request, lesson_id):
 
 def GetMIAnalytics(request, lesson_id):
     if request.method == 'GET':
-        user_profile = User.objects.filter(id=1).first()
+        user_profile = User.objects.filter(id=request.user.id).first()
         get_mi_data = label_mi_activities_analytics(lesson_id)
         context = {"data": get_mi_data, "message": "your message"}
         return JsonResponse(context)
@@ -420,7 +420,7 @@ def GetMIAnalytics(request, lesson_id):
 
 def GetRetentionAnalytics(request, lesson_id):
     if request.method == 'GET':
-        user_profile = User.objects.filter(id=1).first()
+        user_profile = User.objects.filter(id=request.user.id).first()
         get_retention_data = retention_activities_analytics(lesson_id)
         context = {"data": get_retention_data, "message": "your message"}
         print(context)
@@ -430,7 +430,7 @@ def GetRetentionAnalytics(request, lesson_id):
 
 def view_name(request):
     if request.method == 'GET':
-        user_profile = User.objects.filter(id=1).first()
+        user_profile = User.objects.filter(id=request.user.id).first()
         html = [{
                 "Id": 49,
                 "SupplierName": "Supplier 1"
