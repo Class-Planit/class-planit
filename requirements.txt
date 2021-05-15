@@ -183,7 +183,7 @@ smart-open==3.0.0
 sortedcontainers==2.3.0
 soupsieve==2.1
 spacy==3.0.6
-spacy-legacy==2.3.0
+spacy-legacy
 sqlparse==0.4.1
 srsly==2.4.1
 starkbank-ecdsa==1.1.0
