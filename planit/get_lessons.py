@@ -440,12 +440,16 @@ def get_lesson_sections(text_overview, class_id, lesson_id, user_id):
         #get the list of terms and parse them
         term_sets = []
         for row in soup.findAll('table')[0].tbody.findAll('tr'):
-            final = []
-            for item in row:
-                result = item.text
-                result = result.replace('\xa0', '')
-                final.append(result)
-            term_sets.append(final)
+            term = row.find('th').contents
+            if term[0]:
+                description = row.find('td').contents
+                for item in description:
+                    result = item.get_text(', ', strip=True)
+                    result = result.split(", ")
+                    for item in result:
+                        if item:
+                            result = term[0], item
+                            term_sets.append(result)
 
         #build new terms with new descriptions 
         key_term_list = list(term_sets)

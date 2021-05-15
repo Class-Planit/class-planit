@@ -241,7 +241,8 @@ def CreateObjective(request, user_id=None, week_of=None):
         for classroom_m in user_classrooms:
             s_match = classroom_m.subjects.all()
             subject_match = standardSubjects.objects.filter(id__in=s_match)
-            subjects.append(subject_match)
+            if subject_match not in subjects:
+                subjects.append(subject_match)
 
     else:
         subjects = []
@@ -557,16 +558,30 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
     subject_match_full = standardSubjects.objects.get(id=subject_match) 
 
 
-    worksheet_title = '%s: %s for week of %s' % (user_profile, classroom_profile, current_week) 
-    get_worksheet, created = worksheetFull.objects.get_or_create(created_by=user_profile, title=worksheet_title)
+    worksheet_title = '%s: %s %s for week of %s' % (user_profile, classroom_profile, subject_match_full, current_week) 
+    get_worksheet, created = worksheetFull.objects.get_or_create(created_by=user_profile, title=worksheet_title, lesson_overview=lesson_match)
     question_matches = get_worksheet.questions.all()
 
-    check_lesson_questions = topicQuestion.objects.filter(lesson_overview=lesson_match)
+    check_lesson_questions = topicQuestion.objects.filter(id__in=question_matches)
     
     if check_lesson_questions:
         all_matched_questions = topicQuestion.objects.filter(lesson_overview=lesson_match)
+        matched_questions = topicQuestion.objects.filter(id__in=question_matches)
     else:
         text_questions_one = get_question_text(lesson_id, user_profile)
+        matched_questions = topicQuestion.objects.filter(id__in=text_questions_one).order_by('?')[:10]
+        line_match = []
+        for quest in matched_questions:
+            l_text = quest.linked_text
+            l_topic = quest.linked_topic
+            if l_text:
+                result = l_text
+            else:
+                result = l_topic
+
+            if result not in line_match:
+                line_match.append(result)
+                get_worksheet.questions.add(quest)
         all_matched_questions = topicQuestion.objects.filter(id__in=text_questions_one)
     
     
@@ -590,23 +605,6 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
         else:
             unknown.append(quest)
 
-    
-    if question_matches:
-        matched_questions = topicQuestion.objects.filter(id__in=question_matches)
-    else:
-        matched_questions = topicQuestion.objects.filter(id__in=text_questions_one).order_by('?')[:10]
-        line_match = []
-        for quest in matched_questions:
-            l_text = quest.linked_text
-            l_topic = quest.linked_topic
-            if l_text:
-                result = l_text
-            else:
-                result = l_topic
-
-            if result not in line_match:
-                line_match.append(result)
-                get_worksheet.questions.add(quest)
 
     if 'None' in question_id:
         question_match = current_question = None
@@ -615,7 +613,7 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
     else:
         q = int(question_id)
         next_q = q + 1
-        question_match = current_question = question_matches[q]
+        question_match = current_question = matched_questions[q]
     
 
     if 'False' in act_id:

@@ -47,16 +47,13 @@ lancaster=LancasterStemmer()
 from textblob import TextBlob
 wikipedia.set_rate_limiting(True)
 engine = inflect.engine()
-import spacy
+import math
 import pyinflect
 
 import random
 
-import pytextrank
-nlp = spacy.load('en_core_web_sm')
 
-nlp.add_pipe("textrank", config={ "stopwords": { "word": ["NOUN"] } })
-
+import spacy
 
 stop_words = ['i', "'", "'" '!', '.', ':', ',', '[', ']', '(', ')', '?', "'see", "see", 'x', '...',  'student', 'learn', 'objective', 'students', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', "you're", "you've", "you'll", "you'd", 'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', "she's", 'her', 'hers', 'herself', 'it', "it's", 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', "that'll", 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', "don't", 'should', "should've", 'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 'aren', "aren't", 'couldn', "couldn't", 'didn', "didn't", 'doesn', "doesn't", 'hadn', "hadn't", 'hasn', "hasn't", 'haven', "haven't", 'isn', "isn't", 'ma', 'mightn', "mightn't", 'mustn', "mustn't", 'needn', "needn't", 'shan', "shan't", 'shouldn', "shouldn't", 'wasn', "wasn't", 'weren', "weren't", 'won', "won't", 'wouldn', "wouldn't"]
 
@@ -119,17 +116,64 @@ def check_matches_topics(item_one, item_two):
         return(False)
 
 
+def tf(word, blob):
+    return blob.words.count(word) / len(blob.words)
+
+def n_containing(word, bloblist):
+    return sum(1 for blob in bloblist if word in blob.words)
+
+def idf(word, bloblist):
+    return math.log(len(bloblist) / (1 + n_containing(word, bloblist)))
+
+def tfidf(word, blob, bloblist):
+    
+    return tf(word, blob) * idf(word, bloblist)
+
+def get_word_topic_banks(result, all_topics):
+    
+    bloblist = []
+    for line in all_topics:
+        desc = line.description
+        blob_result = TextBlob(desc)
+        bloblist.append(blob_result)
+
+    blob = TextBlob(result)
+    sent_tagger = blob.pos_tags
+
+    word_list = []
+    for word in blob.words:
+        score = word, (round(tfidf(word, blob, bloblist), 5) * 1)
+        word_list.append(score)
+
+    final = sent_tagger, word_list
+    return(final)
+
+def get_word_textline_banks(result, all_textlines):
+    
+    bloblist = []
+    for item in all_textlines:
+        desc = item.line_text
+        blob_result = TextBlob(desc)
+        bloblist.append(blob_result)
+
+    blob = TextBlob(result)
+    sent_tagger = blob.pos_tags
+
+    word_list = []
+    for word in blob.words:
+        score = word, (round(tfidf(word, blob, bloblist), 5) * 1)
+        word_list.append(score)
+
+    final = sent_tagger, word_list
+    return(final)
+
 def get_word_banks(result):
     sent = ' '.join(result)
-    doc = nlp(sent)
-    word_list = []
-    for phrase in doc._.phrases:
-        words = phrase.text, phrase.rank, phrase.count
-        word_list.append(words)
+    
 
     sent_blob = TextBlob(sent)
     sent_tagger = sent_blob.pos_tags
-    return(sent_tagger, word_list)
+    return(sent_tagger)
     
 def true_false_statements(descriptions, topic):
     pass
@@ -185,7 +229,7 @@ def get_question_text(lesson_id, user_profile):
         all_topics = topicDescription.objects.filter(id__in=desc_list, is_admin=False, created_by=user_profile)
         for top in all_topics:
             result = term, top.description
-            word_banks = get_word_banks(result)
+            word_banks = get_word_topic_banks(top.description, all_topics)
             final = term, top.description, word_banks, 'topic', item
             descriptions.append(final)
 
@@ -195,7 +239,7 @@ def get_question_text(lesson_id, user_profile):
         textlines = textBookBackground.objects.filter(id__in=text_lines)
         for item in textlines:
             result = term, item.line_text
-            word_banks = get_word_banks(result)
+            word_banks = get_word_textline_banks(item.line_text, textlines)
             final = term, item.line_text, word_banks, 'textbook', item
             descriptions.append(final)
 

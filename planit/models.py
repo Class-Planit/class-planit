@@ -1154,6 +1154,10 @@ class worksheetFull(models.Model):
                                on_delete=models.CASCADE,
                                blank=True,
                                null=True)
+    lesson_overview = models.ForeignKey(lessonObjective,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
     is_admin = models.BooleanField(default=False)
     title	= models.CharField(max_length=200,
                         blank=True,
