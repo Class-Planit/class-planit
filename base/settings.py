@@ -17,6 +17,8 @@ from decouple import config, Csv
 #from whitenoise import WhiteNoise
 from django.core.exceptions import FieldDoesNotExist
 import redis
+import sys
+import dj_database_url
 
 
 r = redis.from_url(config("REDIS_URL"))
