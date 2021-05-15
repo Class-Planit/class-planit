@@ -222,17 +222,18 @@ def get_question_text(lesson_id, user_profile):
 
     topic_matches = class_objectives.objectives_topics.all()
     topics = topicInformation.objects.filter(id__in=topic_matches)
-    
+    print('topics------------------', topics)
     descriptions = []
     for item in topics:
         term = item.item
         desc_list = item.description.all()
+        print('1------------------', desc_list)
         all_topics = topicDescription.objects.filter(id__in=desc_list, is_admin=False, created_by=user_profile)
         for top in all_topics:
             result = term, top.description
             word_banks = get_word_topic_banks(top.description, all_topics)
             final = term, top.description, word_banks, 'topic', item
-            print('1------------------', final)
+            
             descriptions.append(final)
 
     print('2------------------', descriptions)
