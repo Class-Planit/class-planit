@@ -611,9 +611,14 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
         next_q = 1
         question_id = 0
     else:
-        q = int(question_id)
-        next_q = q + 1
-        question_match = current_question = matched_questions[q]
+        if matched_questions:
+            q = int(question_id)
+            next_q = q + 1
+            question_match = current_question = matched_questions[q]
+        else:
+            question_match = current_question = None
+            next_q = 1
+            question_id = 0
     
 
     if 'False' in act_id:
