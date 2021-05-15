@@ -453,6 +453,7 @@ def get_lesson_sections(text_overview, class_id, lesson_id, user_id):
 
         #build new terms with new descriptions 
         key_term_list = list(term_sets)
+        print(key_term_list)
         term_pairs = create_terms(key_term_list, lesson_id, matched_grade, user_id, standard_set)
 
 
