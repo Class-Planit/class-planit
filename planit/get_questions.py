@@ -232,9 +232,10 @@ def get_question_text(lesson_id, user_profile):
             result = term, top.description
             word_banks = get_word_topic_banks(top.description, all_topics)
             final = term, top.description, word_banks, 'topic', item
-            print(final)
+            print('1------------------', final)
             descriptions.append(final)
 
+    print('2------------------', descriptions)
     for topic in topics: 
         term = topic.item
         text_lines = topic.text_index.all()
@@ -249,7 +250,7 @@ def get_question_text(lesson_id, user_profile):
     question_results = []
     all_topic_lines = []
     for topic in descriptions: 
-        print(topic)
+        print('3------------------', topic)
         remove_list = ['illustrations', 'cartoon', 'Figure', 'they', 'those', 'Name ', 'Circle ', 'Education.com ', 'The McGraw-Hill', 'Review ']
         if any(word in topic[1] for word in remove_list):
             pass
