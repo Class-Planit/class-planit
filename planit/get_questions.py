@@ -233,7 +233,6 @@ def get_question_text(lesson_id, user_profile):
             result = term, top.description
             word_banks = get_word_topic_banks(top.description, all_topics)
             final = term, top.description, word_banks, 'topic', item
-            
             descriptions.append(final)
 
     print('2------------------', descriptions)

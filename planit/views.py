@@ -546,7 +546,7 @@ def SelectRelatedInformation(request, user_id=None, class_id=None, subject=None,
 
 def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson_id=None, worksheet_id=None, page=None, act_id=None, question_id=None):
     current_week = date.today().isocalendar()[1] 
-    user_profile = User.objects.filter(id=1).first()
+    user_profile = User.objects.filter(id=user_id).first()
 
     classroom_profile = classroom.objects.get(id=class_id)
     grade_list = classroom_profile.grade_level.all()
