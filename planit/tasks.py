@@ -6,7 +6,7 @@ from .models import *
 from datetime import date
 from datetime import datetime
 from time import sleep 
-
+from .activity_builder import *
 from django.db.models import Avg
 
 

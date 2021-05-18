@@ -283,7 +283,7 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     standards_matches = lesson_match.objectives_standards.all()
 
 
-    standards_topics = activity_builder.delay(teacher_input, class_id, lesson_id, user_id)
+    standards_topics = activity_builder(teacher_input, class_id, lesson_id, user_id)
     
     matched_topics = standards_topics['matched_topics']
     matched_standards = standards_topics['matched_standards']
