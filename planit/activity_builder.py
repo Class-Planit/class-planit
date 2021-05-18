@@ -60,102 +60,8 @@ stop_words = ['i', "'", "'" '!', '.', ':', ',', '[', ']', '(', ')', '?', "'see",
 
 TAG_RE = re.compile(r'<[^>]+>')
 
-
-def get_new_lesson(demo_wording, topic_list,  lesson_id, user_id):
-    user_profile = User.objects.get(id=user_id)
-
-    lesson_match = lessonObjective.objects.get(id=lesson_id)
-    topic_results = []
-    for topic in topic_list:
-        tt_list = topic.topic_type.all()
-        for item in tt_list:
-            topic_results.append(item) 
-
-    lesson_templates = lessonTemplates.objects.filter(components__in=topic_results)
-
-    lesson_list = []
-    for temp in lesson_templates:
-        lesson_wording = temp.wording
-        verb = temp.verb
-        work_product = temp.work_product
-        bloom = temp.bloom
-        mi = temp.mi
-        new_wording = lesson_wording.replace('DEMO_KS', demo_wording)
-     
-        new, created = selectedActivity.objects.get_or_create(created_by=user_profile , template_id=temp.id , lesson_overview = lesson_match, lesson_text = new_wording, verb = verb, work_product = work_product, bloom = bloom, mi = mi, is_admin = False)
-        lesson_list.append(new)
-
-    return(lesson_list)
-
-
-def get_multiple_types_activity(topic_list):
-    word_list = []
-    for topic in topic_list:
-        words = topic.item
-        word_list.append(words)
-
-    words_list_full = ' '.join([str(i) for i in word_list])
-    words_list_full = words_list_full.split()
-
-    wordfreq = []
-    for w in words_list_full:
-        if w not in stop_words:
-            result = w, words_list_full.count(w)
-            wordfreq.append(result)
-
-    wordfreq.sort(key=lambda x: x[1], reverse=True)
-
-    wording_list = []
-    if wordfreq:
-        if wordfreq[0][1] > 1:
-            result = wordfreq[0][0]
-            sent_blob = TextBlob(result)
-            sent_tagger = sent_blob.pos_tags
-
-            for y in sent_tagger:
-                if 'NN' in y[1]:
-                    wording = 'describe the parts of the ' +  y[0]
-                    wording_list.append(wording)
-        
-
-
-    return(wording_list)
-
-    
-
-
-
-def get_plural_types_activity(topic_list):
-    word_list = []
-    for topic in topic_list:
-        words = topic.item
-        word_list.append(words)
-
-    words_list_full = ' '.join([str(i) for i in word_list])
-    words_list_full = words_list_full.split()
-
-    wordfreq = []
-    for w in words_list_full:
-        result = w, words_list_full.count(w)
-        wordfreq.append(result)
-
-    wordfreq.sort(key=lambda x: x[1], reverse=True)
-
-    wording_list = []
-
-    if wordfreq[0][1] > 1:
-        plural = engine.plural(wordfreq[0][0])
-        if plural:
-            wording = 'characterize the types of ' +  plural
-            wording_list.append(wording)
-        
-
-
-    return(wording_list)
-
-
 #Show students examples of <<DEMONSTRATION>>. <<GROUPING>> Instruct students to <<VERB>> by <<DEMONSTRATION>> <<WORK_PRODUCT>>
-def get_lessons(topic_list, demo_ks, lesson_id, user_id):
+def get_lessons_full(topic_list, demo_ks, lesson_id, user_id):
     topic_results = []
     full_result = []
     topic_ids = []
@@ -266,6 +172,101 @@ def get_lessons(topic_list, demo_ks, lesson_id, user_id):
 
 
     return(wording_list)
+
+
+
+def get_new_lesson(demo_wording, topic_list,  lesson_id, user_id):
+    user_profile = User.objects.get(id=user_id)
+
+    lesson_match = lessonObjective.objects.get(id=lesson_id)
+    topic_results = []
+    for topic in topic_list:
+        tt_list = topic.topic_type.all()
+        for item in tt_list:
+            topic_results.append(item) 
+
+    lesson_templates = lessonTemplates.objects.filter(components__in=topic_results)
+
+    lesson_list = []
+    for temp in lesson_templates:
+        lesson_wording = temp.wording
+        verb = temp.verb
+        work_product = temp.work_product
+        bloom = temp.bloom
+        mi = temp.mi
+        new_wording = lesson_wording.replace('DEMO_KS', demo_wording)
+     
+        new, created = selectedActivity.objects.get_or_create(created_by=user_profile , template_id=temp.id , lesson_overview = lesson_match, lesson_text = new_wording, verb = verb, work_product = work_product, bloom = bloom, mi = mi, is_admin = False)
+        lesson_list.append(new)
+
+    return(lesson_list)
+
+
+def get_multiple_types_activity(topic_list):
+    word_list = []
+    for topic in topic_list:
+        words = topic.item
+        word_list.append(words)
+
+    words_list_full = ' '.join([str(i) for i in word_list])
+    words_list_full = words_list_full.split()
+
+    wordfreq = []
+    for w in words_list_full:
+        if w not in stop_words:
+            result = w, words_list_full.count(w)
+            wordfreq.append(result)
+
+    wordfreq.sort(key=lambda x: x[1], reverse=True)
+
+    wording_list = []
+    if wordfreq:
+        if wordfreq[0][1] > 1:
+            result = wordfreq[0][0]
+            sent_blob = TextBlob(result)
+            sent_tagger = sent_blob.pos_tags
+
+            for y in sent_tagger:
+                if 'NN' in y[1]:
+                    wording = 'describe the parts of the ' +  y[0]
+                    wording_list.append(wording)
+        
+
+
+    return(wording_list)
+
+    
+
+
+
+def get_plural_types_activity(topic_list):
+    word_list = []
+    for topic in topic_list:
+        words = topic.item
+        word_list.append(words)
+
+    words_list_full = ' '.join([str(i) for i in word_list])
+    words_list_full = words_list_full.split()
+
+    wordfreq = []
+    for w in words_list_full:
+        result = w, words_list_full.count(w)
+        wordfreq.append(result)
+
+    wordfreq.sort(key=lambda x: x[1], reverse=True)
+
+    wording_list = []
+
+    if wordfreq[0][1] > 1:
+        plural = engine.plural(wordfreq[0][0])
+        if plural:
+            wording = 'characterize the types of ' +  plural
+            wording_list.append(wording)
+        
+
+
+    return(wording_list)
+
 
 
 def stemSentence(sentence):
