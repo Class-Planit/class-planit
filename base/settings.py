@@ -66,6 +66,8 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'django_material_icons',
     'tinymce',
+    'django_celery_results',
+    'celery_progress',
 
 
     
