@@ -282,7 +282,8 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     teacher_input = lesson_match.teacher_objective
     standards_matches = lesson_match.objectives_standards.all()
 
-    standards_topics = activity_builder(teacher_input, class_id, lesson_id, user_id)
+
+    standards_topics = activity_builder.delay(teacher_input, class_id, lesson_id, user_id)
     
     matched_topics = standards_topics['matched_topics']
     matched_standards = standards_topics['matched_standards']
@@ -398,6 +399,17 @@ def SelectStandards(request, lesson_id):
         return JsonResponse(context)
     else:
         return HttpResponse("Request method is not a GET")
+
+
+def GetActivitySummary(request, lesson_id):
+    if request.method == 'GET':
+        user_profile = User.objects.filter(id=request.user.id).first()
+        lesson_analytics = label_activities_analytics_small(lesson_id)
+        context = {"data": lesson_analytics, "message": "your message"}
+        return JsonResponse(context)
+    else:
+        return HttpResponse("Request method is not a GET")
+
 
 def GetBloomsAnalytics(request, lesson_id):
     if request.method == 'GET':

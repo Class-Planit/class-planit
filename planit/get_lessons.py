@@ -360,6 +360,7 @@ def retention_activities_analytics(lesson_id):
 
 
 def label_activities_analytics(lesson_id):
+    print("---------------------- starting wrong one")
     class_objectives = lessonObjective.objects.get(id=lesson_id)
     matched_activities = selectedActivity.objects.filter(lesson_overview=class_objectives, is_selected=True)
     class_standards = class_objectives.objectives_standards.all()

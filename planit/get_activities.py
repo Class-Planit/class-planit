@@ -144,7 +144,7 @@ def label_activities(activity, lesson_id):
 
    
 
-def label_activities_analytics(lesson_id):
+def label_activities_analytics_small(lesson_id):
     class_objectives = lessonObjective.objects.get(id=lesson_id)
     matched_activities = selectedActivity.objects.filter(lesson_overview=class_objectives)
     class_standards = class_objectives.objectives_standards.all()
@@ -195,6 +195,11 @@ def label_activities_analytics(lesson_id):
             trsfm=vectorizer.fit_transform(corpus)
             result = cosine_similarity(trsfm[0:1], trsfm)
             result = result[0][1] * 100
-            final = mi_high, bl_high, diff_count, result
+            one = {'name': 'Retention Rate', 'progress': mi_high, 'color': 'bg-warning', 'div': 'showRateDiff()'}
+            two = {'name': 'Depth of Understanding', 'progress': bl_high, 'color': 'bg-info', 'div': 'showDepthDiff()'}
+            three = {'name': 'Differentiation', 'progress': diff_count, 'color': 'bg-success', 'div': 'showDivDiff()'}
+            four = {'name': 'Standards Alignment', 'progress': result, 'color': 'bg-danger', 'div': 'showStanDiff()'}
+            final = one, two, three, four
+            print('----------------', final)
             return(final)
     

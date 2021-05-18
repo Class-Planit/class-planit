@@ -112,6 +112,11 @@ urlpatterns = [
         view=GetBloomsAnalytics,
         name='get_blooms'),
 
+    url(r'^get-activity-summary/(?P<lesson_id>[\w-]+)/$',
+        view=GetActivitySummary,
+        name='get_activity_summary'),
+
+
     url(r'^get-retention/(?P<lesson_id>[\w-]+)/$',
         view=GetRetentionAnalytics,
         name='get_retention'),

@@ -394,22 +394,20 @@
             
                 <div class="col-12 px-0 mb-4">
                     <div class="card border-light shadow-sm">
-                        <div class="card-body">
+                        <div class="card-body" id="activity-summary">
                     
                             <button type="button" class="btn btn-link" onclick="showDivDiff()"><i class="fas fa-angle-left"></i> Differentiation:</button>
                             <br>
-                          
                             <div class="progress">
-                                <div
-                                  class="progress-bar  bg-success"
-                                  role="progressbar"
-                                  style="width: {{ lesson_analytics.3 }}%"
-                                  aria-valuenow="{{ lesson_analytics.3 }}"
-                                  aria-valuemin="0"
-                                  aria-valuemax="100"
-                                ></div>
-                              </div>
-                             
+                            <div
+                                class="progress-bar  bg-success"
+                                role="progressbar"
+                                style="width: {{ lesson_analytics.3 }}%"
+                                aria-valuenow="{{ lesson_analytics.3 }}"
+                                aria-valuemin="0"
+                                aria-valuemax="100"
+                            ></div>
+                            </div>
                               <button type="button" class="btn btn-link" onclick="showDepthDiff()" ><i class="fas fa-angle-left"></i> Depth of Understanding:</button>
                               <div class="progress">
                                 <div
@@ -433,18 +431,17 @@
                                 ></div>
                               </div>
                               <button type="button" class="btn btn-link" onclick="showStanDiff()" ><i class="fas fa-angle-left"></i> Standards Alignment:</button>
-                              
-                              
-                                <div class="progress">
-                                    <div
-                                    class="progress-bar bg-danger"
-                                    role="progressbar"
-                                    style="width: {{ lesson_analytics.3 }}%"
-                                    aria-valuenow="{{ lesson_analytics.3 }}"
-                                    aria-valuemin="0"
-                                    aria-valuemax="100"
-                                    ></div>
-                                </div>
+                            <div class="progress">
+                                <div
+                                class="progress-bar bg-danger"
+                                role="progressbar"
+                                style="width: {{ lesson_analytics.3 }}%"
+                                aria-valuenow="{{ lesson_analytics.3 }}"
+                                aria-valuemin="0"
+                                aria-valuemax="100"
+                                ></div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -622,6 +619,7 @@
     })
 }, 4000);
 </script> 
+
 <!----| Select TinyMce Text |-->
 <script type="text/javascript">
     $('.savetext').click(function(){
@@ -642,6 +640,7 @@
     })
 });
 </script> 
+
 <!----| Select Activity |-->
 <script type="text/javascript">
     $('.selectactivity').click(function(){
@@ -725,6 +724,40 @@
 
         })
     });
+</script> 
+
+<!----| Update Activity Summary |-->
+<script type="text/javascript">
+    setInterval(function(){
+    var overview = document.getElementById('activity-summary');
+    htmlContent = overview.innerHTML,
+    $.ajax(
+    {
+        type:"GET",
+        url: "/get-activity-summary/{{ lesson_match.id}}",
+        
+        success: function(response) {
+        $("#activity-summary").empty(); 
+        $.each(response.data, function (i, item) {
+        
+    	$("#activity-summary").append(
+            '<button type="button" class="btn btn-link" onclick="'
+            + item.div + 
+            '"><i class="fas fa-angle-left"></i> ' 
+            + item.name + 
+            '</button><br><div class="progress"> \
+            <div class="progress-bar  '
+            + item.color + 
+            '" role="progressbar" style="width:' 
+            + item.progress + 
+            '%" aria-valuenow="'
+            + item.progress + 
+            '" aria-valuemin="0" aria-valuemax="100"></div></div>');
+        });
+    }
+
+    })
+}, 3000);
 </script> 
 
 <!----| Update Blooms |-->
@@ -846,6 +879,8 @@
     })
 }, 4003);
 </script>
+
+
 <!----| TinyMce Scripts |-->
  <script>
 
