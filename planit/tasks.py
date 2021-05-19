@@ -500,7 +500,7 @@ def upload_standards(self):
             obj, created = singleStandard.objects.get_or_create(standards_set=new_standard_set, subject=new_subject, grade_level=new_grade, skill_topic=skill_topic, standard_objective=standard_objective, competency=competency)
 
 @shared_task(bind=True)
-def activity_builder(self, teacher_input, class_id, lesson_id, user_id):
+def activity_builder_task(self, teacher_input, class_id, lesson_id, user_id):
  
     classroom_profile = classroom.objects.get(id=class_id)
     

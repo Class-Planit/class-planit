@@ -106,6 +106,7 @@
      
              </div>
          </div>
+         {% if user_profile %}
          <div class="row">
         
              <div class="col-lg-9">
@@ -294,63 +295,103 @@
               
              </div>
          </div>
-    
+         {% endif %}
        <br>
  
      </div>
+
   <!-- Modal -->
   <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-     <div class="modal-dialog" role="document">
-     <div class="modal-content">
-         <div class="modal-header">
-         <h5 class="modal-title" id="exampleModalLabel">Login</h5>
-         
-         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-             <span aria-hidden="true">&times;</span>
-         </button>
-         </div>
-         <div class="modal-body">
-             <button data-toggle="modal" data-target="#exampleModal2" type="button" class="btn btn-sm btn-outline-secondary">Sign Up</button>
-         </div>
-         <div class="modal-footer">
-         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-         <button type="button" class="btn btn-primary">Save changes</button>
-         </div>
-     </div>
-     </div>
- </div>
-  <!-- Modal -->
-  <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-     <div class="modal-dialog" role="document">
-     <div class="modal-content">
-         <div class="modal-header">
-         <h5 class="modal-title" id="exampleModalLabel">Sign Up</h5>
-         
-         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-             <span aria-hidden="true">&times;</span>
-         </button>
-         </div>
-         <div class="modal-body">
-             <form action="{% url 'student_registration' lesson_id=lesson_id worksheet_id=worksheet_id %}" method="POST" enctype="multipart/form-data">
-                 {% csrf_token %}
-                 {% for field in form %}
-                 {% for error in field.errors %}
-                       <p style="color: red">{{ error }}</p>
-                 {% endfor %}
- 
-                 <p>{{ field.label_tag }}<br>
-                 {{ field }}</p>
-                     <hr>
-                     
-                   
-                 {% endfor %}
-                 
-                 <button type="submit">Sign Up</button>
-               </form>
-             </div>
-     </div>
-     </div>
- </div>
+    <div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Login</h5>
+        
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        <div class="modal-body">
+           <form action="{% url 'student_login' lesson_id=lesson_id worksheet_id=worksheet_id %}" method="POST" enctype="multipart/form-data">
+               {% csrf_token %}
+               <div class="form-group">
+               <div class="input-group">
+                   <div class="input-group-prepend">
+                       <span class="input-group-text"><i class="far fa-user"></i></span>
+                   </div>
+                   <input type="username" name='username' class="form-control" id="username"
+                       placeholder="Enter username" required>
+               </div>
+           </div>
+           <div class="form-group">
+               <div class="input-group">
+                   <div class="input-group-prepend">
+                       <span class="input-group-text"><i class="fas fa-unlock-alt"></i></span>
+                   </div>
+                   <input class="form-control" placeholder="Password" id="password" name='password' type="password" required>
+                   <div class="input-group-append">
+                       
+                       <span class="input-group-text">
+                           <a onclick="revealPassword()">
+                           <i class="far fa-eye"></i>
+                           </a>
+                       </span>
+                       
+                   </div>
+               </div>
+               </div>
+               <button type="submit" class="btn btn-outline-primary">Login</button>
+             </form>
+        </div>
+        <div class="modal-footer">
+            <h5>Do you need to Register instead?</h5>
+           <button data-toggle="modal" data-target="#exampleModal2" type="button" class="btn btn-sm btn-outline-secondary">Sign Up</button>
+        </div>
+    </div>
+    </div>
+</div>
+ <!-- Modal -->
+ <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Sign Up</h5>
+        
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        <div class="modal-body">
+            <form action="{% url 'student_registration' lesson_id=lesson_id worksheet_id=worksheet_id %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% for field in form %}
+                {% for error in field.errors %}
+                      <p style="color: red">{{ error }}</p>
+                {% endfor %}
+
+                <p>{{ field.label_tag }}<br>
+                {{ field }}</p>
+                    <hr>
+                    
+                  
+                {% endfor %}
+                
+                <button type="submit" class="btn btn-outline-primary">Sign Up</button>
+              </form>
+            </div>
+    </div>
+    </div>
+</div>
+<script>
+    function revealPassword() {
+       var x = document.getElementById("password");
+       if (x.type === "password") {
+           x.type = "text";
+       } else {
+           x.type = "password";
+       }
+       }
+</script>
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
  
  <script type="text/javascript">

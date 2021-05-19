@@ -463,3 +463,53 @@ def get_standard_matches(get_objective_matches, tokens_without_sw):
         full_result.append(item[0])
     return(full_result)
 
+
+
+def activity_builder_jq(teacher_input, class_id, lesson_id, user_id):
+ 
+    classroom_profile = classroom.objects.get(id=class_id)
+    
+    grade_list = classroom_profile.grade_level.all()
+    standard_set = classroom_profile.standards_set
+    
+    class_objectives = lessonObjective.objects.get(id=lesson_id)
+    create_topic_matches, created = matchedTopics.objects.get_or_create(lesson_overview=class_objectives)
+    topic_matches = class_objectives.objectives_topics.all()
+    selected_standard = class_objectives.objectives_standards.all()
+    topics = topicInformation.objects.filter(id__in=topic_matches)
+    demo_ks = class_objectives.objectives_demonstration.all()
+    topic_count = topics.count()
+    results_list = []
+    topic_ids = []
+    for item in topics: 
+        result = item.item
+        item_id = item.id 
+        results_list.append(result)
+        topic_ids.append(item_id)
+
+    lesson_matches = get_lessons_full(topics, demo_ks, lesson_id, user_id)
+    subject = class_objectives.subject
+    grade_standards = []
+    teacher_input_full = teacher_input + str(results_list) + str(selected_standard)
+
+    teacher_input_stem = teacher_input_full.lower()
+    teacher_input_stem = stemSentence(teacher_input_stem)
+    text_tokens = word_tokenize(teacher_input_stem)
+    tokens_without_sw = [word for word in text_tokens if not word in stop_words]
+
+    get_objective_matches = get_topic_matches(teacher_input, tokens_without_sw, class_objectives, topic_count, grade_list, subject, standard_set, lesson_id)
+
+    matched_topics = match_objectives(get_objective_matches, tokens_without_sw, topic_ids)
+
+    
+    not_selected_topics = []
+    for item in matched_topics:      
+        match_topic = topicInformation.objects.filter(id=item).first()
+        update_matches = create_topic_matches.objectives_topics.add(match_topic)
+        if item.id not in topic_ids:
+            result = {'id': match_topic.id, 'term': match_topic.item} 
+            not_selected_topics.append(result)
+
+            
+    results = matched_topics[:10]
+    return(results)

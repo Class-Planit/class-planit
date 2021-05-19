@@ -36,6 +36,8 @@ from .activity_builder import *
 from .get_lessons import *
 from .get_questions import *
 from .ocr import * 
+from .get_classrooms import *
+
 ##################| Homepage Views |#####################
 #Homepage Landing Page
 def Homepage(request):
@@ -195,12 +197,21 @@ class ClassroomList(TemplateView):
     template_name = 'dashboard/classroom_list.html' 
 
     def get(self,request):
+        current_year = datetime.datetime.now().year
         current_week = date.today().isocalendar()[1] 
         user_profile = User.objects.filter(username=request.user.username).first()
-        classroom_profiles = classroom.objects.filter(main_teacher=user_profile)
+        class_summary = get_classroom_summary(user_profile.id, current_year)
+        
         page = 'Classrooms'
+        return render(request, 'dashboard/classroom_list.html', {'user_profile': user_profile, 'class_summary': class_summary, 'page': page})
 
-        return render(request, 'dashboard/classroom_list.html', {'user_profile': user_profile, 'classroom_profiles': classroom_profiles, 'page': page})
+
+def ClassroomSingle(request, user_id=None, class_id=None):
+    current_year = datetime.datetime.now().year
+    user_profile = User.objects.filter(username=request.user.username).first()
+    class_profile = classroom.objects.get(id=class_id)
+    student_summary = get_classroom_summary(user_profile.id, current_year, class_id)
+    return render(request, 'dashboard/classrooms.html', {'user_profile': user_profile, 'student_summary': student_summary, 'class_profile': class_profile})
 
 
 #Main Dashboard View labeled as 'Overview'
@@ -283,8 +294,9 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     standards_matches = lesson_match.objectives_standards.all()
 
 
-    standards_topics = activity_builder(teacher_input, class_id, lesson_id, user_id)
+    standards_topics = activity_builder_task(teacher_input, class_id, lesson_id, user_id)
     
+  
     matched_topics = standards_topics['matched_topics']
     matched_standards = standards_topics['matched_standards']
 
@@ -340,9 +352,15 @@ def SelectTopic(request):
 
         description_list = []
         for desc in topic_match.description.all():
-            description_list.append(desc.description)
-        desc_str = ''.join([str(i) for i in description_list])
-        context = {'term': topic_match.item, 'description': desc_str}
+            if desc.created_by_id == user_id:
+                if desc.is_admin == False:
+                    result = "<li id='description'>%s</li>" % (desc.description)
+                    description_list.append(result)
+        description_list = ' '.join(description_list)
+        final = "<ul>%s</ul>" % (description_list)
+
+        print(final)
+        context = {'term': topic_match.item, 'description': final}
 
         return JsonResponse(context)
     else:
@@ -360,7 +378,7 @@ def SelectActivity(request):
 
         activity_match.is_selected = True 
         activity_match.save()
-        print(activity_match)
+
         context = {'text': activity_match.lesson_text}
 
         return JsonResponse(context)
@@ -393,8 +411,8 @@ def SelectStandards(request, lesson_id):
         stand_id = request.GET['stand_id']
         standard_match = singleStandard.objects.get(id=stand_id)
         lesson_match.objectives_standards.add(standard_match)
-        strandard_result = str(standard_match.skill_topic) + str(standard_match.standard_objective) + str(standard_match.competency)
-        print(strandard_result)
+        strandard_result = str(standard_match.standard_objective) + str(standard_match.competency)
+
         context = {"data": strandard_result}
         return JsonResponse(context)
     else:
@@ -435,10 +453,26 @@ def GetRetentionAnalytics(request, lesson_id):
         user_profile = User.objects.filter(id=request.user.id).first()
         get_retention_data = retention_activities_analytics(lesson_id)
         context = {"data": get_retention_data, "message": "your message"}
-        print(context)
+
         return JsonResponse(context)
     else:
         return HttpResponse("Request method is not a GET")
+
+
+def UpdateKeyTerms(request, lesson_id, class_id):
+    if request.method == 'GET':
+        user_profile = User.objects.filter(id=request.user.id).first()
+        lesson_match = lessonObjective.objects.get(id=lesson_id)
+        teacher_input = lesson_match.teacher_objective
+        update_term_list = activity_builder_jq(teacher_input, class_id, lesson_id, user_profile.id)
+        context = {"data": update_term_list, "message": "your message"}
+
+        return JsonResponse(context)
+    else:
+        return HttpResponse("Request method is not a GET")
+
+
+  
 
 def view_name(request):
     if request.method == 'GET':
@@ -726,8 +760,9 @@ def StudentDashboard(request, lesson_id=None, worksheet_id=None, question_id=Non
         form = StudentForm()
         return render(request, 'dashboard/student_dashboard.html', {'user_profile': user_profile, 'current_per': current_per, 'question_count': question_count, 'word_bank': word_bank, 'single_answers': single_answers, 'student_answer': student_answer, 'worksheet_match': worksheet_match, 'lesson_id':lesson_id, 'worksheet_id':worksheet_id, 'question_id':question_id, 'form': form, 'previous_q': previous_q, 'next_q': next_q, 'current_question': current_question, 'worksheet_theme': worksheet_theme, 'background_img': background_img})
     else:
+        form = StudentForm()
         login_required = True
-        return render(request, 'dashboard/student_dashboard.html', {'login_required': login_required})
+        return render(request, 'dashboard/student_dashboard.html', {'login_required': login_required, 'form': form, 'lesson_id':lesson_id, 'worksheet_id':worksheet_id,})
 
 def StudentWorksheetSubmit(request, user_id=None, lesson_id=None, worksheet_id=None, submit=None):
     user_profile = User.objects.filter(id=request.user.id).first()
@@ -747,9 +782,10 @@ def StudentWorksheetSubmit(request, user_id=None, lesson_id=None, worksheet_id=N
     return render(request, 'dashboard/student_submit.html', {'user_profile': user_profile, 'single_answers': single_answers, 'worksheet_id': worksheet_id, 'lesson_id': lesson_id })
 
 def StudentMainDashboard(request, user_id=None, lesson_id=None, worksheet_id=None, submit=None):
-    
-    user_profile = User.objects.get(id=user_id)
-    return render(request, 'dashboard/student_main.html', {'user_profile': user_profile })
+    form = StudentForm()
+    form2 = StudentForm()
+    user_profile = User.objects.filter(id=user_id).first()
+    return render(request, 'dashboard/student_main.html', {'user_profile': user_profile, 'form': form, 'form2': form2 })
 
 def StudentMCSelect(request, user_id=None, lesson_id=None, worksheet_id=None):
 
@@ -764,7 +800,6 @@ def StudentMCSelect(request, user_id=None, lesson_id=None, worksheet_id=None):
         answer = request.GET['answer']
         match_question = topicQuestion.objects.get(id=question_id)
         correct_answer = match_question.Correct
-        print(correct_answer)
         single_answer, created = studentQuestionAnswer.objects.get_or_create(worksheet_assignment=worksheet_match, student=user_profile, question_num=match_question)
         single_answer.question = question
         single_answer.correct = correct_answer
@@ -830,20 +865,29 @@ def StudentSAAnswer(request, user_id=None, lesson_id=None, worksheet_id=None, qu
     else:
         return HttpResponse("Request method is not a GET")
 
-
-
+  
 def StudentRegistration(request, lesson_id=None, worksheet_id=None):
+    current_year = datetime.datetime.now().year
+
     worksheet_match = worksheetFull.objects.get(id=worksheet_id)
     lesson_match = lessonObjective.objects.get(id=lesson_id)
+    l_classroom = lesson_match.lesson_classroom_id
+    class_match = classroom.objects.get(id=l_classroom)
+    classroom_list, created = classroomList.objects.get_or_create(lesson_classroom=class_match, academic_year=current_year)
+
     if request.method == "POST":
         form = StudentForm(request.POST, request.FILES)
 
         if form.is_valid():
             form.save()
+            first_name = form.cleaned_data.get('first_name')
+            last_name = form.cleaned_data.get('last_name')
             username = form.cleaned_data.get('username')
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             user_id = user.id
+            create_student, created = studentProfiles.objects.get_or_create(first_name = first_name, last_name = last_name, is_enrolled =True, student_username = user)
+            classroom_list.students.add(create_student)
             if user is not None:
                 login(request, user)
 
@@ -851,6 +895,20 @@ def StudentRegistration(request, lesson_id=None, worksheet_id=None):
         else:
             return redirect('student_dashboard', lesson_id=lesson_id, worksheet_id=worksheet_id, question_id=0)
     
+#User Login 
+def StudentLogin(request, lesson_id=None, worksheet_id=None):
+
+    if request.method == "POST":
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('student_dashboard', lesson_id=lesson_id, worksheet_id=worksheet_id, question_id=0)
+        else:
+            pass
+  
+    return render(request, 'dashboard/sign-in.html', {})
 
 def EditQuestions(request, user_id=None, class_id=None, subject=None, lesson_id=None, worksheet_id=None, page=None, act_id=None, question_id=None):
     user_profile = User.objects.get(id=user_id)

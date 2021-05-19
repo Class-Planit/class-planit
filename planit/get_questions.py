@@ -216,18 +216,18 @@ def find_mc_incorrects(descriptions, topic):
 
 
 def get_question_text(lesson_id, user_profile):
-    print('starting')
+
     class_objectives = lessonObjective.objects.get(id=lesson_id)
     subject = class_objectives.subject
 
     topic_matches = class_objectives.objectives_topics.all()
     topics = topicInformation.objects.filter(id__in=topic_matches)
-    print('topics------------------', topics)
+
     descriptions = []
     for item in topics:
         term = item.item
         desc_list = item.description.all()
-        print('1------------------', desc_list)
+
         all_topics = topicDescription.objects.filter(id__in=desc_list, is_admin=False, created_by=user_profile)
         for top in all_topics:
             result = term, top.description
@@ -235,7 +235,7 @@ def get_question_text(lesson_id, user_profile):
             final = term, top.description, word_banks, 'topic', item
             descriptions.append(final)
 
-    print('2------------------', descriptions)
+
     for topic in topics: 
         term = topic.item
         text_lines = topic.text_index.all()
@@ -250,7 +250,7 @@ def get_question_text(lesson_id, user_profile):
     question_results = []
     all_topic_lines = []
     for topic in descriptions: 
-        print('3------------------', topic)
+
         remove_list = ['illustrations', 'cartoon', 'Figure', 'they', 'those', 'Name ', 'Circle ', 'Education.com ', 'The McGraw-Hill', 'Review ']
         if any(word in topic[1] for word in remove_list):
             pass

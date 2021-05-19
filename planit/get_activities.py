@@ -200,6 +200,6 @@ def label_activities_analytics_small(lesson_id):
             three = {'name': 'Differentiation', 'progress': diff_count, 'color': 'bg-success', 'div': 'showDivDiff()'}
             four = {'name': 'Standards Alignment', 'progress': result, 'color': 'bg-danger', 'div': 'showStanDiff()'}
             final = one, two, three, four
-            print('----------------', final)
+
             return(final)
     

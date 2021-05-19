@@ -302,7 +302,7 @@ class singleStandard(models.Model):
     competency = models.TextField(max_length=1000)
     
     def __str__(self):
-        return "%s : %s - %s" % (self.skill_topic, self.standard_objective, self.competency)
+        return "%s - %s" % (self.standard_objective, self.competency)
 
 class topicTypes(models.Model):
     item = models.CharField(max_length=200,
@@ -406,6 +406,22 @@ class LearningDemonstration(models.Model):
     def __str__(self):
         return "%s" % (self.content)
 
+
+class classroomList(models.Model):
+    lesson_classroom = models.ForeignKey(classroom,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    students = models.ManyToManyField(studentProfiles,
+                                     blank=True,
+                                     related_name='classroom_students',
+                               null=True)  
+    academic_year = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
+
+    def __str__(self):
+        return "%s" % (self.id)
 
 class lessonObjective(models.Model):
     lesson_classroom = models.ForeignKey(classroom,

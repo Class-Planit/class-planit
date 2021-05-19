@@ -210,7 +210,7 @@ def pdf_pull_text(file_id):
 
 
 def build_textbook(file_id, user_id, class_id, lesson_id, week_of):
-    print('Started')
+
     user_profile = User.objects.get(id=user_id)
     classroom_profile = classroom.objects.get(id=class_id)
     class_objectives = lessonObjective.objects.get(id=lesson_id)

@@ -302,7 +302,7 @@ def label_mi_activities_analytics(lesson_id):
 def retention_activities_analytics(lesson_id):
     class_objectives = lessonObjective.objects.get(id=lesson_id)
     matched_activities = selectedActivity.objects.filter(lesson_overview=class_objectives, is_selected=True)
-    print(matched_activities)
+
     class_standards = class_objectives.objectives_standards.all()
     matched_standards = singleStandard.objects.filter(id__in=class_standards)
     
@@ -360,7 +360,7 @@ def retention_activities_analytics(lesson_id):
 
 
 def label_activities_analytics(lesson_id):
-    print("---------------------- starting wrong one")
+
     class_objectives = lessonObjective.objects.get(id=lesson_id)
     matched_activities = selectedActivity.objects.filter(lesson_overview=class_objectives, is_selected=True)
     class_standards = class_objectives.objectives_standards.all()
@@ -444,17 +444,29 @@ def get_lesson_sections(text_overview, class_id, lesson_id, user_id):
             term = row.find('th').contents
             if term[0]:
                 description = row.find('td').contents
+                
+                
                 for item in description:
-                    result = item.get_text(', ', strip=True)
-                    result = result.split(", ")
-                    for item in result:
-                        if item:
-                            result = term[0], item
-                            term_sets.append(result)
+                    if item:
+                        try:
+                            result = item.get_text(', ', strip=True)
+                            result = result.split(", ")
+                            for item in result:
+                                if item:
+                                    result = term[0], item
+                                    if result not in term_sets:
+                                        term_sets.append(result)
+                        except:
+                            result = item.split(", ")
+                            for item in result:
+                                if item:
+                                    result = term[0], item
+                                    if result not in term_sets:
+                                        term_sets.append(result)
 
         #build new terms with new descriptions 
         key_term_list = list(term_sets)
-        print(key_term_list)
+
         term_pairs = create_terms(key_term_list, lesson_id, matched_grade, user_id, standard_set)
 
 

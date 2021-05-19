@@ -191,7 +191,7 @@
                         </h4>
                         <p id="standard">
                             {% for stand in lesson_match.objectives_standards.all %}
-                            <li id='standard-item'>{{stand }}</li>
+                            <li id='standard-item'>{{ stand }}</li>
                             {% endfor %}
                         </p>
                     
@@ -221,7 +221,11 @@
                                     <tr>
                                         <th scope="row"></th>
                                         <td>
-                                          
+                                          <ul>
+                                              <li>
+                                                  
+                                              </li>
+                                          </ul>
                                         </td>
                                   
                                       </tr>
@@ -230,7 +234,7 @@
                                     <th scope="row">{{ term.item }}</th>
                                     <td>
                                         {% for item in term.description.all %} 
-                                            {% ifchanged item.id %}
+                                            {% ifchanged item.description %}
                                             <li id='description'>{{ item }}</li>
                                             {% endifchanged %}
                                         {% endfor %}
@@ -481,30 +485,20 @@
                             </div>
                         </div>
                         <div class="card-body">
-                        <div class="tagcloud">
-                            {% for topic in lesson_topics %}
-                                {% ifchanged topic.item %}
-                                <a href="#" data-toggle="tooltip" data-placement="top" title="{{ topic }} - {% for item in topic.description.all%}{{item }} ; {% endfor %}" class="btn btn-sm btn-outline-success">{{ topic.item }}</a>
-                            
+                            <div class="tagcloud" id='not-selected-topics'>
+            
+                            {% if matched_activities_topics %}
+                            {% for line in matched_activities_topics %}
+                                {% if line.item %}
+                                
+                                {% ifchanged line.item %}
+
+                                <a class="btn btn-sm btn-outline-secondary selecttopic" id="like{{line.id}}" href="#" data-topid="{{ line.id }}" data-lessid="{{ lesson_match.id }}" data-toggle="tooltip" data-placement="top" title="{{ line.item }} - {% for item in line.description.all%}{{item }} ; {% endfor %}" >{{ line.item }}</a>
                                 {% endifchanged %}
-                            {% endfor %}
-                           
-                           {% if matched_activities_topics %}
-                           {% for line in matched_activities_topics %}
-                               {% if line.item %}
-                               
-                               {% ifchanged line.item %}
-
-                               <a class="btn btn-sm btn-outline-secondary selecttopic" id="like{{line.id}}" href="#" data-topid="{{ line.id }}" data-lessid="{{ lesson_match.id }}" data-toggle="tooltip" data-placement="top" title="{{ line.item }} - {% for item in line.description.all%}{{item }} ; {% endfor %}" >{{ line.item }}</a>
-                               {% endifchanged %}
-                               {% endif %}
-                           {% endfor %}
-                      {% endif %}
-
-                           
-    
-                      
-                        </div>
+                                {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                            </div>
                     </div>
                     </div>
                 </div>
@@ -716,7 +710,7 @@
             success: function(response) {
             elm.remove();
             $("#key-term-section").append(
-                "<tr><th scope='row'>"  + response.term + "</th><td><li id='description'>" + response.description + "</li></td></tr>"
+                "<tr><th scope='row'>"  + response.term + "</th><td>" + response.description + "</td></tr>"
                 
             );
                 
@@ -724,6 +718,36 @@
 
         })
     });
+</script> 
+
+<!----| Update Term Options |-->
+<script type="text/javascript">
+    setInterval(function(){
+    var overview = document.getElementById('not-selected-topics');
+    htmlContent = overview.innerHTML,
+    $.ajax(
+    {
+        type:"GET",
+        url: "/updated-term-options/{{ lesson_match.id}}/{{ class_id }}/",
+        
+        success: function(response) {
+        $("#not-selected-topics").empty(); 
+        $.each(response.data, function (i, item) {
+        
+    	$("#not-selected-topics").append(
+
+            '<a class="btn btn-sm btn-outline-secondary selecttopic" id="like'
+            + item.id +
+            '" href="#" data-topid="'
+            + item.id +
+            '" data-lessid="{{ lesson_match.id }}">'
+            + item.term +
+            '</a>');
+        });
+    }
+
+    })
+}, 3000);
 </script> 
 
 <!----| Update Activity Summary |-->

@@ -42,6 +42,11 @@ urlpatterns = [
         view=StudentRegistration,
         name='student_registration'),
 
+    url(r'^student-login/(?P<lesson_id>[\w\s]+)/(?P<worksheet_id>[\w\s]+)/$',
+        view=StudentLogin,
+        name='student_login'),
+
+
     url(r'^student-submit/(?P<user_id>[\w\s]+)/(?P<lesson_id>[\w\s]+)/(?P<worksheet_id>[\w\s]+)/(?P<submit>[\w\s]+)/',
         view=StudentWorksheetSubmit,
         name='student_submit'),
@@ -83,6 +88,10 @@ urlpatterns = [
     url(r'^classrooms-all/',
         view=ClassroomList.as_view(),
         name='classroom_list'),
+
+    url(r'^classroom-single/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/',
+        view=ClassroomSingle,
+        name='classroom_single'),
 
     url(r'^create_objective/(?P<user_id>[\w\s]+)/(?P<week_of>[\w\s]+)/',
         view=CreateObjective,
