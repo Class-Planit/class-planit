@@ -138,6 +138,10 @@ urlpatterns = [
         view=SelectStandards,
         name='select_standards'),
 
+    url(r'^updated-term-options/(?P<lesson_id>[\w-]+)/(?P<class_id>[\w-]+)/$',
+        view=UpdateKeyTerms,
+        name='update_terms_options'),
+
     url(r'^classroom-planbook-select-related/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<lesson_id>[\w-]+)/(?P<type_id>[\w-]+)/(?P<item_id>[\w-]+)/(?P<action>[\w-]+)/$',
         view=SelectRelatedInformation,
         name='select_related'),

@@ -368,7 +368,6 @@ def match_objectives(get_objective_matches, tokens_without_sw, topic_ids):
         result = cosine_similarity(trsfm[0:1], trsfm)
         result = result[0][1]
         total = standard_id, result
-        
         if result >= .20:
             objective_predictions.append(total)
         elif result >= .08:
@@ -476,6 +475,12 @@ def activity_builder_jq(teacher_input, class_id, lesson_id, user_id):
     create_topic_matches, created = matchedTopics.objects.get_or_create(lesson_overview=class_objectives)
     topic_matches = class_objectives.objectives_topics.all()
     selected_standard = class_objectives.objectives_standards.all()
+    m_stand = singleStandard.objects.filter(id__in=selected_standard)
+    stand_result = []
+    for stand in m_stand:
+        stand_result.append(stand.competency)
+
+    stand_full = ' '.join([str(i) for i in stand_result])
     topics = topicInformation.objects.filter(id__in=topic_matches)
     demo_ks = class_objectives.objectives_demonstration.all()
     topic_count = topics.count()
@@ -490,14 +495,14 @@ def activity_builder_jq(teacher_input, class_id, lesson_id, user_id):
     lesson_matches = get_lessons_full(topics, demo_ks, lesson_id, user_id)
     subject = class_objectives.subject
     grade_standards = []
-    teacher_input_full = teacher_input + str(results_list) + str(selected_standard)
-
+    teacher_input_full = teacher_input + str(results_list) + str(stand_full)
     teacher_input_stem = teacher_input_full.lower()
     teacher_input_stem = stemSentence(teacher_input_stem)
     text_tokens = word_tokenize(teacher_input_stem)
     tokens_without_sw = [word for word in text_tokens if not word in stop_words]
 
     get_objective_matches = get_topic_matches(teacher_input, tokens_without_sw, class_objectives, topic_count, grade_list, subject, standard_set, lesson_id)
+
 
     matched_topics = match_objectives(get_objective_matches, tokens_without_sw, topic_ids)
 
@@ -506,10 +511,11 @@ def activity_builder_jq(teacher_input, class_id, lesson_id, user_id):
     for item in matched_topics:      
         match_topic = topicInformation.objects.filter(id=item).first()
         update_matches = create_topic_matches.objectives_topics.add(match_topic)
-        if item.id not in topic_ids:
+        if item not in topic_ids:
             result = {'id': match_topic.id, 'term': match_topic.item} 
-            not_selected_topics.append(result)
+            if result not in not_selected_topics:
+                not_selected_topics.append(result)
 
-            
-    results = matched_topics[:10]
+    
+    results = not_selected_topics[:10]
     return(results)

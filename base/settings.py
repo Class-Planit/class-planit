@@ -221,3 +221,4 @@ CACHES = {
 }
 
 django_on_heroku.settings(locals(), staticfiles=False)
+

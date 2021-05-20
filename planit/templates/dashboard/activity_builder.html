@@ -486,18 +486,8 @@
                         </div>
                         <div class="card-body">
                             <div class="tagcloud" id='not-selected-topics'>
-            
-                            {% if matched_activities_topics %}
-                            {% for line in matched_activities_topics %}
-                                {% if line.item %}
-                                
-                                {% ifchanged line.item %}
-
-                                <a class="btn btn-sm btn-outline-secondary selecttopic" id="like{{line.id}}" href="#" data-topid="{{ line.id }}" data-lessid="{{ lesson_match.id }}" data-toggle="tooltip" data-placement="top" title="{{ line.item }} - {% for item in line.description.all%}{{item }} ; {% endfor %}" >{{ line.item }}</a>
-                                {% endifchanged %}
-                                {% endif %}
-                                {% endfor %}
-                            {% endif %}
+                               
+                           
                             </div>
                     </div>
                     </div>
@@ -611,7 +601,7 @@
         }
 
     })
-}, 4000);
+}, 40000);
 </script> 
 
 <!----| Select TinyMce Text |-->
@@ -692,7 +682,7 @@
 
 <!----| Select Topic |-->
 <script type="text/javascript">
-        $('.selecttopic').click(function(){
+        $(document).on("click", ".selecttopic", function(){
         var elm = $(this);
         var id = elm.data('id');
         var topid;
@@ -728,14 +718,12 @@
     $.ajax(
     {
         type:"GET",
-        url: "/updated-term-options/{{ lesson_match.id}}/{{ class_id }}/",
+        url: "/updated-term-options/{{ lesson_match.id}}/{{ classroom_profile.id }}/",
         
         success: function(response) {
         $("#not-selected-topics").empty(); 
         $.each(response.data, function (i, item) {
-        
     	$("#not-selected-topics").append(
-
             '<a class="btn btn-sm btn-outline-secondary selecttopic" id="like'
             + item.id +
             '" href="#" data-topid="'
@@ -747,7 +735,7 @@
     }
 
     })
-}, 3000);
+}, 5000);
 </script> 
 
 <!----| Update Activity Summary |-->

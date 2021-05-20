@@ -294,33 +294,16 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     standards_matches = lesson_match.objectives_standards.all()
 
 
-    standards_topics = activity_builder_task.delay(teacher_input, class_id, lesson_id, user_id)
+    standards_topics = activity_builder_task(teacher_input, class_id, lesson_id, user_id)
     
-  
-    matched_topics = standards_topics['matched_topics']
     matched_standards = standards_topics['matched_standards']
 
     standards_select = singleStandard.objects.filter(id__in=matched_standards)
 
-    selected_activities = selectedActivity.objects.filter(lesson_overview=lesson_match, is_selected=True)
-    not_selected_activities = selectedActivity.objects.filter(lesson_overview=lesson_match, is_selected=False).order_by('template_id')
-    m_activities_topics = matchedTopics.objects.filter(lesson_overview=lesson_match).first()
-    if m_activities_topics:
-        desc_m_activities = m_activities_topics.objectives_topics.all()
-        matched_activities_topics = topicInformation.objects.filter(id__in=desc_m_activities).order_by('item').exclude(id__in=l_topics)
-    else:
-        matched_activities_topics = []
         
     new_text, created = lessonText.objects.get_or_create(matched_lesson=lesson_match)
-    
-    if selected_activities:
-        lesson_analytics = label_activities_analytics(lesson_id)
-    else:
-        lesson_analytics = []
 
-    testing = retention_activities_analytics(lesson_id)
-    return render(request, 'dashboard/activity_builder.html', {'user_profile': user_profile, 'matched_activities_topics': matched_activities_topics, 'new_text': new_text, 'lesson_topics': lesson_topics, 'classroom_profile': classroom_profile, 'lesson_match': lesson_match, 'standards_select': standards_select, 'standards_matches': standards_matches,
-                                                                'lesson_analytics': lesson_analytics, 'selected_activities': selected_activities, 'not_selected_activities': not_selected_activities })
+    return render(request, 'dashboard/activity_builder.html', {'user_profile': user_profile, 'new_text': new_text, 'classroom_profile': classroom_profile, 'lesson_match': lesson_match, 'standards_select': standards_select, 'standards_matches': standards_matches })
 
 #Adds or Removes Selected Standards
 def EditObjectiveStandards(request, user_id=None, class_id=None, subject=None, lesson_id=None, standard_id=None, action=None):
@@ -356,10 +339,16 @@ def SelectTopic(request):
                 if desc.is_admin == False:
                     result = "<li id='description'>%s</li>" % (desc.description)
                     description_list.append(result)
+        if description_list:
+            pass
+        else:
+            description_list = []
+            for desc in topic_match.description.all():
+                if desc.is_admin == True:
+                    result = "<li id='description'>%s</li>" % (desc.description)
+                    description_list.append(result)
         description_list = ' '.join(description_list)
         final = "<ul>%s</ul>" % (description_list)
-
-        print(final)
         context = {'term': topic_match.item, 'description': final}
 
         return JsonResponse(context)
