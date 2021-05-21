@@ -461,6 +461,19 @@ def UpdateKeyTerms(request, lesson_id, class_id):
         return HttpResponse("Request method is not a GET")
 
 
+def UpdateLessonActivities(request, lesson_id, class_id):
+    if request.method == 'GET':
+        user_profile = User.objects.filter(id=request.user.id).first()
+        lesson_match = lessonObjective.objects.get(id=lesson_id)
+        teacher_input = lesson_match.teacher_objective
+        update_activity_list = get_lessons(lesson_id, user_profile.id)
+        print(update_activity_list)
+        context = {"data": update_activity_list, "message": "your message"}
+
+        return JsonResponse(context)
+    else:
+        return HttpResponse("Request method is not a GET")
+
   
 
 def view_name(request):

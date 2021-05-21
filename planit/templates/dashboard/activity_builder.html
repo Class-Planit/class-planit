@@ -459,15 +459,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body" id='not-selected-activities'>
                          
-                            {% for item in not_selected_activities %}
-                                {% ifchanged item.template_id %}
-                                <a class="selectactivity" id="like{{item.id}}" href="#" data-actid="{{ item.id }}" data-lessid="{{ lesson_match.id }}">
-                                    {{ item.lesson_text }}</a>
-                                    <hr>
-                                {% endifchanged %}
-                            {% endfor %}
+                          
     
                         </div>
                     </div>
@@ -627,7 +621,7 @@
 
 <!----| Select Activity |-->
 <script type="text/javascript">
-    $('.selectactivity').click(function(){
+    $(document).on("click", ".selectactivity", function(){
     var elm = $(this);
     var id = elm.data('id');
     var actpid;
@@ -731,6 +725,35 @@
             '" data-lessid="{{ lesson_match.id }}">'
             + item.term +
             '</a>');
+        });
+    }
+
+    })
+}, 3000);
+</script> 
+
+
+<!----| Update Activity Options |-->
+<script type="text/javascript">
+    setInterval(function(){
+    var overview = document.getElementById('not-selected-activities');
+    htmlContent = overview.innerHTML,
+    $.ajax(
+    {
+        type:"GET",
+        url: "/updated-activity-options/{{ lesson_match.id}}/{{ classroom_profile.id }}/",
+        
+        success: function(response) {
+        $("#not-selected-activities").empty(); 
+        $.each(response.data, function (i, item) {
+    	$("#not-selected-activities").append(
+            '<li><a class="selectactivity" id="like'
+            + item.id + 
+            '" href="#" data-actid="'
+            + item.id  + 
+            '" data-lessid="{{ lesson_match.id }}">'
+            + item.activity + 
+            '</a></li>');
         });
     }
 

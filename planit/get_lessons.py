@@ -54,6 +54,7 @@ nlp = spacy.load('en_core_web_sm')
 import random
 from .get_key_terms import *
 from .get_activities import *
+from .activity_builder import *
 stop_words = ['i', "'", "'" '!', '.', ':', ',', '[', ']', '(', ')', '?', "'see", "see", 'x', '...',  'student', 'learn', 'objective', 'students', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', "you're", "you've", "you'll", "you'd", 'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', "she's", 'her', 'hers', 'herself', 'it', "it's", 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', "that'll", 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', "don't", 'should', "should've", 'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 'aren', "aren't", 'couldn', "couldn't", 'didn', "didn't", 'doesn', "doesn't", 'hadn', "hadn't", 'hasn', "hasn't", 'haven', "haven't", 'isn', "isn't", 'ma', 'mightn', "mightn't", 'mustn', "mustn't", 'needn', "needn't", 'shan', "shan't", 'shouldn', "shouldn't", 'wasn', "wasn't", 'weren', "weren't", 'won', "won't", 'wouldn', "wouldn't"]
 
 TAG_RE = re.compile(r'<[^>]+>')
@@ -172,7 +173,7 @@ def get_lessons(lesson_id, user_id):
                             if result not in wording_list:
                                 wording_list.append(result) 
 
-  
+    activities_full = []
     for line in wording_list:
         wording = line[0]
         wording_split = wording.split()
@@ -180,9 +181,14 @@ def get_lessons(lesson_id, user_id):
         tokens = nlp(first_word)
         new_verb = tokens[0]._.inflect('VBG')
         new_demo = wording.replace(first_word, new_verb) 
-        lesson_full = get_new_lesson(new_demo, line[1], user_id, lesson_id)
 
-    return(wording_list)
+        lesson_full = get_new_lesson(new_demo, line[1], lesson_id, user_profile.id)
+        for item in lesson_full:
+            activity = {'id': item.id, 'activity': item.lesson_text}
+            activities_full.append(activity)
+
+
+    return(activities_full)
 
 def get_mi_analytics_count(mi_list):
     mi_dict = {'Logical': 0, 'Verbal': 0, 'Musical': 0,  'Visual': 0,  'Movement': 0}
