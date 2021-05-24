@@ -86,7 +86,7 @@ urlpatterns = [
         name='about_us'),
 
     url(r'^classrooms-all/',
-        view=ClassroomList.as_view(),
+        view=classroomLists.as_view(),
         name='classroom_list'),
 
     url(r'^classroom-single/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/',

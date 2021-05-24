@@ -407,7 +407,7 @@ class LearningDemonstration(models.Model):
         return "%s" % (self.content)
 
 
-class classroomList(models.Model):
+class classroomLists(models.Model):
     lesson_classroom = models.ForeignKey(classroom,
                                on_delete=models.SET_NULL,
                                blank=True,
