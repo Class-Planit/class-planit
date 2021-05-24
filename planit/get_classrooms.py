@@ -8,7 +8,7 @@ def get_classroom_summary(user_id, date):
     classroom_profiles = classroom.objects.filter(main_teacher=user_profile)
     final_list = []
     for single_classroom in classroom_profiles:
-        class_list_matches, created = classroomLists.objects.get_or_create(lesson_classroom=single_classroom, academic_year=date)
+        class_list_matches, created = classroomLists.objects.get_or_create(lesson_classroom=single_classroom, year=date)
         class_name = single_classroom.classroom_title
         student_list = class_list_matches.students.all()
         student_count = student_list.count()

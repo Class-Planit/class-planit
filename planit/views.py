@@ -878,7 +878,7 @@ def StudentRegistration(request, lesson_id=None, worksheet_id=None):
     lesson_match = lessonObjective.objects.get(id=lesson_id)
     l_classroom = lesson_match.lesson_classroom_id
     class_match = classroom.objects.get(id=l_classroom)
-    classroom_list, created = classroomLists.objects.get_or_create(lesson_classroom=class_match, academic_year=current_year)
+    classroom_list, created = classroomLists.objects.get_or_create(lesson_classroom=class_match, year=current_year)
 
     if request.method == "POST":
         form = StudentForm(request.POST, request.FILES)
