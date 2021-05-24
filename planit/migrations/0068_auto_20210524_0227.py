@@ -81,12 +81,5 @@ class Migration(migrations.Migration):
                 ('student', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
-        migrations.CreateModel(
-            name='classroomList',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('lesson_classroom', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='planit.classroom')),
-                ('students', models.ManyToManyField(blank=True, null=True, related_name='classroom_students', to='planit.studentProfiles')),
-            ],
-        ),
+       
     ]
