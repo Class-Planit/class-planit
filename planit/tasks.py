@@ -62,6 +62,7 @@ nlp = spacy.load('en_core_web_sm')
 import random
 import re
 import inflect
+from .activity_builder import *
 engine = inflect.engine()
 
 stop_words = ['i', "'", "'" '!', '.', ':', ',', '[', ']', '(', ')', '?', "'see", "see", 'x', '...',  'student', 'learn', 'objective', 'students', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', "you're", "you've", "you'll", "you'd", 'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', "she's", 'her', 'hers', 'herself', 'it', "it's", 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', "that'll", 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', "don't", 'should', "should've", 'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 'aren', "aren't", 'couldn', "couldn't", 'didn', "didn't", 'doesn', "doesn't", 'hadn', "hadn't", 'hasn', "hasn't", 'haven', "haven't", 'isn', "isn't", 'ma', 'mightn', "mightn't", 'mustn', "mustn't", 'needn', "needn't", 'shan', "shan't", 'shouldn', "shouldn't", 'wasn', "wasn't", 'weren', "weren't", 'won', "won't", 'wouldn', "wouldn't"]
@@ -73,17 +74,19 @@ app.conf.update(BROKER_URL=config('REDIS_URL'),
                 CELERY_RESULT_BACKEND=config('REDIS_URL'))
 
 
-def get_new_lesson(demo_wording, topic_list,  lesson_id, user_id):
+def get_new_lesson(demo_wording, topic, d_type, t_type, lesson_id, user_id):
+
     user_profile = User.objects.get(id=user_id)
 
     lesson_match = lessonObjective.objects.get(id=lesson_id)
-    topic_results = []
-    for topic in topic_list:
-        tt_list = topic.topic_type.all()
-        for item in tt_list:
-            topic_results.append(item) 
 
-    lesson_templates = lessonTemplates.objects.filter(components__in=topic_results)
+    tt_match = topicTypes.objects.filter(item=t_type).first()
+    if 'multi' in d_type:
+        lesson_templates = lessonTemplates.objects.filter(components=tt_match, is_multi=True)
+    elif 'plural' in d_type:
+        lesson_templates = lessonTemplates.objects.filter(components=tt_match, is_plural=True)
+    else:
+        lesson_templates = lessonTemplates.objects.filter(components=tt_match)
 
     lesson_list = []
     for temp in lesson_templates:
@@ -93,77 +96,15 @@ def get_new_lesson(demo_wording, topic_list,  lesson_id, user_id):
         bloom = temp.bloom
         mi = temp.mi
         new_wording = lesson_wording.replace('DEMO_KS', demo_wording)
-     
-        new, created = selectedActivity.objects.get_or_create(created_by=user_profile , template_id=temp.id , lesson_overview = lesson_match, lesson_text = new_wording, verb = verb, work_product = work_product, bloom = bloom, mi = mi, is_admin = False)
-        lesson_list.append(new)
+        if new_wording:
+            new, created = selectedActivity.objects.get_or_create(created_by=user_profile , template_id=temp.id , lesson_overview = lesson_match, lesson_text = new_wording, verb = verb, work_product = work_product, bloom = bloom, mi = mi, is_admin = False)
+            
+            lesson_list.append(new)
 
     return(lesson_list)
 
 
-def get_multiple_types_activity(topic_list):
-    word_list = []
-    for topic in topic_list:
-        words = topic.item
-        word_list.append(words)
 
-    words_list_full = ' '.join([str(i) for i in word_list])
-    words_list_full = words_list_full.split()
-
-    wordfreq = []
-    for w in words_list_full:
-        if w not in stop_words:
-            result = w, words_list_full.count(w)
-            wordfreq.append(result)
-
-    wordfreq.sort(key=lambda x: x[1], reverse=True)
-
-    wording_list = []
-    if wordfreq:
-        if wordfreq[0][1] > 1:
-            result = wordfreq[0][0]
-            sent_blob = TextBlob(result)
-            sent_tagger = sent_blob.pos_tags
-
-            for y in sent_tagger:
-                if 'NN' in y[1]:
-                    wording = 'describe the parts of the ' +  y[0]
-                    wording_list.append(wording)
-        
-
-
-    return(wording_list)
-
-    
-
-
-
-def get_plural_types_activity(topic_list):
-    word_list = []
-    for topic in topic_list:
-        words = topic.item
-        word_list.append(words)
-
-    words_list_full = ' '.join([str(i) for i in word_list])
-    words_list_full = words_list_full.split()
-
-    wordfreq = []
-    for w in words_list_full:
-        result = w, words_list_full.count(w)
-        wordfreq.append(result)
-
-    wordfreq.sort(key=lambda x: x[1], reverse=True)
-
-    wording_list = []
-
-    if wordfreq[0][1] > 1:
-        plural = engine.plural(wordfreq[0][0])
-        if plural:
-            wording = 'characterize the types of ' +  plural
-            wording_list.append(wording)
-        
-
-
-    return(wording_list)
 
 
 

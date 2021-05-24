@@ -351,34 +351,7 @@ $(document).ready(function () {
             });
     }
 
-    if($('.ct-chart-app-ranking').length) {
-        //Chart 5
-            new Chartist.Bar('.ct-chart-app-ranking', {
-            labels: ['21 Apr', '21 Ap', '22 Ap', '23 Ap', '24 Ap', '25 Ap', '26 Ap'],
-            series: [
-                [5, 4, 3, 7, 5, 10, 3],
-                [2, 2, 1, 5, 3, 4, 2],
-                [3, 2, 9, 5, 4, 6, 4]
-            ]
-            }, {
-            low: 0,
-            showArea: true,
-            plugins: [
-                Chartist.plugins.tooltip()
-            ],
-            axisX: {
-                // On the x-axis start means top and end means bottom
-                position: 'end'
-            },
-            axisY: {
-                // On the y-axis start means left and end means right
-                showGrid: false,
-                showLabel: false,
-                offset: 0
-            }
-        });
-    }
-
+   
     if($('.ct-chart-traffic-share').length) {
         var data = {
             series: [30, 70]

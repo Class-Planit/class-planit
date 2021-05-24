@@ -65,4 +65,7 @@ admin.site.register(worksheetTheme)
 admin.site.register(userImageUpload)
 admin.site.register(studentQuestionAnswer)
 admin.site.register(studentWorksheetAnswerFull)
+admin.site.register(worksheetClassAssignment)
+admin.site.register(studentPraiseTheme)
+admin.site.register(studentPraise)
 

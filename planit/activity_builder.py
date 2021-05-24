@@ -160,54 +160,186 @@ def get_lessons_full(topic_list, demo_ks, lesson_id, user_id):
                             if result not in wording_list:
                                 wording_list.append(result) 
 
-  
+    activities_full = []
     for line in wording_list:
-        wording = line[0]
-        wording_split = wording.split()
+        sentence = line[0]
+        topic = line[1]
+        t_type = line[2]
+        d_type = line[3]
+
+        wording_split = sentence.split()
         first_word = wording_split[0]
         tokens = nlp(first_word)
         new_verb = tokens[0]._.inflect('VBG')
-        new_demo = wording.replace(first_word, new_verb) 
-        lesson_full = get_new_lesson(new_demo, line[1], lesson_id, user_id)
-
+        new_demo = sentence.replace(first_word, new_verb) 
+        
+        lesson_full = get_new_lesson(new_demo, topic, d_type, t_type, lesson_id, user_profile.id)
+        for item in lesson_full:
+            activity = {'id': item.id, 'activity': item.lesson_text}
+            activities_full.append(activity)
 
     return(wording_list)
 
 
 
-def get_new_lesson(demo_wording, topic_list,  lesson_id, user_id):
+def get_new_lessons(lesson_id, user_id):
     user_profile = User.objects.get(id=user_id)
-
     lesson_match = lessonObjective.objects.get(id=lesson_id)
+    topic_matches = lesson_match.objectives_topics.all()
+    demo_ks = lesson_match.objectives_demonstration.all()
+    grouping = 'in groups of two'
+
+    
+    topic_list = topicInformation.objects.filter(id__in=topic_matches)
+    multi_activity = get_multiple_types_activity(topic_list)
+    
+    teacher_objective = lesson_match.teacher_objective
     topic_results = []
-    for topic in topic_list:
-        tt_list = topic.topic_type.all()
-        for item in tt_list:
-            topic_results.append(item) 
+    full_result = []
+    topic_ids = []
+    for item in topic_list:
+        
+        topic_types = item.topic_type.all()
+        
 
-    lesson_templates = lessonTemplates.objects.filter(components__in=topic_results)
+        topic_items = []
+        for tt in topic_types:
+            masked_info = tt.item
+            topic_id = tt.id
+            topic_ids.append(topic_id)
+            topic_items.append(masked_info)
+            topic_results.append(masked_info)
 
-    lesson_list = []
-    for temp in lesson_templates:
-        lesson_wording = temp.wording
-        verb = temp.verb
-        work_product = temp.work_product
-        bloom = temp.bloom
-        mi = temp.mi
-        new_wording = lesson_wording.replace('DEMO_KS', demo_wording)
-     
-        new, created = selectedActivity.objects.get_or_create(created_by=user_profile , template_id=temp.id , lesson_overview = lesson_match, lesson_text = new_wording, verb = verb, work_product = work_product, bloom = bloom, mi = mi, is_admin = False)
-        lesson_list.append(new)
+        replacement = item, topic_items
+        full_result.append(replacement)
+        
+        
 
-    return(lesson_list)
+    words_list_full = ' '.join([str(i) for i in topic_results])
+    words_list_full = words_list_full.split()
+
+    wordfreq = []
+    for w in words_list_full:
+        result = w, words_list_full.count(w)
+        wordfreq.append(result)
+    wordfreq.sort(key=lambda x: x[1], reverse=True)
+    wordfreq = set(wordfreq)
+    
+    
+    wording_list = []
+
+    for item in demo_ks:
+        wording = item.content
+        topic_types = []
+        if item.topic_id:
+            topic_match = topicInformation.objects.filter(id=item.topic_id).first()
+            if topic_match:
+                topic_two = topic_match.topic_type.all()
+                for topic in topic_two:
+                    topic_types.append(topic)
+
+        if wording not in wording_list:
+            results = wording, topic_types
+            wording_list.append(results)
+
+    single_activities = get_single_types_activity(topic_list)
+
+    for line in single_activities:
+        if line not in wording_list:
+            wording_list.append(line)
+
+   
+
+    for topic_item in wordfreq:
+        
+        #this is for multiple or the same topic items 
+        if topic_item[1] > 1:
+
+            result_list = []
+            for item in full_result:
+                if topic_item[0] in item[1]:
+                    result = item[0]
+                    result_list.append(result)
+
+            
+
+            plural_noun = get_plural_types_activity(result_list)
+            for item in plural_noun:
+                if item not in wording_list:
+                    wording_list.append(item) 
+
+            multi_noun = get_multiple_types_activity(result_list)
+            for item in multi_noun:
+                if item not in wording_list:
+                    wording_list.append(item) 
+
+
+
+        else:
+        #this is for single topic items    
+            result_list = []
+            for item in full_result:
+                if topic_item[0] in item[1]:
+                    result_one = item[0]
+                    result_list.append(result_one)
+                    
+                    topic_one = result_one.topic_type.all()
+                    topic_list = []
+                    for item in topic_one:
+                        topic_list.append(item)
+                    
+                    demo_ks_match = LearningDemonstrationTemplate.objects.filter(topic_type__in=topic_one)
+                    for demo in demo_ks_match:
+                        wording = demo.content
+
+                        topic_two = demo.topic_type.all()
+
+                        for item in topic_two:
+                            new_wording = wording.replace(str(item), result_one.item)  
+                            result = new_wording, result_list
+                          
+                            if result not in wording_list:
+
+                                wording_list.append(result) 
+
+    
+
+
+    run_it = get_activity_mask(topic_list)
+    activities_full = []
+    for line in wording_list:
+        sentence = line[0]
+        topic = line[1]
+        d_type = line[2]
+
+        wording_split = sentence.split()
+        first_word = wording_split[0]
+        tokens = nlp(first_word)
+        new_verb = tokens[0]._.inflect('VBG')
+        new_demo = sentence.replace(first_word, new_verb) 
+        
+        lesson_full = get_new_lesson(new_demo, topic, d_type, lesson_id, user_profile.id)
+        for item in lesson_full:
+            activity = {'id': item.id, 'activity': item.lesson_text}
+            activities_full.append(activity)
+
+
+    return(activities_full)
+
 
 
 def get_multiple_types_activity(topic_list):
     word_list = []
+    t_type = []
     for topic in topic_list:
         words = topic.item
+        d_types = topic.topic_type.all()
+        d_matched = topicTypes.objects.filter(id__in=d_types)
+        for item in d_matched:
+            t_type.append(item.item)
         word_list.append(words)
 
+    t_type = set(t_type)
     words_list_full = ' '.join([str(i) for i in word_list])
     words_list_full = words_list_full.split()
 
@@ -229,7 +361,8 @@ def get_multiple_types_activity(topic_list):
             for y in sent_tagger:
                 if 'NN' in y[1]:
                     wording = 'describe the parts of the ' +  y[0]
-                    wording_list.append(wording)
+                    result = wording, wordfreq[0][0], t_type, 'multi'
+                    wording_list.append(result)
         
 
 
@@ -241,10 +374,16 @@ def get_multiple_types_activity(topic_list):
 
 def get_plural_types_activity(topic_list):
     word_list = []
+    t_type = []
     for topic in topic_list:
         words = topic.item
+        d_types = topic.topic_type.all()
+        d_matched = topicTypes.objects.filter(id__in=d_types)
+        for item in d_matched:
+            t_type.append(item.item)
         word_list.append(words)
 
+    t_type = set(t_type)
     words_list_full = ' '.join([str(i) for i in word_list])
     words_list_full = words_list_full.split()
 
@@ -255,16 +394,17 @@ def get_plural_types_activity(topic_list):
 
     wordfreq.sort(key=lambda x: x[1], reverse=True)
 
+    wording_options = ['characterize the types of ', 'identify the types of ', 'labeling the types of ']
+    random.shuffle(wording_options)
     wording_list = []
 
     if wordfreq[0][1] > 1:
         plural = engine.plural(wordfreq[0][0])
         if plural:
-            wording = 'characterize the types of ' +  plural
-            wording_list.append(wording)
+            wording = wording_options[0] +  plural
+            result = wording, wordfreq[0][0], t_type, 'plural'
+            wording_list.append(result)
         
-
-
     return(wording_list)
 
 
@@ -492,7 +632,6 @@ def activity_builder_jq(teacher_input, class_id, lesson_id, user_id):
         results_list.append(result)
         topic_ids.append(item_id)
 
-    lesson_matches = get_lessons_full(topics, demo_ks, lesson_id, user_id)
     subject = class_objectives.subject
     grade_standards = []
     teacher_input_full = teacher_input + str(results_list) + str(stand_full)

@@ -97,6 +97,10 @@ urlpatterns = [
         view=CreateObjective,
         name='create_objective'),
 
+    url(r'^student-performance/(?P<user_id>[\w\s]+)/(?P<class_id>[\w\s]+)/(?P<week_of>[\w\s]+)/',
+        view=StudentPerformance,
+        name='student_performance'),
+
     url(r'^activity-builder/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<lesson_id>[\w-]+)/(?P<page>[\w-]+)/$',
         view=ActivityBuilder,
         name='activity_builder'), 

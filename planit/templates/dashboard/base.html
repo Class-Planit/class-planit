@@ -65,7 +65,7 @@
     
     <!-- Rocket CSS -->
     <link type="text/css" href="{% static 'css/dashboard/rocket.css' %}" rel="stylesheet">
-
+      
     <!-- NOTICE: You can use the _analytics.html partial to include production code specific code & trackers -->
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -157,11 +157,13 @@
                                     {% else %}
                                     <li class="nav-item">
                                     {% endif %}
-                                  <a href="../dashboard/tasks.html" class="nav-link">
+                                  <a href="{% url 'student_performance' user_id=user_profile.id class_id=0 week_of='Current' %}" class="nav-link">
                                       <span class="sidebar-icon"><span class="fas fa-clipboard-list"></span></span>
                                       <span>Assignments</span>
                                   </a>
                                 </li>
+
+              
                                 <li class="nav-item ">
                                   <a href="../dashboard/settings.html" class="nav-link">
                                       <span class="sidebar-icon"><span class="fas fa-cog"></span></span>
@@ -195,6 +197,7 @@
 </div>
 </div>
 </div>
+
 <script>
 $(document).ready(function() {
     $('[data-class="form_ajaxified"]').formsAjaxified();

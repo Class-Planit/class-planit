@@ -37,7 +37,9 @@ from .get_lessons import *
 from .get_questions import *
 from .ocr import * 
 from .get_classrooms import *
-
+from .get_openai import *
+from .get_performance import *
+from .get_students import * 
 ##################| Homepage Views |#####################
 #Homepage Landing Page
 def Homepage(request):
@@ -210,7 +212,7 @@ def ClassroomSingle(request, user_id=None, class_id=None):
     current_year = datetime.datetime.now().year
     user_profile = User.objects.filter(username=request.user.username).first()
     class_profile = classroom.objects.get(id=class_id)
-    student_summary = get_classroom_summary(user_profile.id, current_year, class_id)
+    student_summary = get_classroom_list_summary(user_profile.id, current_year, class_id)
     return render(request, 'dashboard/classrooms.html', {'user_profile': user_profile, 'student_summary': student_summary, 'class_profile': class_profile})
 
 
@@ -293,16 +295,17 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     teacher_input = lesson_match.teacher_objective
     standards_matches = lesson_match.objectives_standards.all()
 
-
     standards_topics = activity_builder_task(teacher_input, class_id, lesson_id, user_id)
     
     matched_standards = standards_topics['matched_standards']
 
     standards_select = singleStandard.objects.filter(id__in=matched_standards)
 
+    
         
     new_text, created = lessonText.objects.get_or_create(matched_lesson=lesson_match)
 
+    
     return render(request, 'dashboard/activity_builder.html', {'user_profile': user_profile, 'new_text': new_text, 'classroom_profile': classroom_profile, 'lesson_match': lesson_match, 'standards_select': standards_select, 'standards_matches': standards_matches })
 
 #Adds or Removes Selected Standards
@@ -467,7 +470,7 @@ def UpdateLessonActivities(request, lesson_id, class_id):
         lesson_match = lessonObjective.objects.get(id=lesson_id)
         teacher_input = lesson_match.teacher_objective
         update_activity_list = get_lessons(lesson_id, user_profile.id)
-        print(update_activity_list)
+
         context = {"data": update_activity_list, "message": "your message"}
 
         return JsonResponse(context)
@@ -947,3 +950,19 @@ def NewQuestions(request, user_id=None, class_id=None, subject=None, lesson_id=N
             prev.save()
             worksheet_match.questions.add(prev)
         return redirect('digital_activities', user_id=user_id, class_id=class_id, lesson_id=lesson_id, subject=1, page='Preview', worksheet_id=worksheet_id, act_id='False', question_id=0)
+
+
+def StudentPerformance(request, user_id, class_id, week_of):
+    all_themes = studentPraiseTheme.objects.all()
+    user_profile = User.objects.get(id=user_id)
+    current_year = datetime.datetime.now().year
+    current_week = date.today().isocalendar()[1]
+    start = current_week - 12
+    if start < 1:
+        start = 1
+    
+
+    week_breakdown = get_weekly_brackets(user_id, start, current_week, current_year)
+    top_lessons = get_demo_ks_brackets(user_id, start, current_week, current_year)
+    student_results = get_student_results(user_id, start, current_week, current_year)
+    return render(request, 'dashboard/tasks.html', {'user_profile': user_profile, 'all_themes': all_themes, 'week_breakdown': week_breakdown, 'top_lessons': top_lessons, 'student_results': student_results})

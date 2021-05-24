@@ -1183,9 +1183,13 @@ class worksheetFull(models.Model):
                                        null=True) 
     questions = models.ManyToManyField(topicQuestion,
                                      blank=True)
+    total_possible = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
 
     def __str__(self):
         return "%s" % (self.title)
+
 
 
 class matchedTopics(models.Model):
@@ -1237,6 +1241,9 @@ class studentWorksheetAnswerFull(models.Model):
                                on_delete=models.CASCADE,
                                blank=True,
                                null=True)
+    week_of = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
     student = models.ForeignKey(User,
                                on_delete=models.CASCADE,
                                blank=True,
@@ -1248,9 +1255,90 @@ class studentWorksheetAnswerFull(models.Model):
                                      blank=True,
                                      related_name='student_answers',
                                      null=True)
+    correct_points = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
+    total_possible = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
+    score = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
     is_graded = models.BooleanField(default=False)
     is_passing = models.BooleanField(default=False)
     is_submitted = models.BooleanField(default=False)
+    assignment_num = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
+    completion_date = models.DateField(blank=True,
+                                   null=True)
     
+    def __str__(self):
+        return "%s" % (self.id)
+
+
+class worksheetClassAssignment(models.Model):
+    lesson_overview = models.ForeignKey(lessonObjective,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    week_of = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
+    subject = models.ForeignKey(standardSubjects,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    created_by = models.ForeignKey(User,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True)
+    worksheet_full = models.ForeignKey(worksheetFull,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True)
+    total_possible = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
+    assigned_classrooms = models.ManyToManyField(classroom,
+                                     blank=True)
+    student_answers = models.ManyToManyField(studentWorksheetAnswerFull,
+                                     blank=True)
+    due_date = models.DateField(blank=True,
+                                   null=True)
+    
+    def __str__(self):
+        return "%s" % (self.id)
+
+
+class studentPraiseTheme(models.Model):
+    user_image = models.ImageField(upload_to='images/praise/',
+                                   blank=True,
+                                   null=True)
+    theme_title = models.CharField(max_length=200,
+                        blank=True,
+                        null=True)
+    
+    
+    def __str__(self):
+        return "%s" % (self.id)
+
+class studentPraise(models.Model):
+    theme_id = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
+    created_by = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
+    student = models.ForeignKey(User,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True)
+    sent_date = models.DateField(blank=True,
+                                   null=True)
+    week_of = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
+
     def __str__(self):
         return "%s" % (self.id)
