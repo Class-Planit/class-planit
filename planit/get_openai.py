@@ -3,7 +3,7 @@ import openai
 from decouple import config, Csv
 from .models import *
 
-import pandas as pd
+
 import re
 
 openai.api_key = config('OPENAI_API_KEY') 

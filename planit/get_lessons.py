@@ -8,7 +8,7 @@ from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from django.db.models import Q, Sum
-import pandas as pd 
+ 
 from .models import *
 import json
 import numpy.random
