@@ -416,7 +416,11 @@ class classroomList(models.Model):
                                      blank=True,
                                      related_name='classroom_students',
                                null=True)  
-    academic_year = models.IntegerField(default = 0,
+    year = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
+    academic_year = models.ForeignKey(academicYear,
+                               on_delete=models.SET_NULL,
                                blank=True,
                                null=True)
 
