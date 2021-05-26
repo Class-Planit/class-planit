@@ -1,2 +1,3 @@
-web: newrelic-admin run-program gunicorn base.wsgi --preload --timeout 120
+web: gunicorn base.wsgi  
 worker: celery -A base worker -l info
+
