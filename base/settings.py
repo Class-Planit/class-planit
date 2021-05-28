@@ -41,8 +41,8 @@ STATICFILES_DIRS = (
 SECRET_KEY = config('SECRET_KEY') 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-SECURE_SSL_REDIRECT = True
+DEBUG = True
+SECURE_SSL_REDIRECT = False
 
 ALLOWED_HOSTS = ['www.classplanit.co', 'www.classplanit.herokuapp.com', 'http://127.0.0.1:8000']
 DATE_INPUT_FORMATS = ['%m/%d/%y']

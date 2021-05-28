@@ -50,7 +50,18 @@
      
   <script src="https://cdn.tiny.cloud/1/0ak6ftt9ng9va9e98pl0iwxwwh0rb1tipwsg8it4mjmcbkjb/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
+  <style type="text/css">
+    .tooltip {
+      border-bottom: 1px dotted #000000;
+      color: #000000; outline: none;
+      cursor: help; text-decoration: none;
+      position: relative;
+    }
+    .tooltip span {
+      margin-left: -999em;
+      position: absolute;
+    }
+    </style>
 <style>
 .demo-dfree {
   position: relative;
@@ -722,7 +733,9 @@
             + item.id +
             '" href="#" data-topid="'
             + item.id +
-            '" data-lessid="{{ lesson_match.id }}">'
+            '" data-lessid="{{ lesson_match.id }}" data-toggle="tooltip" data-placement="top" title="'
+            + item.descriptions + 
+            '" class="tooltip">'
             + item.term +
             '</a>');
         });

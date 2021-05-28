@@ -74,7 +74,7 @@
     <main>
 
         <div class="preloader bg-soft flex-column justify-content-center align-items-center">
-    <img class="loader-element" src="../assets/img/brand/dark.svg" height="50" alt="Rocket logo">
+    <img class="loader-element" src="{% static 'images/dashboard/circle_logo.svg' %}" height="50" alt="Rocket logo">
 </div>
 
         <!-- Section -->
@@ -138,7 +138,7 @@
                             <div class="d-block d-sm-flex justify-content-center align-items-center mt-4">
                                 <span class="font-weight-normal">
                                     Not registered?
-                                    <a href="./sign-up.html" class="font-weight-bold">Create account</a>
+                                    <a href="{% url 'registration_full' retry=False %}" class="font-weight-bold">Create account</a>
                                 </span>
                             </div>
                         </div>

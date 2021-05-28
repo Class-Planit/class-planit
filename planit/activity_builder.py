@@ -602,6 +602,23 @@ def get_standard_matches(get_objective_matches, tokens_without_sw):
         full_result.append(item[0])
     return(full_result)
 
+def get_description_string(topic_id, user_id):
+    user_profile = User.objects.get(id=user_id)
+    match_topic = topicInformation.objects.get(id=topic_id)
+    d_list = match_topic.description.all()
+    personal_descriptions = topicDescription.objects.filter(id__in=d_list, is_admin=False, created_by=user_profile)
+    if personal_descriptions:
+        description_matches = personal_descriptions
+    else:
+        description_matches = topicDescription.objects.filter(id__in=d_list, is_admin=True)
+
+    all_d = []
+    for item in description_matches:
+        line = item.description
+        all_d.append(line)
+
+    final = '; '.join(all_d)
+    return(final)
 
 
 def activity_builder_jq(teacher_input, class_id, lesson_id, user_id):
@@ -649,9 +666,10 @@ def activity_builder_jq(teacher_input, class_id, lesson_id, user_id):
     not_selected_topics = []
     for item in matched_topics:      
         match_topic = topicInformation.objects.filter(id=item).first()
+        descriptions = get_description_string(match_topic.id, user_id)
         update_matches = create_topic_matches.objectives_topics.add(match_topic)
         if item not in topic_ids:
-            result = {'id': match_topic.id, 'term': match_topic.item} 
+            result = {'id': match_topic.id, 'term': match_topic.item, 'descriptions': descriptions} 
             if result not in not_selected_topics:
                 not_selected_topics.append(result)
 

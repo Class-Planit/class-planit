@@ -8,7 +8,7 @@ from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from django.db.models import Q, Sum
- 
+import collections
 from .models import *
 
 import numpy.random
@@ -54,9 +54,70 @@ nlp = spacy.load('en_core_web_sm')
 import random
 from .get_key_terms import *
 
+
 stop_words = ['i', "'", "'" '!', '.', ':', ',', '[', ']', '(', ')', '?', "'see", "see", 'x', '...',  'student', 'learn', 'objective', 'students', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', "you're", "you've", "you'll", "you'd", 'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', "she's", 'her', 'hers', 'herself', 'it', "it's", 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', "that'll", 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', "don't", 'should', "should've", 'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 'aren', "aren't", 'couldn', "couldn't", 'didn', "didn't", 'doesn', "doesn't", 'hadn', "hadn't", 'hasn', "hasn't", 'haven', "haven't", 'isn', "isn't", 'ma', 'mightn', "mightn't", 'mustn', "mustn't", 'needn', "needn't", 'shan', "shan't", 'shouldn', "shouldn't", 'wasn', "wasn't", 'weren', "weren't", 'won', "won't", 'wouldn', "wouldn't"]
 
 TAG_RE = re.compile(r'<[^>]+>')
+
+def retention_activities_analytics(lesson_id):
+    class_objectives = lessonObjective.objects.get(id=lesson_id)
+    matched_activities = selectedActivity.objects.filter(lesson_overview=class_objectives, is_selected=True)
+
+    class_standards = class_objectives.objectives_standards.all()
+    matched_standards = singleStandard.objects.filter(id__in=class_standards)
+    
+    passive = ('watch', 'listen', 'video', 'song')
+    middle = ('notes', 'worksheet', 'complete', 'write', 'type')
+    active = ('present', 'presentation', 'discuss', 'discussion', 'debate', 'group', 'teams', 'pairs', 'explain')
+
+    if matched_activities:
+        
+        active_count = 0
+        middle_count = 0 
+        passive_count = 0 
+        activity_results = 0
+        for activity in matched_activities:
+            activity_text = activity.lesson_text
+            split_activity = activity_text.split()
+            if any(word in activity_text for word in active):
+                activity_results = activity_results + 3
+                active_count = active_count + 1
+            elif any(word in activity_text for word in middle):
+                activity_results = activity_results + 2
+                middle_count = middle_count + 1
+            elif any(word in activity_text for word in passive):
+                activity_results = activity_results + 1
+                passive_count = passive_count + 1
+            else:
+                pass
+ 
+        activity_count = matched_activities.count()
+        remaining = activity_count - active_count - middle_count
+        passive_count = passive_count + remaining 
+
+        total_count = activity_count
+
+        retention_avg = (activity_results/(total_count*3)) * 100
+        retention_avg  = round(retention_avg)
+        passive_per = (passive_count/total_count) * 100
+        middle_per = (middle_count/total_count) * 100
+        active_per = (active_count/total_count) * 100
+
+        if retention_avg >= 60:
+            text = 'Your retention rate is high because your lessons include active learning'
+        elif retention_avg >= 30:
+            text = 'Your retention rate may be average because students practice and take notes.'
+        else:
+            text = 'Try improving your retention rate by including a presentation of knowledge or discussion'
+        
+        results = {'avg': retention_avg, 'text': text, 'passive': passive_per, 'middle': middle_per, 'active': active_per}
+    else:
+        text = 'Add activities to view results'
+        results = {'avg': 0, 'text': text, 'passive': 25, 'middle': 50, 'active': 25}
+
+    
+    return(results)
+
 
 
 def identify_topic(activity, lesson_id):
@@ -146,7 +207,8 @@ def label_activities(activity, lesson_id):
 
 def label_activities_analytics_small(lesson_id):
     class_objectives = lessonObjective.objects.get(id=lesson_id)
-    matched_activities = selectedActivity.objects.filter(lesson_overview=class_objectives)
+
+    matched_activities = selectedActivity.objects.filter(lesson_overview=class_objectives, is_selected=True)
     class_standards = class_objectives.objectives_standards.all()
     matched_standards = singleStandard.objects.filter(id__in=class_standards)
     
@@ -160,23 +222,34 @@ def label_activities_analytics_small(lesson_id):
         bl_list = []
         activity_list = []
         for activity in matched_activities:
-            activity_text = activity.lesson_text
-            act_mi = int(activity.mi)
-            act_bl = int(activity.bloom)
-            mi_list.append(act_mi)
-            bl_list.append(act_bl)
-            activity_list.append(activity_text)
+            if len(activity.lesson_text) >= 4:
+                activity_text = activity.lesson_text
+                act_mi = int(activity.mi)
+                act_bl = int(activity.bloom)
+                mi_list.append(act_mi)
+                bl_list.append(act_bl)
+                activity_list.append(activity_text)
 
         mi_list.sort() 
         bl_list.sort()
 
-        mi_high = (mi_list[-1]/5) * 100 
-        bl_high = (bl_list[-1]/6) * 100 
+
+
+        mi_occurrences = collections.Counter(mi_list)
+        bl_occurrences = collections.Counter(bl_list)
+        
+        mi = sorted(mi_occurrences.items(), key=lambda x: x[1], reverse=True)  
+        bl = sorted(bl_occurrences.items(), key=lambda x: x[1], reverse=True)
+
+        
         mi_count = len(mi_list)
         bl_count = len(bl_list)
 
         mi_length = len(set(str(mi_count)))
         bl_length = len(set(str(bl_count)))
+
+        mi_high = mi[0][0]/5 * 100 
+        bl_high = bl[0][0]/5 * 100 
 
         unique_count = int(mi_length) + int(bl_length)
 
@@ -184,7 +257,8 @@ def label_activities_analytics_small(lesson_id):
 
         diff_count = (unique_count/total_count) * 100
 
-
+        retention_rate = retention_activities_analytics(lesson_id)
+        ret_rate = retention_rate['avg']
         Document1 = ''.join([str(i) for i in activity_list])
         Document2 = ''.join([str(i) for i in stan_list])
         if len(Document2) and len(Document1) >= 4:
@@ -195,7 +269,7 @@ def label_activities_analytics_small(lesson_id):
             trsfm=vectorizer.fit_transform(corpus)
             result = cosine_similarity(trsfm[0:1], trsfm)
             result = result[0][1] * 100
-            one = {'name': 'Retention Rate', 'progress': mi_high, 'color': 'bg-warning', 'div': 'showRateDiff()'}
+            one = {'name': 'Retention Rate', 'progress': ret_rate, 'color': 'bg-warning', 'div': 'showRateDiff()'}
             two = {'name': 'Depth of Understanding', 'progress': bl_high, 'color': 'bg-info', 'div': 'showDepthDiff()'}
             three = {'name': 'Differentiation', 'progress': diff_count, 'color': 'bg-success', 'div': 'showDivDiff()'}
             four = {'name': 'Standards Alignment', 'progress': result, 'color': 'bg-danger', 'div': 'showStanDiff()'}

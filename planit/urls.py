@@ -167,4 +167,20 @@ urlpatterns = [
         view=NewQuestions,
         name='add_new_question'),
 
+    url(r'^standards_upload/$',
+        view=StandardUploadTwo,
+        name='standards_upload'),
+
+    url(r'^topic_upload/$',
+        view=TopicUploadTwo,
+        name='topic_upload'),
+
+    url(r'^textbook_upload/$',
+        view=TextbookUploadOne,
+        name='textbook_uplad_one'),
+        
+    url(r'^textbook_upload_two/(?P<textbook_id>[\w-]+)/$',
+        view=TextbookUploadTwo,
+        name='textbook_uplad_two'),
+
 ]

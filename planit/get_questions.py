@@ -251,7 +251,7 @@ def get_question_text(lesson_id, user_profile):
     all_topic_lines = []
     for topic in descriptions: 
 
-        remove_list = ['illustrations', 'cartoon', 'Figure', 'they', 'those', 'Name ', 'Circle ', 'Education.com ', 'The McGraw-Hill', 'Review ']
+        remove_list = ['illustrations', 'cartoon', 'Figure', 'they', 'those', 'Name ', 'Circle ', 'Interactive', 'Education.com ', 'The McGraw-Hill', 'Review ', 'wikipedia']
         if any(word in topic[1] for word in remove_list):
             pass
         else:

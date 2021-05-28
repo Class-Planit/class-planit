@@ -101,6 +101,8 @@ def get_new_lesson(demo_wording, topic, d_type, t_type, lesson_id, user_id):
             
             lesson_list.append(new)
 
+    
+    
     return(lesson_list)
 
 

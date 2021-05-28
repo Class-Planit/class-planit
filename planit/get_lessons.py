@@ -180,10 +180,8 @@ def get_lessons(lesson_id, user_id):
 
                         for item in topic_two:
                             new_wording = wording.replace(str(item), result_one.item)  
-                            result = new_wording, result_list
-                          
+                            result = new_wording, result_one.item, item, 'single'            
                             if result not in wording_list:
-
                                 wording_list.append(result) 
 
     
@@ -194,6 +192,7 @@ def get_lessons(lesson_id, user_id):
     activities_full = []
     temp_ids_list = []
     demo_list_sect = []
+
     for line in wording_list:
         sentence = line[0]
         topic = line[1]
@@ -219,8 +218,7 @@ def get_lessons(lesson_id, user_id):
                         temp_ids_list.append(temp_id)
                         activity = {'id': item.id, 'activity': item.lesson_text}
                         activities_full.append(activity)
-
-  
+    
     return(activities_full)
 
 def get_mi_analytics_count(mi_list):
@@ -465,6 +463,9 @@ def get_lesson_sections(text_overview, class_id, lesson_id, user_id):
     grade_list = classroom_profile.grade_level.all()
     matched_grade = gradeLevel.objects.filter(id__in=grade_list).first()
     all_selected = selectedActivity.objects.filter(lesson_overview=class_objectives, is_selected=True)
+    for item in all_selected:
+        is_selected = False
+        item.save()
     topic_matches = class_objectives.objectives_topics.all()
     topic_lists_selected = topicInformation.objects.filter(id__in=topic_matches).order_by('item')
 
@@ -511,13 +512,16 @@ def get_lesson_sections(text_overview, class_id, lesson_id, user_id):
 
         for activity in activities:
             l_act = label_activities(activity, lesson_id)
-            new_activity = selectedActivity.objects.get_or_create(created_by=user_profile, lesson_overview=class_objectives, lesson_text=activity, verb=l_act[2], work_product=l_act[3], bloom=l_act[1], mi=l_act[0], is_selected=True)
+            new_activity, created = selectedActivity.objects.get_or_create(created_by=user_profile, lesson_overview=class_objectives, lesson_text=activity, verb=l_act[2], work_product=l_act[3], bloom=l_act[1], mi=l_act[0])
+            new_activity.is_selected=True
+            new_activity.save()
             find_topics = identify_topic(activity, lesson_id)
             if find_topics:
                 for item in find_topics:
                     match_topic = topicInformation.objects.filter(id=item).first()
                     update_matches = create_topic_matches.objectives_topics.add(match_topic)
 
+           
         #create and analyze new activities and update old activities
         ###update_lesson_activities = get_lesson_activities(activities, class_id, lesson_id, user_profile, class_objectives)
 

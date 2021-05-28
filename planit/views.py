@@ -102,7 +102,8 @@ def Homepage(request):
 
 #Full Form Regstration if error on pop up modal
 def FormFull(request, retry=None):
-    if retry:
+    
+    if 'True' in retry:
         message = 'Something Went Wrong! Please complete your registration again.'
     else:
         message = "Let's Get Started!"
@@ -966,3 +967,137 @@ def StudentPerformance(request, user_id, class_id, week_of):
     top_lessons = get_demo_ks_brackets(user_id, start, current_week, current_year)
     student_results = get_student_results(user_id, start, current_week, current_year)
     return render(request, 'dashboard/tasks.html', {'user_profile': user_profile, 'all_themes': all_themes, 'week_breakdown': week_breakdown, 'top_lessons': top_lessons, 'student_results': student_results})
+
+
+
+def StandardUploadTwo(request):
+    #second step to the standards upload process
+    #name="standards_upload"
+    template = "administrator/upload_textbook.html"
+
+    prompt = {
+        'order': 'Order of the CSV should be first name, surname'   
+              }
+    # GET request returns the value of the data with the specified key.
+    if request.method == "GET":
+        return render(request, template, prompt)
+    csv_file = request.FILES['file']
+    # let's check if it is a csv file
+    if not csv_file.name.endswith('.csv'):
+        messages.error(request, 'THIS IS NOT A CSV FILE')
+    data_set = csv_file.read().decode('UTF-8')
+    # setup a stream which is when we loop through each line we are able to handle a data in a stream
+    io_string = io.StringIO(data_set)
+    next(io_string)
+    for line in csv.reader(io_string, delimiter=','):
+        standard_set = line[0]
+        grade_level = line[1]
+        subject = line[2]
+        skill_topic = line[3]
+        standard_objective = line[4]
+        competency = line[5]
+
+        new_standard_set, i = standardSet.objects.get_or_create(Location=standard_set)
+        new_grade, i = gradeLevel.objects.get_or_create(grade=grade_level , grade_labels=grade_level , standards_set=new_standard_set)
+        new_subject, i = standardSubjects.objects.get_or_create(subject_title=subject, standards_set=new_standard_set, is_admin=True)
+        add_grade_subject = new_subject.grade_level.add(new_grade)
+
+        obj, created = singleStandard.objects.get_or_create(standards_set=new_standard_set, subject=new_subject, grade_level=new_grade, skill_topic=skill_topic, standard_objective=standard_objective, competency=competency)
+
+    context = { }
+    return render(request, template, context)
+
+
+
+def TopicUploadTwo(request):
+    #second step to the standards upload process
+    #name="standards_upload"
+    template = "administrator/upload_textbook.html"
+
+
+    prompt = {
+        'order': 'Order of the CSV should be first name, surname'   
+              }
+    # GET request returns the value of the data with the specified key.
+    if request.method == "GET":
+        return render(request, template, prompt)
+    csv_file = request.FILES['file']
+    # let's check if it is a csv file
+    if not csv_file.name.endswith('.csv'):
+        messages.error(request, 'THIS IS NOT A CSV FILE')
+    data_set = csv_file.read().decode('UTF-8')
+    # setup a stream which is when we loop through each line we are able to handle a data in a stream
+    io_string = io.StringIO(data_set)
+    next(io_string)
+    for line in csv.reader(io_string, delimiter=','):
+        Subject = line[0]
+        Grade_Level = line[1]
+        Standard_Set = line[2]
+        topic = line[3]
+        item = line[4]
+        Description = line[5]
+        topic_type = line[6]
+
+
+        standard_match = standardSet.objects.filter(Location=Standard_Set).first()
+        matched_grade = gradeLevel.objects.filter(grade=Grade_Level, standards_set=standard_match).first()
+        matched_subject = standardSubjects.objects.filter(subject_title=Subject, standards_set=standard_match, grade_level=matched_grade).first()
+        topic_match, created = topicTypes.objects.get_or_create(item=topic_type)
+        new_topic, created = topicInformation.objects.get_or_create(subject=matched_subject, grade_level=matched_grade, standard_set=standard_match, topic=topic, item=item)
+        new_description, created =  topicDescription.objects.get_or_create(description=Description) 
+        add_description = new_topic.description.add(new_description)
+        add_topic = new_topic.topic_type.add(topic_match)
+
+    context = {'step': True}
+    return render(request, template, context)
+
+def TextbookUploadOne(request):
+    #second step to the standards upload process
+    #name="standards_upload"
+
+    user_profile = User.objects.filter(username=request.user.username).first()
+
+    if request.method == "POST":
+        form = textBookTitleForm(request.POST)
+        if form.is_valid():
+            prev = form.save()
+            return redirect('textbook_uplad_two', textbook_id=prev.id)
+    else:
+        form = textBookTitleForm()
+    return render(request, 'administrator/upload_textbook.html', {'form': form })
+
+
+
+
+def TextbookUploadTwo(request, textbook_id=None):
+    #second step to the standards upload process
+    #name="standards_upload"
+    template = "administrator/upload_textbook.html"
+    textbook_match = textBookTitle.objects.get(id=textbook_id)
+
+    prompt = {
+        'order': 'Order of the CSV should be first name, surname'   
+              }
+    # GET request returns the value of the data with the specified key.
+    if request.method == "GET":
+        return render(request, template, prompt)
+    csv_file = request.FILES['file']
+    # let's check if it is a csv file
+    if not csv_file.name.endswith('.csv'):
+        messages.error(request, 'THIS IS NOT A CSV FILE')
+    data_set = csv_file.read().decode('UTF-8')
+    # setup a stream which is when we loop through each line we are able to handle a data in a stream
+    io_string = io.StringIO(data_set)
+    next(io_string)
+
+    text_id = textbook_match.id
+
+    for line in csv.reader(io_string, delimiter=','):
+        get_lemma = stemSentence(line[0])
+        obj, created = textBookBackground.objects.get_or_create(textbook=textbook_match, line_text=line[0], line_lemma=get_lemma)
+        obj.line_counter = int(str(text_id) + str(obj.id)) 
+        obj.save()
+
+    update_matches = match_topic_texts(textbook_match.subject, text_id)
+    context = {'step': True}
+    return render(request, template, context)
