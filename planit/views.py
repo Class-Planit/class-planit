@@ -40,6 +40,7 @@ from .get_classrooms import *
 from .get_openai import *
 from .get_performance import *
 from .get_students import * 
+from .get_wikipedia import *
 ##################| Homepage Views |#####################
 #Homepage Landing Page
 def Homepage(request):
@@ -216,6 +217,11 @@ def ClassroomSingle(request, user_id=None, class_id=None):
     student_summary = get_classroom_list_summary(user_profile.id, current_year, class_id)
     return render(request, 'dashboard/classrooms.html', {'user_profile': user_profile, 'student_summary': student_summary, 'class_profile': class_profile})
 
+def StandardsTracking(request, user_id=None):
+    current_year = datetime.datetime.now().year
+    user_profile = User.objects.filter(username=request.user.username).first()
+    
+    return render(request, 'dashboard/app-analysis.html', {'user_profile': user_profile,})
 
 #Main Dashboard View labeled as 'Overview'
 class Dashboard(TemplateView):
@@ -242,7 +248,7 @@ class Dashboard(TemplateView):
 def CreateObjective(request, user_id=None, week_of=None):
     user_profile = User.objects.filter(username=request.user.username).first()
     user_classrooms = classroom.objects.filter(main_teacher=user_profile)
-    
+
 
 
     if 'Current' in week_of:
@@ -270,7 +276,9 @@ def CreateObjective(request, user_id=None, week_of=None):
             prev.week_of = current_week
             subject = prev.subject_id
             selected_class = prev.lesson_classroom_id
-            
+            class_match = classroom.objects.get(id=selected_class)
+            class_grade = class_match.single_grade
+            prev.current_grade_level = class_grade
             prev.save()
 
             return redirect('activity_builder', user_id=user_profile.id, class_id=selected_class, subject=subject, lesson_id=prev.id, page=0)
@@ -295,18 +303,19 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
 
     teacher_input = lesson_match.teacher_objective
     standards_matches = lesson_match.objectives_standards.all()
-
-    standards_topics = activity_builder_task(teacher_input, class_id, lesson_id, user_id)
+    if standards_matches:
+        matched_standards = []
+        standards_select = []
     
-    matched_standards = standards_topics['matched_standards']
-
-    standards_select = singleStandard.objects.filter(id__in=matched_standards)
-
-    
+    else:
+        standards_topics = activity_builder_task.delay(teacher_input, class_id, lesson_id, user_id)
         
+        matched_standards = standards_topics['matched_standards']
+
+        standards_select = singleStandard.objects.filter(id__in=matched_standards)
+
     new_text, created = lessonText.objects.get_or_create(matched_lesson=lesson_match)
 
-    
     return render(request, 'dashboard/activity_builder.html', {'user_profile': user_profile, 'new_text': new_text, 'classroom_profile': classroom_profile, 'lesson_match': lesson_match, 'standards_select': standards_select, 'standards_matches': standards_matches })
 
 #Adds or Removes Selected Standards
@@ -470,7 +479,7 @@ def UpdateLessonActivities(request, lesson_id, class_id):
         user_profile = User.objects.filter(id=request.user.id).first()
         lesson_match = lessonObjective.objects.get(id=lesson_id)
         teacher_input = lesson_match.teacher_objective
-        update_activity_list = get_lessons(lesson_id, user_profile.id)
+        update_activity_list = get_lessons_ajax(lesson_id, user_profile.id)
 
         context = {"data": update_activity_list, "message": "your message"}
 

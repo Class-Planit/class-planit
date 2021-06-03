@@ -113,6 +113,11 @@ urlpatterns = [
         view=SelectTopic,
         name='select_topic'),
 
+    url(r'^standard-tracking/$',
+        view=StandardsTracking,
+        name='standard_tracker'),
+
+
     url(r'^sel-activity/$',
         view=SelectActivity,
         name='select_activity'),

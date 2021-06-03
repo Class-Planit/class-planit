@@ -145,7 +145,7 @@
                                     {% else %}
                                     <li class="nav-item">
                                     {% endif %}
-                                  <a href="../dashboard/traffic-sources.html" class="nav-link">
+                                  <a href="{% url 'standard_tracker' %}" class="nav-link">
                                       <span class="sidebar-icon"><span class="fas fa-chart-bar"></span></span>
                                       <span>Standards Tracking</span>
                                   </a>
@@ -163,14 +163,6 @@
                                   </a>
                                 </li>
 
-              
-                                <li class="nav-item ">
-                                  <a href="../dashboard/settings.html" class="nav-link">
-                                      <span class="sidebar-icon"><span class="fas fa-cog"></span></span>
-                                      <span>Settings</span>
-                                  </a>
-                                </li>
-                          
                                 <li role="separator" class="dropdown-divider mt-4 mb-3 border-blue"></li>
                                 <li class="nav-item">
                                   <a href="https://themesberg.com/docs/rocket/getting-started/quick-start/" target="_blank" class="nav-link">

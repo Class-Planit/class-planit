@@ -18,6 +18,12 @@ class textBookBackgroundAdmin(admin.ModelAdmin):
     model = textBookBackground
     search_fields = ['line_text']
 
+
+class topicDescriptionAdmin(admin.ModelAdmin):
+    model = topicDescription
+    search_fields = ['description']
+    list_filter = ['is_admin']
+
 admin.site.register(User)
 admin.site.register(school_user)
 admin.site.register(lessonImageUpload)
@@ -58,7 +64,7 @@ admin.site.register(lessonText)
 admin.site.register(questionType)
 admin.site.register(topicQuestion, topicQuestionAdmin)
 admin.site.register(mainQuestion)
-admin.site.register(topicDescription)
+admin.site.register(topicDescription, topicDescriptionAdmin)
 admin.site.register(selectedActivity)
 admin.site.register(teacherQuestionnaire)
 admin.site.register(userNickname)

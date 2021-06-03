@@ -75,18 +75,20 @@ app.conf.update(BROKER_URL=config('REDIS_URL'),
 
 
 def get_new_lesson(demo_wording, topic, d_type, t_type, lesson_id, user_id):
-
     user_profile = User.objects.get(id=user_id)
 
     lesson_match = lessonObjective.objects.get(id=lesson_id)
+    subject_match = lesson_match.subject
+    grade_match = lesson_match.current_grade_level
 
     tt_match = topicTypes.objects.filter(item=t_type).first()
     if 'multi' in d_type:
-        lesson_templates = lessonTemplates.objects.filter(components=tt_match, is_multi=True)
+        lesson_templates = lessonTemplates.objects.filter(components=tt_match, grade_level=grade_match, subject=subject_match, is_multi=True)
     elif 'plural' in d_type:
-        lesson_templates = lessonTemplates.objects.filter(components=tt_match, is_plural=True)
+        lesson_templates = lessonTemplates.objects.filter(components=tt_match, grade_level=grade_match, subject=subject_match, is_plural=True)
     else:
-        lesson_templates = lessonTemplates.objects.filter(components=tt_match)
+        lesson_templates = lessonTemplates.objects.filter(components=tt_match, grade_level=grade_match, subject=subject_match, is_multi=False, is_plural=False)
+
 
     lesson_list = []
     for temp in lesson_templates:
@@ -97,8 +99,7 @@ def get_new_lesson(demo_wording, topic, d_type, t_type, lesson_id, user_id):
         mi = temp.mi
         new_wording = lesson_wording.replace('DEMO_KS', demo_wording)
         if new_wording:
-            new, created = selectedActivity.objects.get_or_create(created_by=user_profile , template_id=temp.id , lesson_overview = lesson_match, lesson_text = new_wording, verb = verb, work_product = work_product, bloom = bloom, mi = mi, is_admin = False)
-            
+            new, created = selectedActivity.objects.get_or_create(created_by=user_profile , ks_demo=demo_wording, template_id=temp.id , lesson_overview = lesson_match, lesson_text = new_wording, verb = verb, work_product = work_product, bloom = bloom, mi = mi, is_admin = False)
             lesson_list.append(new)
 
     
@@ -274,34 +275,46 @@ def match_standard(teacher_input, standard_set, subject, grade_list):
         obj = singleStandard.objects.filter(subject=subject, standards_set=standard_set, grade_level=grade)
         objectives_list = []
         for standard in obj:
-                objective = standard.standard_objective,  standard.competency
-                result = standard.id, objective
-                standard_full_joined = ' '.join([str(i) for i in result[1] if not i in stopwords.words()])
-                text_tokens = word_tokenize(teacher_input)
-                tokens_without_sw = [word for word in text_tokens if not word in stopwords.words()]
-                full_result = standard.id, tokens_without_sw
-                standards_list.append(full_result) 
+            objective = str(standard.standard_objective) +  str(standard.competency)
+            result = standard.id, objective
+            standard_full = objective.split()
+            standard_full_joined = ' '.join([str(i) for i in standard_full if not i in stopwords.words()])
+            text_tokens = word_tokenize(teacher_input)
+            tokens_without_sw = [word for word in text_tokens if not word in stopwords.words()]
+            full_result = standard.id, standard_full_joined
+            standards_list.append(full_result) 
     return(standards_list)
 
 
-def get_standard_matches(get_objective_matches, tokens_without_sw):
+def get_standard_matches(standards, tokens_without_sw):
+
     prediction = []
-    for standard_id, standard_full in get_objective_matches:
-        Document1 = ' '.join([str(i) for i in standard_full])
+    for standard_id, standard_full in standards:
+        Document1 = standard_full
         
         Document2 = ' '.join([str(i) for i in tokens_without_sw]) 
         corpus = [Document1,Document2]
+
         X_train_counts = count_vect.fit_transform(corpus)
         vectorizer = TfidfVectorizer()
         trsfm=vectorizer.fit_transform(corpus)
         result = cosine_similarity(trsfm[0:1], trsfm)
         result = result[0][1]
         total = standard_id, result
-        prediction.append(total)
-    prediction.sort(key=lambda x: x[1], reverse=True)
-    full_result = []
-    for item in prediction[:3]:
-        full_result.append(item[0])
+        
+        if result >= .15:
+            
+            prediction.append(total)
+
+
+    if prediction:
+        prediction.sort(key=lambda x: x[1], reverse=True)
+        full_result = []
+        for item in prediction[:3]:
+            full_result.append(item[0])
+    else:
+        full_result = []
+
     return(full_result)
 
 
@@ -455,11 +468,8 @@ def activity_builder_task(self, teacher_input, class_id, lesson_id, user_id):
     subject = class_objectives.subject
     grade_standards = []
     teacher_input_full = teacher_input
-
-    teacher_input_stem = teacher_input_full.lower()
-    teacher_input_stem = stemSentence(teacher_input_stem)
-    text_tokens = word_tokenize(teacher_input_stem)
-    tokens_without_sw = [word for word in text_tokens if not word in stop_words]
+    teacher_input_full = teacher_input_full.split()
+    tokens_without_sw = [word for word in teacher_input_full if not word in stop_words]
 
     get_standard = match_standard(teacher_input, standard_set, subject, grade_list)
 

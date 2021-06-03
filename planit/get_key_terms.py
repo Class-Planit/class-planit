@@ -45,7 +45,7 @@ stop_words.extend(['The', 'students', 'learn'])
 count_vect = CountVectorizer()
 porter = PorterStemmer()
 lancaster=LancasterStemmer()
-from textblob import TextBlob
+
 wikipedia.set_rate_limiting(True)
 engine = inflect.engine()
 import spacy
@@ -66,9 +66,10 @@ def create_terms(key_term_list, lesson_id, matched_grade, user_id, standard_set)
     subject = lesson_match.subject
     m_topics = lesson_match.objectives_topics.all()
     matched_topics = topicInformation.objects.filter(id__in=m_topics)
-
+    
     
     for item in key_term_list:
+        
         if len(item[0]) >= 3:
             topic_term = topicInformation.objects.filter(subject=subject, standard_set=standard_set, grade_level=matched_grade, item=item[0]).first()
             if topic_term:
@@ -90,7 +91,11 @@ def create_terms(key_term_list, lesson_id, matched_grade, user_id, standard_set)
             if tt_results:
                 pass
             else:
-                result = openai_tes(user_id, topic_term, matched_topics)
+                result = openai_term_labels(user_id, topic_term, subject, matched_grade)
+                result = result.strip("'")
+                if result:
+                    tt_new, created = topicTypes.objects.get_or_create(item=result)
+                    add_tt = topic_term.topic_type.add(tt_new)
 
             lesson_match.objectives_topics.add(topic_term)
 

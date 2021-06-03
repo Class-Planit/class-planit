@@ -233,6 +233,9 @@ def get_question_text(lesson_id, user_profile):
             result = term, top.description
             word_banks = get_word_topic_banks(top.description, all_topics)
             final = term, top.description, word_banks, 'topic', item
+            print('############')
+            print('Topic Information', final)
+            print('############')
             descriptions.append(final)
 
 
@@ -244,6 +247,9 @@ def get_question_text(lesson_id, user_profile):
             result = term, item.line_text
             word_banks = get_word_textline_banks(item.line_text, textlines)
             final = term, item.line_text, word_banks, 'textbook', item
+            print('############')
+            print('Textlines', final)
+            print('############')
             descriptions.append(final)
 
     
@@ -267,6 +273,9 @@ def get_question_text(lesson_id, user_profile):
                     new_question, created = topicQuestion.objects.get_or_create(subject	= subject, linked_topic=topic[4], question_type = question_type, lesson_overview=class_objectives, Question = Question, Correct = Answer, is_admin = False)
                 
                 if new_question not in all_topic_lines:
+                    print('11111111111')
+                    print(new_question)
+                    print('11111111111')
                     all_topic_lines.append(new_question.id)
 
                 get_statement = true_false_statements(descriptions, topic)
@@ -278,6 +287,9 @@ def get_question_text(lesson_id, user_profile):
                     question_type = questionType.objects.filter(item='true_false').first()
                     new_question, created = topicQuestion.objects.get_or_create(subject	= subject, question_type = question_type, Question = Question, Correct = Answer, lesson_overview=class_objectives, item=topic[0], is_admin = False)
                     if new_question not in all_topic_lines:
+                        print('2222222222222')
+                        print(new_question)
+                        print('22222222222222')
                         all_topic_lines.append(new_question.id)
 
                 if get_incorrects:
@@ -295,6 +307,9 @@ def get_question_text(lesson_id, user_profile):
                             new_question, created = topicQuestion.objects.get_or_create(subject	= subject, linked_topic=topic[4], question_type = question_type, Question = Question, Correct = Answer, lesson_overview=class_objectives,  item=topic[0], Incorrect_One=in_one, Incorrect_Two=in_two, Incorrect_Three=in_three, is_admin = False)
 
                         if new_question not in all_topic_lines:
+                            print('3333333333333')
+                            print(new_question)
+                            print('33333333333333')
                             all_topic_lines.append(new_question.id)
    
             else:
@@ -313,6 +328,9 @@ def get_question_text(lesson_id, user_profile):
                     else:
                         new_question, created = topicQuestion.objects.get_or_create(subject	= subject, lesson_overview=class_objectives, linked_topic=topic[4], question_type = question_type, Question = Question, Correct = None, is_admin = False)
                     if new_question not in all_topic_lines:
+                        print('4444444444444')
+                        print(new_question)
+                        print('4444444444444')
                         all_topic_lines.append(new_question.id)
                 else:
                     Answer = topic[0]
@@ -324,6 +342,9 @@ def get_question_text(lesson_id, user_profile):
                     else:
                         new_question, created = topicQuestion.objects.get_or_create(subject	= subject, lesson_overview=class_objectives, linked_topic=topic[4], question_type = question_type, Question = Question, Correct = Answer, is_admin = False)
                     if new_question not in all_topic_lines:
+                        print('555555555555')
+                        print(new_question)
+                        print('555555555555')
                         all_topic_lines.append(new_question.id)
 
 

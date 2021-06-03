@@ -241,40 +241,40 @@ def label_activities_analytics_small(lesson_id):
         mi = sorted(mi_occurrences.items(), key=lambda x: x[1], reverse=True)  
         bl = sorted(bl_occurrences.items(), key=lambda x: x[1], reverse=True)
 
-        
-        mi_count = len(mi_list)
-        bl_count = len(bl_list)
+        if mi:
+            mi_count = len(mi_list)
+            bl_count = len(bl_list)
 
-        mi_length = len(set(str(mi_count)))
-        bl_length = len(set(str(bl_count)))
+            mi_length = len(set(str(mi_count)))
+            bl_length = len(set(str(bl_count)))
 
-        mi_high = mi[0][0]/5 * 100 
-        bl_high = bl[0][0]/5 * 100 
+            mi_high = mi[0][0]/5 * 100 
+            bl_high = bl[0][0]/5 * 100 
 
-        unique_count = int(mi_length) + int(bl_length)
+            unique_count = int(mi_length) + int(bl_length)
 
-        total_count = mi_count + bl_count
+            total_count = mi_count + bl_count
 
-        diff_count = (unique_count/total_count) * 100
+            diff_count = (unique_count/total_count) * 100
 
-        retention_rate = retention_activities_analytics(lesson_id)
-        ret_rate = retention_rate['avg']
-        Document1 = ''.join([str(i) for i in activity_list])
-        Document2 = ''.join([str(i) for i in stan_list])
-        if len(Document2) and len(Document1) >= 4:
-            corpus = [Document1,Document2]
+            retention_rate = retention_activities_analytics(lesson_id)
+            ret_rate = retention_rate['avg']
+            Document1 = ''.join([str(i) for i in activity_list])
+            Document2 = ''.join([str(i) for i in stan_list])
+            if len(Document2) and len(Document1) >= 4:
+                corpus = [Document1,Document2]
 
-            X_train_counts = count_vect.fit_transform(corpus)
-            vectorizer = TfidfVectorizer()
-            trsfm=vectorizer.fit_transform(corpus)
-            result = cosine_similarity(trsfm[0:1], trsfm)
-            result = result[0][1] * 100
-            one = {'name': 'Retention Rate', 'progress': ret_rate, 'color': 'bg-warning', 'div': 'showRateDiff()'}
-            two = {'name': 'Depth of Understanding', 'progress': bl_high, 'color': 'bg-info', 'div': 'showDepthDiff()'}
-            three = {'name': 'Differentiation', 'progress': diff_count, 'color': 'bg-success', 'div': 'showDivDiff()'}
-            four = {'name': 'Standards Alignment', 'progress': result, 'color': 'bg-danger', 'div': 'showStanDiff()'}
-            final = one, two, three, four
+                X_train_counts = count_vect.fit_transform(corpus)
+                vectorizer = TfidfVectorizer()
+                trsfm=vectorizer.fit_transform(corpus)
+                result = cosine_similarity(trsfm[0:1], trsfm)
+                result = result[0][1] * 100
+                one = {'name': 'Retention Rate', 'progress': ret_rate, 'color': 'bg-warning', 'div': 'showRateDiff()'}
+                two = {'name': 'Depth of Understanding', 'progress': bl_high, 'color': 'bg-info', 'div': 'showDepthDiff()'}
+                three = {'name': 'Differentiation', 'progress': diff_count, 'color': 'bg-success', 'div': 'showDivDiff()'}
+                four = {'name': 'Standards Alignment', 'progress': result, 'color': 'bg-danger', 'div': 'showStanDiff()'}
+                final = one, two, three, four
 
-            return(final)
+                return(final)
     
 

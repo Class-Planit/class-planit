@@ -195,6 +195,11 @@ class classroom(models.Model):
     grade_level = models.ManyToManyField(gradeLevel,
                                      blank=True,
                                      related_name='grade_level')
+    single_grade = models.ForeignKey(gradeLevel,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True,
+                               related_name='single_grade')
     main_teacher = models.ForeignKey(User,
                                on_delete=models.CASCADE,
                                blank=True,
@@ -373,6 +378,8 @@ class topicInformation(models.Model):
                                blank=True,
                                null=True)
     is_admin = models.BooleanField(default=True)
+    from_wiki = models.BooleanField(default=False)
+    is_secondary = models.BooleanField(default=False)
 
     def __str__(self):
         return "%s" % (self.item)
@@ -385,6 +392,16 @@ class LearningDemonstrationTemplate(models.Model):
                                        null=True)
     topic_type = models.ManyToManyField(topicTypes,
                                      blank=True)
+    subject = models.ForeignKey(standardSubjects,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    grade_level = models.ForeignKey(gradeLevel,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    is_plural = models.BooleanField(default=False)
+    is_multi = models.BooleanField(default=False)
 
     def __str__(self):
         return "%s" % (self.content)
@@ -433,6 +450,10 @@ class lessonObjective(models.Model):
                                blank=True,
                                null=True)
     subject = models.ForeignKey(standardSubjects,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    current_grade_level = models.ForeignKey(gradeLevel,
                                on_delete=models.SET_NULL,
                                blank=True,
                                null=True)
@@ -938,6 +959,14 @@ class lessonTemplates(models.Model):
                                null=True)
     is_plural = models.BooleanField(default=False)
     is_multi = models.BooleanField(default=False)
+    grade_level = models.ForeignKey(gradeLevel,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    subject = models.ForeignKey(standardSubjects,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
 
     def __str__(self):
         return "%s" % (self.wording)
