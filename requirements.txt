@@ -18,8 +18,6 @@ cachetools==4.1.1
 cairocffi==1.2.0
 CairoSVG==2.5.0
 catalogue==2.0.4
-celery==4.4.0
-celery-progress==0.0.14
 certifi==2020.11.8
 cffi==1.14.4
 chardet==3.0.4
@@ -224,6 +222,7 @@ wrapt==1.12.1
 youtube-search==1.1.1
 zc.lockfile==2.0
 zipp==3.4.0
+celery
 redis
 celery-progress
 django_celery_results
