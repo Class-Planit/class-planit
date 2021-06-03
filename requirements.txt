@@ -204,14 +204,12 @@ tensorboard-plugin-wit==1.8.0
 tensorflow-estimator==2.5.0
 termcolor==1.1.0
 textblob==0.15.3
-tfds-nightly==4.1.0.dev202012020108
 thinc==8.0.3
 threadpoolctl==2.1.0
 tika==1.24
 tinycss2==1.1.0
 tokenizers==0.10.3
 tqdm==4.56.0
-transformers==4.6.1
 twilio==6.50.1
 typer==0.3.2
 typing-extensions==3.7.4.3
