@@ -64,7 +64,7 @@ INSTALLED_APPS = [
     'planit',
     'storages',
     'phonenumber_field',
-    'django_material_icons',
+    #'django_material_icons',
     'tinymce',
     'django_celery_results',
     'celery_progress',
@@ -207,10 +207,13 @@ STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 CELERY_BROKER_URL = config("REDIS_URL")
+CELERY_RESULT_BACKEND = config("REDIS_URL")
 CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_ENABLE_UTC = True
+CELERY_TASK_SERIALIZER = "json"
+BROKER_POOL_LIMIT=None
 
-CELERY_RESULT_BACKEND = 'django-db'
 CELERY_REDIS_MAX_CONNECTIONS = 20
 
 CACHES = {
