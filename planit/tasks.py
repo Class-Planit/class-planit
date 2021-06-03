@@ -71,7 +71,6 @@ stop_words = ['i', "'", "'" '!', '.', ':', ',', '[', ']', '(', ')', '?', "'see",
 TAG_RE = re.compile(r'<[^>]+>')
 
 
-
 def get_new_lesson(demo_wording, topic, d_type, t_type, lesson_id, user_id):
     user_profile = User.objects.get(id=user_id)
 

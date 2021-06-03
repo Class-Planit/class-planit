@@ -22,8 +22,7 @@ import dj_database_url
 from urllib.parse import urlparse
 
 
-url = urlparse(os.environ.get("REDIS_URL"))
-r = redis.Redis(host=url.hostname, port=url.port, username=url.username, password=url.password, ssl=True, ssl_cert_reqs=None)
+r = redis.from_url(config("REDIS_URL"))
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATIC_ROOT = 'staticfiles'
@@ -42,8 +41,8 @@ STATICFILES_DIRS = (
 SECRET_KEY = config('SECRET_KEY') 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-SECURE_SSL_REDIRECT = True
+DEBUG = True
+SECURE_SSL_REDIRECT = False
 
 ALLOWED_HOSTS = ['www.classplanit.co', 'www.classplanit.herokuapp.com', 'http://127.0.0.1:8000']
 DATE_INPUT_FORMATS = ['%m/%d/%y']
@@ -208,13 +207,10 @@ STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 CELERY_BROKER_URL = config("REDIS_URL")
-CELERY_RESULT_BACKEND = config("REDIS_URL")
 CELERY_ACCEPT_CONTENT = ['json']
-CELERY_RESULT_SERIALIZER = "json"
-CELERY_ENABLE_UTC = True
-CELERY_TASK_SERIALIZER = "json"
-BROKER_POOL_LIMIT=None
+CELERY_TASK_SERIALIZER = 'json'
 
+CELERY_RESULT_BACKEND = 'django-db'
 CELERY_REDIS_MAX_CONNECTIONS = 20
 
 CACHES = {
