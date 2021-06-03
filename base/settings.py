@@ -19,10 +19,11 @@ from django.core.exceptions import FieldDoesNotExist
 import redis
 import sys
 import dj_database_url
+from urllib.parse import urlparse
 
 
-r = redis.from_url(config("REDIS_URL"))
-
+url = urlparse(os.environ.get("REDIS_URL"))
+r = redis.Redis(host=url.hostname, port=url.port, username=url.username, password=url.password, ssl=True, ssl_cert_reqs=None)
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATIC_ROOT = 'staticfiles'
