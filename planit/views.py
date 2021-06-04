@@ -273,6 +273,7 @@ def CreateObjective(request, user_id=None, week_of=None):
 
         if form.is_valid():
             prev = form.save(commit=False)
+            teacher_input = prev.teacher_objective
             prev.week_of = current_week
             subject = prev.subject_id
             selected_class = prev.lesson_classroom_id
@@ -280,7 +281,7 @@ def CreateObjective(request, user_id=None, week_of=None):
             class_grade = class_match.single_grade
             prev.current_grade_level = class_grade
             prev.save()
-
+            
             return redirect('activity_builder', user_id=user_profile.id, class_id=selected_class, subject=subject, lesson_id=prev.id, page=0)
     else:
         form = lessonObjectiveForm()
@@ -293,6 +294,7 @@ def CreateObjective(request, user_id=None, week_of=None):
 
 
 def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_id=None, page=None):
+    
     current_week = date.today().isocalendar()[1] 
     user_profile = User.objects.get(id=user_id)
     
@@ -303,20 +305,10 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
 
     teacher_input = lesson_match.teacher_objective
     standards_matches = lesson_match.objectives_standards.all()
-    if standards_matches:
-        matched_standards = []
-        standards_select = []
     
-    else:
-        standards_topics = activity_builder_task.delay(teacher_input, class_id, lesson_id, user_id)
-        
-        matched_standards = standards_topics['matched_standards']
-
-        standards_select = singleStandard.objects.filter(id__in=matched_standards)
-
     new_text, created = lessonText.objects.get_or_create(matched_lesson=lesson_match)
-
-    return render(request, 'dashboard/activity_builder.html', {'user_profile': user_profile, 'new_text': new_text, 'classroom_profile': classroom_profile, 'lesson_match': lesson_match, 'standards_select': standards_select, 'standards_matches': standards_matches })
+    
+    return render(request, 'dashboard/activity_builder.html', {'user_profile': user_profile, 'new_text': new_text, 'classroom_profile': classroom_profile, 'lesson_match': lesson_match, 'standards_matches': standards_matches })
 
 #Adds or Removes Selected Standards
 def EditObjectiveStandards(request, user_id=None, class_id=None, subject=None, lesson_id=None, standard_id=None, action=None):
@@ -468,6 +460,33 @@ def UpdateKeyTerms(request, lesson_id, class_id):
         teacher_input = lesson_match.teacher_objective
         update_term_list = activity_builder_jq(teacher_input, class_id, lesson_id, user_profile.id)
         context = {"data": update_term_list, "message": "your message"}
+
+        return JsonResponse(context)
+    else:
+        return HttpResponse("Request method is not a GET")
+
+def UpdateStandards(request, lesson_id, class_id):
+    if request.method == 'GET':
+        user_profile = User.objects.filter(id=request.user.id).first()
+        lesson_match = lessonObjective.objects.get(id=lesson_id)
+        standards_now = lesson_match.objectives_standards.all()
+        if standards_now:
+            context = None
+        else:
+            teacher_input = lesson_match.teacher_objective
+
+            standards_topics = activity_builder_task.delay(teacher_input, class_id, lesson_id, user_profile.id)
+            rec_standards = lessonStandardRecommendation.objects.filter(lesson_classroom=class_id, objectives=lesson_id).first()
+            standard_list = []
+            if rec_standards:
+                standards_list = rec_standards.objectives_standard.all()
+                standards_recs = singleStandard.objects.filter(id__in=standards_list)
+                for item in standards_recs:
+                    line_item = '%s: %s' % (item.standard_objective, item.competency)
+                    result = {'id': item.id, 'standard': line_item.capitalize()}
+                    standard_list.append(result)
+
+            context = {"data": standard_list, "message": "your message"}
 
         return JsonResponse(context)
     else:

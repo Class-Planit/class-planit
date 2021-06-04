@@ -24,6 +24,10 @@ class topicDescriptionAdmin(admin.ModelAdmin):
     search_fields = ['description']
     list_filter = ['is_admin']
 
+
+
+
+admin.site.register(lessonStandardRecommendation)
 admin.site.register(User)
 admin.site.register(school_user)
 admin.site.register(lessonImageUpload)

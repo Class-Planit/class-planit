@@ -584,10 +584,9 @@ class lessonStandardRecommendation(models.Model):
                                on_delete=models.SET_NULL,
                                blank=True,
                                null=True)
-    objectives_standard = models.ForeignKey(singleStandard,
-                               on_delete=models.SET_NULL,
-                               blank=True,
-                               null=True)
+    objectives_standard = models.ManyToManyField(singleStandard,
+                                     blank=True)
+
     is_selected = models.BooleanField(default=False)
 
     def __str__(self):

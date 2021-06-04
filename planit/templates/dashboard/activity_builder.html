@@ -271,18 +271,8 @@
             </div>
             <div class="col-lg-3">
                 <div id='standard-list'>
-                {% if standards_matches %}
-                {% else %}
-                {% if standards_select %}
-                    <h5>Select a Relavent Standard:</h5>
-                    {% for item in standards_select %}
-                        {% ifchanged item.id %}
-                        <li><a class="sel-standard" id="like{{item.id}}" href="#" data-standid="{{ item.id }}">{{ item }}</a></li>
-                        
-                        {% endifchanged %}
-                    {% endfor %}
-                {% endif %}
-                {% endif %}
+                    
+
                 </div>
                 <div class='col-lg-12' id="stanDiv" style="display:none;">
                     
@@ -660,7 +650,7 @@
 
 <!----| Select Standard |-->
 <script type="text/javascript">
-    $('.sel-standard').click(function(){
+    $(document).on("click", ".sel-standard", function(){
     var elm = $(this);
     var id = elm.data('id');
     var standid;
@@ -773,6 +763,38 @@
 
     })
 }, 3000);
+</script> 
+
+
+
+<!----| Add Standards Reccs |-->
+<script type="text/javascript">
+    setInterval(function(){
+        console.log( "ready!" );
+        var overview = document.getElementById('standard-list');
+        htmlContent = overview.innerHTML,
+        $.ajax(
+        {
+            type:"GET",
+            url: "/get-standard-recs/{{ lesson_match.id}}/{{ classroom_profile.id }}/",
+            
+            success: function(response) {
+            $("#standard-list").empty(); 
+            $.each(response.data, function (i, item) {
+            
+            $("#standard-list").append(
+                '<h5>Select a Relavent Standard:</h5><br><li><a class="sel-standard" id="like'
+                + item.id + 
+                '" href="#" data-standid="'
+                + item.id +
+                '">'
+                + item.standard + 
+                '</a></li>');
+            });
+        }
+
+    })
+}, 4000);
 </script> 
 
 <!----| Update Activity Summary |-->

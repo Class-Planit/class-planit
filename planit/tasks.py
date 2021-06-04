@@ -226,7 +226,8 @@ def match_objectives(get_objective_matches, tokens_without_sw, topic_ids):
         full_result.append(item[0])
     return(full_result)
 
-def get_topic_matches(teacher_input, tokens_without_sw, class_objectives, topic_count, grade_list, subject, standard_set, lesson_id):
+@shared_task(bind=True)
+def get_topic_matches(self, teacher_input, tokens_without_sw, class_objectives, topic_count, grade_list, subject, standard_set, lesson_id):
     objective_title = get_objective_title(teacher_input, tokens_without_sw)
     if class_objectives.objective_title:
         pass
@@ -265,8 +266,8 @@ def get_topic_matches(teacher_input, tokens_without_sw, class_objectives, topic_
             
     return(objectives_list)
 
-
-def match_standard(teacher_input, standard_set, subject, grade_list):
+@shared_task(bind=True)
+def match_standard(self, teacher_input, standard_set, subject, grade_list):
     standards_list = []
     for grade in grade_list:
         obj = singleStandard.objects.filter(subject=subject, standards_set=standard_set, grade_level=grade)
@@ -282,8 +283,8 @@ def match_standard(teacher_input, standard_set, subject, grade_list):
             standards_list.append(full_result) 
     return(standards_list)
 
-
-def get_standard_matches(standards, tokens_without_sw):
+@shared_task(bind=True)
+def get_standard_matches(self, standards, tokens_without_sw):
 
     prediction = []
     for standard_id, standard_full in standards:
@@ -316,8 +317,8 @@ def get_standard_matches(standards, tokens_without_sw):
 
 
 
-
-def get_lessons_full(topic_list, demo_ks, lesson_id, user_id):
+@shared_task(bind=True)
+def get_lessons_full(self, topic_list, demo_ks, lesson_id, user_id):
     topic_results = []
     full_result = []
     topic_ids = []
@@ -454,7 +455,7 @@ def upload_standards(self):
 
 @shared_task(bind=True)
 def activity_builder_task(self, teacher_input, class_id, lesson_id, user_id):
- 
+
     classroom_profile = classroom.objects.get(id=class_id)
     
     grade_list = classroom_profile.grade_level.all()
@@ -471,8 +472,12 @@ def activity_builder_task(self, teacher_input, class_id, lesson_id, user_id):
     get_standard = match_standard(teacher_input, standard_set, subject, grade_list)
 
     matched_standards = get_standard_matches(get_standard, tokens_without_sw)
-
     
-    full_results = {'matched_standards': matched_standards}
+    standards_select = singleStandard.objects.filter(id__in=matched_standards)
+    create_stand_recs, created = lessonStandardRecommendation.objects.get_or_create(lesson_classroom=classroom_profile, objectives=class_objectives)
 
-    return(full_results)
+    for item in standards_select:
+        create_stand_recs.objectives_standard.add(item)
+
+
+    print('Done')
