@@ -51,6 +51,7 @@ import spacy
 import pyinflect
 nlp = spacy.load('en_core_web_sm')
 import random
+from youtube_transcript_api import YouTubeTranscriptApi
 from .get_key_terms import *
 from .get_activities import *
 from .activity_builder import *
@@ -60,9 +61,73 @@ TAG_RE = re.compile(r'<[^>]+>')
 
 
 
+def get_transcript(video_id):
+    full_trans = YouTubeTranscriptApi.get_transcript(video_id)
+
+    all_lines = []
+    for line in full_trans:
+        text = line['text']
+        all_lines.append(text)
+
+    print(all_lines)
+
+
+def video_id(url):
+    """
+    Examples:
+    - http://youtu.be/SA2iWivDJiE
+    - http://www.youtube.com/watch?v=_oPAwA_Udwc&feature=feedu
+    - http://www.youtube.com/embed/SA2iWivDJiE
+    - http://www.youtube.com/v/SA2iWivDJiE?version=3&amp;hl=en_US
+    """
+    o = urlparse(url)
+    if o.netloc == 'youtu.be':
+        return o.path[1:]
+    elif o.netloc in ('www.youtube.com', 'youtube.com'):
+        if o.path == '/watch':
+            id_index = o.query.index('v=')
+            return o.query[id_index+2:id_index+13]
+        elif o.path[:7] == '/embed/':
+            return o.path.split('/')[2]
+        elif o.path[:3] == '/v/':
+            return o.path.split('/')[2]
+    return None
+
+def youtube_results(text, lesson_id):
+
+    class_objectives = lessonObjective.objects.get(id=lesson_id)
+    class_objectives_list = str(class_objectives.teacher_objective)
+    topics = class_objectives.objectives_topics.all()
+    topic_list = []
+    for item in topics:
+            title = item.item
+            topic_list.append(title)
+    
+    class_topics = ' '.join([str(i) for i in topic_list])
+
+
+    combined = class_objectives_list
+
+    params = {
+    "engine": "youtube",
+    "search_query": combined,
+    'api_key': config('api_key')
+    }
+
+    search = GoogleSearch(params)
+    results = search.get_dict()
+   
+    try:
+            video_results = results['video_results']
+            return(video_results)
+    except:
+            return(None)
+
+
  
 #Show students examples of <<DEMONSTRATION>>. <<GROUPING>> Instruct students to <<VERB>> by <<DEMONSTRATION>> <<WORK_PRODUCT>>
 def get_lessons_ajax(lesson_id, user_id):
+    
     user_profile = User.objects.get(id=user_id)
     lesson_match = lessonObjective.objects.get(id=lesson_id)
     topic_matches = lesson_match.objectives_topics.all()
@@ -129,6 +194,8 @@ def get_lessons_ajax(lesson_id, user_id):
             results = wording, topic_types
             wording_list.append(results)
 
+
+
     single_activities = get_single_types_activity(topic_list)
 
     for line in single_activities:
@@ -151,12 +218,14 @@ def get_lessons_ajax(lesson_id, user_id):
             
 
             plural_noun = get_plural_types_activity(result_list)
+
             for item in plural_noun:
                 if item not in wording_list:
                     wording_list.append(item) 
 
 
             multi_noun = get_multiple_types_activity(result_list)
+
             for item in multi_noun:
                 if item not in wording_list:
                     wording_list.append(item) 
@@ -188,13 +257,16 @@ def get_lessons_ajax(lesson_id, user_id):
                             if result not in wording_list:
                                 wording_list.append(result) 
 
-    
-
+    mi_labels = [' ', 'Verbal', 'Visual', 'Musical', 'Movement', 'Logical']
+    bl_labels = [' ', 'Remember', 'Understand', 'Apply', 'Analyze', 'Evaluate', 'Create']
+    colors = [' ', 'primary', 'secondary', 'success', 'danger', 'warning', 'light']
+    font_a  = [' ', 'microphone', 'eye', 'music', 'walking', 'puzzle-piece']
     activities_full = []
     
     demo_list_sect = []
 
     for line in wording_list:
+        
         sentence = line[0]
         topic = line[1]
         t_type = line[2]
@@ -205,19 +277,22 @@ def get_lessons_ajax(lesson_id, user_id):
         tokens = nlp(first_word)
         new_verb = tokens[0]._.inflect('VBG')
         new_demo = sentence.replace(first_word, new_verb) 
+       
         lesson_full = get_new_lesson(new_demo, topic, d_type, t_type, lesson_id, user_profile.id)
 
         for item in lesson_full:
             temp_id = item.template_id
             text_s = item.lesson_text
             text_demo = item.ks_demo
-
+            bl = item.bloom
+            mi = item.mi
+            ret = item.ret_rate
             if text_demo not in demo_list_sect:
                 demo_list_sect.append(text_demo)
                 if text_s not in matched_activities:
                     if temp_id not in temp_ids_list:
                         temp_ids_list.append(temp_id)
-                        activity = {'id': item.id, 'activity': item.lesson_text}
+                        activity = {'id': item.id, 'activity': item.lesson_text, 'bl_color': colors[bl], 'bl_label': bl_labels[bl], 'mi_color': colors[mi], 'mi_label': mi_labels[mi], 'mi_icon': font_a[mi], 'ret':ret}
                         activities_full.append(activity)
     
     
@@ -515,6 +590,7 @@ def get_lesson_sections(text_overview, class_id, lesson_id, user_id):
 
 
         for activity in activities:
+            
             l_act = label_activities(activity, lesson_id)
             new_activity, created = selectedActivity.objects.get_or_create(created_by=user_profile, lesson_overview=class_objectives, lesson_text=activity)
             if created:
@@ -529,7 +605,7 @@ def get_lesson_sections(text_overview, class_id, lesson_id, user_id):
                 for item in find_topics:
                     match_topic = topicInformation.objects.filter(id=item).first()
                     update_matches = create_topic_matches.objectives_topics.add(match_topic)
-
+                    update_activity = new_activity.objectives_topics.add(match_topic)
            
         #create and analyze new activities and update old activities
         ###update_lesson_activities = get_lesson_activities(activities, class_id, lesson_id, user_profile, class_objectives)

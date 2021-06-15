@@ -216,7 +216,7 @@ def find_mc_incorrects(descriptions, topic):
 
 
 def get_question_text(lesson_id, user_profile):
-
+    
     class_objectives = lessonObjective.objects.get(id=lesson_id)
     subject = class_objectives.subject
 
@@ -233,9 +233,7 @@ def get_question_text(lesson_id, user_profile):
             result = term, top.description
             word_banks = get_word_topic_banks(top.description, all_topics)
             final = term, top.description, word_banks, 'topic', item
-            print('############')
-            print('Topic Information', final)
-            print('############')
+           
             descriptions.append(final)
 
 
@@ -247,9 +245,7 @@ def get_question_text(lesson_id, user_profile):
             result = term, item.line_text
             word_banks = get_word_textline_banks(item.line_text, textlines)
             final = term, item.line_text, word_banks, 'textbook', item
-            print('############')
-            print('Textlines', final)
-            print('############')
+           
             descriptions.append(final)
 
     

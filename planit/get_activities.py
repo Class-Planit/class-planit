@@ -60,6 +60,7 @@ stop_words = ['i', "'", "'" '!', '.', ':', ',', '[', ']', '(', ')', '?', "'see",
 TAG_RE = re.compile(r'<[^>]+>')
 
 def retention_activities_analytics(lesson_id):
+
     class_objectives = lessonObjective.objects.get(id=lesson_id)
     matched_activities = selectedActivity.objects.filter(lesson_overview=class_objectives, is_selected=True)
 
@@ -206,6 +207,7 @@ def label_activities(activity, lesson_id):
    
 
 def label_activities_analytics_small(lesson_id):
+
     class_objectives = lessonObjective.objects.get(id=lesson_id)
 
     matched_activities = selectedActivity.objects.filter(lesson_overview=class_objectives, is_selected=True)
@@ -216,6 +218,11 @@ def label_activities_analytics_small(lesson_id):
     for stan in matched_standards:
         stan_text = stan.standard_objective
         stan_list.append(stan_text)
+
+    if stan_list:
+        pass
+    else:
+        stan_list.append(class_objectives.teacher_objective)
 
     if matched_activities:
         mi_list = []
@@ -261,6 +268,7 @@ def label_activities_analytics_small(lesson_id):
             ret_rate = retention_rate['avg']
             Document1 = ''.join([str(i) for i in activity_list])
             Document2 = ''.join([str(i) for i in stan_list])
+
             if len(Document2) and len(Document1) >= 4:
                 corpus = [Document1,Document2]
 
@@ -274,7 +282,7 @@ def label_activities_analytics_small(lesson_id):
                 three = {'name': 'Differentiation', 'progress': diff_count, 'color': 'bg-success', 'div': 'showDivDiff()'}
                 four = {'name': 'Standards Alignment', 'progress': result, 'color': 'bg-danger', 'div': 'showStanDiff()'}
                 final = one, two, three, four
-
+            
                 return(final)
     
 

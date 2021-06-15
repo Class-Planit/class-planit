@@ -62,82 +62,100 @@
       position: absolute;
     }
     </style>
-<style>
-.demo-dfree {
-  position: relative;
+    <style>
+    .demo-dfree {
+    position: relative;
 
-  box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.2);
-  text-align: left;
-  color: #626262;
-  font-size: 14px;
-  padding: 20px;
-}
-.demo-dfree *[contentEditable="true"]:hover {
-  outline: 1px solid #1976D2;
-}
-.demo-dfree h1 {
-  color: #1976D2;
-  font-size: 2em;
-}
-.demo-dfree h2 {
-  color: #1976D2;
-  font-size: 2em;
-}
-.demo-dfree h3 {
-  font-size: 1.5em;
-  color: #403f42;
-  color: inherit;
-}
-.demo-dfree h2,
-.demo-dfree h3 {
-  margin-bottom: 0px;
-  margin-top: 0px;
-  line-height: 40px;
-}
-.demo-dfree ul,
-.demo-dfree ol {
-  padding-left: 20px;
-}
-.demo-dfree ul {
-  list-style: disc;
-}
-.demo-dfree ol {
-  list-style: decimal;
-}
-.demo-dfree a {
-  text-decoration: underline;
-}
-.demo-dfree textarea {
+    box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.2);
+    text-align: left;
+    color: #626262;
+    font-size: 14px;
+    padding: 20px;
+    }
+    .demo-dfree *[contentEditable="true"]:hover {
+    outline: 1px solid #1976D2;
+    }
+    .demo-dfree h1 {
+    color: #1976D2;
+    font-size: 2em;
+    }
+    .demo-dfree h2 {
+    color: #1976D2;
+    font-size: 2em;
+    }
+    .demo-dfree h3 {
+    font-size: 1.5em;
+    color: #403f42;
+    color: inherit;
+    }
+    .demo-dfree h2,
+    .demo-dfree h3 {
+    margin-bottom: 0px;
+    margin-top: 0px;
+    line-height: 40px;
+    }
+    .demo-dfree ul,
+    .demo-dfree ol {
+    padding-left: 20px;
+    }
+    .demo-dfree ul {
+    list-style: disc;
+    }
+    .demo-dfree ol {
+    list-style: decimal;
+    }
+    .demo-dfree a {
+    text-decoration: underline;
+    }
+    .demo-dfree textarea {
+    display: none;
+    }
+    .demo-dfree .dfree-header {
+    font-size: 2.4em;
+    text-align: center;
+    margin: 10px;
+    }
+    .demo-dfree .dfree-body {
+    padding: 20px;
+    padding-top: 0px;
+    }
+    .demo-dfree .dfree-body p {
+    margin-bottom: 10px;
+    }
+    .demo-dfree .dfree-body blockquote {
+    margin-left: 30px;
+    padding-left: 10px;
+    margin-right: 40px;
+    font-style: italic;
+    border-left: 1px solid #696969;
+    }
+    .demo-dfree .dfree-body a {
+    text-decoration: underline;
+    }
+    .demo-dfree .dfree-body td,
+    .demo-dfree .dfree-body tr {
+    border: 1px solid #696969;
+    }
+
+
+    </style>
+    <style>
+        .border-button {
+            outline: solid 1px #4A5073;
+            transition: outline 0.3s linear;
+            margin: 0.5em; /* Increased margin since the outline expands outside the element */
+    }
+
+    .border-button:hover { outline-width: 5px; }
+    </style>
+<style>
+   .showme {
   display: none;
 }
-.demo-dfree .dfree-header {
-  font-size: 2.4em;
-  text-align: center;
-  margin: 10px;
-}
-.demo-dfree .dfree-body {
-  padding: 20px;
-  padding-top: 0px;
-}
-.demo-dfree .dfree-body p {
-  margin-bottom: 10px;
-}
-.demo-dfree .dfree-body blockquote {
-  margin-left: 30px;
-  padding-left: 10px;
-  margin-right: 40px;
-  font-style: italic;
-  border-left: 1px solid #696969;
-}
-.demo-dfree .dfree-body a {
-  text-decoration: underline;
-}
-.demo-dfree .dfree-body td,
-.demo-dfree .dfree-body tr {
-  border: 1px solid #696969;
-}
 
-
+.showhim:hover .showme {
+  display: block;
+}
 </style>
 </head>
 <body>
@@ -270,6 +288,7 @@
                 </form>
             </div>
             <div class="col-lg-3">
+               
                 <div id='standard-list'>
                     
 
@@ -452,29 +471,32 @@
                 </div>
              
                 <div class="col-12 px-0 mb-4">
-                    <div class="card border-light shadow-sm">
+                    
+                    <div class="card">
                         <div class="card-header">
                             <div class="row align-items-center">
                                 <div class="col">
-                                <h2 class="h5">Recommended Activities:</h2>
+                                <h2 class="h5">Recomended Activities:</h2>
                                 </div>
+                                
                             </div>
                         </div>
-                        <div class="card-body" id='not-selected-activities'>
-                         
-                          
-                            <p style="color:lightgray">Generating Activities...<i class="fas fa-spinner fa-spin"></i></p>
-                        </div>
+                        <div id='not-selected-activities'></div>
+                       
+                        
                     </div>
                 </div>
-    
+                
                 
                 <div class="col-12 px-0 mb-4">
                     <div class="card border-light shadow-sm">
                         <div class="card-header">
                             <div class="row align-items-center">
                                 <div class="col">
-                                <h2 class="h5">Key Terms:</h2>
+                              
+                                <div class="showhim"><h2 class="h5">Key Terms:</h2>
+                                    <div class="showme"><a class="remove-standard" href="#" >load more terms</a></div>
+                                  </div>
                                 </div>
                                 
                             </div>
@@ -489,28 +511,34 @@
                     </div>
                 </div>
              
-                {% if uploaded_images %}
-                <div class="col-12 px-0 mb-4">
-                    <div class="card border-light shadow-sm">
-                        <div class="card-header">
-                            <div class="row align-items-center">
-                                <div class="col">
-                                <h2 class="h5">Picture Library:</h2>
-                                </div>
-                                <div class="col text-right">
-                                    <a href="#" class="btn btn-sm btn-secondary">Add New</a>
-                                </div>
-                            </div>
-                        </div>
-    
-                        {% for image in uploaded_images %}
-                        <div class="main_image">
-                         <img class="img-fluid" src="{{ image.image_image.url }}" alt="" width="200"/>
-                     </div>
-                         {% endfor %}
+
+               
+                {% for vid in vid_id_list %}
+                            <!--Card-->
+           
+                    <div class="card">
+
+                        
+                        <!--Card image-->
+                        <iframe
+                            src="https://www.youtube.com/embed/{{ vid.vid_id }}">
+                            </iframe>
+                        <!--Card content-->
+                        <div class="card-body">
+                        <!--Title-->
+                        <h4 class="card-title">{{ vid.title }}</h4>
+                        <!--Text-->
+                        
+                        {% if vid.is_selected %}
+                        <a href="#" class="btn btn-secondary btn-sm btn-has-icon"><i class="fa fa-check"></i> Selected</a>
+                        {% else %}
+                        <a href="#" class="btn btn-success selectvideo btn-sm btn-has-icon" id="like{{item.id }}" href="#" data-vidid="{{ vid.id  }}" data-lessid="{{ lesson_match.id }}"><i class="fa fa-check"></i> Add to Lesson</a>
+                        {% endif %}
                     </div>
-                </div>
-                {% endif %}
+                        </div>
+           
+                    <!--/.Card-->
+                    {% endfor %}
             </div>
         </div>
    
@@ -706,6 +734,37 @@
     });
 </script> 
 
+
+
+<!----| Select Video |-->
+<script type="text/javascript">
+    $(document).on("click", ".selectvideo", function(){
+    var elm = $(this);
+    var id = elm.data('id');
+    var vidid;
+    vidid = $(this).attr("data-vidid");
+    var lessid;
+    lessid = $(this).attr("data-lessid");
+    $.ajax(
+    {
+        type:"GET",
+        url: "/add-youtube-video/",
+        data:{
+                video_id: vidid,
+                lesson_id: lessid
+        },
+        success: function(response) {
+        $("#key-term-section").append(
+            "<tr><th scope='row'>"  + response.term + "</th><td>" + response.description + "</td></tr>"
+            
+        );
+            
+    }
+
+    })
+});
+</script> 
+
 <!----| Update Term Options |-->
 <script type="text/javascript">
     setInterval(function(){
@@ -720,7 +779,7 @@
         $("#not-selected-topics").empty(); 
         $.each(response.data, function (i, item) {
     	$("#not-selected-topics").append(
-            '<a class="btn btn-sm btn-outline-secondary selecttopic" id="like'
+            '<a class="btn btn-sm btn-outline-secondary selecttopic myDIV" id="like'
             + item.id +
             '" href="#" data-topid="'
             + item.id +
@@ -733,9 +792,40 @@
     }
 
     })
-}, 3000);
+}, 8000);
 </script> 
 
+
+<!----| Update Term Options |-->
+<script type="text/javascript">
+    $(document).on("click", ".remove-standard", function(){
+    var overview = document.getElementById('not-selected-topics');
+    htmlContent = overview.innerHTML,
+    $("#not-selected-topics").empty(); 
+    $.ajax(
+    {
+        type:"GET",
+        url: "/remove-term-options/{{ lesson_match.id}}/{{ classroom_profile.id }}/",
+        
+        success: function(response) {
+        $("#not-selected-topics").empty(); 
+        $.each(response.data, function (i, item) {
+    	$("#not-selected-topics").append(
+            '<a class="btn btn-sm btn-outline-secondary selecttopic myDIV" id="like'
+            + item.id +
+            '" href="#" data-topid="'
+            + item.id +
+            '" data-lessid="{{ lesson_match.id }}" data-toggle="tooltip" data-placement="top" title="'
+            + item.descriptions + 
+            '" class="tooltip">'
+            + item.term +
+            '</a>');
+        });
+    }
+
+    })
+});
+</script> 
 
 <!----| Update Activity Options |-->
 <script type="text/javascript">
@@ -751,18 +841,30 @@
         $("#not-selected-activities").empty(); 
         $.each(response.data, function (i, item) {
     	$("#not-selected-activities").append(
-            '<li><a class="selectactivity" id="like'
+            '<a href="#" class="selectactivity" id="like'
             + item.id + 
-            '" href="#" data-actid="'
-            + item.id  + 
-            '" data-lessid="{{ lesson_match.id }}">'
+            '"  data-actid='
+            + item.id + 
+            ' data-lessid="{{ lesson_match.id }}"><div class="card-body  border-button"><div class="row d-block d-xl-flex align-items-center"><div><p>'
             + item.activity + 
-            '</a></li>');
+            '</p><div class="row"><div class="col-3"><h6 class="font-weight-normal text-gray"><span class="badge badge-md badge-' 
+                + item.bl_color +
+            ' badge-pill">'
+            + item.bl_label + 
+            '</span></h6></div><div class="col-3"><h6 class="font-weight-normal text-gray"><span class="icon w-20 icon-xs icon-'
+            + item.mi_color +
+            ' mr-1"><span class="fas fa-'
+            + item.mi_icon +
+            '"></span>  ' 
+            + item.mi_label +
+            '</span></h6></div><div class="col-6"><p class="font-weight-normal text-gray">Rentention: ' 
+            + item.ret +
+            '%</p></div></div></div></div></div></a>');
         });
     }
 
     })
-}, 3000);
+}, 8002);
 </script> 
 
 
@@ -783,7 +885,7 @@
             $.each(response.data, function (i, item) {
             
             $("#standard-list").append(
-                '<h5>Select a Relavent Standard:</h5><br><li><a class="sel-standard" id="like'
+                '<li><a class="sel-standard" id="like'
                 + item.id + 
                 '" href="#" data-standid="'
                 + item.id +
@@ -794,7 +896,7 @@
         }
 
     })
-}, 4000);
+}, 8005);
 </script> 
 
 <!----| Update Activity Summary |-->
@@ -828,7 +930,7 @@
     }
 
     })
-}, 3000);
+}, 8007);
 </script> 
 
 <!----| Update Blooms |-->
@@ -863,7 +965,7 @@
     }
 
     })
-}, 4000);
+}, 8010);
 </script> 
 
 <!----| Update MI |-->
@@ -898,7 +1000,7 @@
     }
 
     })
-}, 4005);
+}, 8012);
 </script> 
 
 <!----| Update Retention |-->
@@ -948,7 +1050,7 @@
     }
 
     })
-}, 4003);
+}, 8015);
 </script>
 
 

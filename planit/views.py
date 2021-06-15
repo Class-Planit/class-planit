@@ -41,6 +41,7 @@ from .get_openai import *
 from .get_performance import *
 from .get_students import * 
 from .get_wikipedia import *
+from .get_seach_results import *
 ##################| Homepage Views |#####################
 #Homepage Landing Page
 def Homepage(request):
@@ -292,7 +293,7 @@ def CreateObjective(request, user_id=None, week_of=None):
     step = 1
     return render(request, 'dashboard/identify_objectives.html', {'form': form, 'step': step, 'user_profile': user_profile, 'user_classrooms': user_classrooms, 'subjects': subjects  })
 
-
+#Lesson  planning section 
 def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_id=None, page=None):
     
     current_week = date.today().isocalendar()[1] 
@@ -300,6 +301,7 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     
     classroom_profile = classroom.objects.get(id=class_id)
     lesson_match = lessonObjective.objects.get(id=lesson_id)
+    teacher_input = lesson_match.teacher_objective
     l_topics = lesson_match.objectives_topics.all()
     lesson_topics = topicInformation.objects.filter(id__in=l_topics)
 
@@ -308,7 +310,24 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     
     new_text, created = lessonText.objects.get_or_create(matched_lesson=lesson_match)
     
-    return render(request, 'dashboard/activity_builder.html', {'user_profile': user_profile, 'new_text': new_text, 'classroom_profile': classroom_profile, 'lesson_match': lesson_match, 'standards_matches': standards_matches })
+    youtube_search = youtube_results(teacher_input, lesson_id)
+    if youtube_search:
+        youtube_list = youtube_search[:3]
+    else:
+        youtube_list = []
+
+
+    vid_id_list = []
+    for result in youtube_list:
+        link = result['link']
+        vid_id = video_id(link)
+        description = result['title']
+        title = result['title']
+        youtube_create, created = youtubeSearchResult.objects.get_or_create(lesson_plan=lesson_match, title=title, description=description, vid_id=vid_id)
+        vid_id_list.append(youtube_create)
+
+
+    return render(request, 'dashboard/activity_builder.html', {'user_profile': user_profile, 'new_text': new_text, 'vid_id_list': vid_id_list, 'classroom_profile': classroom_profile, 'lesson_match': lesson_match, 'standards_matches': standards_matches })
 
 #Adds or Removes Selected Standards
 def EditObjectiveStandards(request, user_id=None, class_id=None, subject=None, lesson_id=None, standard_id=None, action=None):
@@ -328,185 +347,7 @@ def EditObjectiveStandards(request, user_id=None, class_id=None, subject=None, l
     return redirect('activity_builder', user_id=user_profile.id, class_id=class_id, subject=subject, lesson_id=lesson_id, page=0)
 
 
-def SelectTopic(request):
-    if request.method == 'GET':
-        user_profile = User.objects.filter(username=request.user.username).first()
-        user_id = user_profile.id
-        topic_id = request.GET['topic_id']
-        lesson_id = request.GET['lesson_id']
-        lesson_match = lessonObjective.objects.get(id=lesson_id)
-        topic_match = topicInformation.objects.get(id=topic_id)
-        update_lesson = lesson_match.objectives_topics.add(topic_match)
 
-        description_list = []
-        for desc in topic_match.description.all():
-            if desc.created_by_id == user_id:
-                if desc.is_admin == False:
-                    result = "<li id='description'>%s</li>" % (desc.description)
-                    description_list.append(result)
-        if description_list:
-            pass
-        else:
-            description_list = []
-            for desc in topic_match.description.all():
-                if desc.is_admin == True:
-                    result = "<li id='description'>%s</li>" % (desc.description)
-                    description_list.append(result)
-        description_list = ' '.join(description_list)
-        final = "<ul>%s</ul>" % (description_list)
-        context = {'term': topic_match.item, 'description': final}
-
-        return JsonResponse(context)
-    else:
-        return HttpResponse("Request method is not a GET")
-
-
-def SelectActivity(request):
-    if request.method == 'GET':
-        user_profile = User.objects.filter(username=request.user.username).first()
-        user_id = user_profile.id
-        activity_id = request.GET['activity_id']
-        lesson_id = request.GET['lesson_id']
-        lesson_match = lessonObjective.objects.get(id=lesson_id)
-        activity_match = selectedActivity.objects.get(id=activity_id)
-
-        activity_match.is_selected = True 
-        activity_match.save()
-
-        context = {'text': activity_match.lesson_text}
-
-        return JsonResponse(context)
-    else:
-        return HttpResponse("Request method is not a GET")
-
-
-def SaveLessonText(request, lesson_id):
-    user = User.objects.filter(id=request.user.id).first()
-    lesson_match = lessonObjective.objects.get(id=lesson_id)
-    new_text, created = lessonText.objects.get_or_create(matched_lesson=lesson_match)
-    less_class = lesson_match.lesson_classroom_id
-    if request.method == 'GET':
-        overview = request.GET['overview']
-        new_text.overview = overview
-        new_text.is_initial = False
-        new_text.save()
-        update_lesson_analytics = get_lesson_sections(overview, less_class, lesson_id, user.id)
-        now = datetime.datetime.now().strftime('%H:%M:%S')
-        context = {"data": now}
-        return JsonResponse(context)
-    else:
-        return HttpResponse("Request method is not a GET")
-
-def SelectStandards(request, lesson_id):
-    user = User.objects.filter(id=request.user.id).first()
-    lesson_match = lessonObjective.objects.get(id=lesson_id)
-    
-    if request.method == 'GET':
-        stand_id = request.GET['stand_id']
-        standard_match = singleStandard.objects.get(id=stand_id)
-        lesson_match.objectives_standards.add(standard_match)
-        strandard_result = str(standard_match.standard_objective) + str(standard_match.competency)
-
-        context = {"data": strandard_result}
-        return JsonResponse(context)
-    else:
-        return HttpResponse("Request method is not a GET")
-
-
-def GetActivitySummary(request, lesson_id):
-    if request.method == 'GET':
-        user_profile = User.objects.filter(id=request.user.id).first()
-        lesson_analytics = label_activities_analytics_small(lesson_id)
-        context = {"data": lesson_analytics, "message": "your message"}
-        return JsonResponse(context)
-    else:
-        return HttpResponse("Request method is not a GET")
-
-
-def GetBloomsAnalytics(request, lesson_id):
-    if request.method == 'GET':
-        user_profile = User.objects.filter(id=request.user.id).first()
-        get_bl_data = label_blooms_activities_analytics(lesson_id)
-        get_mi_data = label_mi_activities_analytics(lesson_id)
-        context = {"data": get_bl_data, "message": "your message"}
-        return JsonResponse(context)
-    else:
-        return HttpResponse("Request method is not a GET")
-
-def GetMIAnalytics(request, lesson_id):
-    if request.method == 'GET':
-        user_profile = User.objects.filter(id=request.user.id).first()
-        get_mi_data = label_mi_activities_analytics(lesson_id)
-        context = {"data": get_mi_data, "message": "your message"}
-        return JsonResponse(context)
-    else:
-        return HttpResponse("Request method is not a GET")
-
-def GetRetentionAnalytics(request, lesson_id):
-    if request.method == 'GET':
-        user_profile = User.objects.filter(id=request.user.id).first()
-        get_retention_data = retention_activities_analytics(lesson_id)
-        context = {"data": get_retention_data, "message": "your message"}
-
-        return JsonResponse(context)
-    else:
-        return HttpResponse("Request method is not a GET")
-
-
-def UpdateKeyTerms(request, lesson_id, class_id):
-    if request.method == 'GET':
-        user_profile = User.objects.filter(id=request.user.id).first()
-        lesson_match = lessonObjective.objects.get(id=lesson_id)
-        teacher_input = lesson_match.teacher_objective
-        update_term_list = activity_builder_jq(teacher_input, class_id, lesson_id, user_profile.id)
-        context = {"data": update_term_list, "message": "your message"}
-
-        return JsonResponse(context)
-    else:
-        return HttpResponse("Request method is not a GET")
-
-def UpdateStandards(request, lesson_id, class_id):
-    if request.method == 'GET':
-        user_profile = User.objects.filter(id=request.user.id).first()
-        lesson_match = lessonObjective.objects.get(id=lesson_id)
-        standards_now = lesson_match.objectives_standards.all()
-        if standards_now:
-            context = None
-        else:
-            teacher_input = lesson_match.teacher_objective
-
-            standards_topics = activity_builder_task.delay(teacher_input, class_id, lesson_id, user_profile.id)
-            rec_standards = lessonStandardRecommendation.objects.filter(lesson_classroom=class_id, objectives=lesson_id).first()
-            standard_list = []
-            if rec_standards:
-                standards_list = rec_standards.objectives_standard.all()
-                standards_recs = singleStandard.objects.filter(id__in=standards_list)
-                for item in standards_recs:
-                    line_item = '%s: %s' % (item.standard_objective, item.competency)
-                    result = {'id': item.id, 'standard': line_item.capitalize()}
-                    standard_list.append(result)
-
-            context = {"data": standard_list, "message": "your message"}
-
-        return JsonResponse(context)
-    else:
-        return HttpResponse("Request method is not a GET")
-
-
-def UpdateLessonActivities(request, lesson_id, class_id):
-    if request.method == 'GET':
-        user_profile = User.objects.filter(id=request.user.id).first()
-        lesson_match = lessonObjective.objects.get(id=lesson_id)
-        teacher_input = lesson_match.teacher_objective
-        update_activity_list = get_lessons_ajax(lesson_id, user_profile.id)
-
-        context = {"data": update_activity_list, "message": "your message"}
-
-        return JsonResponse(context)
-    else:
-        return HttpResponse("Request method is not a GET")
-
-  
 
 def view_name(request):
     if request.method == 'GET':
@@ -528,100 +369,6 @@ def view_name(request):
         return JsonResponse(context)
     else:
         return HttpResponse("Request method is not a GET")
-
-def SelectRelatedInformation(request, user_id=None, class_id=None, subject=None, lesson_id=None, type_id=None, item_id=None, action=None):
-    user_profile = User.objects.get(id=user_id)
-    classroom_profile = classroom.objects.get(id=class_id)
-    #Keyword = 1 , Google Topic = 2, Question = 3, Wiki Topic = 5  
-    type_id = int(type_id)
-    if type_id == 1: 
-        keyword_match = keywordResults.objects.get(id=item_id)
-        action = int(action)
-        if action == 0:
-            keyword_match.is_selected = True
-            keyword_match.save()
-        elif action == 2:
-            keyword_match.delete()
-        else:
-            keyword_match.is_selected = False
-            keyword_match.save()
-        return redirect('{}#keywords'.format(reverse('select_keywords_two', kwargs={'user_id':user_profile.id, 'class_id':classroom_profile.id, 'subject':subject, 'lesson_id':lesson_id})))
-    elif type_id == 2:
-        keyword_match = googleSearchResult.objects.get(id=item_id)
-        action = int(action)
-        if action == 0:
-            keyword_match.is_selected = True
-            keyword_match.save()
-        elif action == 2:
-            keyword_match.delete()
-        else:
-            keyword_match.is_selected = False
-            keyword_match.save()
-        return redirect('{}#keywords'.format(reverse('select_keywords', kwargs={'user_id':user_profile.id, 'class_id':classroom_profile.id, 'subject':subject, 'lesson_id':lesson_id})))
-    elif type_id == 3:
-        keyword_match = googleRelatedQuestions.objects.get(id=item_id)
-        action = int(action)
-        if action == 0:
-            keyword_match.is_selected = True
-            keyword_match.save()
-        elif action == 2:
-            keyword_match.delete()
-        else:
-            keyword_match.is_selected = False
-            keyword_match.save()
-        return redirect('{}#keywords'.format(reverse('select_keywords', kwargs={'user_id':user_profile.id, 'class_id':classroom_profile.id, 'subject':subject, 'lesson_id':lesson_id})))
-    elif type_id == 7:
-        keyword_match = youtubeSearchResult.objects.get(id=item_id)
-        action = int(action)
-        if action == 0:
-            keyword_match.is_selected = True
-            keyword_match.save()
-        else:
-            keyword_match.is_selected = False
-            keyword_match.save()
-        return redirect('{}#youtube'.format(reverse('select_keywords', kwargs={'user_id':user_profile.id, 'class_id':classroom_profile.id, 'subject':subject, 'lesson_id':lesson_id})))
-    elif type_id == 6:
-        lesson_match = lessonObjective.objects.get(id=lesson_id)
-        topic_match = topicInformation.objects.get(id=item_id)
-        action = int(action)
-        if action == 0:
-            update_lesson = lesson_match.objectives_topics.remove(topic_match)
-        else:
-            update_lesson = lesson_match.objectives_topics.add(topic_match)
-        return redirect('{}#keywords'.format(reverse('activity_builder', kwargs={'user_id':user_profile.id, 'class_id':classroom_profile.id, 'subject':subject, 'lesson_id':lesson_id, 'page': 0})))
-    elif type_id == 8:
-        lesson_match = lessonObjective.objects.get(id=lesson_id)
-        topic_match = topicInformation.objects.get(id=item_id)
-        action = int(action)
-        if action == 0:
-            update_lesson = lesson_match.objectives_topics.remove(topic_match)
-        else:
-            update_lesson = lesson_match.objectives_topics.add(topic_match)
-        return redirect('{}#youtube'.format(reverse('select_standards_two', kwargs={'user_id':user_profile.id, 'class_id':classroom_profile.id, 'subject':subject, 'lesson_id':lesson_id, 'select_all':False})))
-    elif type_id == 10:
-        lesson_match = lessonObjective.objects.get(id=lesson_id)
-        topic_match = selectedActivity.objects.get(id=item_id)
-        action = int(action)
-
-        if action == 0:
-            topic_match.is_selected = True 
-            topic_match.save()
-        else:
-            topic_match.is_selected = False
-            topic_match.save()
-        return redirect('{}#keywords'.format(reverse('activity_builder', kwargs={'user_id':user_profile.id, 'class_id':classroom_profile.id, 'subject':subject, 'lesson_id':lesson_id, 'page': 0})))
-    else:
-        keyword_match = wikiTopic.objects.get(id=item_id)
-        action = int(action)
-        if action == 0:
-            keyword_match.is_selected = True
-            keyword_match.save()
-        elif action == 2:
-            keyword_match.delete()
-        else:
-            keyword_match.is_selected = False
-            keyword_match.save()
-        return redirect('{}#keywords'.format(reverse('select_keywords', kwargs={'user_id':user_profile.id, 'class_id':classroom_profile.id, 'subject':subject, 'lesson_id':lesson_id})))
 
 
 def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson_id=None, worksheet_id=None, page=None, act_id=None, question_id=None):
@@ -709,6 +456,13 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
     lesson_standards = singleStandard.objects.filter(id__in=lesson_match.objectives_standards.all())
     topic_matches = lesson_match.objectives_topics.all()
     topic_lists_selected = topicInformation.objects.filter(id__in=topic_matches).order_by('item')
+    topic_images = []
+    for tp in topic_lists_selected:
+        if tp.image_url:
+            pass
+        else:
+            tp_image = get_possible_images(tp.item, tp.id)
+            
 
     worksheet_theme = worksheetTheme.objects.get(id=1)
 
@@ -1129,3 +883,245 @@ def TextbookUploadTwo(request, textbook_id=None):
     update_matches = match_topic_texts(textbook_match.subject, text_id)
     context = {'step': True}
     return render(request, template, context)
+
+
+############################################
+#Ajax Queries from the Activity Builder Page 
+############################################
+
+def SelectYoutubeVideo(request):
+    print('Starting')
+    if request.method == 'GET':
+        user_profile = User.objects.filter(username=request.user.username).first()
+        user_id = user_profile.id
+        video_id = request.GET['video_id']
+        lesson_id = request.GET['lesson_id']
+        lesson_match = lessonObjective.objects.get(id=lesson_id)
+        video_match = youtubeSearchResult.objects.get(id=video_id)
+        video_match.is_selected = True
+        video_match.save()
+        get_transcript(video_match.vid_id)
+        context = {'message': 'Video added'}
+
+        return JsonResponse(context)
+    else:
+        return HttpResponse("Request method is not a GET")
+
+
+
+def SelectTopic(request):
+
+    if request.method == 'GET':
+        user_profile = User.objects.filter(username=request.user.username).first()
+        user_id = user_profile.id
+        topic_id = request.GET['topic_id']
+        lesson_id = request.GET['lesson_id']
+        lesson_match = lessonObjective.objects.get(id=lesson_id)
+        topic_match = topicInformation.objects.get(id=topic_id)
+        update_lesson = lesson_match.objectives_topics.add(topic_match)
+
+        description_list = []
+        for desc in topic_match.description.all():
+            if desc.created_by_id == user_id:
+                if desc.is_admin == False:
+                    result = "<li id='description'>%s</li>" % (desc.description)
+                    description_list.append(result)
+        if description_list:
+            pass
+        else:
+            description_list = []
+            for desc in topic_match.description.all():
+                if desc.is_admin == True:
+                    result = "<li id='description'>%s</li>" % (desc.description)
+                    description_list.append(result)
+        description_list = ' '.join(description_list)
+        final = "<ul>%s</ul>" % (description_list)
+        context = {'term': topic_match.item, 'description': final}
+
+        return JsonResponse(context)
+    else:
+        return HttpResponse("Request method is not a GET")
+
+
+def SelectActivity(request):
+    if request.method == 'GET':
+        user_profile = User.objects.filter(username=request.user.username).first()
+        user_id = user_profile.id
+        activity_id = request.GET['activity_id']
+        lesson_id = request.GET['lesson_id']
+        activity_id = int(activity_id)
+        lesson_id = int(lesson_id)
+        lesson_match = lessonObjective.objects.get(id=lesson_id)
+        activity_match = selectedActivity.objects.get(id=activity_id)
+
+        activity_match.is_selected = True 
+        activity_match.save()
+
+        context = {'text': activity_match.lesson_text}
+
+        return JsonResponse(context)
+    else:
+        return HttpResponse("Request method is not a GET")
+
+
+def SaveLessonText(request, lesson_id):
+    user = User.objects.filter(id=request.user.id).first()
+    lesson_match = lessonObjective.objects.get(id=lesson_id)
+    new_text, created = lessonText.objects.get_or_create(matched_lesson=lesson_match)
+    less_class = lesson_match.lesson_classroom_id
+    if request.method == 'GET':
+        overview = request.GET['overview']
+        new_text.overview = overview
+        new_text.is_initial = False
+        new_text.save()
+        update_lesson_analytics = get_lesson_sections(overview, less_class, lesson_id, user.id)
+        now = datetime.datetime.now().strftime('%H:%M:%S')
+        context = {"data": now}
+        return JsonResponse(context)
+    else:
+        return HttpResponse("Request method is not a GET")
+
+def SelectStandards(request, lesson_id):
+    user = User.objects.filter(id=request.user.id).first()
+    lesson_match = lessonObjective.objects.get(id=lesson_id)
+    
+    if request.method == 'GET':
+        stand_id = request.GET['stand_id']
+        standard_match = singleStandard.objects.get(id=stand_id)
+        lesson_match.objectives_standards.add(standard_match)
+        strandard_result = str(standard_match.standard_objective) + str(standard_match.competency)
+
+        context = {"data": strandard_result}
+        return JsonResponse(context)
+    else:
+        return HttpResponse("Request method is not a GET")
+
+
+def GetActivitySummary(request, lesson_id):
+    if request.method == 'GET':
+        user_profile = User.objects.filter(id=request.user.id).first()
+        lesson_analytics = label_activities_analytics_small(lesson_id)
+        context = {"data": lesson_analytics, "message": "your message"}
+        return JsonResponse(context)
+    else:
+        return HttpResponse("Request method is not a GET")
+
+
+def GetBloomsAnalytics(request, lesson_id):
+    if request.method == 'GET':
+        user_profile = User.objects.filter(id=request.user.id).first()
+        get_bl_data = label_blooms_activities_analytics(lesson_id)
+        get_mi_data = label_mi_activities_analytics(lesson_id)
+        context = {"data": get_bl_data, "message": "your message"}
+        return JsonResponse(context)
+    else:
+        return HttpResponse("Request method is not a GET")
+
+def GetMIAnalytics(request, lesson_id):
+    if request.method == 'GET':
+        user_profile = User.objects.filter(id=request.user.id).first()
+        get_mi_data = label_mi_activities_analytics(lesson_id)
+        context = {"data": get_mi_data, "message": "your message"}
+        return JsonResponse(context)
+    else:
+        return HttpResponse("Request method is not a GET")
+
+def GetRetentionAnalytics(request, lesson_id):
+    if request.method == 'GET':
+        user_profile = User.objects.filter(id=request.user.id).first()
+        get_retention_data = retention_activities_analytics(lesson_id)
+        context = {"data": get_retention_data, "message": "your message"}
+
+        return JsonResponse(context)
+    else:
+        return HttpResponse("Request method is not a GET")
+
+
+def UpdateKeyTerms(request, lesson_id, class_id):
+    if request.method == 'GET':
+        user_profile = User.objects.filter(id=request.user.id).first()
+        lesson_match = lessonObjective.objects.get(id=lesson_id)
+        teacher_input = lesson_match.teacher_objective
+        update_term_list = activity_builder_jq(teacher_input, class_id, lesson_id, user_profile.id)
+        context = {"data": update_term_list, "message": "your message"}
+
+        return JsonResponse(context)
+    else:
+        return HttpResponse("Request method is not a GET")
+
+
+def RemoveKeyTerms(request, lesson_id, class_id):
+
+    if request.method == 'GET':
+        user_profile = User.objects.filter(id=request.user.id).first()
+        lesson_match = lessonObjective.objects.get(id=lesson_id)
+        teacher_input = lesson_match.teacher_objective
+        match_recs = reccomendedTopics.objects.filter(matched_lesson=lesson_match).first()
+        if match_recs:
+            rt = match_recs.rec_topics.all()
+            matched_rt = topicInformation.objects.filter(id__in=rt)
+            for top in matched_rt:
+                add_remove = match_recs.removed_topics.add(top)
+                remove_rec = match_recs.rec_topics.remove(top)
+        
+        update_term_list = activity_builder_jq(teacher_input, class_id, lesson_id, user_profile.id)
+
+        context = {"data": update_term_list, "message": "your message"}
+
+
+        return JsonResponse(context)
+    else:
+        return HttpResponse("Request method is not a GET")
+
+
+
+def UpdateStandards(request, lesson_id, class_id):
+
+    if request.method == 'GET':
+        user_profile = User.objects.filter(id=request.user.id).first()
+        lesson_match = lessonObjective.objects.get(id=lesson_id)
+        standards_now = lesson_match.objectives_standards.all()
+        
+        if standards_now:
+            
+            context = None
+        else:
+            
+            teacher_input = lesson_match.teacher_objective
+            
+            standards_topics = activity_builder_task(teacher_input, class_id, lesson_id, user_profile.id)
+
+            rec_standards = lessonStandardRecommendation.objects.filter(lesson_classroom=class_id, objectives=lesson_id).first()
+            standard_list = []
+            if rec_standards:
+                standards_list = rec_standards.objectives_standard.all()
+                standards_recs = singleStandard.objects.filter(id__in=standards_list)
+                for item in standards_recs:
+                    line_item = '%s: %s' % (item.standard_objective, item.competency)
+                    result = {'id': item.id, 'standard': line_item.capitalize()}
+                    standard_list.append(result)
+            
+
+            if standard_list:
+                context = {"data": standard_list, "message": "your message"}
+                return JsonResponse(context)
+            else:
+                return HttpResponse("Request method is not a GET")
+    else:
+        return HttpResponse("Request method is not a GET")
+
+
+def UpdateLessonActivities(request, lesson_id, class_id):
+    if request.method == 'GET':
+        user_profile = User.objects.filter(id=request.user.id).first()
+        lesson_match = lessonObjective.objects.get(id=lesson_id)
+        teacher_input = lesson_match.teacher_objective
+        update_activity_list = get_lessons_ajax(lesson_id, user_profile.id)
+
+        context = {"data": update_activity_list, "message": "your message"}
+
+        return JsonResponse(context)
+    else:
+        return HttpResponse("Request method is not a GET")
+
+  

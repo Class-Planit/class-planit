@@ -70,36 +70,79 @@ stop_words = ['i', "'", "'" '!', '.', ':', ',', '[', ']', '(', ')', '?', "'see",
 
 TAG_RE = re.compile(r'<[^>]+>')
 
+def retention_activity(lesson_wording):
+
+    passive = ('watch', 'listen', 'video', 'song')
+    middle = ('notes', 'worksheet', 'complete', 'write', 'type')
+    active = ('present', 'presentation', 'discuss', 'discussion', 'debate', 'group', 'teams', 'pairs', 'explain')
+
+    rec_count = 0
+    total_count = 0
+
+    split_activity = lesson_wording.split()
+    if any(word in split_activity for word in active):
+        rec_count = rec_count + 3
+        total_count = total_count + 1
+    elif any(word in split_activity for word in middle):
+        rec_count = rec_count + 2
+        total_count = total_count + 1
+    elif any(word in split_activity for word in passive):
+        rec_count = rec_count + 1
+        total_count = total_count + 1
+    else:
+        pass
+    
+    total_possible = total_count * 3 
+
+    if rec_count >= 1:
+        ret_rate = rec_count/total_possible * 100 
+    else:
+        ret_rate = 20
+
+    return(ret_rate)
+
+
 
 def get_new_lesson(demo_wording, topic, d_type, t_type, lesson_id, user_id):
+
+
     user_profile = User.objects.get(id=user_id)
 
     lesson_match = lessonObjective.objects.get(id=lesson_id)
-    subject_match = lesson_match.subject
-    grade_match = lesson_match.current_grade_level
+    subject_match = lesson_match.subject_id
+    grade_match = lesson_match.current_grade_level_id
 
-    tt_match = topicTypes.objects.filter(item=t_type).first()
+    try:
+        tt_match = topicTypes.objects.filter(item=t_type)
+  
+    except:
+        tt_match = topicTypes.objects.filter(item__in=t_type)
+
+    
+
+
+
     if 'multi' in d_type:
-        lesson_templates = lessonTemplates.objects.filter(components=tt_match, grade_level=grade_match, subject=subject_match, is_multi=True)
+        lesson_templates = lessonTemplates.objects.filter(components__in=tt_match, grade_level=grade_match, subject=subject_match, is_multi=True)
     elif 'plural' in d_type:
-        lesson_templates = lessonTemplates.objects.filter(components=tt_match, grade_level=grade_match, subject=subject_match, is_plural=True)
+        lesson_templates = lessonTemplates.objects.filter(components__in=tt_match, grade_level=grade_match, subject=subject_match, is_plural=True)
     else:
-        lesson_templates = lessonTemplates.objects.filter(components=tt_match, grade_level=grade_match, subject=subject_match, is_multi=False, is_plural=False)
+        lesson_templates = lessonTemplates.objects.filter(components__in=tt_match, grade_level=grade_match, subject=subject_match, is_multi=False, is_plural=False)
+
 
 
     lesson_list = []
     for temp in lesson_templates:
         lesson_wording = temp.wording
+        ret_rate = retention_activity(lesson_wording)
         verb = temp.verb
         work_product = temp.work_product
         bloom = temp.bloom
         mi = temp.mi
         new_wording = lesson_wording.replace('DEMO_KS', demo_wording)
         if new_wording:
-            new, created = selectedActivity.objects.get_or_create(created_by=user_profile , ks_demo=demo_wording, template_id=temp.id , lesson_overview = lesson_match, lesson_text = new_wording, verb = verb, work_product = work_product, bloom = bloom, mi = mi, is_admin = False)
+            new, created = selectedActivity.objects.get_or_create(created_by=user_profile , ks_demo=demo_wording, template_id=temp.id , lesson_overview = lesson_match, lesson_text = new_wording, verb = verb, work_product = work_product, ret_rate=ret_rate, bloom = bloom, mi = mi, is_admin = False)
             lesson_list.append(new)
-
-    
     
     return(lesson_list)
 
@@ -268,19 +311,23 @@ def get_topic_matches(self, teacher_input, tokens_without_sw, class_objectives, 
 
 @shared_task(bind=True)
 def match_standard(self, teacher_input, standard_set, subject, grade_list):
+    print('Starting match_standard ')
     standards_list = []
     for grade in grade_list:
-        obj = singleStandard.objects.filter(subject=subject, standards_set=standard_set, grade_level=grade)
-        objectives_list = []
+        obj = singleStandard.objects.filter(subject=subject, standards_set=standard_set, grade_level=grade)        
         for standard in obj:
             objective = str(standard.standard_objective) +  str(standard.competency)
             result = standard.id, objective
             standard_full = objective.split()
-            standard_full_joined = ' '.join([str(i) for i in standard_full if not i in stopwords.words()])
+            standard_full_joined = ' '.join([str(i) for i in standard_full if not i in stop_words])
             text_tokens = word_tokenize(teacher_input)
-            tokens_without_sw = [word for word in text_tokens if not word in stopwords.words()]
+
+            tokens_without_sw = [word for word in text_tokens if not word in stop_words]
             full_result = standard.id, standard_full_joined
+
             standards_list.append(full_result) 
+    
+
     return(standards_list)
 
 @shared_task(bind=True)
@@ -469,15 +516,16 @@ def activity_builder_task(self, teacher_input, class_id, lesson_id, user_id):
     teacher_input_full = teacher_input_full.split()
     tokens_without_sw = [word for word in teacher_input_full if not word in stop_words]
 
+
     get_standard = match_standard(teacher_input, standard_set, subject, grade_list)
 
     matched_standards = get_standard_matches(get_standard, tokens_without_sw)
-    
+
     standards_select = singleStandard.objects.filter(id__in=matched_standards)
     create_stand_recs, created = lessonStandardRecommendation.objects.get_or_create(lesson_classroom=classroom_profile, objectives=class_objectives)
 
     for item in standards_select:
         create_stand_recs.objectives_standard.add(item)
 
-
+ 
     print('Done')

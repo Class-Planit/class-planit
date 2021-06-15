@@ -368,6 +368,8 @@ class topicInformation(models.Model):
     image_name = models.CharField(max_length=200,
                                        blank=True,
                                        null=True)
+    image_url = models.URLField(blank=True,
+                                null=True)
     image_file = models.ImageField(upload_to='images/topic/',
                                        blank=True,
                                        null=True) 
@@ -380,6 +382,15 @@ class topicInformation(models.Model):
     is_admin = models.BooleanField(default=True)
     from_wiki = models.BooleanField(default=False)
     is_secondary = models.BooleanField(default=False)
+
+    def get_remote_image(self):
+        if self.image_url and not self.image_file:
+            result = urllib.urlretrieve(self.image_url)
+            self.image_file.save(
+                    os.path.basename(self.image_url),
+                    File(open(result[0]))
+                    )
+            self.save()
 
     def __str__(self):
         return "%s" % (self.item)
@@ -500,6 +511,24 @@ class lessonPDFImage(models.Model):
     image_image = models.ImageField(upload_to='images/words/',
                                        blank=True,
                                        null=True) 
+
+    def __str__(self):
+        return "%s" % (self.id)
+
+
+class reccomendedTopics(models.Model):
+    matched_lesson = models.ForeignKey(lessonObjective,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    rec_topics = models.ManyToManyField(topicInformation,
+                                     blank=True,
+                                     related_name='reccomended_topics',
+                                     null=True)
+    removed_topics = models.ManyToManyField(topicInformation,
+                                     blank=True,
+                                     related_name='removed_topics',
+                                     null=True)
 
     def __str__(self):
         return "%s" % (self.id)
@@ -1003,11 +1032,18 @@ class selectedActivity(models.Model):
     mi = models.IntegerField(default = 0,
                                blank=True,
                                null=True)
+    ret_rate = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
     template_id = models.IntegerField(default = 0,
                                blank=True,
                                null=True)
     is_admin = models.BooleanField(default=False)
     is_selected = models.BooleanField(default=False)
+    objectives_topics = models.ManyToManyField(topicInformation,
+                                     blank=True,
+                                     related_name='activitiy_topic',
+                                     null=True)
     
 
     def __str__(self):

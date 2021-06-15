@@ -113,6 +113,11 @@ urlpatterns = [
         view=SelectTopic,
         name='select_topic'),
 
+
+    url(r'^add-youtube-video/$',
+        view=SelectYoutubeVideo,
+        name='add_youtube_video'),
+
     url(r'^standard-tracking/$',
         view=StandardsTracking,
         name='standard_tracker'),
@@ -154,14 +159,15 @@ urlpatterns = [
         view=UpdateKeyTerms,
         name='update_terms_options'),
 
+    url(r'^remove-term-options/(?P<lesson_id>[\w-]+)/(?P<class_id>[\w-]+)/$',
+        view=RemoveKeyTerms,
+        name='remove_terms_options'),
 
     url(r'^updated-activity-options/(?P<lesson_id>[\w-]+)/(?P<class_id>[\w-]+)/$',
         view=UpdateLessonActivities,
         name='update_activity_options'),
 
-    url(r'^classroom-planbook-select-related/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<lesson_id>[\w-]+)/(?P<type_id>[\w-]+)/(?P<item_id>[\w-]+)/(?P<action>[\w-]+)/$',
-        view=SelectRelatedInformation,
-        name='select_related'),
+
 
     url(r'^activity-builder-worksheets/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<lesson_id>[\w-]+)/(?P<page>[\w-]+)/(?P<worksheet_id>[\w-]+)/(?P<act_id>[\w-]+)/(?P<question_id>[\w-]+)/$',
         view=DigitalActivities,

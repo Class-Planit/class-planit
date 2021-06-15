@@ -28,29 +28,50 @@ def get_description_string(topic_id, user_id):
 
 
 def openai_term_labels(user_id, topic_term, subject, grade):
-    subject = 'english'
-    grade = 'eight'
-    path3 = f'planit/files/{subject}/{grade}/examples.csv'
 
+    path3 = f'planit/files/{subject}/{grade}/examples.csv'
+   
     description = get_description_string(topic_term.id, user_id)
     wording = f'term: {topic_term.item} description: {description}'
     #this is for the mi and blooms level assignment
     
-    with open(path3) as f:
-        examples = []
-        labels = []
-        for line in f:
-            line = line.split(',')
-            example_wording = [line[0], line[1]]
-            examples.append(example_wording)
-            labels.append(line[1])
+    try:
+        with open(path3) as f:
 
-        response = openai.Classification.create(
-                    search_model="ada", 
-                    model="curie",
-                    examples=examples,
-                    query=wording,
-                    labels=labels)
+            examples = []
+            labels = []
+            for line in f:
+                line = line.split(',')
+                
+                example_wording = [line[0], line[1]]
+                examples.append(example_wording)
+                labels.append(line[1])
+
+            response = openai.Classification.create(
+                        search_model="ada", 
+                        model="curie",
+                        examples=examples,
+                        query=wording,
+                        labels=labels)
+    except:
+        path = f'planit/files/English/Eight/examples.csv'
+        with open(path) as f:
+
+            examples = []
+            labels = []
+            for line in f:
+                line = line.split(',')
+                
+                example_wording = [line[0], line[1]]
+                examples.append(example_wording)
+                labels.append(line[1])
+
+            response = openai.Classification.create(
+                        search_model="ada", 
+                        model="curie",
+                        examples=examples,
+                        query=wording,
+                        labels=labels)
 
     
     return(response['label'].upper())
