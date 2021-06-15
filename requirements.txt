@@ -227,3 +227,4 @@ redis
 celery-progress
 django_celery_results
 django-redis-cache
+youtube-transcript-api
