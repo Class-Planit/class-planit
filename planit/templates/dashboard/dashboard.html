@@ -1,9 +1,10 @@
 
 {% extends 'dashboard/base.html' %}
 {% load static %}
+{% load tailwind_tags %}
 {% block content %}
 
-                
+      
 <main class="content">
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
         <div class="btn-toolbar">
@@ -24,6 +25,7 @@
             <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
         </div>
     </div>
+   
     <section class="section section-md ">
         <div class="container">
             <div class="row">
@@ -48,6 +50,7 @@
                     
                 </div>
             </div>
+           
             <div class="table-settings mb-4">
                 <div class="row justify-content-between align-items-center">
                     <div class="col-12 col-md-6 col-lg-3 align-items-center d-none d-md-flex">
@@ -105,7 +108,9 @@
                     </div>
                 </div>
             </div>
+            
             <div class="row justify-content-center">
+                
                 <div class="col-12 col-sm-6 col-xl-4 mb-4">
                     <a href="{% url 'create_objective' user_id=user_profile.id week_of='Current' %}" class="card border-light animate-up-3 shadow-soft p-0 p-lg-4">     
                         <div class="card-body">

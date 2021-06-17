@@ -1,5 +1,5 @@
 {% load static %}
-
+{% load tailwind_tags %}
 <!--
 
 =========================================================
@@ -65,21 +65,21 @@
     
     <!-- Rocket CSS -->
     <link type="text/css" href="{% static 'css/dashboard/rocket.css' %}" rel="stylesheet">
-      
+    
     <!-- NOTICE: You can use the _analytics.html partial to include production code specific code & trackers -->
-
+    {% tailwind_css %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script src="{% static 'forms_ajaxified/js/forms_ajaxified.js' %}"></script>
     <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
-
+    
     </head>
 
 <body style="background-color:#f3f7fa;">
 
   
         <div class="preloader bg-soft flex-column justify-content-center align-items-center">
-    <img class="loader-element" src="{% static 'images/dashboard/circle_logo.svg' %}" height="50" alt="Rocket logo">
+    <img class="loader-element" src="{% static 'images/dashboard/icon_120.png' %}" height="20" alt="Rocket logo">
 </div>
 
         <nav class="navbar navbar-dark navbar-theme-primary col-12 d-md-none">

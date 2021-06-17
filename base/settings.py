@@ -68,11 +68,15 @@ INSTALLED_APPS = [
     'tinymce',
     'django_celery_results',
     'celery_progress',
+    'tailwind',
+    'theme',
 
 
     
 ]
 
+
+TAILWIND_APP_NAME = 'theme'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     # 'whitenoise.middleware.WhiteNoiseMiddleware',
