@@ -42,6 +42,7 @@ from .get_performance import *
 from .get_students import * 
 from .get_wikipedia import *
 from .get_seach_results import *
+from .get_misc_info import *
 ##################| Homepage Views |#####################
 #Homepage Landing Page
 def Homepage(request):
@@ -98,9 +99,9 @@ def Homepage(request):
     
     choice = random.choice([1, 2])
     if choice == 1:
-        return render(request, 'homepage/index.html', {'form': form})
+        return render(request, 'dashboard/index3.html', {'form': form})
     else:
-        return render(request, 'homepage/index2.html', {'form': form})
+        return render(request, 'dashboard/index3.html', {'form': form})
 
 #Full Form Regstration if error on pop up modal
 def FormFull(request, retry=None):
@@ -198,6 +199,12 @@ class AboutUs(TemplateView):
         return render(request, 'homepage/about.html', { })
 
 ##################| End Homepage Views |#####################
+
+############################################
+#Teacher Functions  
+############################################
+
+#classroom list for teacher 
 class classroomLists(TemplateView):
     template_name = 'dashboard/classroom_list.html' 
 
@@ -210,7 +217,7 @@ class classroomLists(TemplateView):
         page = 'Classrooms'
         return render(request, 'dashboard/classroom_list.html', {'user_profile': user_profile, 'class_summary': class_summary, 'page': page})
 
-
+#view information for a single classroom 
 def ClassroomSingle(request, user_id=None, class_id=None):
     current_year = datetime.datetime.now().year
     user_profile = User.objects.filter(username=request.user.username).first()
@@ -218,116 +225,105 @@ def ClassroomSingle(request, user_id=None, class_id=None):
     student_summary = get_classroom_list_summary(user_profile.id, current_year, class_id)
     return render(request, 'dashboard/classrooms.html', {'user_profile': user_profile, 'student_summary': student_summary, 'class_profile': class_profile})
 
+#view standards that have been addressed so far 
 def StandardsTracking(request, user_id=None):
     current_year = datetime.datetime.now().year
     user_profile = User.objects.filter(username=request.user.username).first()
     
     return render(request, 'dashboard/app-analysis.html', {'user_profile': user_profile,})
 
-#Main Dashboard View labeled as 'Overview'
-class Dashboard(TemplateView):
-    template_name = 'dashboard/dashboard.html' 
-
-    def get(self,request,week_of):
-        current_week = date.today().isocalendar()[1] 
-        if 'Current' in week_of:
-            active_week = current_week
-        else:
-            active_week = int(week_of)
-        user_profile = User.objects.filter(username=request.user.username).first()
-        if user_profile:
-            classroom_profiles = classroom.objects.filter(main_teacher=user_profile)
-
-            objective_matches = lessonObjective.objects.filter(week_of=active_week, lesson_classroom__in=classroom_profiles)
-
-            return render(request, 'dashboard/dashboard.html', {'user_profile': user_profile, 'current_week': current_week, 'active_week': active_week, 'objective_matches': objective_matches})
-        else:
-            return redirect('login_user')
 
 
-#Step One Teachers type in their Objective 
+#Main Teacher Dashboard View labeled as 'Overview'
+def Dashboard(request, week_of):
+    #get active and current week number (active being the week the teacher is on and current meaning the actual week in the calendar)
+    week_info = get_week_info(week_of)
+
+    user_profile = User.objects.get(id=request.user.id)
+
+    if user_profile is not None:
+        #gets the classrooms teachers are main teacher on 
+        classroom_profiles = classroom.objects.filter(main_teacher=user_profile)
+
+        #? we need to as a classroom list where teacher is not the main teacher but classrooms are shared
+
+        # the lessonObjective is a single lesson plan for one subject, one grade, in one classroom
+        objective_matches = lessonObjective.objects.filter(week_of=week_info['active_week'], lesson_classroom__in=classroom_profiles)
+        context = {'user_profile': user_profile, 'current_week': week_info['current_week'], 'active_week': week_info['active_week'], 'objective_matches': objective_matches,\
+                    'previous_week': week_info['previous_week'], 'next_week': week_info['next_week']}
+        return render(request, 'dashboard/dashboard.html', context)
+    else:
+        message = 'Sorry, Please login'
+        return redirect('login_user', {'message': message})
+
+
+#This is the form where teachers create a new lessonObjective. 
+#The teacher puts in their objective (what they want to teach the students)
 def CreateObjective(request, user_id=None, week_of=None):
-    user_profile = User.objects.filter(username=request.user.username).first()
-    user_classrooms = classroom.objects.filter(main_teacher=user_profile)
+    if user_id is not None:
+        user_profile = User.objects.filter(username=request.user.username).first()
+        week_info = get_week_info(week_of)
 
-
-
-    if 'Current' in week_of:
-        current_week = date.today().isocalendar()[1] 
-    else:
-        current_week = int(week_of)
-
-    if user_classrooms:
+        user_classrooms = classroom.objects.filter(main_teacher=user_profile)
         subjects = []
-        for classroom_m in user_classrooms:
-            s_match = classroom_m.subjects.all()
-            subject_match = standardSubjects.objects.filter(id__in=s_match)
-            if subject_match not in subjects:
-                subjects.append(subject_match)
+        if user_classrooms:
+            for classroom_m in user_classrooms:
+                s_match = classroom_m.subjects.all()
+                subject_match = standardSubjects.objects.filter(id__in=s_match)
+                if subject_match not in subjects:
+                    subjects.append(subject_match)
 
-    else:
-        subjects = []
-
-
-    if request.method == "POST":
-        form = lessonObjectiveForm(request.POST, request.FILES)
-
-        if form.is_valid():
-            prev = form.save(commit=False)
-            teacher_input = prev.teacher_objective
-            prev.week_of = current_week
-            subject = prev.subject_id
-            selected_class = prev.lesson_classroom_id
-            class_match = classroom.objects.get(id=selected_class)
-            class_grade = class_match.single_grade
-            prev.current_grade_level = class_grade
-            prev.save()
-            
-            return redirect('activity_builder', user_id=user_profile.id, class_id=selected_class, subject=subject, lesson_id=prev.id, page=0)
-    else:
-        form = lessonObjectiveForm()
-  
-
-
-
-    step = 1
-    return render(request, 'dashboard/identify_objectives.html', {'form': form, 'step': step, 'user_profile': user_profile, 'user_classrooms': user_classrooms, 'subjects': subjects  })
-
-#Lesson  planning section 
-def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_id=None, page=None):
+        if request.method == "POST":
+            form = lessonObjectiveForm(request.POST, request.FILES)
+            if form.is_valid():
+                prev = form.save(commit=False)
+                teacher_input = prev.teacher_objective
+                prev.week_of = week_info['active_week']
+                class_match = classroom.objects.get(id=prev.lesson_classroom_id)
+                #this is an overide - currently we want one grade per classroom but we will move to multiple grade levels like art which could have 9, 10, 11 grades
+                prev.current_grade_level = class_match.single_grade
+                prev.save()
+                
+                return redirect('activity_builder', user_id=user_profile.id, class_id=class_match.id, subject=prev.subject_id, lesson_id=prev.id, page=0)
+        else:
+            form = lessonObjectiveForm()
     
-    current_week = date.today().isocalendar()[1] 
+        context = {'form': form, 'step': 1, 'user_profile': user_profile, 'user_classrooms': user_classrooms, 'subjects': subjects  }
+        return render(request, 'dashboard/identify_objectives.html', context)
+    else:
+        message = 'Sorry, Please login'
+        return redirect('login_user', {'message': message})
+
+
+#redirect from CreateObjective form submission. 
+# This page has the tinymce editor as well as the analytics and activity recommendations
+def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_id=None, page=None):
     user_profile = User.objects.get(id=user_id)
     
     classroom_profile = classroom.objects.get(id=class_id)
     lesson_match = lessonObjective.objects.get(id=lesson_id)
-    teacher_input = lesson_match.teacher_objective
-    l_topics = lesson_match.objectives_topics.all()
-    lesson_topics = topicInformation.objects.filter(id__in=l_topics)
 
-    teacher_input = lesson_match.teacher_objective
-    standards_matches = lesson_match.objectives_standards.all()
+    lesson_topics = topicInformation.objects.filter(id__in=lesson_match.objectives_topics.all())
+
     
     new_text, created = lessonText.objects.get_or_create(matched_lesson=lesson_match)
     
-    youtube_search = youtube_results(teacher_input, lesson_id)
+    youtube_search = youtube_results(lesson_match.teacher_objective, lesson_id)
+    
+    youtube_list = []
     if youtube_search:
         youtube_list = youtube_search[:3]
-    else:
-        youtube_list = []
-
-
+    
     vid_id_list = []
     for result in youtube_list:
         link = result['link']
         vid_id = video_id(link)
-        description = result['title']
-        title = result['title']
-        youtube_create, created = youtubeSearchResult.objects.get_or_create(lesson_plan=lesson_match, title=title, description=description, vid_id=vid_id)
+        youtube_create, created = youtubeSearchResult.objects.get_or_create(lesson_plan=lesson_match, title=result['title'], vid_id=vid_id)
         vid_id_list.append(youtube_create)
 
+    context = {'user_profile': user_profile, 'new_text': new_text, 'vid_id_list': vid_id_list, 'classroom_profile': classroom_profile, 'lesson_match': lesson_match}
+    return render(request, 'dashboard/activity_builder.html', context)
 
-    return render(request, 'dashboard/activity_builder.html', {'user_profile': user_profile, 'new_text': new_text, 'vid_id_list': vid_id_list, 'classroom_profile': classroom_profile, 'lesson_match': lesson_match, 'standards_matches': standards_matches })
 
 #Adds or Removes Selected Standards
 def EditObjectiveStandards(request, user_id=None, class_id=None, subject=None, lesson_id=None, standard_id=None, action=None):
@@ -347,30 +343,7 @@ def EditObjectiveStandards(request, user_id=None, class_id=None, subject=None, l
     return redirect('activity_builder', user_id=user_profile.id, class_id=class_id, subject=subject, lesson_id=lesson_id, page=0)
 
 
-
-
-def view_name(request):
-    if request.method == 'GET':
-        user_profile = User.objects.filter(id=request.user.id).first()
-        html = [{
-                "Id": 49,
-                "SupplierName": "Supplier 1"
-            }, {
-                "Id": 50,
-                "SupplierName": "Supplier 2"
-            }, {
-                "Id": 51,
-                "SupplierName": "Supplier 3"
-            }, {
-                "Id": 52,
-                "SupplierName": "Supplier 4"
-            }]
-        context = {"data": html, "message": "your message"}
-        return JsonResponse(context)
-    else:
-        return HttpResponse("Request method is not a GET")
-
-
+#Creates Digital Worksheets with questions 
 def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson_id=None, worksheet_id=None, page=None, act_id=None, question_id=None):
     current_week = date.today().isocalendar()[1] 
     user_profile = User.objects.filter(id=user_id).first()
@@ -475,7 +448,52 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
                                                                   'short_answer': short_answer, 'fib':fib, 'multi_choice':multi_choice, 'unknown':unknown})
 
 
-def StudentDashboard(request, lesson_id=None, worksheet_id=None, question_id=None):
+#Edit already created or recommended Question
+def EditQuestions(request, user_id=None, class_id=None, subject=None, lesson_id=None, worksheet_id=None, page=None, act_id=None, question_id=None):
+    user_profile = User.objects.get(id=user_id)
+    question_match = topicQuestion.objects.get(id=question_id)
+    question_type = question_match.question_type
+    worksheet_match = worksheetFull.objects.get(id=worksheet_id)
+    subject_match = standardSubjects.objects.get(id=subject)
+    if request.method == "POST":
+        form = topicQuestionForm(request.POST, request.FILES, instance=question_match)
+
+        if form.is_valid():
+            prev = form.save(commit=False)
+            prev.question_type = question_type
+            prev.subject = subject_match
+            prev.is_admin = False
+            prev.created_by = user_profile
+            prev.save()
+            worksheet_match.questions.add(prev)
+
+    return redirect('digital_activities', user_id=user_id, class_id=class_id, lesson_id=lesson_id, subject=1, page='Preview', worksheet_id=worksheet_id, act_id='False', question_id=0)
+
+
+#create new question from scratch
+def NewQuestions(request, user_id=None, class_id=None, subject=None, lesson_id=None, worksheet_id=None, page=None, act_id=None, question_id=None):
+    user_profile = User.objects.get(id=user_id)
+    worksheet_match = worksheetFull.objects.get(id=worksheet_id)
+    subject_match = standardSubjects.objects.get(id=subject)
+    if request.method == "POST":
+        form = topicQuestionForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            prev = form.save(commit=False)
+            prev.subject = subject_match
+            prev.is_admin = False
+            prev.created_by = user_profile
+            prev.save()
+            worksheet_match.questions.add(prev)
+        return redirect('digital_activities', user_id=user_id, class_id=class_id, lesson_id=lesson_id, subject=1, page='Preview', worksheet_id=worksheet_id, act_id='False', question_id=0)
+
+############################################
+#Student Functions
+############################################
+
+
+#student begin worksheet 
+def StudentWorksheetStart(request, lesson_id=None, worksheet_id=None, question_id=None):
     user_profile = User.objects.filter(id=request.user.id).first()
     worksheet_match = worksheetFull.objects.get(id=worksheet_id)
     if user_profile:
@@ -552,6 +570,8 @@ def StudentDashboard(request, lesson_id=None, worksheet_id=None, question_id=Non
         login_required = True
         return render(request, 'dashboard/student_dashboard.html', {'login_required': login_required, 'form': form, 'lesson_id':lesson_id, 'worksheet_id':worksheet_id,})
 
+
+#final submit of assigned worksheet
 def StudentWorksheetSubmit(request, user_id=None, lesson_id=None, worksheet_id=None, submit=None):
     user_profile = User.objects.filter(id=request.user.id).first()
     worksheet_match = worksheetFull.objects.get(id=worksheet_id)
@@ -569,12 +589,81 @@ def StudentWorksheetSubmit(request, user_id=None, lesson_id=None, worksheet_id=N
 
     return render(request, 'dashboard/student_submit.html', {'user_profile': user_profile, 'single_answers': single_answers, 'worksheet_id': worksheet_id, 'lesson_id': lesson_id })
 
+
+#student dashboard 
 def StudentMainDashboard(request, user_id=None, lesson_id=None, worksheet_id=None, submit=None):
     form = StudentForm()
     form2 = StudentForm()
     user_profile = User.objects.filter(id=user_id).first()
     return render(request, 'dashboard/student_main.html', {'user_profile': user_profile, 'form': form, 'form2': form2 })
 
+
+#student registration 
+def StudentRegistration(request, lesson_id=None, worksheet_id=None):
+    current_year = datetime.datetime.now().year
+
+    worksheet_match = worksheetFull.objects.get(id=worksheet_id)
+    lesson_match = lessonObjective.objects.get(id=lesson_id)
+    l_classroom = lesson_match.lesson_classroom_id
+    class_match = classroom.objects.get(id=l_classroom)
+    classroom_list, created = classroomLists.objects.get_or_create(lesson_classroom=class_match, year=current_year)
+
+    if request.method == "POST":
+        form = StudentForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            form.save()
+            first_name = form.cleaned_data.get('first_name')
+            last_name = form.cleaned_data.get('last_name')
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            user_id = user.id
+            create_student, created = studentProfiles.objects.get_or_create(first_name = first_name, last_name = last_name, is_enrolled =True, student_username = user)
+            classroom_list.students.add(create_student)
+            if user is not None:
+                login(request, user)
+
+            return redirect('student_dashboard', lesson_id=lesson_id, worksheet_id=worksheet_id, question_id=0)
+        else:
+            return redirect('student_dashboard', lesson_id=lesson_id, worksheet_id=worksheet_id, question_id=0)
+    
+
+#User Login 
+def StudentLogin(request, lesson_id=None, worksheet_id=None):
+
+    if request.method == "POST":
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('student_dashboard', lesson_id=lesson_id, worksheet_id=worksheet_id, question_id=0)
+        else:
+            pass
+  
+    return render(request, 'dashboard/sign-in.html', {})
+
+
+#student analytics for parents and students
+def StudentPerformance(request, user_id, class_id, week_of):
+    all_themes = studentPraiseTheme.objects.all()
+    user_profile = User.objects.get(id=user_id)
+    current_year = datetime.datetime.now().year
+    current_week = date.today().isocalendar()[1]
+    start = current_week - 12
+    if start < 1:
+        start = 1
+    
+
+    week_breakdown = get_weekly_brackets(user_id, start, current_week, current_year)
+    top_lessons = get_demo_ks_brackets(user_id, start, current_week, current_year)
+    student_results = get_student_results(user_id, start, current_week, current_year)
+    return render(request, 'dashboard/tasks.html', {'user_profile': user_profile, 'all_themes': all_themes, 'week_breakdown': week_breakdown, 'top_lessons': top_lessons, 'student_results': student_results})
+
+
+####### these functions handle the students answers as they go through the digital worksheet #########
+#selected the multiple choice answer in worksheet question
 def StudentMCSelect(request, user_id=None, lesson_id=None, worksheet_id=None):
 
     if request.method == 'GET':
@@ -605,6 +694,7 @@ def StudentMCSelect(request, user_id=None, lesson_id=None, worksheet_id=None):
         return HttpResponse("Request method is not a GET")
 
 
+#submits fill in the blank answer in worksheet question 
 def StudentFIBAnswer(request, user_id=None, lesson_id=None, worksheet_id=None, question_id=None, index_id=None):
 
     if request.method == 'GET':
@@ -632,6 +722,7 @@ def StudentFIBAnswer(request, user_id=None, lesson_id=None, worksheet_id=None, q
         return HttpResponse("Request method is not a GET")
 
 
+#submits short answer in worksheet question 
 def StudentSAAnswer(request, user_id=None, lesson_id=None, worksheet_id=None, question_id=None, index_id=None):
 
     if request.method == 'GET':
@@ -653,105 +744,14 @@ def StudentSAAnswer(request, user_id=None, lesson_id=None, worksheet_id=None, qu
     else:
         return HttpResponse("Request method is not a GET")
 
-  
-def StudentRegistration(request, lesson_id=None, worksheet_id=None):
-    current_year = datetime.datetime.now().year
-
-    worksheet_match = worksheetFull.objects.get(id=worksheet_id)
-    lesson_match = lessonObjective.objects.get(id=lesson_id)
-    l_classroom = lesson_match.lesson_classroom_id
-    class_match = classroom.objects.get(id=l_classroom)
-    classroom_list, created = classroomLists.objects.get_or_create(lesson_classroom=class_match, year=current_year)
-
-    if request.method == "POST":
-        form = StudentForm(request.POST, request.FILES)
-
-        if form.is_valid():
-            form.save()
-            first_name = form.cleaned_data.get('first_name')
-            last_name = form.cleaned_data.get('last_name')
-            username = form.cleaned_data.get('username')
-            raw_password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=raw_password)
-            user_id = user.id
-            create_student, created = studentProfiles.objects.get_or_create(first_name = first_name, last_name = last_name, is_enrolled =True, student_username = user)
-            classroom_list.students.add(create_student)
-            if user is not None:
-                login(request, user)
-
-            return redirect('student_dashboard', lesson_id=lesson_id, worksheet_id=worksheet_id, question_id=0)
-        else:
-            return redirect('student_dashboard', lesson_id=lesson_id, worksheet_id=worksheet_id, question_id=0)
-    
-#User Login 
-def StudentLogin(request, lesson_id=None, worksheet_id=None):
-
-    if request.method == "POST":
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('student_dashboard', lesson_id=lesson_id, worksheet_id=worksheet_id, question_id=0)
-        else:
-            pass
-  
-    return render(request, 'dashboard/sign-in.html', {})
-
-def EditQuestions(request, user_id=None, class_id=None, subject=None, lesson_id=None, worksheet_id=None, page=None, act_id=None, question_id=None):
-    user_profile = User.objects.get(id=user_id)
-    question_match = topicQuestion.objects.get(id=question_id)
-    question_type = question_match.question_type
-    worksheet_match = worksheetFull.objects.get(id=worksheet_id)
-    subject_match = standardSubjects.objects.get(id=subject)
-    if request.method == "POST":
-        form = topicQuestionForm(request.POST, request.FILES, instance=question_match)
-
-        if form.is_valid():
-            prev = form.save(commit=False)
-            prev.question_type = question_type
-            prev.subject = subject_match
-            prev.is_admin = False
-            prev.created_by = user_profile
-            prev.save()
-            worksheet_match.questions.add(prev)
-
-    return redirect('digital_activities', user_id=user_id, class_id=class_id, lesson_id=lesson_id, subject=1, page='Preview', worksheet_id=worksheet_id, act_id='False', question_id=0)
-
-def NewQuestions(request, user_id=None, class_id=None, subject=None, lesson_id=None, worksheet_id=None, page=None, act_id=None, question_id=None):
-    user_profile = User.objects.get(id=user_id)
-    worksheet_match = worksheetFull.objects.get(id=worksheet_id)
-    subject_match = standardSubjects.objects.get(id=subject)
-    if request.method == "POST":
-        form = topicQuestionForm(request.POST, request.FILES)
-
-        if form.is_valid():
-            prev = form.save(commit=False)
-            prev.subject = subject_match
-            prev.is_admin = False
-            prev.created_by = user_profile
-            prev.save()
-            worksheet_match.questions.add(prev)
-        return redirect('digital_activities', user_id=user_id, class_id=class_id, lesson_id=lesson_id, subject=1, page='Preview', worksheet_id=worksheet_id, act_id='False', question_id=0)
+###### end student answer handling fuctions ##############
 
 
-def StudentPerformance(request, user_id, class_id, week_of):
-    all_themes = studentPraiseTheme.objects.all()
-    user_profile = User.objects.get(id=user_id)
-    current_year = datetime.datetime.now().year
-    current_week = date.today().isocalendar()[1]
-    start = current_week - 12
-    if start < 1:
-        start = 1
-    
+############################################
+#Upload Functions that allows us to upload csv's of relevant content cleaned in pandas 
+############################################
 
-    week_breakdown = get_weekly_brackets(user_id, start, current_week, current_year)
-    top_lessons = get_demo_ks_brackets(user_id, start, current_week, current_year)
-    student_results = get_student_results(user_id, start, current_week, current_year)
-    return render(request, 'dashboard/tasks.html', {'user_profile': user_profile, 'all_themes': all_themes, 'week_breakdown': week_breakdown, 'top_lessons': top_lessons, 'student_results': student_results})
-
-
-
+#uploads the standards from each state or region 
 def StandardUploadTwo(request):
     #second step to the standards upload process
     #name="standards_upload"
@@ -789,8 +789,7 @@ def StandardUploadTwo(request):
     context = { }
     return render(request, template, context)
 
-
-
+#uploads key terms 
 def TopicUploadTwo(request):
     #second step to the standards upload process
     #name="standards_upload"
@@ -833,6 +832,9 @@ def TopicUploadTwo(request):
     context = {'step': True}
     return render(request, template, context)
 
+
+#uploads cleaned textbook data for textbook matching
+#this is the first step where you create textbook title and select subject and grade 
 def TextbookUploadOne(request):
     #second step to the standards upload process
     #name="standards_upload"
@@ -849,8 +851,7 @@ def TextbookUploadOne(request):
     return render(request, 'administrator/upload_textbook.html', {'form': form })
 
 
-
-
+#this is second step when the actual csv is uploaded 
 def TextbookUploadTwo(request, textbook_id=None):
     #second step to the standards upload process
     #name="standards_upload"
@@ -889,8 +890,31 @@ def TextbookUploadTwo(request, textbook_id=None):
 #Ajax Queries from the Activity Builder Page 
 ############################################
 
+
+#this is to save the tinymce editor 
+def SaveLessonText(request, lesson_id):
+    #this is a jquery function that's set on an interval. It pulls in the tinymce and analyzes the text
+    user = User.objects.filter(id=request.user.id).first()
+    lesson_match = lessonObjective.objects.get(id=lesson_id)
+    new_text, created = lessonText.objects.get_or_create(matched_lesson=lesson_match)
+    less_class = lesson_match.lesson_classroom_id
+
+    if request.method == 'GET':
+        overview = request.GET['overview']
+        new_text.overview = overview
+        new_text.is_initial = False
+        new_text.save()
+        #this function is at get_lessons.py
+        update_lesson_analytics = get_lesson_sections(overview, less_class, lesson_id, user.id)
+        now = datetime.datetime.now().strftime('%H:%M:%S')
+        context = {"data": now}
+        return JsonResponse(context)
+    else:
+        return HttpResponse("Request method is not a GET")
+
+######## Selection functions that are called on click from the activity_builder.html ########
 def SelectYoutubeVideo(request):
-    print('Starting')
+    #adds youtube video to lesson when it is selected 
     if request.method == 'GET':
         user_profile = User.objects.filter(username=request.user.username).first()
         user_id = user_profile.id
@@ -907,10 +931,8 @@ def SelectYoutubeVideo(request):
     else:
         return HttpResponse("Request method is not a GET")
 
-
-
 def SelectTopic(request):
-
+    #function to add topic to lesson when its selected 
     if request.method == 'GET':
         user_profile = User.objects.filter(username=request.user.username).first()
         user_id = user_profile.id
@@ -942,7 +964,6 @@ def SelectTopic(request):
     else:
         return HttpResponse("Request method is not a GET")
 
-
 def SelectActivity(request):
     if request.method == 'GET':
         user_profile = User.objects.filter(username=request.user.username).first()
@@ -963,24 +984,6 @@ def SelectActivity(request):
     else:
         return HttpResponse("Request method is not a GET")
 
-
-def SaveLessonText(request, lesson_id):
-    user = User.objects.filter(id=request.user.id).first()
-    lesson_match = lessonObjective.objects.get(id=lesson_id)
-    new_text, created = lessonText.objects.get_or_create(matched_lesson=lesson_match)
-    less_class = lesson_match.lesson_classroom_id
-    if request.method == 'GET':
-        overview = request.GET['overview']
-        new_text.overview = overview
-        new_text.is_initial = False
-        new_text.save()
-        update_lesson_analytics = get_lesson_sections(overview, less_class, lesson_id, user.id)
-        now = datetime.datetime.now().strftime('%H:%M:%S')
-        context = {"data": now}
-        return JsonResponse(context)
-    else:
-        return HttpResponse("Request method is not a GET")
-
 def SelectStandards(request, lesson_id):
     user = User.objects.filter(id=request.user.id).first()
     lesson_match = lessonObjective.objects.get(id=lesson_id)
@@ -996,60 +999,9 @@ def SelectStandards(request, lesson_id):
     else:
         return HttpResponse("Request method is not a GET")
 
+######## End Selection Functions #################
 
-def GetActivitySummary(request, lesson_id):
-    if request.method == 'GET':
-        user_profile = User.objects.filter(id=request.user.id).first()
-        lesson_analytics = label_activities_analytics_small(lesson_id)
-        context = {"data": lesson_analytics, "message": "your message"}
-        return JsonResponse(context)
-    else:
-        return HttpResponse("Request method is not a GET")
-
-
-def GetBloomsAnalytics(request, lesson_id):
-    if request.method == 'GET':
-        user_profile = User.objects.filter(id=request.user.id).first()
-        get_bl_data = label_blooms_activities_analytics(lesson_id)
-        get_mi_data = label_mi_activities_analytics(lesson_id)
-        context = {"data": get_bl_data, "message": "your message"}
-        return JsonResponse(context)
-    else:
-        return HttpResponse("Request method is not a GET")
-
-def GetMIAnalytics(request, lesson_id):
-    if request.method == 'GET':
-        user_profile = User.objects.filter(id=request.user.id).first()
-        get_mi_data = label_mi_activities_analytics(lesson_id)
-        context = {"data": get_mi_data, "message": "your message"}
-        return JsonResponse(context)
-    else:
-        return HttpResponse("Request method is not a GET")
-
-def GetRetentionAnalytics(request, lesson_id):
-    if request.method == 'GET':
-        user_profile = User.objects.filter(id=request.user.id).first()
-        get_retention_data = retention_activities_analytics(lesson_id)
-        context = {"data": get_retention_data, "message": "your message"}
-
-        return JsonResponse(context)
-    else:
-        return HttpResponse("Request method is not a GET")
-
-
-def UpdateKeyTerms(request, lesson_id, class_id):
-    if request.method == 'GET':
-        user_profile = User.objects.filter(id=request.user.id).first()
-        lesson_match = lessonObjective.objects.get(id=lesson_id)
-        teacher_input = lesson_match.teacher_objective
-        update_term_list = activity_builder_jq(teacher_input, class_id, lesson_id, user_profile.id)
-        context = {"data": update_term_list, "message": "your message"}
-
-        return JsonResponse(context)
-    else:
-        return HttpResponse("Request method is not a GET")
-
-
+#remove function that removes receomendations and generates new ones ###################
 def RemoveKeyTerms(request, lesson_id, class_id):
 
     if request.method == 'GET':
@@ -1064,7 +1016,7 @@ def RemoveKeyTerms(request, lesson_id, class_id):
                 add_remove = match_recs.removed_topics.add(top)
                 remove_rec = match_recs.rec_topics.remove(top)
         
-        update_term_list = activity_builder_jq(teacher_input, class_id, lesson_id, user_profile.id)
+        update_term_list = generate_term_recs(teacher_input, class_id, lesson_id, user_profile.id)
 
         context = {"data": update_term_list, "message": "your message"}
 
@@ -1073,8 +1025,82 @@ def RemoveKeyTerms(request, lesson_id, class_id):
     else:
         return HttpResponse("Request method is not a GET")
 
+######## End Selection Functions #################
 
 
+#############################################################
+######    Data Analytics and Ai powered functions ###########
+#############################################################
+
+########## Analytics Functions that set on  Interval to analze content in editor ##################
+
+#this is the summary on dropdowns that covers diffrentiation, engagement, retention, and alignment
+def GetActivitySummary(request, lesson_id):
+    if request.method == 'GET':
+        user_profile = User.objects.filter(id=request.user.id).first()
+        #goes to get_activities.py
+        lesson_analytics = label_activities_analytics_small(lesson_id)
+        context = {"data": lesson_analytics}
+        return JsonResponse(context)
+    else:
+        return HttpResponse("Request method is not a GET")
+
+
+#this pulls blooms level for activity 
+#learn about blooms here : 
+#https://www.teachthought.com/learning/what-is-blooms-taxonomy-a-definition-for-teachers/
+def GetBloomsAnalytics(request, lesson_id):
+    if request.method == 'GET':
+        user_profile = User.objects.filter(id=request.user.id).first()
+        #goes to get_lessons.py 
+        get_bl_data = label_blooms_activities_analytics(lesson_id)
+        context = {"data": get_bl_data}
+        return JsonResponse(context)
+    else:
+        return HttpResponse("Request method is not a GET")
+
+
+#this pulls the Multiple Intelligence or Learning Styles for Activities 
+#find out more: https://www.onatlas.com/blog/multiple-intelligences-theory
+def GetMIAnalytics(request, lesson_id):
+    if request.method == 'GET':
+        user_profile = User.objects.filter(id=request.user.id).first()
+        #goes to get_lessons.py
+        get_mi_data = label_mi_activities_analytics(lesson_id)
+        context = {"data": get_mi_data}
+        return JsonResponse(context)
+    else:
+        return HttpResponse("Request method is not a GET")
+
+
+#this pulls in Rention Rate Analytics for Activities 
+#https://www.educationcorner.com/the-learning-pyramid.html#:~:text=The%20%22learning%20pyramid%22%2C%20sometimes,they%20learn%20through%20teaching%20others.
+def GetRetentionAnalytics(request, lesson_id):
+    if request.method == 'GET':
+        user_profile = User.objects.filter(id=request.user.id).first()
+        get_retention_data = retention_activities_analytics(lesson_id)
+        context = {"data": get_retention_data, "message": "your message"}
+
+        return JsonResponse(context)
+    else:
+        return HttpResponse("Request method is not a GET")
+
+#this functions updates the ket terms recommended in the word clouds 
+def UpdateKeyTerms(request, lesson_id, class_id):
+    if request.method == 'GET':
+        user_profile = User.objects.filter(id=request.user.id).first()
+        lesson_match = lessonObjective.objects.get(id=lesson_id)
+        teacher_input = lesson_match.teacher_objective
+        #pulls from acivity_builder.py
+        update_term_list = generate_term_recs(teacher_input, class_id, lesson_id, user_profile.id)
+        context = {"data": update_term_list, "message": "your message"}
+
+        return JsonResponse(context)
+    else:
+        return HttpResponse("Request method is not a GET")
+
+
+#this function finds the most relevant Standards at the begining of the lesson plan. 
 def UpdateStandards(request, lesson_id, class_id):
 
     if request.method == 'GET':
@@ -1111,6 +1137,7 @@ def UpdateStandards(request, lesson_id, class_id):
         return HttpResponse("Request method is not a GET")
 
 
+#this function creates teh activity recommendations found on the right side bar. 
 def UpdateLessonActivities(request, lesson_id, class_id):
     if request.method == 'GET':
         user_profile = User.objects.filter(id=request.user.id).first()
@@ -1124,4 +1151,6 @@ def UpdateLessonActivities(request, lesson_id, class_id):
     else:
         return HttpResponse("Request method is not a GET")
 
-  
+#############################################################
+######    End Data Analytics and Ai powered functions #######
+#############################################################

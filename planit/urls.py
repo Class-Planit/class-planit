@@ -27,11 +27,11 @@ urlpatterns = [
         name='registration_full'),
 
     url(r'^dashboard/(?P<week_of>[\w\s]+)/',
-        view=Dashboard.as_view(),
+        view=Dashboard,
         name='Dashboard'),
 
     url(r'^student-dashboard/(?P<lesson_id>[\w\s]+)/(?P<worksheet_id>[\w\s]+)/(?P<question_id>[\w\s]+)/',
-        view=StudentDashboard,
+        view=StudentWorksheetStart,
         name='student_dashboard'),
 
     url(r'^student-main/(?P<user_id>[\w\s]+)/',
@@ -70,11 +70,6 @@ urlpatterns = [
     url(r'^how-it-works/',
         view=HowItWorks.as_view(),
         name='how_it_works'),
-
-    
-    url(r'^view/',
-        view=view_name,
-        name='view_test'),
     
     url(r'^services/',
         view=Services.as_view(),

@@ -69,7 +69,6 @@ def get_transcript(video_id):
         text = line['text']
         all_lines.append(text)
 
-    print(all_lines)
 
 
 def video_id(url):
@@ -298,47 +297,12 @@ def get_lessons_ajax(lesson_id, user_id):
     
     return(activities_full)
 
-def get_mi_analytics_count(mi_list):
-    mi_dict = {'Logical': 0, 'Verbal': 0, 'Musical': 0,  'Visual': 0,  'Movement': 0}
-    mi_count = len(mi_list)
-    for item in mi_list:
-        if item == 1:
-            mi_dict['Verbal'] = ((mi_dict['Verbal']  + 1)/mi_count) * 100
-        elif item == 2:
-            mi_dict['Visual'] = ((mi_dict['Visual']  + 1)/mi_count) * 100
-        elif item == 3:
-            mi_dict['Musical'] = ((mi_dict['Musical']  + 1)/mi_count) * 100
-        elif item == 4:
-            mi_dict['Movement'] = ((mi_dict['Movement'] + 1)/mi_count) * 100
-        else:
-            mi_dict['Logical'] = ((mi_dict['Logical']  + 1)/mi_count) * 100
-
-
-    return(mi_dict) 
-
-def get_bl_analytics_count(bl_list):
-    bl_dict = {'Remember': 0, 'Understand': 0, 'Analyze': 0,  'Evaluate': 0,  'Create': 0}
-    bl_count = len(bl_list)
-    for item in bl_list:
-        if item == 1:
-            bl_dict['Remember'] = ((bl_dict['Remember'] + 1)/bl_count) * 100
-        elif item == 2:
-            bl_dict['Understand'] = ((bl_dict['Understand'] + 1)/bl_count) * 100
-        elif item == 3:
-            bl_dict['Analyze'] = ((bl_dict['Analyze'] + 1)/bl_count) * 100
-        elif item == 4:
-            bl_dict['Evaluate'] = ((bl_dict['Evaluate'] + 1)/bl_count) * 100
-        else:
-            bl_dict['Create'] = ((bl_dict['Create'] + 1)/bl_count) * 100
-
-    return(bl_dict) 
-
 def label_blooms_activities_analytics(lesson_id):
+    #each activity is given a blooms level
+    #this counts the number of occurences of each blooms level and divides by the total number to get a %
     class_objectives = lessonObjective.objects.get(id=lesson_id)
     matched_activities = selectedActivity.objects.filter(lesson_overview=class_objectives, is_selected=True)
-    class_standards = class_objectives.objectives_standards.all()
-    matched_standards = singleStandard.objects.filter(id__in=class_standards)
-    
+
     bl_list = []
     bl_names = ('Remember', 'Understand', 'Analyze',  'Evaluate',  'Create')
     for activity in matched_activities:
@@ -348,12 +312,12 @@ def label_blooms_activities_analytics(lesson_id):
 
     bl_list.sort()
 
-    bl_high = (bl_list[-1]/6) * 100 
     bl_count = len(bl_list)
 
 
     bl_length = len(set(str(bl_count)))
 
+    #the blooms number is used as an index to find the color and label in the progress bar 
     colors = ('bg-primary', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-warning')
     bl_names = ('Remember', 'Understand', 'Analyze',  'Evaluate',  'Create')
     bl_Count = [1,2,3,4,5]
@@ -374,12 +338,10 @@ def label_blooms_activities_analytics(lesson_id):
 
 
 def label_mi_activities_analytics(lesson_id):
+    #each activity is given a blooms level
+    #this counts the number of occurences of each blooms level and divides by the total number to get a %
     class_objectives = lessonObjective.objects.get(id=lesson_id)
     matched_activities = selectedActivity.objects.filter(lesson_overview=class_objectives, is_selected=True)
-    class_standards = class_objectives.objectives_standards.all()
-    matched_standards = singleStandard.objects.filter(id__in=class_standards)
-    
-
 
     mi_list = []
 
@@ -396,6 +358,7 @@ def label_mi_activities_analytics(lesson_id):
 
     mi_length = len(set(str(mi_count)))
 
+    #the mi number is used as an index to find the color and label in the progress bar 
     colors = ('bg-primary', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-warning')
     mi_names = ('Verbal',  'Visual', 'Musical', 'Movement', 'Logical')
     mi_Count = [1,2,3,4,5]
@@ -473,65 +436,63 @@ def retention_activities_analytics(lesson_id):
     return(results)
 
 
-def label_activities_analytics(lesson_id):
 
-    class_objectives = lessonObjective.objects.get(id=lesson_id)
-    matched_activities = selectedActivity.objects.filter(lesson_overview=class_objectives, is_selected=True)
-    class_standards = class_objectives.objectives_standards.all()
-    matched_standards = singleStandard.objects.filter(id__in=class_standards)
-    
-    stan_list = []
-    for stan in matched_standards:
-        stan_text = stan.standard_objective
-        stan_list.append(stan_text)
+def build_activity_list(soup, user_profile, class_objectives, lesson_id):
+    #this function pulls in beautiful soup and pulls out the activities that will be used to create analytics and demonstrations of knowledge
+    activities_list =  soup.find('ul', {"id": "activity-div"})
+    activities = [x.get_text() for x in activities_list.findAll('li')]
+    for activity in activities:
+        l_act = label_activities(activity, lesson_id)
+        new_activity, created = selectedActivity.objects.get_or_create(created_by=user_profile, lesson_overview=class_objectives, lesson_text=activity)
+        if created:
+            new_activity.verb=l_act[2]
+            new_activity.work_product=l_act[3]
+            new_activity.bloom=l_act[1]
+            new_activity.mi=l_act[0]
+        new_activity.is_selected=True
+        new_activity.save()
+        find_topics = identify_topic(activity, lesson_id)
+        if find_topics:
+            for item in find_topics:
+                match_topic = topicInformation.objects.filter(id=item).first()
+                update_matches = create_topic_matches.objectives_topics.add(match_topic)
+                update_activity = new_activity.objectives_topics.add(match_topic)
 
+def build_key_terms_list(soup, user_profile, class_objectives, lesson_id, matched_grade, standard_set):
+    #this takes the beautiful soup and pulls out key terms to save for changes and create more connections. 
+    term_sets = []
+    for row in soup.findAll('table')[0].tbody.findAll('tr'):
+        term = row.find('th').contents
+        if term[0]:
+            description = row.find('td').contents
+            for item in description:
+                if item:
+                    try:
+                        result = item.get_text(';; ', strip=True)
+                        result = result.split(";; ")
+                        for item in result:
+                            if item:
+                                result = term[0], item
+                                if result not in term_sets:
+                                    term_sets.append(result)
+                    except:
+                        result = item.split(";; ")
+                        for item in result:
+                            if item:
+                                result = term[0], item
+                                if result not in term_sets:
+                                    term_sets.append(result)
 
-    mi_list = []
-    bl_list = []
-    activity_list = []
-    for activity in matched_activities:
-        activity_text = activity.lesson_text
-        act_mi = int(activity.mi)
-        act_bl = int(activity.bloom)
-        mi_list.append(act_mi)
-        bl_list.append(act_bl)
-        activity_list.append(activity_text)
+        #build new terms with new descriptions 
+        key_term_list = list(term_sets)
+        #located at get_key_terms.py
+        term_pairs = create_terms(key_term_list, lesson_id, matched_grade, user_profile.id, standard_set)
 
-    mi_list.sort() 
-    bl_list.sort()
-
-    mi_analytics = get_mi_analytics_count(mi_list) 
-    bl_analytics = get_bl_analytics_count(bl_list)
-
-
-    mi_high = (mi_list[-1]/5) * 100 
-    bl_high = (bl_list[-1]/6) * 100 
-    mi_count = len(mi_list)
-    bl_count = len(bl_list)
-
-    mi_length = len(set(str(mi_count)))
-    bl_length = len(set(str(bl_count)))
-
-    unique_count = int(mi_length) + int(bl_length)
-
-    total_count = mi_count + bl_count
-
-    diff_count = (unique_count/total_count) * 100
-
-    Document1 = ''.join([str(i) for i in activity_list])
-    Document2 = ''.join([str(i) for i in stan_list])
-    corpus = [Document1,Document2]
-    if len(Document2) and len(Document1) >= 4:
-        X_train_counts = count_vect.fit_transform(corpus)
-        vectorizer = TfidfVectorizer()
-        trsfm=vectorizer.fit_transform(corpus)
-        result = cosine_similarity(trsfm[0:1], trsfm)
-        result = result[0][1] * 100
-        final = mi_high, bl_high, diff_count, result, mi_analytics, bl_analytics, bl_count, mi_length
-        return(final)
 
 
 def get_lesson_sections(text_overview, class_id, lesson_id, user_id):
+    #this is the main function that reads the tinymce editor information and breaks it into activities and key terms.
+
     user_profile = User.objects.get(id=user_id)
     classroom_profile = classroom.objects.get(id=class_id)
     standard_set = classroom_profile.standards_set
@@ -549,70 +510,12 @@ def get_lesson_sections(text_overview, class_id, lesson_id, user_id):
     create_topic_matches, created = matchedTopics.objects.get_or_create(lesson_overview=class_objectives)
     #pulls information from the TinyMCE html field and then parse the information 
     if text_overview:
+
         soup = BeautifulSoup(text_overview)
 
-        #get the list of activities and parse them 
-        activities_list =  soup.find('ul', {"id": "activity-div"})
-        activities = [x.get_text() for x in activities_list.findAll('li')]
-        
-        #get the list of terms and parse them
-        term_sets = []
-        for row in soup.findAll('table')[0].tbody.findAll('tr'):
-            term = row.find('th').contents
-            if term[0]:
-                description = row.find('td').contents
-                
-                
-                for item in description:
-                    
-                    if item:
-                        try:
-                            
-                            result = item.get_text(';; ', strip=True)
-                            result = result.split(";; ")
-                            for item in result:
-                                if item:
-                                    result = term[0], item
-                                    if result not in term_sets:
-                                        term_sets.append(result)
-                        except:
-                            result = item.split(";; ")
-                            for item in result:
-                                if item:
-                                    result = term[0], item
-                                    if result not in term_sets:
-                                        term_sets.append(result)
+        build_activities = build_activity_list(soup, user_profile, class_objectives, lesson_id)
 
-        #build new terms with new descriptions 
-        key_term_list = list(term_sets)
-        
-        term_pairs = create_terms(key_term_list, lesson_id, matched_grade, user_id, standard_set)
-
-
-        for activity in activities:
-            
-            l_act = label_activities(activity, lesson_id)
-            new_activity, created = selectedActivity.objects.get_or_create(created_by=user_profile, lesson_overview=class_objectives, lesson_text=activity)
-            if created:
-                new_activity.verb=l_act[2]
-                new_activity.work_product=l_act[3]
-                new_activity.bloom=l_act[1]
-                new_activity.mi=l_act[0]
-            new_activity.is_selected=True
-            new_activity.save()
-            find_topics = identify_topic(activity, lesson_id)
-            if find_topics:
-                for item in find_topics:
-                    match_topic = topicInformation.objects.filter(id=item).first()
-                    update_matches = create_topic_matches.objectives_topics.add(match_topic)
-                    update_activity = new_activity.objectives_topics.add(match_topic)
-           
-        #create and analyze new activities and update old activities
-        ###update_lesson_activities = get_lesson_activities(activities, class_id, lesson_id, user_profile, class_objectives)
-
-        #user the new activities and see if there are new key terms we should add to the list
-        ####update_key_terms = get_lesson_key_terms(key_term_pair, class_id, lesson_id, user_profile, matched_grade, subject, standard_set, topic_lists_selected, class_objectives)
-        
+        build_key_terms = build_key_terms_list(soup, user_profile, class_objectives, lesson_id, matched_grade, standard_set)
 
     return('Done')
 

@@ -261,7 +261,7 @@ def get_wiki_full(title, lesson_id, topic_id):
                         pass        
 
         wiki_list = []   
-        print('wiki_titles', wiki_titles)
+
         for wiki_title in wiki_titles:       
                 try:
                     topic_result = wikipedia.summary(wiki_title.title, sentences = 3, auto_suggest=False, redirect=True)
@@ -293,9 +293,6 @@ def wiki_results(lesson_id, user_id):
 
         act_wording = ' '.join(m_wording)
         
-
-        
-
         topic_matches = class_objectives.objectives_topics.all()
         topics = topicInformation.objects.filter(id__in=topic_matches)
         search_sentences = []
@@ -309,6 +306,8 @@ def wiki_results(lesson_id, user_id):
         search_wording = ' '.join(search_sentences)
         class_objectives_list = str(class_objectives.teacher_objective) + str(act_wording) + str(search_wording)
 
+       
+
         objective_topic = get_topic_nouns(class_objectives_list, lesson_id)
 
 
@@ -318,6 +317,9 @@ def wiki_results(lesson_id, user_id):
             if wiki_search[0] not in wiki_titles:
                 wiki_titles.append(wiki_search[0])
 
+
+
+        
 
         wiki_list = []    
         for wiki_title in wiki_titles:
@@ -335,5 +337,5 @@ def wiki_results(lesson_id, user_id):
             
 
         wiki_list.sort(key=lambda x: x[2], reverse=True) 
-                     
+                    
         return(wiki_list)

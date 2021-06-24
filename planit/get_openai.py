@@ -8,6 +8,23 @@ import re
 
 openai.api_key = config('OPENAI_API_KEY') 
 
+def get_desciption_summary(item, full_desc):
+    full_sentence = f'term: {item} description: {full_desc}'
+    if len(full_sentence)  > 4:
+        response = openai.Completion.create(
+                    engine="curie",
+                    prompt=full_sentence,
+                    temperature=0.3,
+                    max_tokens=80,
+                    top_p=1,
+                    frequency_penalty=0,
+                    presence_penalty=0,
+                    stop=["\n"]
+                    )
+        results = response['choices'][0]
+
+        return(results['text'])
+
 def get_description_string(topic_id, user_id):
     user_profile = User.objects.get(id=user_id)
     match_topic = topicInformation.objects.get(id=topic_id)

@@ -311,7 +311,7 @@ def get_topic_matches(self, teacher_input, tokens_without_sw, class_objectives, 
 
 @shared_task(bind=True)
 def match_standard(self, teacher_input, standard_set, subject, grade_list):
-    print('Starting match_standard ')
+   
     standards_list = []
     for grade in grade_list:
         obj = singleStandard.objects.filter(subject=subject, standards_set=standard_set, grade_level=grade)        

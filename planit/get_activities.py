@@ -59,14 +59,11 @@ stop_words = ['i', "'", "'" '!', '.', ':', ',', '[', ']', '(', ')', '?', "'see",
 
 TAG_RE = re.compile(r'<[^>]+>')
 
-def retention_activities_analytics(lesson_id):
+def retention_activities_analytics(lesson_id, matched_activities, matched_standards):
 
-    class_objectives = lessonObjective.objects.get(id=lesson_id)
-    matched_activities = selectedActivity.objects.filter(lesson_overview=class_objectives, is_selected=True)
+    #current word choices that indicate retention levels
+    #! these word list may need to be expanded or gpt3 used to classify by examples
 
-    class_standards = class_objectives.objectives_standards.all()
-    matched_standards = singleStandard.objects.filter(id__in=class_standards)
-    
     passive = ('watch', 'listen', 'video', 'song')
     middle = ('notes', 'worksheet', 'complete', 'write', 'type')
     active = ('present', 'presentation', 'discuss', 'discussion', 'debate', 'group', 'teams', 'pairs', 'explain')
@@ -93,11 +90,13 @@ def retention_activities_analytics(lesson_id):
                 pass
  
         activity_count = matched_activities.count()
+        #this makes any item not labeled a passive activity
         remaining = activity_count - active_count - middle_count
         passive_count = passive_count + remaining 
 
         total_count = activity_count
 
+        #total possivle retention score is 3x the total count given that all activities could be scored a possible 3
         retention_avg = (activity_results/(total_count*3)) * 100
         retention_avg  = round(retention_avg)
         passive_per = (passive_count/total_count) * 100
@@ -207,7 +206,8 @@ def label_activities(activity, lesson_id):
    
 
 def label_activities_analytics_small(lesson_id):
-
+    #returns a dict of values and labels for the progress bars on activity_builder.html
+    #through java and jquery
     class_objectives = lessonObjective.objects.get(id=lesson_id)
 
     matched_activities = selectedActivity.objects.filter(lesson_overview=class_objectives, is_selected=True)
@@ -222,17 +222,22 @@ def label_activities_analytics_small(lesson_id):
     if stan_list:
         pass
     else:
+        #if there are no standards selected the teaching objective will act as the standard for tracking purpose
         stan_list.append(class_objectives.teacher_objective)
 
     if matched_activities:
         mi_list = []
         bl_list = []
         activity_list = []
+
         for activity in matched_activities:
             if len(activity.lesson_text) >= 4:
                 activity_text = activity.lesson_text
+                #multiple inteligence level that is assigned when the activity is created 
                 act_mi = int(activity.mi)
+                 #blooms taxonomy level that is assigned when the activity is created 
                 act_bl = int(activity.bloom)
+
                 mi_list.append(act_mi)
                 bl_list.append(act_bl)
                 activity_list.append(activity_text)
@@ -240,8 +245,7 @@ def label_activities_analytics_small(lesson_id):
         mi_list.sort() 
         bl_list.sort()
 
-
-
+        #counts the occurence of each it MI (multiple intelligence) or BL (bloom's taxonomy)
         mi_occurrences = collections.Counter(mi_list)
         bl_occurrences = collections.Counter(bl_list)
         
@@ -256,19 +260,27 @@ def label_activities_analytics_small(lesson_id):
             bl_length = len(set(str(bl_count)))
 
             mi_high = mi[0][0]/5 * 100 
+            #because blooms as a hierarchy we assign score based on how high the teacher goes on the hierarchy 
+            #in contrast the goal of multiple intelligence is to offer different types and one is not higher than the other
             bl_high = bl[0][0]/5 * 100 
 
+            #diffrentiation is calculated by counting each unique value and dividing by total 
+            # if there are 3 unique values and 6 toal values the diffrentiation is 50% 
+            #! this calculation works well except for when there is only one activity because diffrentiation score is 100%
             unique_count = int(mi_length) + int(bl_length)
-
             total_count = mi_count + bl_count
-
             diff_count = (unique_count/total_count) * 100
 
-            retention_rate = retention_activities_analytics(lesson_id)
+            #gets retention rate 
+            retention_rate = retention_activities_analytics(lesson_id, matched_activities, matched_standards)
             ret_rate = retention_rate['avg']
+
+
             Document1 = ''.join([str(i) for i in activity_list])
             Document2 = ''.join([str(i) for i in stan_list])
 
+            #checks if there are more than 4 letters in the standards list as well as the activity
+            #this function uses cosine similarity to chekc how close the activities are to the declared objective or selected standard
             if len(Document2) and len(Document1) >= 4:
                 corpus = [Document1,Document2]
 
@@ -277,6 +289,8 @@ def label_activities_analytics_small(lesson_id):
                 trsfm=vectorizer.fit_transform(corpus)
                 result = cosine_similarity(trsfm[0:1], trsfm)
                 result = result[0][1] * 100
+
+                #final result is a dict of four with color and value for progress bar on activity_builder.html page 
                 one = {'name': 'Retention Rate', 'progress': ret_rate, 'color': 'bg-warning', 'div': 'showRateDiff()'}
                 two = {'name': 'Depth of Understanding', 'progress': bl_high, 'color': 'bg-info', 'div': 'showDepthDiff()'}
                 three = {'name': 'Differentiation', 'progress': diff_count, 'color': 'bg-success', 'div': 'showDivDiff()'}

@@ -518,7 +518,7 @@ def match_objectives(get_objective_matches, tokens_without_sw, topic_ids):
         Document2 = Document2.replace("'", '')
 
         corpus = [Document1,Document2]
-        
+
         X_train_counts = count_vect.fit_transform(corpus)
         vectorizer = TfidfVectorizer()
         trsfm=vectorizer.fit_transform(corpus)
@@ -543,49 +543,38 @@ def match_objectives(get_objective_matches, tokens_without_sw, topic_ids):
         full_result.append(item)
     return(full_result)
 
-def get_topic_matches(teacher_input, tokens_without_sw, class_objectives, topic_count, grade_list, subject, standard_set, lesson_id):
-    class_objectives = lessonObjective.objects.get(id=lesson_id)
+def get_topic_matches(class_objectives, topic_count, grade_list, subject, standard_set, lesson_id, user_id):
     current_rec_list, created = reccomendedTopics.objects.get_or_create(matched_lesson=class_objectives)
     removed_t = current_rec_list.removed_topics.all()
     removed_topics = topicInformation.objects.filter(id__in=removed_t)
  
-    objective_title = get_objective_title(teacher_input, tokens_without_sw)
-    if class_objectives.objective_title:
-        pass
-    else:
-        class_objectives.objective_title = objective_title
-        class_objectives.save()
-
-
     if topic_count > 2:
+        #we use textbook mapping after we have 3 topics 
         get_topic_ids = group_topic_texts(lesson_id)
     else:
         get_topic_ids = []
 
     objectives_list = []
     for grade in grade_list:
-            
-        
-        obj = topicInformation.objects.filter(subject=subject, standard_set=standard_set, grade_level=grade).exclude(id__in=removed_t)
-        
-
-        if obj:
-            for topic in obj:
+        topic_list = topicInformation.objects.filter(subject=subject, standard_set=standard_set, grade_level=grade).exclude(id__in=removed_t)
+        #takes each relevant topic by subject, standards, and grade 
+        if topic_list:
+            for topic in topic_list:
                 descriptions = topic.description.all()
-                desc_list = []
-                for item in descriptions:
-                    result = item.description
-                    desc_list.append(result)
+                desc_list = get_description_string(topic.id, user_id)
                 
                 result = topic.id, (desc_list, topic.item) 
-                standard_full_join = ' '.join([str(i) for i in result]).lower()
-                standard_full_join = stemSentence(standard_full_join)
-                standard_full_join_tokens = word_tokenize(standard_full_join)
-                standard_without_sw = [word for word in standard_full_join_tokens if not word in stop_words]
-                full = topic.id, standard_without_sw
+                topic_item_joined = ' '.join([str(i) for i in result[1]]).lower()
+                
+                topic_input_stem = stemSentence(topic_item_joined)
+
+                topic_item_without_sw = [word for word in topic_input_stem.split() if not word in stop_words]
+               
+                full = topic.id, topic_item_without_sw
                 objectives_list.append(full) 
-    
-            
+               
+    #returns a list of relevant topics that have been cleaned for comparison 
+  
     return(objectives_list)
 
 
@@ -608,20 +597,119 @@ def get_description_string(topic_id, user_id):
     return(final)
 
 
-def activity_builder_jq(teacher_input, class_id, lesson_id, user_id):
 
+
+def build_wiki_topic_list(topics, lesson_id, user_profile):
+    not_selected_topics = []
+    if topics:
+        for top in topics:    
+            if top.from_wiki:
+                
+                if top.is_secondary:
+                    pass
+                else:
+                    title = top.item
+                    get_full_links = get_wiki_full(title, lesson_id, top.id)
+                    
+                    if get_full_links:
+                        for item in get_full_links: 
+                            wiki_results.append(item)
+                            
+                            full_desc = ''.join(item[1])
+                            get_desc_summary = get_desciption_summary(item[0], full_desc)
+                            match_topic = topicInformation.objects.filter(item=item[0], created_by=user_profile, is_admin=False, from_wiki=True).first()
+                            if match_topic:
+                                pass
+                            else:
+                                match_topic, created = topicInformation.objects.get_or_create(item=item[0], created_by=user_profile, is_admin=False, from_wiki=True, is_secondary=True)
+                            new_description, created = topicDescription.objects.get_or_create(topic_id=match_topic.id, created_by=user_profile, is_admin=False)
+                            print('from wiki', top)
+                            print(created)
+                            print('=================')
+                            new_description.description = get_desc_summary 
+                            new_description.save()
+                            add_description = match_topic.description.add(new_description)
+                            top_id = match_topic.id
+                        
+                            if top_id not in topic_ids:
+                                result = top_id, item[2]
+                                if result[0] not in not_selected_topics:
+                                    not_selected_topics.append(result)
+            else:
+                
+                wiki_topics = wiki_results(lesson_id, user_profile.id)
+                
+                for item in wiki_topics: 
+
+                    full_desc = ''.join(item[1])
+                    get_desc_summary = get_desciption_summary(item[0], full_desc)
+                    match_topic = topicInformation.objects.filter(item=item[0], created_by=user_profile, is_admin=False, from_wiki=True).first()
+                    if match_topic:
+                        pass
+                    else:
+                        match_topic, created = topicInformation.objects.get_or_create(item=item[0], created_by=user_profile, is_admin=False, from_wiki=True)
+                    new_description, created = topicDescription.objects.get_or_create(topic_id=match_topic.id, created_by=user_profile, is_admin=False)
+                    print('not from wiki', top)
+                    print(created)
+                    print('=================')
+                    new_description.description = get_desc_summary 
+                    new_description.save()
+                    add_description = match_topic.description.add(new_description)
+                    top_id = match_topic.id
+                    result = top_id, item[2]
+                    if result[0] not in not_selected_topics:
+                        not_selected_topics.append(result)
+
+    else:
+        
+        wiki_topics = wiki_results(lesson_id, user_profile.id)
+        for item in wiki_topics: 
+
+            full_desc = ''.join(item[1])
+            get_desc_summary = get_desciption_summary(item[0], full_desc)
+            match_topic = topicInformation.objects.filter(item=item[0], created_by=user_profile, is_admin=False, from_wiki=True).first()
+            if match_topic:
+                pass
+            else:
+                match_topic, created = topicInformation.objects.get_or_create(item=item[0], created_by=user_profile, is_admin=False, from_wiki=True)
+            new_description, created = topicDescription.objects.get_or_create(topic_id=match_topic.id, created_by=user_profile, is_admin=False)
+            print('no topics')
+            print(created)
+            print('=================')
+            new_description.description = get_desc_summary
+            new_description.save()
+            add_description = match_topic.description.add(new_description)
+            top_id = match_topic.id
+            result = top_id, item[2]
+            if result[0] not in not_selected_topics:
+                not_selected_topics.append(result)
+
+
+    return(not_selected_topics)
+
+def generate_term_recs(teacher_input, class_id, lesson_id, user_id):
+    #this function creates relevant key terms based on objective, standard, activities, and already selected key terms
     user_profile = User.objects.get(id=user_id)
+    class_objectives = lessonObjective.objects.get(id=lesson_id)
     classroom_profile = classroom.objects.get(id=class_id)
-    
+    subject = class_objectives.subject
     grade_list = classroom_profile.grade_level.all()
     standard_set = classroom_profile.standards_set
     
-    class_objectives = lessonObjective.objects.get(id=lesson_id)
+    
     current_rec_list, created = reccomendedTopics.objects.get_or_create(matched_lesson=class_objectives)
     removed_t = current_rec_list.removed_topics.all()
+    #demonstrations of knowledge are parts of an activity that says what we want students to know 
+    #by the end of the activity ie "identify importance of teh Emancipation Proclaimation"
+    demo_ks = class_objectives.objectives_demonstration.all()
+
+    #removes topics are terms that the teacher has indicated aren't relevant 
     removed_topics = topicInformation.objects.filter(id__in=removed_t)
  
+    #creates a new model object where we will save the recomended topics so that we don't have to continously 
+    #generate new key terms if some are already there
     create_topic_matches, created = matchedTopics.objects.get_or_create(lesson_overview=class_objectives)
+
     topic_matches = class_objectives.objectives_topics.all()
     selected_standard = class_objectives.objectives_standards.all()
     m_stand = singleStandard.objects.filter(id__in=selected_standard)
@@ -631,8 +719,9 @@ def activity_builder_jq(teacher_input, class_id, lesson_id, user_id):
 
     stand_full = ' '.join([str(i) for i in stand_result])
     topics = topicInformation.objects.filter(id__in=topic_matches)
-    demo_ks = class_objectives.objectives_demonstration.all()
     topic_count = topics.count()
+    
+    
     results_list = []
     topic_ids = []
     for item in topics: 
@@ -641,25 +730,15 @@ def activity_builder_jq(teacher_input, class_id, lesson_id, user_id):
         results_list.append(result)
         topic_ids.append(item_id)
 
-
-    subject = class_objectives.subject
-    grade_standards = []
-    teacher_objective = teacher_input + str(stand_full)
-    teacher_objective_stem = teacher_objective.lower()
-    teacher_objective_stem = stemSentence(teacher_objective_stem)
-    objective_tokens = word_tokenize(teacher_objective_stem)
-    tokens_objectives = [word for word in objective_tokens if not word in stop_words]
-
-    
-    teacher_input_full = teacher_input + str(results_list) + str(stand_full)
-    teacher_input_stem = teacher_input_full.lower()
-    teacher_input_stem = stemSentence(teacher_input_stem)
-    text_tokens = word_tokenize(teacher_input_stem)
-    tokens_without_sw = [word for word in text_tokens if not word in stop_words]
+    terms_full = ' '.join([str(i) for i in results_list])
+    teacher_input_full = ' '.join([teacher_input, terms_full, stand_full])
+    teacher_input_stem = stemSentence(teacher_input_full.lower())
+    tokens_without_sw = [word for word in teacher_input_stem.split() if not word in stop_words]
+   
 
     
 
-    get_objective_matches = get_topic_matches(teacher_objective, tokens_without_sw, class_objectives, topic_count, grade_list, subject, standard_set, lesson_id)
+    get_objective_matches = get_topic_matches(class_objectives, topic_count, grade_list, subject, standard_set, lesson_id, user_id)
     matched_activities = selectedActivity.objects.filter(lesson_overview=class_objectives, is_selected=True)
 
     #step two check other topics
@@ -667,24 +746,12 @@ def activity_builder_jq(teacher_input, class_id, lesson_id, user_id):
 
     #step three check wikipedia 
 
-
-    #step One check based on objective and standard
-    matched_objectives_topics = match_objectives(get_objective_matches, tokens_objectives, topic_ids)
-
-    
     #step two check other topics
     matched_topics = match_objectives(get_objective_matches, tokens_without_sw, topic_ids)
 
-    
+
     not_selected_topics = []
     
-    for item in matched_objectives_topics:  
-        if item[0] in removed_t:
-            pass
-        else:    
-            if item[0] not in not_selected_topics:
-                not_selected_topics.append(item)
-
     for item in matched_topics:  
         if item[0] in removed_t:
             pass
@@ -696,84 +763,19 @@ def activity_builder_jq(teacher_input, class_id, lesson_id, user_id):
 
 
     results_one = not_selected_topics[:10]
+
     if len(results_one) < 6:
-        
-        if topics:
-            for top in topics:    
-                if top.from_wiki:
-                    if top.is_secondary:
-                        pass
-                    else:
-                        title = top.item
-                        get_full_links = get_wiki_full(title, lesson_id, top.id)
-                       
-                        if get_full_links:
-                            for item in get_full_links: 
-                                wiki_results.append(item)
-                                
-                                full_desc = ''.join(item[1])
-                                
-                                match_topic = topicInformation.objects.filter(item=item[0], created_by=user_profile, is_admin=False, from_wiki=True).first()
-                                if match_topic:
-                                    pass
-                                else:
-                                    match_topic, created = topicInformation.objects.get_or_create(item=item[0], created_by=user_profile, is_admin=False, from_wiki=True, is_secondary=True)
-                                new_description, create = topicDescription.objects.get_or_create(topic_id=match_topic.id, description=full_desc, created_by=user_profile, is_admin=False)
-                                add_description = match_topic.description.add(new_description)
-                                top_id = match_topic.id
-                            
-                                if top_id not in topic_ids:
-                                    result = top_id, item[2]
-                                    if result[0] not in not_selected_topics:
-                                        not_selected_topics.append(result)
-                else:
-                   
-                    wiki_topics = wiki_results(lesson_id, user_id)
-                   
-                    for item in wiki_topics: 
-
-                        full_desc = ''.join(item[1])
-                        match_topic = topicInformation.objects.filter(item=item[0], created_by=user_profile, is_admin=False, from_wiki=True).first()
-                        if match_topic:
-                            pass
-                        else:
-                            match_topic, created = topicInformation.objects.get_or_create(item=item[0], created_by=user_profile, is_admin=False, from_wiki=True)
-                        new_description, create = topicDescription.objects.get_or_create(topic_id=match_topic.id, description=full_desc, created_by=user_profile, is_admin=False)
-                        add_description = match_topic.description.add(new_description)
-                        top_id = match_topic.id
-                        if top_id not in topic_ids:
-                            result = top_id, item[2]
-                            if result[0] not in not_selected_topics:
-                                not_selected_topics.append(result)
-        else:
-            
-            wiki_topics = wiki_results(lesson_id, user_id)
-           
-            for item in wiki_topics: 
-
-                full_desc = ''.join(item[1])
-                match_topic = topicInformation.objects.filter(item=item[0], created_by=user_profile, is_admin=False, from_wiki=True).first()
-                if match_topic:
-                    pass
-                else:
-                    match_topic, created = topicInformation.objects.get_or_create(item=item[0], created_by=user_profile, is_admin=False, from_wiki=True)
-                new_description, create = topicDescription.objects.get_or_create(topic_id=match_topic.id, description=full_desc, created_by=user_profile, is_admin=False)
-                add_description = match_topic.description.add(new_description)
-                top_id = match_topic.id
-                if top_id not in topic_ids:
-                    result = top_id, item[2]
-                    if result[0] not in not_selected_topics:
-                        not_selected_topics.append(result)
-
-
-
-    for item in not_selected_topics:
-        if item[0] in removed_t:
-            not_selected_topics.remove(item)
+        get_more_topics = build_wiki_topic_list(topics, lesson_id, user_profile)
+        for topic_item in get_more_topics:
+            if topic_item in removed_t:
+                not_selected_topics.remove(topic_item)
+            else:
+                not_selected_topics.append(topic_item)
 
 
     topic_list = not_selected_topics[:10]     
 
+    print('topic_list', topic_list)
     final_list = []
     for top in topic_list:
         top_id = top[0]
@@ -784,5 +786,6 @@ def activity_builder_jq(teacher_input, class_id, lesson_id, user_id):
             update_recs = current_rec_list.rec_topics.add(top_match)
             final_list.append(result)
 
+    print('final', final_list)
     return(final_list)
 
