@@ -23,3 +23,20 @@ def get_week_info(week_of):
 
     week_info = {'current_week': current_week, 'active_week': active_week, 'previous_week': previous_week, 'next_week': next_week}
     return(week_info)
+
+def get_subject_and_classroom(objective_matches):
+    subject_results = []
+    for objective in objective_matches:
+        subject_match = objective.subject_id
+        subject_title = objective.subject 
+        results = subject_match,subject_title
+        if results not in subject_results:
+            subject_results.append(results)
+    classroom_results = []
+    for objective in objective_matches:
+        classroom_match = objective.lesson_classroom_id
+        classroom_title = objective.lesson_classroom
+        results = classroom_match,classroom_title
+        if results not in classroom_results:
+            classroom_results.append(results)
+    return subject_results, classroom_results
