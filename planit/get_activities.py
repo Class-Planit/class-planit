@@ -299,4 +299,5 @@ def label_activities_analytics_small(lesson_id):
             
                 return(final)
     
-
+    else:
+        return

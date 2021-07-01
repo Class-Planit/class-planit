@@ -168,7 +168,7 @@ def login_user(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('Dashboard', week_of='Current')
+            return redirect('Dashboard', week_of='Current', subject_id='All', class_id='All')
         else:
             pass
   
@@ -205,25 +205,54 @@ class AboutUs(TemplateView):
 ############################################
 
 #classroom list for teacher 
-class classroomLists(TemplateView):
-    template_name = 'dashboard/classroom_list.html' 
 
-    def get(self,request):
-        current_year = datetime.datetime.now().year
-        current_week = date.today().isocalendar()[1] 
-        user_profile = User.objects.filter(username=request.user.username).first()
-        class_summary = get_classroom_summary(user_profile.id, current_year)
-        
-        page = 'Classrooms'
-        return render(request, 'dashboard/classroom_list.html', {'user_profile': user_profile, 'class_summary': class_summary, 'page': page})
+def ClassroomLists(request):
+    current_year = datetime.datetime.now().year
+    current_week = date.today().isocalendar()[1] 
+    user_profile = User.objects.filter(username=request.user.username).first()
+    s_user_match = school_user.objects.get(user=user_profile.id)
+    standard_set_match = s_user_match.standards_set
+    grade_list = gradeLevel.objects.filter(standards_set=standard_set_match).order_by('grade')
+
+    class_summary = get_classroom_summary(user_profile.id, current_year)
+    
+    
+    page = 'Classrooms'
+
+    if request.method == "POST":
+        form = classroomForm(request.POST, request.FILES)
+        if form.is_valid():
+            prev = form.save(commit=False)
+            prev.main_teacher = user_profile
+            prev.standards_set = standard_set_match
+            prev.save()
+            
+            return redirect('classroom_settings', user_id=user_profile.id, classroom_id=prev.id, view_ref=1)
+    else:
+        form = classroomForm()
+
+    return render(request, 'dashboard/classroom_list.html', {'user_profile': user_profile, 'grade_list': grade_list, 'form': form, 'class_summary': class_summary, 'page': page})
 
 #view information for a single classroom 
-def ClassroomSingle(request, user_id=None, class_id=None):
+def ClassroomDashboard(request, user_id=None, class_id=None):
     current_year = datetime.datetime.now().year
     user_profile = User.objects.filter(username=request.user.username).first()
     class_profile = classroom.objects.get(id=class_id)
     student_summary = get_classroom_list_summary(user_profile.id, current_year, class_id)
     return render(request, 'dashboard/classrooms.html', {'user_profile': user_profile, 'student_summary': student_summary, 'class_profile': class_profile})
+
+
+def ClassroomSettingsView(request, user_id=None, classroom_id=None, view_ref=None): 
+    current_year = datetime.datetime.now().year
+    user_profile = User.objects.filter(username=request.user.username).first()
+    class_profile = classroom.objects.get(id=classroom_id)
+    student_summary = get_classroom_list_summary(user_profile.id, current_year, classroom_id)
+
+    
+    return render(request, 'dashboard/classrooms_settings.html', {'user_profile': user_profile, 'view_ref': view_ref, 'student_summary': student_summary, 'class_profile': class_profile})
+
+
+
 
 #view standards that have been addressed so far 
 def StandardsTracking(request, user_id=None):
@@ -235,11 +264,17 @@ def StandardsTracking(request, user_id=None):
 
 
 #Main Teacher Dashboard View labeled as 'Overview'
-def Dashboard(request, week_of):
+def Dashboard(request, week_of, subject_id, class_id):
+
+    #things to think about:
+    #default would show everything - subject_id = 'All' 
+    #if statement if 'All' in subject_id, else subject_id = int(subject_id)
+
+
     #get active and current week number (active being the week the teacher is on and current meaning the actual week in the calendar)
     week_info = get_week_info(week_of)
 
-    user_profile = User.objects.get(id=request.user.id)
+    user_profile = User.objects.filter(id=request.user.id).first()
 
     if user_profile is not None:
         #gets the classrooms teachers are main teacher on 
@@ -253,8 +288,8 @@ def Dashboard(request, week_of):
                     'previous_week': week_info['previous_week'], 'next_week': week_info['next_week']}
         return render(request, 'dashboard/dashboard.html', context)
     else:
-        message = 'Sorry, Please login'
-        return redirect('login_user', {'message': message})
+        
+        return redirect('login_user')
 
 
 #This is the form where teachers create a new lessonObjective. 
@@ -1109,8 +1144,8 @@ def UpdateStandards(request, lesson_id, class_id):
         standards_now = lesson_match.objectives_standards.all()
         
         if standards_now:
-            
-            context = None
+            context = {}
+            return JsonResponse(context)
         else:
             
             teacher_input = lesson_match.teacher_objective
@@ -1132,7 +1167,8 @@ def UpdateStandards(request, lesson_id, class_id):
                 context = {"data": standard_list, "message": "your message"}
                 return JsonResponse(context)
             else:
-                return HttpResponse("Request method is not a GET")
+                context = {}
+                return JsonResponse(context)
     else:
         return HttpResponse("Request method is not a GET")
 

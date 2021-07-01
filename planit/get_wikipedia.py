@@ -33,7 +33,7 @@ stop_words = stopwords.words('english')
 
 stop_words.extend(['The', 'students', 'learn'])
 
-stop_words = ['i', 'student', 'learn', 'objective', 'students', 'Students', 'Student' 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', "you're", "you've", "you'll", "you'd", 'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', "she's", 'her', 'hers', 'herself', 'it', "it's", 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', "that'll", 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', "don't", 'should', "should've", 'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 'aren', "aren't", 'couldn', "couldn't", 'didn', "didn't", 'doesn', "doesn't", 'hadn', "hadn't", 'hasn', "hasn't", 'haven', "haven't", 'isn', "isn't", 'ma', 'mightn', "mightn't", 'mustn', "mustn't", 'needn', "needn't", 'shan', "shan't", 'shouldn', "shouldn't", 'wasn', "wasn't", 'weren', "weren't", 'won', "won't", 'wouldn', "wouldn't"]
+stop_words = ['i', "'", "'" '!', '.', ':', ',', '[', ']', '(', ')', '?', "'see", "see", 'x', '...',  'student', 'learn', 'objective', 'students', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', "you're", "you've", "you'll", "you'd", 'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', "she's", 'her', 'hers', 'herself', 'it', "it's", 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', "that'll", 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', "don't", 'should', "should've", 'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 'aren', "aren't", 'couldn', "couldn't", 'didn', "didn't", 'doesn', "doesn't", 'hadn', "hadn't", 'hasn', "hasn't", 'haven', "haven't", 'isn', "isn't", 'ma', 'mightn', "mightn't", 'mustn', "mustn't", 'needn', "needn't", 'shan', "shan't", 'shouldn', "shouldn't", 'wasn', "wasn't", 'weren', "weren't", 'won', "won't", 'wouldn', "wouldn't"]
 
 def get_description_string(topic_id, user_id):
     user_profile = User.objects.get(id=user_id)
@@ -52,8 +52,6 @@ def get_description_string(topic_id, user_id):
 
     final = ';; '.join(all_d)
     return(final)
-
-
 
 def check_topic_relevance(text, lesson_id):
 
@@ -95,7 +93,6 @@ def check_topic_wiki_relevance(text, topic_id):
     result = result[0][1]
 
     return(result)
-
 
 def get_keywords(text):
         my_words = 'Use'
@@ -223,11 +220,12 @@ def get_topic_nouns(match_textlines, lesson_id):
 
     return(rel_nouns)
 
-
 def get_wiki_full(title, lesson_id, topic_id):
-   
+
     text_title = 'Wiki: %s' % (title)
     textbook_match = textBookTitle.objects.filter(title=text_title)
+
+    wiki_list = [] 
     if textbook_match:
         pass
     else:
@@ -237,7 +235,11 @@ def get_wiki_full(title, lesson_id, topic_id):
         soup = BeautifulSoup(res.text, "html.parser")
         full_text = soup.get_text()
         f_text = tokenize.sent_tokenize(full_text)
-
+        line_counter = 1
+        for line in f_text:
+            line_counter = line_counter + 1
+            new_text, created = textBookBackground.objects.get_or_create(textbook=textbook_match , line_counter= line_counter, page_counter=1, line_text=line)
+        
         link_list = []
         for link in soup.find_all("a"):
             url = link.get("href", "")
@@ -249,9 +251,11 @@ def get_wiki_full(title, lesson_id, topic_id):
                 if results not in link_list:
                     link_list.append(results)
 
-
         wiki_titles = []
         
+        print('#################')
+        print(link_list[:10])
+        print('#################')
         for sentence in link_list[:10]:
                 try:
                     wiki_search = wikipedia.page(sentence)
@@ -260,7 +264,7 @@ def get_wiki_full(title, lesson_id, topic_id):
                 except:
                         pass        
 
-        wiki_list = []   
+          
 
         for wiki_title in wiki_titles:       
                 try:
@@ -269,73 +273,76 @@ def get_wiki_full(title, lesson_id, topic_id):
                     result = check_topic_wiki_relevance(topic_result, topic_id)
                     
                     if result >= .20:
-
+                       
                         term = wiki_search.title, topic_result, result
-                        wiki_list.append(term)
+                        wiki_list.append(create_wiki_topic)
                 except wikipedia.DisambiguationError as e:
                         pass
 
-                
-        wiki_list.sort(key=lambda x: x[2], reverse=True)
-    
-        return(wiki_list)
-
-
-
-def wiki_results(lesson_id, user_id):
-        
-        class_objectives = lessonObjective.objects.get(id=lesson_id)
-        m_activities = selectedActivity.objects.filter(lesson_overview=class_objectives, is_selected=True)
-        m_wording = []
-        for item in m_activities:
-            wording = item.lesson_text
-            m_wording.append(wording)
-
-        act_wording = ' '.join(m_wording)
-        
-        topic_matches = class_objectives.objectives_topics.all()
-        topics = topicInformation.objects.filter(id__in=topic_matches)
-        search_sentences = []
-        for topic in topics:
-                term = topic.item
-                description_match = get_description_string(topic.id, user_id)
-
-                search_sentences.append(description_match)
-
-
-        search_wording = ' '.join(search_sentences)
-        class_objectives_list = str(class_objectives.teacher_objective) + str(act_wording) + str(search_wording)
-
-       
-
-        objective_topic = get_topic_nouns(class_objectives_list, lesson_id)
-
-
-        wiki_titles = []
-        for sentence in objective_topic[:20]:
-            wiki_search = wikipedia.search(sentence)
-            if wiki_search[0] not in wiki_titles:
-                wiki_titles.append(wiki_search[0])
-
-
-
-        
-
-        wiki_list = []    
-        for wiki_title in wiki_titles:
-            try:
-                    topic_result = wikipedia.summary(wiki_title, sentences = 3, auto_suggest=False, redirect=True)
-                    
-                    result = check_topic_relevance(topic_result, lesson_id)
-                    if result >= .10:
-                        term = wiki_title, topic_result, result
-                        wiki_list.append(term)
-
-            except wikipedia.DisambiguationError as e:
-                    pass
-
             
-
-        wiki_list.sort(key=lambda x: x[2], reverse=True) 
-                    
         return(wiki_list)
+
+def wiki_results(lesson_id, user_id, standards_nouns):
+    class_objectives = lessonObjective.objects.get(id=lesson_id)
+    m_activities = selectedActivity.objects.filter(lesson_overview=class_objectives, is_selected=True)
+    m_wording = []
+    for item in m_activities:
+        wording = item.lesson_text
+        m_wording.append(wording)
+
+    act_wording = ' '.join(m_wording)
+    
+    topic_matches = class_objectives.objectives_topics.all()
+    topics = topicInformation.objects.filter(id__in=topic_matches)
+    search_sentences = []
+    for topic in topics:
+            term = topic.item
+            description_match = get_description_string(topic.id, user_id)
+
+            search_sentences.append(description_match)
+
+
+    search_wording = ' '.join(search_sentences)
+    class_objectives_list = str(class_objectives.teacher_objective) + ', ' + str(act_wording) + ', ' + str(search_wording)
+
+
+    wiki_titles = []
+
+    for search in standards_nouns:
+        wiki_search = wikipedia.search(search)
+        for r_search in wiki_search:
+           
+            if r_search not in wiki_titles:
+                wiki_titles.append(r_search)
+
+
+    wiki_list = []    
+    wiki_count = 0
+    for wiki_title in wiki_titles:
+        try:
+                wiki_url = "https://en.wikipedia.org/wiki/%s" % (wiki_title)
+                topic_result = wikipedia.summary(wiki_title, sentences = 3, auto_suggest=False, redirect=True)
+                results = tokenize.sent_tokenize(topic_result)
+                sent_result = ' '.join(results[:3])
+                result = check_topic_relevance(sent_result, lesson_id)
+                print('================')
+                print(wiki_title, sent_result, result)
+                print('================')
+                if wiki_count > 5:
+                    if result >= .10:
+                        term = wiki_title, sent_result, result
+                        wiki_count = wiki_count + 1
+                        wiki_list.append(term)
+                else:
+                    term = wiki_title, sent_result, result
+                    wiki_count = wiki_count + 1
+                    wiki_list.append(term)
+
+        except wikipedia.DisambiguationError as e:
+                pass
+
+        
+
+    wiki_list.sort(key=lambda x: x[2], reverse=True) 
+
+    return(wiki_list)

@@ -54,7 +54,7 @@ class school_user(models.Model):
     def __str__(self):
         return "%s" % (self.user)
 
-
+ 
 
 
 
@@ -677,6 +677,10 @@ class keywordResults(models.Model):
         return "%s" % (self.word)
 
 class wikiTopic(models.Model):
+    textbook_match = models.ForeignKey(textBookTitle,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
     is_selected = models.BooleanField(default=False)
     lesson_plan = models.ForeignKey(lessonObjective,
                                on_delete=models.SET_NULL,

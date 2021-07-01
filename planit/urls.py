@@ -26,7 +26,8 @@ urlpatterns = [
         view=FormFull,
         name='registration_full'),
 
-    url(r'^dashboard/(?P<week_of>[\w\s]+)/',
+
+    url(r'^dashboard/(?P<week_of>[\w\s]+)/(?P<subject_id>[\w\s]+)/(?P<class_id>[\w\s]+)/',
         view=Dashboard,
         name='Dashboard'),
 
@@ -81,12 +82,18 @@ urlpatterns = [
         name='about_us'),
 
     url(r'^classrooms-all/',
-        view=classroomLists.as_view(),
+        view=ClassroomLists,
         name='classroom_list'),
 
-    url(r'^classroom-single/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/',
-        view=ClassroomSingle,
+    url(r'^classroom-dashboard/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/',
+        view=ClassroomDashboard,
         name='classroom_single'),
+
+    url(r'^classroom-settings/(?P<user_id>[\w-]+)/(?P<classroom_id>[\w-]+)/(?P<view_ref>[\w-]+)/',
+        view=ClassroomSettingsView,
+        name='classroom_settings'),
+
+
 
     url(r'^create_objective/(?P<user_id>[\w\s]+)/(?P<week_of>[\w\s]+)/',
         view=CreateObjective,

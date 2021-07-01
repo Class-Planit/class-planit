@@ -15,6 +15,8 @@ def get_active_week(current_week, week_of):
     return(active_week)
 
 def get_week_info(week_of): 
+    #checks if the week is a current week 
+    # returns current week, active week, previous week and next week 
     current_week = date.today().isocalendar()[1] 
     active_week = get_active_week(current_week, week_of)
 

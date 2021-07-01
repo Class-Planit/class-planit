@@ -1,0 +1,108 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+{% block content %}
+                
+<main class="content">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+        <div class="btn-toolbar">
+            <button class="btn btn-primary btn-sm mr-2 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="fas fa-plus mr-2"></span>New Item
+            </button>
+            <div class="dropdown-menu dashboard-dropdown dropdown-menu-left mt-2">
+                <a class="dropdown-item font-weight-bold" href="#" data-toggle="modal" data-target="#exampleModal"><span class="fas fa-tasks mr-2"></span>New Classroom</a>
+                <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-cloud-upload-alt mr-2"></span>New Student</a>
+
+                <div role="separator" class="dropdown-divider"></div>
+                <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-rocket text-danger mr-2"></span>New Co-Teacher</a>
+            </div>
+        </div>
+        <div class="btn-group">
+            <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+        </div>
+    </div>
+    <div class="table-settings mb-4">
+        <div class="row justify-content-between align-items-center">
+            <div class="col-12 col-md-6 col-lg-3 align-items-center d-none d-md-flex">
+                <div class="form-group mb-0 mr-3">
+                    <select class="custom-select" id="inlineFormCustomSelectMesages">
+                        <option selected="selected">Grade Level</option>
+                        <option value="1">English</option>
+                        <option value="2">Math</option>
+                        
+                    </select>
+                </div>
+                <div class="form-group mb-0 mr-3">
+                    <select class="custom-select" id="inlineFormCustomSelectMesages">
+                        <option selected="selected">Classroom</option>
+                        <option value="1">1-B</option>
+                        <option value="2">2-B</option>
+                        
+                    </select>
+                </div>
+                
+            </div>
+            <div class="col col-md-4 col-lg-3 col-xl-2 ml-auto">
+                <div class="input-group">
+                    <div class="input-group-prepend"><span class="input-group-text"><span class="fas fa-search"></span></span></div>
+                    <input class="form-control" id="searchInputdashboard1" placeholder="Search" type="text" aria-label="Dashboard user search">
+                </div>
+            </div>
+            <div class="col-2 pl-0 d-none d-lg-flex">
+                <div class="form-group mb-0">
+                    <select class="custom-select" id="inlineFormCustomSelectMesages2">
+                        <option selected="selected">All</option>
+                        <option value="1">Active</option>
+                        <option value="2">Inactive</option>
+                        <option value="3">Pending</option>
+                        <option value="3">Canceled</option>
+                    </select>
+                </div>
+            </div>
+        
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-2">
+            
+        </div>
+        <div class="col-lg-8">
+            <h2 class="h4 mb-4"><center>{{ class_match.classroom_title|title }}</center></h2>
+        </div>
+        <div class="col-lg-2">
+            
+        </div>
+    </div>
+
+
+<h5>Hello !!</h5>
+<div class="container">
+    <div class="row align-items-start">
+      <div class="col-3">
+        SIde Buttons
+      </div>
+      <div class="col-9">
+        {% if 'Students' in view_ref %}
+        <h5>View One </h5>
+        {% elif view_ref == 2 %}
+        <h5>View Two </h5>
+        {% else %}
+        <h5>Default </h5>
+        {% endif %}
+      </div>
+    </div>
+</div>           
+    <footer class="footer section py-5">
+<div class="container-fluid">
+<div class="row">
+<div class="col-12 col-lg-6 mb-4 mb-lg-0">
+<p class="mb-0 text-center text-xl-left">Copyright © 2019-<span class="current-year"></span> <a class="text-primary font-weight-normal" href="https://www.classplanit.co">ClassPlanit</a></p>
+</div>
+
+ 
+</div>
+</div>
+</footer>
+</main>
+
+{% endblock %}
