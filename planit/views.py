@@ -264,13 +264,7 @@ def StandardsTracking(request, user_id=None):
 
 
 #Main Teacher Dashboard View labeled as 'Overview'
-def Dashboard(request, week_of, subject_id, class_id):
-
-    #things to think about:
-    #default would show everything - subject_id = 'All' 
-    #if statement if 'All' in subject_id, else subject_id = int(subject_id)
-
-
+def Dashboard(request, week_of, subject_id, classroom_id):
     #get active and current week number (active being the week the teacher is on and current meaning the actual week in the calendar)
     week_info = get_week_info(week_of)
 
@@ -284,8 +278,24 @@ def Dashboard(request, week_of, subject_id, class_id):
 
         # the lessonObjective is a single lesson plan for one subject, one grade, in one classroom
         objective_matches = lessonObjective.objects.filter(week_of=week_info['active_week'], lesson_classroom__in=classroom_profiles)
+        
+        if subject_id == 'All':
+            if classroom_id == 'All':
+                active_lessons = objective_matches
+            else:
+                active_lessons = objective_matches.filter(lesson_classroom_id=classroom_id)
+        else:
+            if classroom_id == 'All':
+                active_lessons = objective_matches.filter(subject_id=subject_id)
+            else:
+                active_lessons = objective_matches.filter(subject_id=subject_id, lesson_classroom_id=classroom_id)
+
+        # gets the subjects and classrooms for the dropdown options
+        subject_results, classroom_results = get_subject_and_classroom(objective_matches)
+        
         context = {'user_profile': user_profile, 'current_week': week_info['current_week'], 'active_week': week_info['active_week'], 'objective_matches': objective_matches,\
-                    'previous_week': week_info['previous_week'], 'next_week': week_info['next_week']}
+                    'previous_week': week_info['previous_week'], 'next_week': week_info['next_week'], 'subject_results': subject_results, 'classroom_results': classroom_results, \
+                    'active_lessons': active_lessons, 'active_subject_id': subject_id, 'active_classroom_id': classroom_id}
         return render(request, 'dashboard/dashboard.html', context)
     else:
         

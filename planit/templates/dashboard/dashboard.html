@@ -4,7 +4,6 @@
 {% load static %}
 {% block content %}
 
-                
 <main class="content">
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
         <div class="btn-toolbar">
@@ -55,22 +54,46 @@
                 <div class="row justify-content-between align-items-center">
                     <div class="col-12 col-md-6 col-lg-3 align-items-center d-none d-md-flex">
                         <div class="form-group mb-0 mr-3">
-                            <select class="custom-select" id="inlineFormCustomSelectMesages">
-                                <option selected="selected">Subject</option>
-                                <option value='{{ subject_result.0 }}'>English</option>
-                                <option value="2">Math</option>
-                                
-                            </select>
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  Subject
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" href="{% url 'Dashboard' week_of='Current' subject_id='All' classroom_id=active_classroom_id %}">All subjects</a>
+                                    {% for subject in subject_results %}
+                                    <a class="dropdown-item" href="{% url 'Dashboard' week_of='Current' subject_id=subject.0 classroom_id=active_classroom_id %}">{{ subject.1 }}</a>
+                                    {% endfor %}
+                                </div>
+                            </div>
                         </div>
+                        <div class="form-group mb-0 mr-3">
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  Classroom
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" href="{% url 'Dashboard' week_of='Current' subject_id=active_subject_id classroom_id='All' %}">All classrooms</a>
+                                    {% for classroom in classroom_results %}
+                                    <a class="dropdown-item" href="{% url 'Dashboard' week_of='Current' subject_id=active_subject_id classroom_id=classroom.0 %}">{{ classroom.1 }}</a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--
                         <div class="form-group mb-0 mr-3">
                             <select class="custom-select" id="inlineFormCustomSelectMesages">
                                 <option selected="selected">Classroom</option>
                                 <option value="1">1-B</option>
                                 <option value="2">2-B</option>
+
+                                {% for objective in objective_matches %}
+                                    <option value="#">{{ objective.lesson_classroom }}</option>
+                                {% endfor %}
                                 
                             </select>
                         </div>
-                        
+                        -->
                     </div>
                     <div class="col col-md-4 col-lg-3 col-xl-2 ml-auto">
                         <div class="input-group">
@@ -140,7 +163,7 @@
                 
                 </div>
             
-                {% for objective in objective_matches %}
+                {% for objective in active_lessons %}
                 <div class="col-12 col-lg-4 mb-3">
                     <a href="{% url 'activity_builder' user_id=1 class_id=objective.lesson_classroom_id lesson_id=objective.id subject=objective.subject_id page=0 %}#heading" class="card border-light animate-up-3 shadow-soft p-0 p-lg-4">     
                         <div class="card-body">

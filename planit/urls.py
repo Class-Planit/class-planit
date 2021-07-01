@@ -26,8 +26,7 @@ urlpatterns = [
         view=FormFull,
         name='registration_full'),
 
-
-    url(r'^dashboard/(?P<week_of>[\w\s]+)/(?P<subject_id>[\w\s]+)/(?P<class_id>[\w\s]+)/',
+    url(r'^dashboard/(?P<week_of>[\w\s]+)/(?P<subject_id>[\w\s]+)/(?P<classroom_id>[\w\s]+)/',
         view=Dashboard,
         name='Dashboard'),
 
