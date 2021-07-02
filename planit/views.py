@@ -248,8 +248,16 @@ def ClassroomSettingsView(request, user_id=None, classroom_id=None, view_ref=Non
     class_profile = classroom.objects.get(id=classroom_id)
     student_summary = get_classroom_list_summary(user_profile.id, current_year, classroom_id)
 
-    
-    return render(request, 'dashboard/classrooms_settings.html', {'user_profile': user_profile, 'view_ref': view_ref, 'student_summary': student_summary, 'class_profile': class_profile})
+    #gets the classrooms teachers are main teacher on 
+    classroom_profiles = classroom.objects.filter(main_teacher=user_profile)
+    # the lessonObjective is a single lesson plan for one subject, one grade, in one classroom
+    objective_matches = lessonObjective.objects.filter(lesson_classroom__in=classroom_profiles)
+    # gets the subjects and classrooms for the dropdown options
+    subject_results, classroom_results = get_subject_and_classroom(objective_matches)
+        
+    context = {'user_profile': user_profile, 'view_ref': view_ref, 'student_summary': student_summary, 'class_profile': class_profile,\
+               'subject_results': subject_results, 'classroom_results': classroom_results}
+    return render(request, 'dashboard/classrooms_settings.html', context)
 
 
 

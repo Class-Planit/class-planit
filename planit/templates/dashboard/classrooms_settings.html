@@ -23,24 +23,34 @@
     </div>
     <div class="table-settings mb-4">
         <div class="row justify-content-between align-items-center">
-            <div class="col-12 col-md-6 col-lg-3 align-items-center d-none d-md-flex">
-                <div class="form-group mb-0 mr-3">
-                    <select class="custom-select" id="inlineFormCustomSelectMesages">
-                        <option selected="selected">Grade Level</option>
-                        <option value="1">English</option>
-                        <option value="2">Math</option>
-                        
-                    </select>
+            <div class="form-group mb-0 mr-3">
+                <div class="dropdown">
+                    <!--
+                        SUBJECT BUTTON NOT NEEDED ?
+
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Subject
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="#">All subjects</a>
+                        {% for subject in subject_results %}
+                        <a class="dropdown-item" href="#">{{ subject.1 }}</a>
+                        {% endfor %}
+                    </div>
+                    -->
                 </div>
-                <div class="form-group mb-0 mr-3">
-                    <select class="custom-select" id="inlineFormCustomSelectMesages">
-                        <option selected="selected">Classroom</option>
-                        <option value="1">1-B</option>
-                        <option value="2">2-B</option>
-                        
-                    </select>
+            </div>
+            <div class="form-group mb-0 mr-3">
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Classroom
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        {% for classroom in classroom_results %}
+                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=classroom.0 view_ref='Students' %}">{{ classroom.1 }}</a>
+                        {% endfor %}
+                    </div>
                 </div>
-                
             </div>
             <div class="col col-md-4 col-lg-3 col-xl-2 ml-auto">
                 <div class="input-group">
@@ -59,7 +69,6 @@
                     </select>
                 </div>
             </div>
-        
         </div>
     </div>
     <div class="row">
@@ -74,24 +83,134 @@
         </div>
     </div>
 
+    <h2 class="h5">Editing Classroom: {{ class_profile }}</h2>
+    <div class="container p-3 my-3 bg-white">
+        <div class="row align-items-start">
+            <div class="col-3">
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle border-white btn-block" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Manage members
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Students' %}">Students</a>
+                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Teachers' %}">Teachers</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle border-white btn-block" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Update class aspects
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Subjects' %}">Edit subjects</a>
+                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Grade-Levels' %}">Edit grade levels</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-9">
+                {% if view_ref == 'Students' %}
+                    <h2 class="h5">Students settings options</h2>
+                    <h4>Add New Students:</h4>
+                    <div class="card border-light shadow-sm">
+                        <div class="card-body flex-row align-items-center flex-0 border-bottom">
+                            
+                            <h5 class="card-title">Invite students to {{class_profile}}</h5>
+                            <!--How to send email invite?-->
+                            <form  method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label for="exampleFormControlInput1">Enter student or guardian's email:</label>
+                                    <input type="text" class="form-control" id="classroom_title" name='classroom_title' placeholder="name@example.com">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Send</button>
+                            </form>
 
-<h5>Hello !!</h5>
-<div class="container">
-    <div class="row align-items-start">
-      <div class="col-3">
-        SIde Buttons
-      </div>
-      <div class="col-9">
-        {% if 'Students' in view_ref %}
-        <h5>View One </h5>
-        {% elif view_ref == 2 %}
-        <h5>View Two </h5>
-        {% else %}
-        <h5>Default </h5>
-        {% endif %}
-      </div>
-    </div>
-</div>           
+                        </div>
+                    </div>
+                    <h2 class="h5">&nbsp</h2>
+                    <h4>Edit Current Students:</h4>
+                        <table class="table table-borderless table-sm">
+                            <thead class="table-light">
+                              <tr>
+                                <th scope="col" class="h6">Student Name:</th>
+                                <th scope="col"> </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                <td>Mark Smith</td>
+                                <td> <a href="#">Remove</a> </td>
+                              </tr>
+                              <tr>
+                                <td>John Smith</td>
+                                <td> <a href="#">Remove</a> </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                                <!--
+                                <p>John Doe</p>
+                                {% for student in class_profile.student.all %}
+                                    <p>{{ student.first_name }} {{ student.last_name }}</p>
+                                {% endfor %}
+                                -->
+                            
+                                <!--
+                                <a href="#">Remove</a> 
+                                {% for student in class_profile.student.all %}
+                                    <a href="link to remove student from classroom">Remove</a> 
+                                {% endfor %}
+                                -->
+
+                {% elif view_ref == 'Teachers' %}
+                <h2 class="h5">Teachers settings options</h2>
+                <h4>Add New Teachers:</h4>
+                <div class="card border-light shadow-sm">
+                    <div class="card-body flex-row align-items-center flex-0 border-bottom">
+                        
+                        <h5 class="card-title">Invite teachers to {{class_profile}}</h5>
+                        <!--How to send email invite?-->
+                        <form  method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="exampleFormControlInput1">Enter teacher's email:</label>
+                                <input type="text" class="form-control" id="classroom_title" name='classroom_title' placeholder="name@example.com">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Send</button>
+                        </form>
+
+                    </div>
+                </div>
+                <h2 class="h5">&nbsp</h2>
+                <h4>Edit Current Teachers:</h4>
+                    <table class="table table-borderless table-sm">
+                        <thead class="table-light">
+                          <tr>
+                            <th scope="col" class="h6">Teacher Name:</th>
+                            <th scope="col"> </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                            <td>Mark Smith</td>
+                            <td> <a href="#">Remove</a> </td>
+                          </tr>
+                          <tr>
+                            <td>John Smith</td>
+                            <td> <a href="#">Remove</a> </td>
+                          </tr>
+                        </tbody>
+                      </table>
+
+                {% elif view_ref == 'Subjects' %}
+                    <h5>Subjects settings options </h5>
+                {% elif view_ref == 'Grade-Levels' %}
+                    <h5>Grade-Levels settings options </h5>
+                {% else %}
+                    <h5>Default </h5>
+                {% endif %}
+            </div>
+        </div>
+    </div>     
+
     <footer class="footer section py-5">
 <div class="container-fluid">
 <div class="row">

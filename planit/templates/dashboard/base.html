@@ -188,7 +188,7 @@
 {% block content %}
 {% endblock %}
 </div>
-</div>
+    </div>
         </div>
         <div class="modal fade" id="newClassroom" tabindex="-1" role="dialog" aria-labelledby="newClassroomLabel" aria-hidden="true">
           <div class="modal-dialog" role="document">
@@ -202,9 +202,8 @@
               <div class="modal-body">
                 <form  method="POST" enctype="multipart/form-data">
                   {% csrf_token %}
-                
-                  classroom_title = text field 
-                  single_grade = single selection 
+                  <!--classroom_title = text field--> 
+                  <!--single_grade = single selection-->
                   <div class="form-group">
                     <label for="exampleFormControlInput1">Classroom Title</label>
                     <input type="text" class="form-control" id="classroom_title" name='classroom_title' placeholder="Enter Classroom Title Here..">
@@ -219,7 +218,7 @@
                   </div>
                   <!----------- | End Incorrect Three Answer | -->
                   <!-------------------------------------->
-                  <button type="submit" class="btn btn-primary btn-block">Add to Worksheet </button>
+                  <button type="submit" class="btn btn-primary btn-block">Create classroom </button>
               </form>
               </div>
             </div>
