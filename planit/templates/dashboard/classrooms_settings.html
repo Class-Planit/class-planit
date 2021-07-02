@@ -47,7 +47,7 @@
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         {% for classroom in classroom_results %}
-                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=classroom.0 view_ref='Students' %}">{{ classroom.1 }}</a>
+                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=classroom.0 view_ref='Students' confirmation=0 %}">{{ classroom.1 }}</a>
                         {% endfor %}
                     </div>
                 </div>
@@ -86,46 +86,44 @@
     <h2 class="h5">Editing Classroom: {{ class_profile }}</h2>
     <div class="container p-3 my-3 bg-white">
         <div class="row align-items-start">
-            <div class="col-3">
-                <div class="dropdown">
-                    <button class="btn btn-outline-secondary dropdown-toggle border-white btn-block" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Manage members
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Students' %}">Students</a>
-                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Teachers' %}">Teachers</a>
-                    </div>
-                </div>
-                <div class="dropdown">
-                    <button class="btn btn-outline-secondary dropdown-toggle border-white btn-block" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Update class aspects
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Subjects' %}">Edit subjects</a>
-                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Grade-Levels' %}">Edit grade levels</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-9">
+        
+            <div class="col-md-8">
                 {% if view_ref == 'Students' %}
                     <h2 class="h5">Students settings options</h2>
-                    <h4>Add New Students:</h4>
-                    <div class="card border-light shadow-sm">
-                        <div class="card-body flex-row align-items-center flex-0 border-bottom">
-                            
-                            <h5 class="card-title">Invite students to {{class_profile}}</h5>
-                            <!--How to send email invite?-->
-                            <form  method="POST" enctype="multipart/form-data">
-                                {% csrf_token %}
-                                <div class="form-group">
-                                    <label for="exampleFormControlInput1">Enter student or guardian's email:</label>
-                                    <input type="text" class="form-control" id="classroom_title" name='classroom_title' placeholder="name@example.com">
-                                </div>
-                                <button type="submit" class="btn btn-primary">Send</button>
-                            </form>
-
+                        {% if confirmation == 1 %}
+                        <div class="alert alert-success" role="alert">
+                            <h5> Email Sent!</h5>
+                            <a href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Students' confirmation=0 %}">Send Another Invite</a>
                         </div>
-                    </div>
+                        {% else %}
+                            <h4>Add New Students:</h4>
+                            <div class="card border-light shadow-sm">
+                                <div class="card-body flex-row align-items-center flex-0 border-bottom">
+                                    
+                                    <h5 class="card-title">Invite students to {{class_profile}}</h5>
+                                    <!--How to send email invite?-->
+                                    
+                                    <form  action="{% url 'add_student_to_classroom' user_id=user_profile.id class_id=class_profile.id %}" method="POST" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                    
+                                        <div class="row">
+                                            <div class="col">
+                                            <input type="text" name='first_name' id='first_name' class="form-control" placeholder="First name">
+                                            </div>
+                                            <div class="col">
+                                            <input type="text" name='last_name' id='last_name' class="form-control" placeholder="Last name">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="email">Enter student or guardian's email:</label>
+                                            <input type="email" class="form-control" id="email" name='email' placeholder="name@example.com">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Send Invite</button>
+                                    </form>
+                                    
+                                </div>
+                            </div>
+                        {% endif %}
                     <h2 class="h5">&nbsp</h2>
                     <h4>Edit Current Students:</h4>
                         <table class="table table-borderless table-sm">
@@ -207,6 +205,26 @@
                 {% else %}
                     <h5>Default </h5>
                 {% endif %}
+            </div>
+            <div class="col-md-4">
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle border-white btn-block" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Manage members
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Students' confirmation=0 %}">Students</a>
+                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Teachers' confirmation=0 %}">Teachers</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle border-white btn-block" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Update class aspects
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Subjects' confirmation=0 %}">Edit subjects</a>
+                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Grade-Levels' confirmation=0 %}">Edit grade levels</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>     

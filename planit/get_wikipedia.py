@@ -242,6 +242,8 @@ def get_wiki_full(title, lesson_id, topic_id):
         
         link_list = []
         for link in soup.find_all("a"):
+            term = link.string
+            print(term)
             url = link.get("href", "")
             results = url.replace('/wiki/', '') 
             remove_list = ['cite', 'index', 'special', 'Special', 'Category:', '/', 'File', 'Wikipedia:', 'Main_Page', 'Help:', '#', 'United_States', 'Overweight', 'Talk:']

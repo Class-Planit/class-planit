@@ -28,6 +28,12 @@ class  studentProfilesForm(forms.ModelForm):
         model = studentProfiles
         fields = '__all__'
 
+class  studentInvitationForm(forms.ModelForm):
+
+    class Meta:
+        model = studentInvitation
+        fields = '__all__'
+
 
 class  topicQuestionForm(forms.ModelForm):
 

@@ -88,11 +88,13 @@ urlpatterns = [
         view=ClassroomDashboard,
         name='classroom_single'),
 
-    url(r'^classroom-settings/(?P<user_id>[\w-]+)/(?P<classroom_id>[\w-]+)/(?P<view_ref>[\w-]+)/',
+    url(r'^classroom-settings/(?P<user_id>[\w-]+)/(?P<classroom_id>[\w-]+)/(?P<view_ref>[\w-]+)/(?P<confirmation>[\w-]+)/',
         view=ClassroomSettingsView,
         name='classroom_settings'),
 
-
+    url(r'^add-student-to-classroom/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/',
+        view=AddStudentToClassroom,
+        name='add_student_to_classroom'),
 
     url(r'^create_objective/(?P<user_id>[\w\s]+)/(?P<week_of>[\w\s]+)/',
         view=CreateObjective,
