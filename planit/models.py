@@ -261,7 +261,40 @@ class studentInvitation(models.Model):
 
     def __str__(self):
         return "%s - %s" % (self.invite_ref, self.email)
-                        
+
+class teacherInvitation(models.Model):
+    invite_ref = models.CharField(_('Teacher Reference'),
+                                   max_length=255,
+                                   blank=True,
+                                   null=True)
+    first_name = models.CharField(max_length=50,
+                                  blank=True,
+                                  null=True)
+    last_name = models.CharField(max_length=50,
+                                 blank=True,
+                                 null=True)
+    email = models.EmailField(blank=True,
+                              null=True)
+    for_classroom = models.ForeignKey(classroom,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    created_by = models.ForeignKey(User,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True)
+    
+
+    def save(self, *args, **kwargs):
+        # This to check if it creates a new or updates an old instance
+        if self.pk is None:
+            self.invite_ref= token_generator.make_token(8)
+        super(teacherInvitation, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return "%s - %s" % (self.invite_ref, self.email)
+   
+
 class textBookTitle(models.Model):
     title = models.TextField(max_length=500)
     grade_level = models.ManyToManyField(gradeLevel,

@@ -83,49 +83,86 @@
         </div>
     </div>
 
-    <h2 class="h5">Editing Classroom: {{ class_profile }}</h2>
+    <span style="text-align: center"><h2 class="h3">Editing Classroom: {{ class_profile }}</h2></span>
     <div class="container p-3 my-3 bg-white">
         <div class="row align-items-start">
-        
             <div class="col-md-8">
                 {% if view_ref == 'Students' %}
                     <h2 class="h5">Students settings options</h2>
-                        {% if confirmation == 1 %}
-                        <div class="alert alert-success" role="alert">
-                            <h5> Email Sent!</h5>
-                            <a href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Students' confirmation=0 %}">Send Another Invite</a>
-                        </div>
-                        {% else %}
-                            <h4>Add New Students:</h4>
-                            <div class="card border-light shadow-sm">
-                                <div class="card-body flex-row align-items-center flex-0 border-bottom">
-                                    
-                                    <h5 class="card-title">Invite students to {{class_profile}}</h5>
-                                    <!--How to send email invite?-->
-                                    
-                                    <form  action="{% url 'add_student_to_classroom' user_id=user_profile.id class_id=class_profile.id %}" method="POST" enctype="multipart/form-data">
-                                        {% csrf_token %}
-                                    
-                                        <div class="row">
-                                            <div class="col">
-                                            <input type="text" name='first_name' id='first_name' class="form-control" placeholder="First name">
-                                            </div>
-                                            <div class="col">
-                                            <input type="text" name='last_name' id='last_name' class="form-control" placeholder="Last name">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="email">Enter student or guardian's email:</label>
-                                            <input type="email" class="form-control" id="email" name='email' placeholder="name@example.com">
-                                        </div>
-                                        <button type="submit" class="btn btn-primary">Send Invite</button>
-                                    </form>
-                                    
+
+                    <div class="container h-100 py-2">
+                        <ul class="nav nav-tabs border-0" id="myTab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active border border-primary border-bottom-0" id="home-tab" data-toggle="tab" href="#edit" role="tab" aria-selected="true">Add Students</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link border border-primary border-bottom-0" id="profile-tab" data-toggle="tab" href="#pending" role="tab" aria-selected="false">Pending Students</a>
+                            </li>
+                        </ul>
+                    
+                        <div class="tab-content h-75">
+                            <div class="tab-pane h-100 p-3 active border border-primary" id="edit" role="tabpanel">
+                                {% if confirmation == 1 %}
+                                <div class="card text-white bg-slack mb-3" style="max-width: 18rem;">
+                                    <div class="card-body">
+                                        <h5 class="card-text">Email Sent!</h5>
+                                    </div>
                                 </div>
+                                <a class="btn btn-primary" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Students' confirmation=0 %}">Send Another Invite</a>
+                                {% else %}
+                                    <h2>&nbsp</h2>
+                                    <h4 class="h6">Add New Students:</h4>
+                                    <div class="card border-light shadow-sm">
+                                        <div class="card-body flex-row align-items-center flex-0 border-bottom">
+                                            <h5 class="card-title">Invite students to {{class_profile}}</h5>  
+                                            <form  action="{% url 'add_student_to_classroom' user_id=user_profile.id class_id=class_profile.id %}" method="POST" enctype="multipart/form-data">
+                                                {% csrf_token %}
+                                                <label for="email">Enter student's first and last name:</label>
+                                                <div class="row">
+                                                    <div class="col">
+                                                    <input type="text" name='first_name' id='first_name' class="form-control" placeholder="First name">
+                                                    </div>
+                                                    <div class="col">
+                                                    <input type="text" name='last_name' id='last_name' class="form-control" placeholder="Last name">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="email">Enter student or guardian's email:</label>
+                                                    <input type="email" class="form-control" id="email" name='email' placeholder="name@example.com">
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">Send Invite</button>
+                                            </form>
+                                            
+                                        </div>
+                                    </div>
+                                {% endif %}
                             </div>
-                        {% endif %}
+                            <div class="tab-pane h-100 p-3 border border-primary" id="pending" role="tabpanel">
+                                <h2>&nbsp</h2>
+                                <h4 class="h6">Pending Students:</h4>
+                                <table class="table table-borderless table-sm">
+                                    <thead class="table-light">
+                                    <tr>
+                                        <th scope="col" class="h6">Student Name:</th>
+                                        <th scope="col"> </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                        <td>Lucy Smith</td>
+                                        <td> <a href="#">Resend</a> </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Lilly Smith</td>
+                                        <td> <a href="#">Resend</a> </td>
+                                    </tr>
+                                    </tbody>
+                              </table>
+                            </div>
+                        </div>
+                    </div>
                     <h2 class="h5">&nbsp</h2>
-                    <h4>Edit Current Students:</h4>
+                    <h4 class="h6">Edit Current Students:</h4>
                         <table class="table table-borderless table-sm">
                             <thead class="table-light">
                               <tr>
@@ -159,49 +196,171 @@
                                 -->
 
                 {% elif view_ref == 'Teachers' %}
-                <h2 class="h5">Teachers settings options</h2>
-                <h4>Add New Teachers:</h4>
-                <div class="card border-light shadow-sm">
-                    <div class="card-body flex-row align-items-center flex-0 border-bottom">
-                        
-                        <h5 class="card-title">Invite teachers to {{class_profile}}</h5>
-                        <!--How to send email invite?-->
-                        <form  method="POST" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            <div class="form-group">
-                                <label for="exampleFormControlInput1">Enter teacher's email:</label>
-                                <input type="text" class="form-control" id="classroom_title" name='classroom_title' placeholder="name@example.com">
+                    <h2 class="h5">Teachers settings options</h2>
+                    <div class="container h-100 py-2">
+                        <ul class="nav nav-tabs border-0" id="myTab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active border border-primary border-bottom-0" id="home-tab" data-toggle="tab" href="#edit" role="tab" aria-selected="true">Add Teachers</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link border border-primary border-bottom-0" id="profile-tab" data-toggle="tab" href="#pending" role="tab" aria-selected="false">Pending Tachers</a>
+                            </li>
+                        </ul>
+                    
+                        <div class="tab-content h-75">
+                            <div class="tab-pane h-100 p-3 active border border-primary" id="edit" role="tabpanel">
+                                {% if confirmation == 1 %}
+                                <div class="card text-white bg-slack mb-3" style="max-width: 18rem;">
+                                    <div class="card-body">
+                                        <h5 class="card-text">Email Sent!</h5>
+                                    </div>
+                                </div>
+                                <a class="btn btn-primary" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Teachers' confirmation=0 %}">Send Another Invite</a>
+                                {% else %}
+                                    <h2>&nbsp</h2>
+                                    <h4 class="h6">Add New Teachers:</h4>
+                                    <div class="card border-light shadow-sm">
+                                        <div class="card-body flex-row align-items-center flex-0 border-bottom">
+                                            <h5 class="card-title">Invite teachers to {{class_profile}}</h5>  
+                                            <form  action="{% url 'add_teacher_to_classroom' user_id=user_profile.id class_id=class_profile.id %}" method="POST" enctype="multipart/form-data">
+                                                {% csrf_token %}
+                                                <label for="email">Enter teacher's first and last name:</label>
+                                                <div class="row">
+                                                    <div class="col">
+                                                    <input type="text" name='first_name' id='first_name' class="form-control" placeholder="First name">
+                                                    </div>
+                                                    <div class="col">
+                                                    <input type="text" name='last_name' id='last_name' class="form-control" placeholder="Last name">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="email">Enter teacher's email:</label>
+                                                    <input type="email" class="form-control" id="email" name='email' placeholder="name@example.com">
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">Send Invite</button>
+                                            </form>
+                                            
+                                        </div>
+                                    </div>
+                                {% endif %}
                             </div>
-                            <button type="submit" class="btn btn-primary">Send</button>
-                        </form>
-
+                            <div class="tab-pane h-100 p-3 border border-primary" id="pending" role="tabpanel">
+                                <h2>&nbsp</h2>
+                                <h4 class="h6">Pending Teachers:</h4>
+                                <table class="table table-borderless table-sm">
+                                    <thead class="table-light">
+                                    <tr>
+                                        <th scope="col" class="h6">Teacher Name:</th>
+                                        <th scope="col"> </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                        <td>Lucy Smith</td>
+                                        <td> <a href="#">Resend</a> </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Lilly Smith</td>
+                                        <td> <a href="#">Resend</a> </td>
+                                    </tr>
+                                    </tbody>
+                            </table>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <h2 class="h5">&nbsp</h2>
-                <h4>Edit Current Teachers:</h4>
+                    <h2 class="h5">&nbsp</h2>
+                    <h4 class="h6">Edit Current Teachers:</h4>
+                        <table class="table table-borderless table-sm">
+                            <thead class="table-light">
+                            <tr>
+                                <th scope="col" class="h6">Teacher Name:</th>
+                                <th scope="col"> </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                <td>Mark Smith</td>
+                                <td> <a href="#">Remove</a> </td>
+                            </tr>
+                            <tr>
+                                <td>John Smith</td>
+                                <td> <a href="#">Remove</a> </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                {% elif view_ref == 'Subjects' %}
+                    <h2 class="h5">Teachers settings options</h2>
+                    <h4 class="h6">Edit Subjects:</h4>
                     <table class="table table-borderless table-sm">
                         <thead class="table-light">
-                          <tr>
-                            <th scope="col" class="h6">Teacher Name:</th>
+                        <tr>
+                            <th scope="col" class="h6">Current Subjects:</th>
                             <th scope="col"> </th>
-                          </tr>
+                        </tr>
                         </thead>
                         <tbody>
                             <tr>
-                            <td>Mark Smith</td>
+                            <td>English</td>
                             <td> <a href="#">Remove</a> </td>
-                          </tr>
-                          <tr>
-                            <td>John Smith</td>
+                        </tr>
+                        <tr>
+                            <td>Computer Science</td>
                             <td> <a href="#">Remove</a> </td>
-                          </tr>
+                        </tr>                       
                         </tbody>
-                      </table>
+                    </table>
+                    <h2>&nbsp</h2>
+                    <table class="table table-borderless table-sm">
+                        <thead class="table-light">
+                        <tr>
+                            <th scope="col" class="h6">Current Subjects:</th>
+                            <th scope="col"> </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                            <td>Science</td>
+                            <td> <a href="#">Add</a> </td>
+                        </tr>
+                        <tr>
+                            <td>Social Studies</td>
+                            <td> <a href="#">Add</a> </td>
+                        </tr>      
+                        <tr>
+                            <td>Other: (create your own subject)</td>
+                            <td> <a href="#">Add</a> </td>
+                        </tr>                  
+                        </tbody>
+                    </table>
 
-                {% elif view_ref == 'Subjects' %}
-                    <h5>Subjects settings options </h5>
                 {% elif view_ref == 'Grade-Levels' %}
-                    <h5>Grade-Levels settings options </h5>
+                    <h2 class="h5">Grade Levels settings options</h2>
+                    <h4 class="h6">Edit Grade Levels:</h4>
+                    <table class="table table-borderless table-sm">
+                        <thead class="table-light">
+                        <tr>
+                            <th scope="col" class="h6">Grade Level:</th>
+                            <th scope="col"> </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                            <td>First</td>
+                            <td> <a href="#">Remove</a> </td>
+                        </tr>
+                        <tr>
+                            <td>Second</td>
+                            <td> <a href="#">Remove</a> </td>
+                        </tr>
+                        <tr>
+                            <td>Third</td>
+                            <td> <a href="#">Add</a> </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                {% elif view_ref == 'Classroom-Title' %}
+                    <h2 class="h5">Classroom Title settings options</h2>
                 {% else %}
                     <h5>Default </h5>
                 {% endif %}
@@ -221,6 +380,7 @@
                         Update class aspects
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Classroom-Title' confirmation=0 %}">Edit classroom title</a>
                         <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Subjects' confirmation=0 %}">Edit subjects</a>
                         <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Grade-Levels' confirmation=0 %}">Edit grade levels</a>
                     </div>

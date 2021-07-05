@@ -266,11 +266,52 @@ def AddStudentToClassroom(request, user_id=None, class_id=None):
             except Exception as e:
                 pass
 
-            return redirect('classroom_settings', user_id=user_match.id, classroom_id=prev.id, view_ref='Students', confirmation=1)
+            return redirect('classroom_settings', user_id=user_match.id, classroom_id=class_id, view_ref='Students', confirmation=1)
         else:
             return redirect('classroom_list')
     else:
         return redirect('classroom_list')
+
+
+def AddTeacherToClassroom(request, user_id=None, class_id=None):
+    user_match = User.objects.get(id=user_id)
+    classoom_match = classroom.objects.get(id=class_id)
+
+    if request.method == "POST":
+        form = teacherInvitationForm(request.POST, request.FILES)
+        if form.is_valid():
+            prev = form.save(commit=False)
+            prev.created_by = user_match
+            prev.for_classroom = classoom_match
+            prev.save()
+            invitation_match = teacherInvitation.objects.get(id=prev.id)
+
+            invite_email = invitation_match.email
+
+            if invite_email:
+                try:
+                    message = Mail(
+                        from_email='welcome@classplanit.co',
+                        to_emails=invite_email,
+                        subject="You're Invited",
+                        html_content= get_template('dashboard/teacher_invite_email.html').render({'invitation_match': invitation_match}))
+                except:
+                    pass
+            try:
+                sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+                response = sg.send(message)
+                print(response.status_code)
+                print(response.body)
+                print(response.headers)
+            except Exception as e:
+                pass
+
+            return redirect('classroom_settings', user_id=user_match.id, classroom_id=class_id, view_ref='Teachers', confirmation=1)
+        else:
+            return redirect('classroom_list')
+    else:
+        return redirect('classroom_list')
+
 
 
 def JoinStudentToClassroom(request, invite_ref=None):
@@ -294,7 +335,7 @@ def ClassroomSettingsView(request, user_id=None, classroom_id=None, view_ref=Non
     classroom_profiles = classroom.objects.filter(main_teacher=user_profile)
     # the lessonObjective is a single lesson plan for one subject, one grade, in one classroom
     objective_matches = lessonObjective.objects.filter(lesson_classroom__in=classroom_profiles)
-    # gets the subjects and classrooms for the dropdown options
+    # gets the subjects and classrooms for the dropdown options and subjects display
     subject_results, classroom_results = get_subject_and_classroom(objective_matches)
     confirmation = int(confirmation)
     context = {'user_profile': user_profile, 'view_ref': view_ref, 'student_summary': student_summary, 'class_profile': class_profile,\

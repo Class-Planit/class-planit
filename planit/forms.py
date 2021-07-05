@@ -35,6 +35,13 @@ class  studentInvitationForm(forms.ModelForm):
         fields = '__all__'
 
 
+class  teacherInvitationForm(forms.ModelForm):
+
+    class Meta:
+        model = teacherInvitation
+        fields = '__all__'
+
+
 class  topicQuestionForm(forms.ModelForm):
 
     class Meta:
