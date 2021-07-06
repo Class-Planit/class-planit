@@ -42,3 +42,9 @@ def get_subject_and_classroom(objective_matches):
         if results not in classroom_results:
             classroom_results.append(results)
     return subject_results, classroom_results
+
+
+def get_standard_subjects(standards_set):
+    #get all the subjects from a standard
+    temp_standard_subjects = ['English', 'Social Studies', 'Algebra']
+    return temp_standard_subjects

@@ -93,7 +93,10 @@
                     <div class="container h-100 py-2">
                         <ul class="nav nav-tabs border-0" id="myTab" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link active border border-primary border-bottom-0" id="home-tab" data-toggle="tab" href="#edit" role="tab" aria-selected="true">Add Students</a>
+                                <a class="nav-link active border border-primary border-bottom-0" id="home-tab" data-toggle="tab" href="#edit" role="tab" aria-selected="true">Current Students</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link border border-primary border-bottom-0" id="home-tab" data-toggle="tab" href="#add" role="tab" aria-selected="false">Add Students</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link border border-primary border-bottom-0" id="profile-tab" data-toggle="tab" href="#pending" role="tab" aria-selected="false">Pending Students</a>
@@ -102,6 +105,27 @@
                     
                         <div class="tab-content h-75">
                             <div class="tab-pane h-100 p-3 active border border-primary" id="edit" role="tabpanel">
+                                <h2>&nbsp</h2>
+                                <h4 class="h6">Edit Current Students:</h4>
+                                <table class="table table-borderless table-sm">
+                                    <thead class="table-light">
+                                      <tr>
+                                        <th scope="col" class="h6">Student Name:</th>
+                                        <th scope="col"> </th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for student in class_profile.student.all %}
+                                            <tr>
+                                                <td>{{ student.first_name }} {{ student.last_name }}</td>
+                                            <!--what href to use for Remove functionality?-->
+                                            <td> <a href="#">Remove</a> </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                  </table>
+                            </div>
+                            <div class="tab-pane h-100 p-3 border border-primary" id="add" role="tabpanel">
                                 {% if confirmation == 1 %}
                                 <div class="card text-white bg-slack mb-3" style="max-width: 18rem;">
                                     <div class="card-body">
@@ -117,7 +141,7 @@
                                             <h5 class="card-title">Invite students to {{class_profile}}</h5>  
                                             <form  action="{% url 'add_student_to_classroom' user_id=user_profile.id class_id=class_profile.id %}" method="POST" enctype="multipart/form-data">
                                                 {% csrf_token %}
-                                                <label for="email">Enter student's first and last name:</label>
+                                                <label for="name">Enter student's first and last name:</label>
                                                 <div class="row">
                                                     <div class="col">
                                                     <input type="text" name='first_name' id='first_name' class="form-control" placeholder="First name">
@@ -126,6 +150,17 @@
                                                     <input type="text" name='last_name' id='last_name' class="form-control" placeholder="Last name">
                                                     </div>
                                                 </div>
+                                                <h3>&nbsp</h3>
+                                                <label for="name">Student's grade level:</label>
+                                                <div class="input-group mb-3">
+                                                    <select class="form-select" id="grade_level" placeholder="Choose">
+                                                        <option selected>Choose...</option>
+                                                        <option value="1">{{ class_profile.single_grade }}</option>
+                                                        {% for grade in class_profile.grade_level.all %}
+                                                            <option value="#">{{ grade }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                  </div>
                                                 <div class="form-group">
                                                     <label for="email">Enter student or guardian's email:</label>
                                                     <input type="email" class="form-control" id="email" name='email' placeholder="name@example.com">
@@ -161,54 +196,45 @@
                             </div>
                         </div>
                     </div>
-                    <h2 class="h5">&nbsp</h2>
-                    <h4 class="h6">Edit Current Students:</h4>
-                        <table class="table table-borderless table-sm">
-                            <thead class="table-light">
-                              <tr>
-                                <th scope="col" class="h6">Student Name:</th>
-                                <th scope="col"> </th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                <td>Mark Smith</td>
-                                <td> <a href="#">Remove</a> </td>
-                              </tr>
-                              <tr>
-                                <td>John Smith</td>
-                                <td> <a href="#">Remove</a> </td>
-                              </tr>
-                            </tbody>
-                          </table>
-                                <!--
-                                <p>John Doe</p>
-                                {% for student in class_profile.student.all %}
-                                    <p>{{ student.first_name }} {{ student.last_name }}</p>
-                                {% endfor %}
-                                -->
-                            
-                                <!--
-                                <a href="#">Remove</a> 
-                                {% for student in class_profile.student.all %}
-                                    <a href="link to remove student from classroom">Remove</a> 
-                                {% endfor %}
-                                -->
-
                 {% elif view_ref == 'Teachers' %}
                     <h2 class="h5">Teachers settings options</h2>
+
                     <div class="container h-100 py-2">
                         <ul class="nav nav-tabs border-0" id="myTab" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link active border border-primary border-bottom-0" id="home-tab" data-toggle="tab" href="#edit" role="tab" aria-selected="true">Add Teachers</a>
+                                <a class="nav-link active border border-primary border-bottom-0" id="home-tab" data-toggle="tab" href="#edit" role="tab" aria-selected="true">Current Teachers</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link border border-primary border-bottom-0" id="profile-tab" data-toggle="tab" href="#pending" role="tab" aria-selected="false">Pending Tachers</a>
+                                <a class="nav-link border border-primary border-bottom-0" id="home-tab" data-toggle="tab" href="#add" role="tab" aria-selected="false">Add Teachers</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link border border-primary border-bottom-0" id="profile-tab" data-toggle="tab" href="#pending" role="tab" aria-selected="false">Pending Teachers</a>
                             </li>
                         </ul>
                     
                         <div class="tab-content h-75">
                             <div class="tab-pane h-100 p-3 active border border-primary" id="edit" role="tabpanel">
+                                <h2>&nbsp</h2>
+                                <h4 class="h6">Edit Current Teachers:</h4>
+                                <table class="table table-borderless table-sm">
+                                    <thead class="table-light">
+                                    <tr>
+                                        <th scope="col" class="h6">Teacher Name:</th>
+                                        <th scope="col"> </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for teacher in class_profile.support_teachers.all %}
+                                            <tr>
+                                                <td>{{ teacher.first_name }} {{ teacher.last_name }}</td>
+                                            <!--what href to use for Remove functionality?-->
+                                            <td> <a href="#">Remove</a> </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="tab-pane h-100 p-3 border border-primary" id="add" role="tabpanel">
                                 {% if confirmation == 1 %}
                                 <div class="card text-white bg-slack mb-3" style="max-width: 18rem;">
                                     <div class="card-body">
@@ -224,7 +250,7 @@
                                             <h5 class="card-title">Invite teachers to {{class_profile}}</h5>  
                                             <form  action="{% url 'add_teacher_to_classroom' user_id=user_profile.id class_id=class_profile.id %}" method="POST" enctype="multipart/form-data">
                                                 {% csrf_token %}
-                                                <label for="email">Enter teacher's first and last name:</label>
+                                                <label for="name">Enter teacher's first and last name:</label>
                                                 <div class="row">
                                                     <div class="col">
                                                     <input type="text" name='first_name' id='first_name' class="form-control" placeholder="First name">
@@ -268,97 +294,150 @@
                             </div>
                         </div>
                     </div>
-                    <h2 class="h5">&nbsp</h2>
-                    <h4 class="h6">Edit Current Teachers:</h4>
-                        <table class="table table-borderless table-sm">
-                            <thead class="table-light">
-                            <tr>
-                                <th scope="col" class="h6">Teacher Name:</th>
-                                <th scope="col"> </th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                <td>Mark Smith</td>
-                                <td> <a href="#">Remove</a> </td>
-                            </tr>
-                            <tr>
-                                <td>John Smith</td>
-                                <td> <a href="#">Remove</a> </td>
-                            </tr>
-                            </tbody>
-                        </table>
-
                 {% elif view_ref == 'Subjects' %}
-                    <h2 class="h5">Teachers settings options</h2>
-                    <h4 class="h6">Edit Subjects:</h4>
-                    <table class="table table-borderless table-sm">
-                        <thead class="table-light">
-                        <tr>
-                            <th scope="col" class="h6">Current Subjects:</th>
-                            <th scope="col"> </th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                            <td>English</td>
-                            <td> <a href="#">Remove</a> </td>
-                        </tr>
-                        <tr>
-                            <td>Computer Science</td>
-                            <td> <a href="#">Remove</a> </td>
-                        </tr>                       
-                        </tbody>
-                    </table>
-                    <h2>&nbsp</h2>
-                    <table class="table table-borderless table-sm">
-                        <thead class="table-light">
-                        <tr>
-                            <th scope="col" class="h6">Current Subjects:</th>
-                            <th scope="col"> </th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                            <td>Science</td>
-                            <td> <a href="#">Add</a> </td>
-                        </tr>
-                        <tr>
-                            <td>Social Studies</td>
-                            <td> <a href="#">Add</a> </td>
-                        </tr>      
-                        <tr>
-                            <td>Other: (create your own subject)</td>
-                            <td> <a href="#">Add</a> </td>
-                        </tr>                  
-                        </tbody>
-                    </table>
+                    <h2 class="h5">Subjects settings options</h2>
+
+                    <div class="container h-100 py-2">
+                        <ul class="nav nav-tabs border-0" id="myTab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active border border-primary border-bottom-0" id="home-tab" data-toggle="tab" href="#edit" role="tab" aria-selected="true">Current Subjects</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link border border-primary border-bottom-0" id="home-tab" data-toggle="tab" href="#add" role="tab" aria-selected="false">Add Subjects</a>
+                            </li>
+                        </ul>
+                    
+                        <div class="tab-content h-75">
+                            <div class="tab-pane h-100 p-3 active border border-primary" id="edit" role="tabpanel">
+                                <h2>&nbsp</h2>
+                                <h4 class="h6">Edit Current Subjects:</h4>
+                                <table class="table table-borderless table-sm">
+                                    <thead class="table-light">
+                                    <tr>
+                                        <th scope="col" class="h6">Subject:</th>
+                                        <th scope="col"> </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for subject in class_profile.subjects.all %}
+                                            <tr>
+                                                <td>{{ subject.subject_title }}</td>
+                                            <!--what href to use for Remove functionality?-->
+                                            <td> <a href="#">Remove</a> </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="tab-pane h-100 p-3 border border-primary" id="add" role="tabpanel">
+                                <h2>&nbsp</h2>
+                                <h4 class="h6">Add Subjects:</h4>
+                                <table class="table table-borderless table-sm">
+                                    <thead class="table-light">
+                                    <tr>
+                                        <th scope="col" class="h6">Subject:</th>
+                                        <th scope="col"> </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for subject in subject_list %}
+                                            {% if subject not in current_subjects.all %}
+                                                <tr>
+                                                    <td>{{ subject }}</td>
+                                                <!--what href to use for Add functionality?-->
+                                                <td> <a href="#">Add</a> </td>
+                                                </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                        <tr>
+                                            <td>Other...</td>
+                                            <!--what href to use for Add functionality?-->
+                                            <td> <a href="#">Add</a> </td>
+                                        </tr>
+                                        <!--
+                                            GET STANDARD SUBJECTS FOR THE STANDARDS THE TEAHCER IS USING
+                                        {% for subject in class_profile.standards_set.all %}
+                                            <tr>
+                                                <td>{{ subject.subject_title }}</td>
+                                            what href to use for Remove functionality?
+                                            <td> <a href="#">Remove</a> </td>
+                                            </tr>
+                                        {% endfor %}
+                                        -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
 
                 {% elif view_ref == 'Grade-Levels' %}
                     <h2 class="h5">Grade Levels settings options</h2>
-                    <h4 class="h6">Edit Grade Levels:</h4>
-                    <table class="table table-borderless table-sm">
-                        <thead class="table-light">
-                        <tr>
-                            <th scope="col" class="h6">Grade Level:</th>
-                            <th scope="col"> </th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                            <td>First</td>
-                            <td> <a href="#">Remove</a> </td>
-                        </tr>
-                        <tr>
-                            <td>Second</td>
-                            <td> <a href="#">Remove</a> </td>
-                        </tr>
-                        <tr>
-                            <td>Third</td>
-                            <td> <a href="#">Add</a> </td>
-                        </tr>
-                        </tbody>
-                    </table>
+                    <div class="container h-100 py-2">
+                        <ul class="nav nav-tabs border-0" id="myTab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active border border-primary border-bottom-0" id="home-tab" data-toggle="tab" href="#edit" role="tab" aria-selected="true">Current Grade Levels</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link border border-primary border-bottom-0" id="home-tab" data-toggle="tab" href="#add" role="tab" aria-selected="false">Add Grade Levels</a>
+                            </li>
+                        </ul>
+                    
+                        <div class="tab-content h-75">
+                            <div class="tab-pane h-100 p-3 active border border-primary" id="edit" role="tabpanel">
+                                <h2>&nbsp</h2>
+                                <h4 class="h6">Edit Current Grade Levels:</h4>
+                                <table class="table table-borderless table-sm">
+                                    <thead class="table-light">
+                                    <tr>
+                                        <th scope="col" class="h6">Grade Level:</th>
+                                        <th scope="col"> </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>{{ class_profile.single_grade }} 
+                                                <a href="#" data-toggle="tooltip" title="The grade that is primarily taught in the classroom">(default grade)</a>
+                                            </td>
+                                            <td> <a href="#">Change</a> </td>
+                                        </tr>
+                                        {% for grade in class_profile.grade_level.all %}
+                                            {% if grade != class_profile.single_grade %}
+                                                <tr>
+                                                    <td>{{ grade }}</td>
+                                                <!--what href to use for Remove functionality?-->
+                                                <td> <a href="#">Remove</a> </td>
+                                                </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="tab-pane h-100 p-3 border border-primary" id="add" role="tabpanel">
+                                <h2>&nbsp</h2>
+                                <h4 class="h6">Add Grade Levels:</h4>
+                                <table class="table table-borderless table-sm">
+                                    <thead class="table-light">
+                                    <tr>
+                                        <th scope="col" class="h6">Grade Level:</th>
+                                        <th scope="col"> </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for grade in grade_list %}
+                                            {% if grade not in current_grade_levels.all and grade != class_profile.single_grade %}
+                                                <tr>
+                                                    <td>{{ grade }}</td>
+                                                <!--what href to use for Add functionality?-->
+                                                <td> <a href="#">Add</a> </td>
+                                                </tr>
+                                            {% endif %}    
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
                 {% elif view_ref == 'Classroom-Title' %}
                     <h2 class="h5">Classroom Title settings options</h2>
                 {% else %}
