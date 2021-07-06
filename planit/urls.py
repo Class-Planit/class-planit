@@ -95,6 +95,10 @@ urlpatterns = [
     url(r'^add-student-to-classroom/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/',
         view=AddStudentToClassroom,
         name='add_student_to_classroom'),
+        
+    url(r'^add-teacher-to-classroom/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/',
+        view=AddTeacherToClassroom,
+        name='add_teacher_to_classroom'),
 
     url(r'^create_objective/(?P<user_id>[\w\s]+)/(?P<week_of>[\w\s]+)/',
         view=CreateObjective,
