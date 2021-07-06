@@ -153,11 +153,13 @@
                                                 <h3>&nbsp</h3>
                                                 <label for="name">Student's grade level:</label>
                                                 <div class="input-group mb-3">
-                                                    <select class="form-select" id="grade_level" placeholder="Choose">
+                                                    <select class="form-select" id="grade_level">
                                                         <option selected>Choose...</option>
                                                         <option value="1">{{ class_profile.single_grade }}</option>
                                                         {% for grade in class_profile.grade_level.all %}
+                                                            {% if grade != class_profile.single_grade %}
                                                             <option value="#">{{ grade }}</option>
+                                                            {% endif %}
                                                         {% endfor %}
                                                     </select>
                                                   </div>

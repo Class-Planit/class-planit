@@ -233,20 +233,20 @@ def ClassroomLists(request):
 
     return render(request, 'dashboard/classroom_list.html', {'user_profile': user_profile, 'grade_list': grade_list, 'form': form, 'class_summary': class_summary, 'page': page})
 
-def AddStudentToClassroom(request, user_id=None, class_id=None):
+def AddStudentToClassroom(request, user_id=None, class_id=None, grade_level=None):
     user_match = User.objects.get(id=user_id)
-    classoom_match = classroom.objects.get(id=class_id)
+    classroom_match = classroom.objects.get(id=class_id)
 
     if request.method == "POST":
         form = studentInvitationForm(request.POST, request.FILES)
         if form.is_valid():
             prev = form.save(commit=False)
             prev.created_by = user_match
-            prev.for_classroom = classoom_match
+            prev.for_classroom = classroom_match
             student_fname = prev.first_name
             student_lname = prev.last_name
-            student_glevel = grade_level
-            #create student then add student to the classroom
+            new_student = studentProfiles.objects.create(first_name= student_fname, last_name= student_lname, current_grade_level= grade_level , is_enrolled= True )
+            update_classroom = classroom_match.student.add(new_student)
             prev.save()
             invitation_match = studentInvitation.objects.get(id=prev.id)
 
