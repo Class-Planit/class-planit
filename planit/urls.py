@@ -92,7 +92,7 @@ urlpatterns = [
         view=ClassroomSettingsView,
         name='classroom_settings'),
 
-    url(r'^add-student-to-classroom/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/',
+    url(r'^add-student-to-classroom/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<invite_id>[\w-]+)/',
         view=AddStudentToClassroom,
         name='add_student_to_classroom'),
         
