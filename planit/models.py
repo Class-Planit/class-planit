@@ -251,7 +251,10 @@ class studentInvitation(models.Model):
                                on_delete=models.CASCADE,
                                blank=True,
                                null=True)
-    
+    student_profile = models.ForeignKey(studentProfiles,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True)
 
     def save(self, *args, **kwargs):
         # This to check if it creates a new or updates an old instance

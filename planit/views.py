@@ -233,16 +233,20 @@ def ClassroomLists(request):
 
     return render(request, 'dashboard/classroom_list.html', {'user_profile': user_profile, 'grade_list': grade_list, 'form': form, 'class_summary': class_summary, 'page': page})
 
-def AddStudentToClassroom(request, user_id=None, class_id=None):
+def AddStudentToClassroom(request, user_id=None, class_id=None, grade_level=None):
     user_match = User.objects.get(id=user_id)
-    classoom_match = classroom.objects.get(id=class_id)
+    classroom_match = classroom.objects.get(id=class_id)
 
     if request.method == "POST":
         form = studentInvitationForm(request.POST, request.FILES)
         if form.is_valid():
             prev = form.save(commit=False)
             prev.created_by = user_match
-            prev.for_classroom = classoom_match
+            prev.for_classroom = classroom_match
+            student_fname = prev.first_name
+            student_lname = prev.last_name
+            new_student = studentProfiles.objects.create(first_name= student_fname, last_name= student_lname, current_grade_level= grade_level , is_enrolled= True )
+            update_classroom = classroom_match.student.add(new_student)
             prev.save()
             invitation_match = studentInvitation.objects.get(id=prev.id)
 
@@ -330,6 +334,13 @@ def ClassroomSettingsView(request, user_id=None, classroom_id=None, view_ref=Non
     user_profile = User.objects.filter(username=request.user.username).first()
     class_profile = classroom.objects.get(id=classroom_id)
     student_summary = get_classroom_list_summary(user_profile.id, current_year, classroom_id)
+    #get all of the standard subjects from the standards set 
+    subject_list = standardSubjects.objects.filter(standards_set=class_profile.standards_set)
+    current_subjects = class_profile.subjects
+
+    #get all grade levels from standards set
+    grade_list = gradeLevel.objects.filter(standards_set=class_profile.standards_set).order_by('grade')
+    current_grade_levels = class_profile.grade_level
 
     #gets the classrooms teachers are main teacher on 
     classroom_profiles = classroom.objects.filter(main_teacher=user_profile)
@@ -339,7 +350,8 @@ def ClassroomSettingsView(request, user_id=None, classroom_id=None, view_ref=Non
     subject_results, classroom_results = get_subject_and_classroom(objective_matches)
     confirmation = int(confirmation)
     context = {'user_profile': user_profile, 'view_ref': view_ref, 'student_summary': student_summary, 'class_profile': class_profile,\
-               'subject_results': subject_results, 'classroom_results': classroom_results, 'confirmation': confirmation}
+               'subject_results': subject_results, 'classroom_results': classroom_results, 'confirmation': confirmation, \
+               'subject_list': subject_list, 'current_subjects': current_subjects, 'grade_list': grade_list, 'current_grade_levels': current_grade_levels}
     return render(request, 'dashboard/classrooms_settings.html', context)
 
 
