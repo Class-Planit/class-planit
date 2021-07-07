@@ -38,7 +38,7 @@ urlpatterns = [
         view=StudentMainDashboard,
         name='student_main'),
 
-    url(r'^student-registration/(?P<lesson_id>[\w\s]+)/(?P<worksheet_id>[\w\s]+)/',
+    url(r'^student-registration/(?P<ref_id>[\w\s]+)/(?P<lesson_id>[\w\s]+)/(?P<worksheet_id>[\w\s]+)/',
         view=StudentRegistration,
         name='student_registration'),
 

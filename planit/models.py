@@ -255,6 +255,7 @@ class studentInvitation(models.Model):
                                on_delete=models.CASCADE,
                                blank=True,
                                null=True)
+    is_pending = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
         # This to check if it creates a new or updates an old instance
@@ -286,6 +287,7 @@ class teacherInvitation(models.Model):
                                on_delete=models.CASCADE,
                                blank=True,
                                null=True)
+    is_pending = models.BooleanField(default=True)
     
 
     def save(self, *args, **kwargs):

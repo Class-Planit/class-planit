@@ -747,35 +747,60 @@ def StudentMainDashboard(request, user_id=None, lesson_id=None, worksheet_id=Non
 
 
 #student registration 
-def StudentRegistration(request, lesson_id=None, worksheet_id=None):
-    current_year = datetime.datetime.now().year
+def StudentRegistration(request, ref_id=None, lesson_id=None, worksheet_id=None):
+    if len(ref_id) < 7:
+        current_year = datetime.datetime.now().year
 
-    worksheet_match = worksheetFull.objects.get(id=worksheet_id)
-    lesson_match = lessonObjective.objects.get(id=lesson_id)
-    l_classroom = lesson_match.lesson_classroom_id
-    class_match = classroom.objects.get(id=l_classroom)
-    classroom_list, created = classroomLists.objects.get_or_create(lesson_classroom=class_match, year=current_year)
+        worksheet_match = worksheetFull.objects.get(id=worksheet_id)
+        lesson_match = lessonObjective.objects.get(id=lesson_id)
+        l_classroom = lesson_match.lesson_classroom_id
+        class_match = classroom.objects.get(id=l_classroom)
+        classroom_list, created = classroomLists.objects.get_or_create(lesson_classroom=class_match, year=current_year)
 
-    if request.method == "POST":
-        form = StudentForm(request.POST, request.FILES)
+        if request.method == "POST":
+            form = StudentForm(request.POST, request.FILES)
 
-        if form.is_valid():
-            form.save()
-            first_name = form.cleaned_data.get('first_name')
-            last_name = form.cleaned_data.get('last_name')
-            username = form.cleaned_data.get('username')
-            raw_password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=raw_password)
-            user_id = user.id
-            create_student, created = studentProfiles.objects.get_or_create(first_name = first_name, last_name = last_name, is_enrolled =True, student_username = user)
-            classroom_list.students.add(create_student)
-            if user is not None:
-                login(request, user)
+            if form.is_valid():
+                form.save()
+                first_name = form.cleaned_data.get('first_name')
+                last_name = form.cleaned_data.get('last_name')
+                username = form.cleaned_data.get('username')
+                raw_password = form.cleaned_data.get('password1')
+                user = authenticate(username=username, password=raw_password)
+                user_id = user.id
+                create_student, created = studentProfiles.objects.get_or_create(first_name = first_name, last_name = last_name, is_enrolled =True, student_username = user)
+                classroom_list.students.add(create_student)
+                if user is not None:
+                    login(request, user)
 
-            return redirect('student_dashboard', lesson_id=lesson_id, worksheet_id=worksheet_id, question_id=0)
+                return redirect('student_dashboard', lesson_id=lesson_id, worksheet_id=worksheet_id, question_id=0)
+            else:
+                return redirect('student_dashboard', lesson_id=lesson_id, worksheet_id=worksheet_id, question_id=0)
+    else:
+        invite_match = studentInvitation.objects.get(invite_ref=ref_id)
+        student_match = studentProfile.objects.get(id=invite_match.student_profile_id)
+        if request.method == "POST":
+            form = StudentForm(request.POST, request.FILES)
+
+            if form.is_valid():
+                form.save()
+                first_name = form.cleaned_data.get('first_name')
+                last_name = form.cleaned_data.get('last_name')
+                username = form.cleaned_data.get('username')
+                raw_password = form.cleaned_data.get('password1')
+                user = authenticate(username=username, password=raw_password)
+                user_id = user.id
+                student_match.student_username = user
+                student_match.save()
+                invite_match.is_pending = False
+                invite_match.save()
+                if user is not None:
+                    login(request, user)
+                return redirect('student_main', user_id=user_id)
         else:
-            return redirect('student_dashboard', lesson_id=lesson_id, worksheet_id=worksheet_id, question_id=0)
-    
+            form = StudentForm()
+            return render(request, 'dashboard/sign-in.html', {'form': form})
+
 
 #User Login 
 def StudentLogin(request, lesson_id=None, worksheet_id=None):
