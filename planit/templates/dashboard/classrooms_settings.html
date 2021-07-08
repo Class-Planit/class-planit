@@ -218,6 +218,7 @@
                                     <thead class="table-light">
                                       <tr>
                                         <th scope="col" class="h6">Teacher Name:</th>
+                                        <th scope="col" class="h6">Email</th>
                                         <th scope="col" class="h6">Reference</th>
                                         <th scope="col" class="h6">Reinvite or Remove</th>
                                       </tr>
@@ -225,11 +226,12 @@
                                     <tbody>
                                         {% for teacher in teacher_list %}
                                             <tr>
-                                                <td>First Last</td>
+                                                <td>{{ teacher.t_first }} {{ teacher.t_last }}</td>
+                                                <td>{{ teacher.email }}</td>
                                             <!--what href to use for Remove functionality?-->
-                                            {% if student.username == None %}
-                                                <td> ref:  </td>
-                                                <td> <a href="#">Resend invite</a> </td>
+                                            {% if teacher.teacher_invite != None %}
+                                                <td> ref: {{ teacher.teacher_invite.invite_ref }} </td>
+                                                <td> <a href="{% url 'add_teacher_to_classroom' user_id=user_profile.id class_id=class_profile.id invite_id=teacher.teacher_invite.id %}">Resend invite</a> </td>
                                             {% else %}
                                                 <td> </td>
                                                 <td> <a href="#">Remove</a> </td>
@@ -253,7 +255,7 @@
                                     <div class="card border-light shadow-sm">
                                         <div class="card-body flex-row align-items-center flex-0 border-bottom">
                                             <h5 class="card-title">Invite teachers to {{class_profile}}</h5>  
-                                            <form  action="{% url 'add_teacher_to_classroom' user_id=user_profile.id class_id=class_profile.id %}" method="POST" enctype="multipart/form-data">
+                                            <form  action="{% url 'add_teacher_to_classroom' user_id=user_profile.id class_id=class_profile.id invite_id=0 %}" method="POST" enctype="multipart/form-data">
                                                 {% csrf_token %}
                                                 <label for="name">Enter teacher's first and last name:</label>
                                                 <div class="row">
@@ -274,28 +276,6 @@
                                         </div>
                                     </div>
                                 {% endif %}
-                            </div>
-                            <div class="tab-pane h-100 p-3 border border-primary" id="pending" role="tabpanel">
-                                <h2>&nbsp</h2>
-                                <h4 class="h6">Pending Teachers:</h4>
-                                <table class="table table-borderless table-sm">
-                                    <thead class="table-light">
-                                    <tr>
-                                        <th scope="col" class="h6">Teacher Name:</th>
-                                        <th scope="col"> </th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                        <td>Lucy Smith</td>
-                                        <td> <a href="#">Resend</a> </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Lilly Smith</td>
-                                        <td> <a href="#">Resend</a> </td>
-                                    </tr>
-                                    </tbody>
-                            </table>
                             </div>
                         </div>
                     </div>
@@ -328,7 +308,7 @@
                                             <tr>
                                                 <td>{{ subject.subject_title }}</td>
                                             <!--what href to use for Remove functionality?-->
-                                            <td> <a href="#">Remove from classroom</a> </td>
+                                            <td> <a href="{% url 'edit_classroom_subjects' user_id=user_profile.id class_id=class_profile.id subject_id=subject.id action=1 %}">Remove from classroom</a> </td>
                                             </tr>
                                         {% endfor %}
                                     </tbody>
@@ -350,7 +330,7 @@
                                                 <tr>
                                                     <td>{{ subject }}</td>
                                                 <!--what href to use for Add functionality?-->
-                                                <td> <a href="#">Add to classroom</a> </td>
+                                                <td> <a href="{% url 'edit_classroom_subjects' user_id=user_profile.id class_id=class_profile.id subject_id=subject.id action=0 %}">Add to classroom</a> </td>
                                                 </tr>
                                             {% endif %}
                                         {% endfor %}
@@ -359,16 +339,6 @@
                                             <!--what href to use for Add functionality?-->
                                             <td> <a href="#">Add to classroom</a> </td>
                                         </tr>
-                                        <!--
-                                            GET STANDARD SUBJECTS FOR THE STANDARDS THE TEAHCER IS USING
-                                        {% for subject in class_profile.standards_set.all %}
-                                            <tr>
-                                                <td>{{ subject.subject_title }}</td>
-                                            what href to use for Remove functionality?
-                                            <td> <a href="#">Remove</a> </td>
-                                            </tr>
-                                        {% endfor %}
-                                        -->
                                     </tbody>
                                 </table>
                             </div>
@@ -396,6 +366,7 @@
                                     <tr>
                                         <th scope="col" class="h6">Grade Level:</th>
                                         <th scope="col"> </th>
+                                        <th scope="col"> </th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -403,14 +374,16 @@
                                             <td>{{ class_profile.single_grade }} 
                                                 <a href="#" data-toggle="tooltip" title="The grade that is primarily taught in the classroom">(default grade)</a>
                                             </td>
-                                            <td> <a href="#">Change to another subject</a> </td>
+                                            <td> <a href="#" data-toggle="tooltip" title="Cannot remove default grade"><span style="color: #858585 ">Remove</span></a></td>
+                                            <td> </td>
                                         </tr>
                                         {% for grade in class_profile.grade_level.all %}
                                             {% if grade != class_profile.single_grade %}
                                                 <tr>
                                                     <td>{{ grade }}</td>
                                                 <!--what href to use for Remove functionality?-->
-                                                <td> <a href="#">Remove from classroom</a> </td>
+                                                <td> <a href="{% url 'edit_classroom_grade_levels' user_id=user_profile.id class_id=class_profile.id grade_level_id=grade.id action=1 %}">Remove </a> </td>
+                                                <td> <a href="{% url 'edit_classroom_grade_levels' user_id=user_profile.id class_id=class_profile.id grade_level_id=grade.id action=2 %}">Make default </a> </td>
                                                 </tr>
                                             {% endif %}
                                         {% endfor %}
@@ -432,8 +405,7 @@
                                             {% if grade not in current_grade_levels.all and grade != class_profile.single_grade %}
                                                 <tr>
                                                     <td>{{ grade }}</td>
-                                                <!--what href to use for Add functionality?-->
-                                                <td> <a href="#">Add</a> </td>
+                                                <td> <a href="{% url 'edit_classroom_grade_levels' user_id=user_profile.id class_id=class_profile.id grade_level_id=grade.id action=0 %}">Add</a> </td>
                                                 </tr>
                                             {% endif %}    
                                         {% endfor %}
@@ -450,9 +422,43 @@
                 {% endif %}
             </div>
             <div class="col-md-4">
-                
+            
+                <div id="accordion">
+                    <div class="card text-center">
+                      <div class="card-title">
+                        <h5>
+                            <button class="btn btn-secondary dropdown-toggle btn-block" data-toggle="collapse" data-target="#collapseOne">
+                                Manage Members <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </h5>
+                      </div>
+                      <div id="collapseOne" class="collapse" data-parent="#accordion">
+                        <div class="card-text">
+                            <p><a href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Students' confirmation=0 %}">Students</a></p>
+                            <p><a href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Teachers' confirmation=0 %}">Teachers</a></p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card text-center">
+                        <div class="card-title">
+                          <h5>
+                            <button class="btn btn-secondary btn-block" data-toggle="collapse" data-target="#collapseTwo">
+                                Classroom Aspects <i class="fas fa-chevron-down"></i>
+                            </button>
+                          </h5>
+                        </div>
+                        <div id="collapseTwo" class="collapse" data-parent="#accordion">
+                          <div class="card-text">
+                                <p><a href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Classroom-Title' confirmation=0 %}">Classroom Title</a></p>
+                                <p><a href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Subjects' confirmation=0 %}">Subjects</a></p>
+                                <p><a href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Grade-Levels' confirmation=0 %}">Grade Levels</a></p>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <!--
                 <div class="dropdown">
-                    <button class="btn btn-outline-secondary dropdown-toggle border-white btn-block" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button class="btn btn-outline-secondary dropdown-toggle btn-block" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Manage members <i class="fas fa-chevron-down"></i>
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -461,16 +467,16 @@
                     </div>
                 </div>
                 <div class="dropdown">
-                    <button class="btn btn-outline-secondary dropdown-toggle border-white btn-block" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button class="btn btn-outline-secondary dropdown-toggle btn-block" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Update class aspects <i class="fas fa-chevron-down"></i>
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Classroom-Title' confirmation=0 %}">Edit classroom title</a>
-                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Subjects' confirmation=0 %}">Edit subjects</a>
-                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Grade-Levels' confirmation=0 %}">Edit grade levels</a>
+                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Classroom-Title' confirmation=0 %}">Classroom Title</a>
+                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Subjects' confirmation=0 %}">Subjects</a>
+                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Grade-Levels' confirmation=0 %}">Grade Levels</a>
                     </div>
                 </div>
-                
+                -->
             </div>
         </div>
     </div>     
