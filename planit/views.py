@@ -168,7 +168,7 @@ def login_user(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('Dashboard', week_of='Current', subject_id='All', class_id='All')
+            return redirect('Dashboard', week_of='Current', subject_id='All', classroom_id='All')
         else:
             pass
   
@@ -300,7 +300,7 @@ def AddStudentToClassroom(request, user_id=None, class_id=None, invite_id=None):
         except Exception as e:
             pass
 
-        return redirect('classroom_settings', user_id=user_match.id, classroom_id=class_id, view_ref='Teachers', confirmation=2)
+        return redirect('classroom_settings', user_id=user_match.id, classroom_id=class_id, view_ref='Students', confirmation=2)
 
 
 def AddTeacherToClassroom(request, user_id=None, class_id=None, invite_id=None):
