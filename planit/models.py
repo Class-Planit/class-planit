@@ -241,6 +241,10 @@ class studentInvitation(models.Model):
     last_name = models.CharField(max_length=50,
                                  blank=True,
                                  null=True)
+    grade_level = models.ForeignKey(gradeLevel,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True)
     email = models.EmailField(blank=True,
                               null=True)
     for_classroom = models.ForeignKey(classroom,
