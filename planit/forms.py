@@ -13,7 +13,8 @@ from phonenumber_field.formfields import PhoneNumberField
 from tinymce.widgets import TinyMCE
 
 
-
+class teacherSubjectForm(forms.Form):
+    subject_title = forms.CharField()
 
 class  lessonTextForm(forms.ModelForm):
 

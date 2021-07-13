@@ -328,6 +328,7 @@
                                             <td> <a href="#">Remove</a> </td>
                                             </tr>
                                         {% endfor %}
+                                     
                                     </tbody>
                                 </table>
                             </div>
@@ -352,9 +353,24 @@
                                             {% endif %}
                                         {% endfor %}
                                         <tr>
-                                            <td>Other...</td>
+                                          
+                                            
+                                            <td>
+
+                                            <button id='showAddSubject' onclick="showDivForm()">Add New Subject...</button>
+                                            <div id='showForm'  style="display:none;">
+                                                <form method="post">
+                                                    {% csrf_token %}
+                                                    {{ form.as_p }}
+                                                    <input type="submit" value="Add" class="btn btn-info">
+                                                </form>
+                                               
+                                            </div>
+                                            </td>
+                                            
+                                           
                                             <!--what href to use for Add functionality?-->
-                                            <td> <a href="#">Add</a> </td>
+                                            
                                         </tr>
                                         <!--
                                             GET STANDARD SUBJECTS FOR THE STANDARDS THE TEAHCER IS USING

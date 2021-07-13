@@ -332,16 +332,23 @@ def ClassroomDashboard(request, user_id=None, class_id=None):
 def ClassroomSettingsView(request, user_id=None, classroom_id=None, view_ref=None, confirmation=None): 
     current_year = datetime.datetime.now().year
     user_profile = User.objects.filter(username=request.user.username).first()
+    school_user_match = school_user.objects.filter(user=user_profile.id).first()
+    if school_user_match.standards_set:
+        standard_set_match = school_user_match.standards_set
+    else:
+        standard_set_match = standardSet.objects.filter(Location='Texas Teks').first()
+
     class_profile = classroom.objects.get(id=classroom_id)
     student_summary = get_classroom_list_summary(user_profile.id, current_year, classroom_id)
     #get all of the standard subjects from the standards set 
-    subject_list = standardSubjects.objects.filter(standards_set=class_profile.standards_set)
+    subject_list = standardSubjects.objects.filter(standards_set=class_profile.standards_set).filter(Q(is_admin=True) | Q(created_by=user_profile))
     current_subjects = class_profile.subjects
 
     #get all grade levels from standards set
     grade_list = gradeLevel.objects.filter(standards_set=class_profile.standards_set).order_by('grade')
     current_grade_levels = class_profile.grade_level
-
+    current_grade_level_list = gradeLevel.objects.filter(id__in=current_grade_levels.all()).order_by('grade')
+    default_grade = class_profile.single_grade
     #gets the classrooms teachers are main teacher on 
     classroom_profiles = classroom.objects.filter(main_teacher=user_profile)
     # the lessonObjective is a single lesson plan for one subject, one grade, in one classroom
@@ -349,7 +356,22 @@ def ClassroomSettingsView(request, user_id=None, classroom_id=None, view_ref=Non
     # gets the subjects and classrooms for the dropdown options and subjects display
     subject_results, classroom_results = get_subject_and_classroom(objective_matches)
     confirmation = int(confirmation)
-    context = {'user_profile': user_profile, 'view_ref': view_ref, 'student_summary': student_summary, 'class_profile': class_profile,\
+
+    if request.method == "POST":
+        form = teacherSubjectForm(request.POST, request.FILES)
+        if form.is_valid():
+            subject_title = form.cleaned_data.get('subject_title')
+            new_subject = standardSubjects.objects.create(subject_title=subject_title, standards_set=standard_set_match, created_by=user_profile, is_admin=False)
+            single_grade = new_subject.grade_level.add(default_grade)
+            for grade in current_grade_level_list:
+                new_subject.grade_level.add(grade)
+            update_subject = class_profile.subjects.add(new_subject)
+            return redirect('classroom_settings', user_id=user_profile.id, classroom_id=class_profile.id, view_ref='Subjects', confirmation=0)
+    else:
+        form = teacherSubjectForm()
+
+    
+    context = {'user_profile': user_profile, 'form': form, 'view_ref': view_ref, 'student_summary': student_summary, 'class_profile': class_profile,\
                'subject_results': subject_results, 'classroom_results': classroom_results, 'confirmation': confirmation, \
                'subject_list': subject_list, 'current_subjects': current_subjects, 'grade_list': grade_list, 'current_grade_levels': current_grade_levels}
     return render(request, 'dashboard/classrooms_settings.html', context)
