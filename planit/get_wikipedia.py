@@ -25,15 +25,55 @@ from collections import Counter
 #test comment 
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
-
+import random
 wikipedia.set_rate_limiting(True)
 count_vect = CountVectorizer()
 from nltk.corpus import stopwords
 stop_words = stopwords.words('english')
-
+import wikipediaapi
+wiki_wiki = wikipediaapi.Wikipedia('en')
 stop_words.extend(['The', 'students', 'learn'])
 
 stop_words = ['i', "'", "'" '!', '.', ':', ',', '[', ']', '(', ')', '?', "'see", "see", 'x', '...',  'student', 'learn', 'objective', 'students', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', "you're", "you've", "you'll", "you'd", 'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', "she's", 'her', 'hers', 'herself', 'it', "it's", 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', "that'll", 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', "don't", 'should', "should've", 'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 'aren', "aren't", 'couldn', "couldn't", 'didn', "didn't", 'doesn', "doesn't", 'hadn', "hadn't", 'hasn', "hasn't", 'haven', "haven't", 'isn', "isn't", 'ma', 'mightn', "mightn't", 'mustn', "mustn't", 'needn', "needn't", 'shan', "shan't", 'shouldn', "shouldn't", 'wasn', "wasn't", 'weren', "weren't", 'won', "won't", 'wouldn', "wouldn't"]
+
+def get_pdf_sent(full_results):
+    full_sent_list = []
+    text_list_join = ''.join([str(i) for i in full_results])
+    results = tokenize.sent_tokenize(text_list_join)
+
+    for sent in results:
+        sent = ' '.join(sent.split())
+        is_verb = False
+        is_noun = False
+        is_long = False
+        sent = sent.replace('|', ' ')
+        sent_blob = TextBlob(sent)
+        sent_tagger = sent_blob.pos_tags
+        for y in sent_tagger:
+            if len(y[1]) > 2:
+                is_long = True
+        for y in sent_tagger:
+            if 'V' in y[1]:
+                is_verb = True
+        for y in sent_tagger:
+            if 'NNP' in y[1]:
+                is_noun = True
+            elif 'NNPS' in y[1]:
+                is_noun = True
+        remove_list = ['cite', 'index', 'special', 'Special', 'Category:', '/', 'File', 'Wikipedia:', 'Main_Page', 'Help:', '#', 'United_States', 'Overweight', 'Talk:']
+        results = []
+        if is_verb and is_noun and is_long:
+            sent = re.sub(r'\(.*\)', '', sent)
+            sent = re.sub('Chapter', '', sent)
+            sent = re.sub('Rule Britannia!', '', sent)
+            sent = re.sub('Description', '', sent)
+            if any(word in sent for word in remove_list):
+                pass
+            else:
+                if sent not in full_sent_list:
+                    full_sent_list.append(sent)
+    
+    return(full_sent_list)
 
 def get_description_string(topic_id, user_id):
     user_profile = User.objects.get(id=user_id)
@@ -59,7 +99,8 @@ def check_topic_relevance(text, lesson_id):
     class_objectives_list = str(class_objectives.teacher_objective)
 
     Document1 = class_objectives_list
-    Document2 = text
+    Document2 = '%s %s' % (text[0], text[1])
+
     corpus = [Document1,Document2]
     X_train_counts = count_vect.fit_transform(corpus)
     vectorizer = TfidfVectorizer()
@@ -83,7 +124,7 @@ def check_topic_wiki_relevance(text, topic_id):
     desc_full = '; '.join(result_list)
 
     Document1 = desc_full
-    Document2 = text
+    Document2 = '%s %s' % (text[0], text[1])
     
     corpus = [Document1,Document2]
     X_train_counts = count_vect.fit_transform(corpus)
@@ -243,7 +284,7 @@ def get_wiki_full(title, lesson_id, topic_id):
         link_list = []
         for link in soup.find_all("a"):
             term = link.string
-            print(term)
+
             url = link.get("href", "")
             results = url.replace('/wiki/', '') 
             remove_list = ['cite', 'index', 'special', 'Special', 'Category:', '/', 'File', 'Wikipedia:', 'Main_Page', 'Help:', '#', 'United_States', 'Overweight', 'Talk:']
@@ -255,9 +296,7 @@ def get_wiki_full(title, lesson_id, topic_id):
 
         wiki_titles = []
         
-        print('#################')
-        print(link_list[:10])
-        print('#################')
+
         for sentence in link_list[:10]:
                 try:
                     wiki_search = wikipedia.page(sentence)
@@ -272,7 +311,7 @@ def get_wiki_full(title, lesson_id, topic_id):
                 try:
                     topic_result = wikipedia.summary(wiki_title.title, sentences = 3, auto_suggest=False, redirect=True)
                     
-                    result = check_topic_wiki_relevance(topic_result, topic_id)
+                    result = check_topic_wiki_relevance(topic_result, lesson_id)
                     
                     if result >= .20:
                        
@@ -284,67 +323,123 @@ def get_wiki_full(title, lesson_id, topic_id):
             
         return(wiki_list)
 
-def wiki_results(lesson_id, user_id, standards_nouns):
-    class_objectives = lessonObjective.objects.get(id=lesson_id)
-    m_activities = selectedActivity.objects.filter(lesson_overview=class_objectives, is_selected=True)
-    m_wording = []
-    for item in m_activities:
-        wording = item.lesson_text
-        m_wording.append(wording)
-
-    act_wording = ' '.join(m_wording)
+def get_wiki_term_summary(search_item, wiki_title):
+    topic_result = wiki_title.summary[:500]
+    strip_sent = tokenize.sent_tokenize(topic_result)
+    topic_r = ' '.join(strip_sent[:2])
+    search_t = search_item.title()
+    term = search_t, topic_r
     
-    topic_matches = class_objectives.objectives_topics.all()
-    topics = topicInformation.objects.filter(id__in=topic_matches)
-    search_sentences = []
-    for topic in topics:
-            term = topic.item
-            description_match = get_description_string(topic.id, user_id)
-
-            search_sentences.append(description_match)
+    return(term)
 
 
-    search_wording = ' '.join(search_sentences)
-    class_objectives_list = str(class_objectives.teacher_objective) + ', ' + str(act_wording) + ', ' + str(search_wording)
-
-
+def wiki_results(lesson_id, user_id, standards_nouns):
+    final_terms = []
     wiki_titles = []
 
-    for search in standards_nouns:
-        wiki_search = wikipedia.search(search)
-        for r_search in wiki_search:
-           
-            if r_search not in wiki_titles:
-                wiki_titles.append(r_search)
+    remove_list = ['cite', 'index', 'special', 'Special', 'Category:', '/', 'File', 'Wikipedia:', 'Main_Page', 'Help:', '#', 'United_States', 'Overweight', 'Talk:']
+    
+    for search_item in standards_nouns:
+        wiki_search = wiki_wiki.page(str(search_item))
+        if wiki_search.exists():
+            r_search = wiki_search.fullurl
+            wiki_t = r_search, search_item
+            w_summary = get_wiki_term_summary(search_item, wiki_search)
+            sim_score = check_topic_relevance(w_summary, lesson_id)
+            results = None, w_summary, sim_score
+            if results not in final_terms:
+                final_terms.append(results)
+            if wiki_t not in wiki_titles:
+                wiki_titles.append(wiki_t)
 
-
-    wiki_list = []    
+   
     wiki_count = 0
     for wiki_title in wiki_titles:
-        try:
-                wiki_url = "https://en.wikipedia.org/wiki/%s" % (wiki_title)
-                topic_result = wikipedia.summary(wiki_title, sentences = 3, auto_suggest=False, redirect=True)
-                results = tokenize.sent_tokenize(topic_result)
-                sent_result = ' '.join(results[:3])
-                result = check_topic_relevance(sent_result, lesson_id)
-                print('================')
-                print(wiki_title, sent_result, result)
-                print('================')
-                if wiki_count > 5:
-                    if result >= .10:
-                        term = wiki_title, sent_result, result
-                        wiki_count = wiki_count + 1
-                        wiki_list.append(term)
-                else:
-                    term = wiki_title, sent_result, result
+
+        matched_topic = topicInformation.objects.filter(item=wiki_title[1]).first()
+
+        if matched_topic:
+            lesson_match = lessonObjective.objects.filter(id=lesson_id, objectives_topics=matched_topic)
+
+            if lesson_match:
+                link_list = []
+                
+                textbook_match, created = textBookTitle.objects.get_or_create(title=wiki_title[0])
+                if created:
+                    #gets main item summary 
+                    term = wiki_title[1]
                     wiki_count = wiki_count + 1
-                    wiki_list.append(term)
+                    final_terms.append(term)
+                    res = requests.get(wiki_title[0])
+                    soup = BeautifulSoup(res.text, "html.parser")
+                    if soup:
+                        for link in soup.find_all("a"):
+                            term = link.string
+                            
+                            url = link.get("href", "")
+                            results = url.replace('/wiki/', '') 
+                        
+                            if any(word in results for word in remove_list):
+                                    pass
+                            else:
+                                if results not in link_list:
+                                    final = term, results
+                                    if final not in link_list:
+                                        link_list.append(final)
 
-        except wikipedia.DisambiguationError as e:
-                pass
+                        link_list = set(link_list)
+                        full_text = soup.get_text()    
+                        full_t = full_text.strip()
+                        full_results = tokenize.sent_tokenize(full_t)
+                        fresults = get_pdf_sent(full_results)
+                        line_counter = 1
+                        for line in fresults:
+                            
+                            line_counter = line_counter + 1
+                            
+                            a_string = line.rstrip("\n")
+                            final_line = re.sub(r'\[.*\]', '', a_string)
+                            
+                            for word in link_list:
+                                if word[0] is not None:
+                                    if len(word[0]) >= 4:
+                                        if word[0] in final_line:
+                                            wiki_text = word[0], final_line
+                                            new_text, created = textBookBackground.objects.get_or_create(textbook=textbook_match , header= word[0], section=word[1] ,page_counter=1, line_text=final_line)
+                                            new_text.line_counter= line_counter
+                                            new_text.save()
 
-        
+                else:
+                    
+                    new_text = textBookBackground.objects.filter(textbook=textbook_match)
+                    
+                    word_list = []
+                    word_full = []
+                    for word in new_text:
+                        if word.header not in word_list:
+                            word_list.append(word.header)
+                            word_full.append(word)
 
-    wiki_list.sort(key=lambda x: x[2], reverse=True) 
+                    random.shuffle(word_full)
+                    word_counts = 0
+                    for word in word_full:
+                        if word.term_created == False:
+                            if word_counts <= 10:
+                                wiki_search = wiki_wiki.page(str(word.header))
+                                if wiki_search.exists():
+                                    r_search = wiki_search.fullurl
+                                    
+                                    secondary_term  = get_wiki_term_summary(word.header, wiki_search)
+                                    
+                                    sim_score = check_topic_relevance(secondary_term, lesson_id)
+                                    if sim_score >= .10:
+                                        results = word.id, secondary_term, sim_score
+                                        word_counts = word_counts + 1
+                                        word.term_created == True 
+                                        word.save()
+                                        if results not in final_terms:
+                                            final_terms.append(results)
+               
+ 
+    return(final_terms)
 
-    return(wiki_list)

@@ -168,7 +168,7 @@ def login_user(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('Dashboard', week_of='Current', subject_id='All', class_id='All')
+            return redirect('Dashboard', week_of='Current', subject_id='All', classroom_id='All')
         else:
             pass
   
@@ -426,8 +426,11 @@ def CreateObjective(request, user_id=None, week_of=None):
             if form.is_valid():
                 prev = form.save(commit=False)
                 teacher_input = prev.teacher_objective
+                
                 prev.week_of = week_info['active_week']
                 class_match = classroom.objects.get(id=prev.lesson_classroom_id)
+
+                prev.standard_set = class_match.standards_set
                 #this is an overide - currently we want one grade per classroom but we will move to multiple grade levels like art which could have 9, 10, 11 grades
                 prev.current_grade_level = class_match.single_grade
                 prev.save()
@@ -465,9 +468,10 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     vid_id_list = []
     for result in youtube_list:
         link = result['link']
-        vid_id = video_id(link)
-        youtube_create, created = youtubeSearchResult.objects.get_or_create(lesson_plan=lesson_match, title=result['title'], vid_id=vid_id)
-        vid_id_list.append(youtube_create)
+        if link:
+            vid_id = video_id(link)
+            youtube_create, created = youtubeSearchResult.objects.get_or_create(lesson_plan=lesson_match, title=result['title'], vid_id=vid_id)
+            vid_id_list.append(youtube_create)
 
     context = {'user_profile': user_profile, 'new_text': new_text, 'vid_id_list': vid_id_list, 'classroom_profile': classroom_profile, 'lesson_match': lesson_match}
     return render(request, 'dashboard/activity_builder.html', context)

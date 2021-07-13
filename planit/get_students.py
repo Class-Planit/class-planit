@@ -29,7 +29,7 @@ def get_student_list(user_id, date, class_id):
         else:
             student_user = None 
 
-        result = ['s_first': student.first_name, 's_last': student.last_name, 'g_level': student.current_grade_level,  'username': student_user]
+        result = {'s_first': student.first_name, 's_last': student.last_name, 'g_level': student.current_grade_level,  'username': student_user}
 
         student_list.append(result)
 

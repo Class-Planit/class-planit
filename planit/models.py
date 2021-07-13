@@ -321,6 +321,8 @@ class textBookTitle(models.Model):
                                blank=True,
                                null=True)
     is_admin = models.BooleanField(default=False)
+    wiki_page = tinymce_models.HTMLField(blank=True,
+                               null=True)
 
     def __str__(self):
         return "%s" % (self.title)
@@ -348,6 +350,7 @@ class textBookBackground(models.Model):
     line_lemma = models.CharField(max_length=1000,
                                   blank=True,
                                   null=True)
+    term_created = models.BooleanField(default=False)
 
     def __str__(self):
         return "%s" % (self.line_counter)
@@ -408,6 +411,7 @@ class topicDescription(models.Model):
                                blank=True,
                                null=True)
     is_admin = models.BooleanField(default=True)
+    is_generated = models.BooleanField(default=False)
     
     def __str__(self):
         return "%s" % (self.description)
@@ -561,6 +565,10 @@ class lessonObjective(models.Model):
                                      blank=True,
                                      related_name='objectives_topic',
                                      null=True)
+    standard_set = models.ForeignKey(standardSet,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
 
     def __str__(self):
         return "%s" % (self.id)
