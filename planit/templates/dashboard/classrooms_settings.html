@@ -98,28 +98,67 @@
                             <li class="nav-item">
                                 <a class="nav-link border border-primary border-bottom-0" id="home-tab" data-toggle="tab" href="#add" role="tab" aria-selected="false">Add Students</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link border border-primary border-bottom-0" id="profile-tab" data-toggle="tab" href="#pending" role="tab" aria-selected="false">Pending Students</a>
-                            </li>
                         </ul>
                     
                         <div class="tab-content h-75">
                             <div class="tab-pane h-100 p-3 active border border-primary" id="edit" role="tabpanel">
                                 <h2>&nbsp</h2>
                                 <h4 class="h6">Edit Current Students:</h4>
+                                {% if confirmation == 2 %}
+                                    <div class="card text-white bg-slack mb-3" style="max-width: 18rem;">
+                                        <div class="card-body">
+                                            <h5 class="card-text">Reinvitation Email Sent!</h5>
+                                        </div>
+                                    </div>
+                                {% endif %}
                                 <table class="table table-borderless table-sm">
                                     <thead class="table-light">
                                       <tr>
-                                        <th scope="col" class="h6">Student Name:</th>
-                                        <th scope="col"> </th>
+                                        <th scope="col" class="h6">Name and Email:</th>
+                                        <th scope="col" class="h6">Grade</th>
+                                        <th scope="col" class="h6">Reference</th>
+                                        <th scope="col" class="h6"></th>
+                                        <th scope="col" class="h6"></th>
                                       </tr>
                                     </thead>
                                     <tbody>
-                                        {% for student in class_profile.student.all %}
+                                        {% for student in student_list %}
                                             <tr>
-                                                <td>{{ student.first_name }} {{ student.last_name }}</td>
+                                                <td>{{ student.s_first }} {{ student.s_last }}<br>
+                                                    {{student.email}}
+                                                </td>
+                                                <td>{{ student.g_level }} </td>
                                             <!--what href to use for Remove functionality?-->
-                                            <td> <a href="#">Remove</a> </td>
+                                            {% if student.username == None %}
+                                                <td> {{ student.student_invite.invite_ref }} </td>
+                                                <td> <a href="{% url 'add_student_to_classroom' user_id=user_profile.id class_id=class_profile.id invite_id=student.student_invite.id %}" data-toggle="tooltip" title="Resend invite email">
+                                                    <i class="fas fa-envelope"></i></a>
+                                                </td>
+                                                <td> <a href="#"></a> 
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-white dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                                        </button>
+                                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                            <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Students' confirmation=0 %}">Delete?</a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            {% else %}
+                                                <td> </td>
+                                                <td> <a href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Students' confirmation=0 %}" data-toggle="tooltip" title="Remove student from classroom">
+                                                    <i class="fas fa-trash"></i></td>
+                                                <td> <a href="#"></a> 
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-white dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                                        </button>
+                                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                            <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Students' confirmation=0 %}">Delete?</a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            {% endif %}
                                             </tr>
                                         {% endfor %}
                                     </tbody>
@@ -127,19 +166,19 @@
                             </div>
                             <div class="tab-pane h-100 p-3 border border-primary" id="add" role="tabpanel">
                                 {% if confirmation == 1 %}
-                                <div class="card text-white bg-slack mb-3" style="max-width: 18rem;">
-                                    <div class="card-body">
-                                        <h5 class="card-text">Email Sent!</h5>
+                                    <div class="card text-white bg-slack mb-3" style="max-width: 18rem;">
+                                        <div class="card-body">
+                                            <h5 class="card-text">Email Sent!</h5>
+                                        </div>
                                     </div>
-                                </div>
-                                <a class="btn btn-primary" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Students' confirmation=0 %}">Send Another Invite</a>
+                                    <a class="btn btn-primary" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Students' confirmation=0 %}">Send Another Invite</a>
                                 {% else %}
                                     <h2>&nbsp</h2>
                                     <h4 class="h6">Add New Students:</h4>
                                     <div class="card border-light shadow-sm">
                                         <div class="card-body flex-row align-items-center flex-0 border-bottom">
                                             <h5 class="card-title">Invite students to {{class_profile}}</h5>  
-                                            <form  action="{% url 'add_student_to_classroom' user_id=user_profile.id class_id=class_profile.id %}" method="POST" enctype="multipart/form-data">
+                                            <form  action="{% url 'add_student_to_classroom' user_id=user_profile.id class_id=class_profile.id invite_id=0 %}" method="POST" enctype="multipart/form-data">
                                                 {% csrf_token %}
                                                 <label for="name">Enter student's first and last name:</label>
                                                 <div class="row">
@@ -153,12 +192,12 @@
                                                 <h3>&nbsp</h3>
                                                 <label for="name">Student's grade level:</label>
                                                 <div class="input-group mb-3">
-                                                    <select class="form-select" id="grade_level">
+                                                    <select class="form-select" id="grade_level" name="grade_level">
                                                         <option selected>Choose...</option>
-                                                        <option value="1">{{ class_profile.single_grade }}</option>
+                                                        <option value={{class_profile.single_grade_id}}>{{ class_profile.single_grade }}</option>
                                                         {% for grade in class_profile.grade_level.all %}
                                                             {% if grade != class_profile.single_grade %}
-                                                            <option value="#">{{ grade }}</option>
+                                                            <option value={{grade.id}}>{{ grade }}</option>
                                                             {% endif %}
                                                         {% endfor %}
                                                     </select>
@@ -174,28 +213,6 @@
                                     </div>
                                 {% endif %}
                             </div>
-                            <div class="tab-pane h-100 p-3 border border-primary" id="pending" role="tabpanel">
-                                <h2>&nbsp</h2>
-                                <h4 class="h6">Pending Students:</h4>
-                                <table class="table table-borderless table-sm">
-                                    <thead class="table-light">
-                                    <tr>
-                                        <th scope="col" class="h6">Student Name:</th>
-                                        <th scope="col"> </th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                        <td>Lucy Smith</td>
-                                        <td> <a href="#">Resend</a> </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Lilly Smith</td>
-                                        <td> <a href="#">Resend</a> </td>
-                                    </tr>
-                                    </tbody>
-                              </table>
-                            </div>
                         </div>
                     </div>
                 {% elif view_ref == 'Teachers' %}
@@ -209,32 +226,70 @@
                             <li class="nav-item">
                                 <a class="nav-link border border-primary border-bottom-0" id="home-tab" data-toggle="tab" href="#add" role="tab" aria-selected="false">Add Teachers</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link border border-primary border-bottom-0" id="profile-tab" data-toggle="tab" href="#pending" role="tab" aria-selected="false">Pending Teachers</a>
-                            </li>
                         </ul>
                     
                         <div class="tab-content h-75">
                             <div class="tab-pane h-100 p-3 active border border-primary" id="edit" role="tabpanel">
                                 <h2>&nbsp</h2>
                                 <h4 class="h6">Edit Current Teachers:</h4>
+                                {% if confirmation == 2 %}
+                                    <div class="card text-white bg-slack mb-3" style="max-width: 18rem;">
+                                        <div class="card-body">
+                                            <h5 class="card-text">Reinvitation Email Sent!</h5>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                <div class="table-responsive">
                                 <table class="table table-borderless table-sm">
                                     <thead class="table-light">
-                                    <tr>
-                                        <th scope="col" class="h6">Teacher Name:</th>
-                                        <th scope="col"> </th>
-                                    </tr>
+                                      <tr>
+                                        <th scope="col" class="h6">Name and Email:</th>
+                                        <th scope="col" class="h6">Reference</th>
+                                        <th scope="col" class="h6"> </th>
+                                        <th scope="col" class="h6"> </th>
+                                      </tr>
                                     </thead>
                                     <tbody>
-                                        {% for teacher in class_profile.support_teachers.all %}
+                                        {% for teacher in teacher_list %}
                                             <tr>
-                                                <td>{{ teacher.first_name }} {{ teacher.last_name }}</td>
+                                                <td>{{ teacher.t_first }} {{ teacher.t_last }}<br>
+                                                    {{ teacher.email }}</td>
                                             <!--what href to use for Remove functionality?-->
-                                            <td> <a href="#">Remove</a> </td>
+                                            {% if teacher.teacher_invite != None %}
+                                                <td> {{ teacher.teacher_invite.invite_ref }} </td>
+                                                <td> <a href="{% url 'add_teacher_to_classroom' user_id=user_profile.id class_id=class_profile.id invite_id=teacher.teacher_invite.id %}" data-toggle="tooltip" title="Resend invite email">
+                                                    <i class="fas fa-envelope"></i></a> 
+                                                </td>
+                                                <td> <a href="#"></a> 
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-white dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                                        </button>
+                                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                            <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Teachers' confirmation=0 %}">Copy invite link</a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            {% else %}
+                                                <td> <a href="#"></a> </td>
+                                                <td> <a href="#" data-toggle="tooltip" title="Remove teacher from classroom"> <i class="fas fa-trash"></i> </a> </td>
+                                                <td> <a href="#"></a> 
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-white dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                                        </button>
+                                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                            <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Teachers' confirmation=0 %}">Delete?</a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+
+                                            {% endif %}
                                             </tr>
                                         {% endfor %}
                                     </tbody>
                                 </table>
+                                </div>
                             </div>
                             <div class="tab-pane h-100 p-3 border border-primary" id="add" role="tabpanel">
                                 {% if confirmation == 1 %}
@@ -250,7 +305,7 @@
                                     <div class="card border-light shadow-sm">
                                         <div class="card-body flex-row align-items-center flex-0 border-bottom">
                                             <h5 class="card-title">Invite teachers to {{class_profile}}</h5>  
-                                            <form  action="{% url 'add_teacher_to_classroom' user_id=user_profile.id class_id=class_profile.id %}" method="POST" enctype="multipart/form-data">
+                                            <form  action="{% url 'add_teacher_to_classroom' user_id=user_profile.id class_id=class_profile.id invite_id=0 %}" method="POST" enctype="multipart/form-data">
                                                 {% csrf_token %}
                                                 <label for="name">Enter teacher's first and last name:</label>
                                                 <div class="row">
@@ -271,28 +326,6 @@
                                         </div>
                                     </div>
                                 {% endif %}
-                            </div>
-                            <div class="tab-pane h-100 p-3 border border-primary" id="pending" role="tabpanel">
-                                <h2>&nbsp</h2>
-                                <h4 class="h6">Pending Teachers:</h4>
-                                <table class="table table-borderless table-sm">
-                                    <thead class="table-light">
-                                    <tr>
-                                        <th scope="col" class="h6">Teacher Name:</th>
-                                        <th scope="col"> </th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                        <td>Lucy Smith</td>
-                                        <td> <a href="#">Resend</a> </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Lilly Smith</td>
-                                        <td> <a href="#">Resend</a> </td>
-                                    </tr>
-                                    </tbody>
-                            </table>
                             </div>
                         </div>
                     </div>
@@ -325,7 +358,7 @@
                                             <tr>
                                                 <td>{{ subject.subject_title }}</td>
                                             <!--what href to use for Remove functionality?-->
-                                            <td> <a href="#">Remove</a> </td>
+                                            <td> <a href="{% url 'edit_classroom_subjects' user_id=user_profile.id class_id=class_profile.id subject_id=subject.id action=1 %}">Remove from classroom</a> </td>
                                             </tr>
                                         {% endfor %}
                                     </tbody>
@@ -347,25 +380,15 @@
                                                 <tr>
                                                     <td>{{ subject }}</td>
                                                 <!--what href to use for Add functionality?-->
-                                                <td> <a href="#">Add</a> </td>
+                                                <td> <a href="{% url 'edit_classroom_subjects' user_id=user_profile.id class_id=class_profile.id subject_id=subject.id action=0 %}">Add to classroom</a> </td>
                                                 </tr>
                                             {% endif %}
                                         {% endfor %}
                                         <tr>
                                             <td>Other...</td>
                                             <!--what href to use for Add functionality?-->
-                                            <td> <a href="#">Add</a> </td>
+                                            <td> <a href="#">Add to classroom</a> </td>
                                         </tr>
-                                        <!--
-                                            GET STANDARD SUBJECTS FOR THE STANDARDS THE TEAHCER IS USING
-                                        {% for subject in class_profile.standards_set.all %}
-                                            <tr>
-                                                <td>{{ subject.subject_title }}</td>
-                                            what href to use for Remove functionality?
-                                            <td> <a href="#">Remove</a> </td>
-                                            </tr>
-                                        {% endfor %}
-                                        -->
                                     </tbody>
                                 </table>
                             </div>
@@ -393,6 +416,7 @@
                                     <tr>
                                         <th scope="col" class="h6">Grade Level:</th>
                                         <th scope="col"> </th>
+                                        <th scope="col"> </th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -400,14 +424,16 @@
                                             <td>{{ class_profile.single_grade }} 
                                                 <a href="#" data-toggle="tooltip" title="The grade that is primarily taught in the classroom">(default grade)</a>
                                             </td>
-                                            <td> <a href="#">Change</a> </td>
+                                            <td> <a href="#" data-toggle="tooltip" title="Cannot remove default grade"><span style="color: #858585 ">Remove</span></a></td>
+                                            <td> </td>
                                         </tr>
                                         {% for grade in class_profile.grade_level.all %}
                                             {% if grade != class_profile.single_grade %}
                                                 <tr>
                                                     <td>{{ grade }}</td>
                                                 <!--what href to use for Remove functionality?-->
-                                                <td> <a href="#">Remove</a> </td>
+                                                <td> <a href="{% url 'edit_classroom_grade_levels' user_id=user_profile.id class_id=class_profile.id grade_level_id=grade.id action=1 %}">Remove </a> </td>
+                                                <td> <a href="{% url 'edit_classroom_grade_levels' user_id=user_profile.id class_id=class_profile.id grade_level_id=grade.id action=2 %}">Make default </a> </td>
                                                 </tr>
                                             {% endif %}
                                         {% endfor %}
@@ -429,8 +455,7 @@
                                             {% if grade not in current_grade_levels.all and grade != class_profile.single_grade %}
                                                 <tr>
                                                     <td>{{ grade }}</td>
-                                                <!--what href to use for Add functionality?-->
-                                                <td> <a href="#">Add</a> </td>
+                                                <td> <a href="{% url 'edit_classroom_grade_levels' user_id=user_profile.id class_id=class_profile.id grade_level_id=grade.id action=0 %}">Add</a> </td>
                                                 </tr>
                                             {% endif %}    
                                         {% endfor %}
@@ -447,9 +472,44 @@
                 {% endif %}
             </div>
             <div class="col-md-4">
+            
+                <div id="accordion">
+                    <div class="card text-center">
+                      <div class="card-title">
+                        <h5>
+                            <button class="btn btn-secondary dropdown-toggle btn-block" data-toggle="collapse" data-target="#collapseOne">
+                                Manage Members <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </h5>
+                      </div>
+                      <div id="collapseOne" class="collapse" data-parent="#accordion">
+                        <div class="card-text">
+                            <p><a href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Students' confirmation=0 %}">Students</a></p>
+                            <p><a href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Teachers' confirmation=0 %}">Teachers</a></p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card text-center">
+                        <div class="card-title">
+                          <h5>
+                            <button class="btn btn-secondary btn-block" data-toggle="collapse" data-target="#collapseTwo">
+                                Classroom Aspects <i class="fas fa-chevron-down"></i>
+                            </button>
+                          </h5>
+                        </div>
+                        <div id="collapseTwo" class="collapse" data-parent="#accordion">
+                          <div class="card-text">
+                                <p><a href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Classroom-Title' confirmation=0 %}">Classroom Title</a></p>
+                                <p><a href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Subjects' confirmation=0 %}">Subjects</a></p>
+                                <p><a href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Grade-Levels' confirmation=0 %}">Grade Levels</a></p>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <!--
                 <div class="dropdown">
-                    <button class="btn btn-outline-secondary dropdown-toggle border-white btn-block" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Manage members
+                    <button class="btn btn-outline-secondary dropdown-toggle btn-block" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Manage members <i class="fas fa-chevron-down"></i>
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Students' confirmation=0 %}">Students</a>
@@ -457,15 +517,16 @@
                     </div>
                 </div>
                 <div class="dropdown">
-                    <button class="btn btn-outline-secondary dropdown-toggle border-white btn-block" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Update class aspects
+                    <button class="btn btn-outline-secondary dropdown-toggle btn-block" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Update class aspects <i class="fas fa-chevron-down"></i>
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Classroom-Title' confirmation=0 %}">Edit classroom title</a>
-                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Subjects' confirmation=0 %}">Edit subjects</a>
-                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Grade-Levels' confirmation=0 %}">Edit grade levels</a>
+                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Classroom-Title' confirmation=0 %}">Classroom Title</a>
+                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Subjects' confirmation=0 %}">Subjects</a>
+                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Grade-Levels' confirmation=0 %}">Grade Levels</a>
                     </div>
                 </div>
+                -->
             </div>
         </div>
     </div>     

@@ -92,13 +92,21 @@ urlpatterns = [
         view=ClassroomSettingsView,
         name='classroom_settings'),
 
-    url(r'^add-student-to-classroom/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/',
+    url(r'^add-student-to-classroom/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<invite_id>[\w-]+)/',
         view=AddStudentToClassroom,
         name='add_student_to_classroom'),
         
-    url(r'^add-teacher-to-classroom/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/',
+    url(r'^add-teacher-to-classroom/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<invite_id>[\w-]+)/',
         view=AddTeacherToClassroom,
         name='add_teacher_to_classroom'),
+
+    url(r'^edit-classroom-subjects/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject_id>[\w-]+)/(?P<action>[\w-]+)/',
+        view=EditClassroomSubjects,
+        name='edit_classroom_subjects'),
+
+    url(r'^edit-classroom-grade-levels/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<grade_level_id>[\w-]+)/(?P<action>[\w-]+)/',
+        view=EditClassroomGradeLevels,
+        name='edit_classroom_grade_levels'),
 
     url(r'^create_objective/(?P<user_id>[\w\s]+)/(?P<week_of>[\w\s]+)/',
         view=CreateObjective,

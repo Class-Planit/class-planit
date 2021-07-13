@@ -80,4 +80,5 @@ admin.site.register(studentWorksheetAnswerFull)
 admin.site.register(worksheetClassAssignment)
 admin.site.register(studentPraiseTheme)
 admin.site.register(studentPraise)
-
+admin.site.register(studentInvitation)
+admin.site.register(teacherInvitation)

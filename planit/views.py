@@ -168,7 +168,7 @@ def login_user(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('Dashboard', week_of='Current', subject_id='All', class_id='All')
+            return redirect('Dashboard', week_of='Current', subject_id='All', classroom_id='All')
         else:
             pass
   
@@ -233,89 +233,174 @@ def ClassroomLists(request):
 
     return render(request, 'dashboard/classroom_list.html', {'user_profile': user_profile, 'grade_list': grade_list, 'form': form, 'class_summary': class_summary, 'page': page})
 
-def AddStudentToClassroom(request, user_id=None, class_id=None, grade_level=None):
+def AddStudentToClassroom(request, user_id=None, class_id=None, invite_id=None):
     user_match = User.objects.get(id=user_id)
     classroom_match = classroom.objects.get(id=class_id)
+    
+    invite_id = int(invite_id)
+    if invite_id == 0:
+        if request.method == "POST":
+            form = studentInvitationForm(request.POST, request.FILES)
+            if form.is_valid():
+                prev = form.save(commit=False)
+                prev.created_by = user_match
+                prev.for_classroom = classroom_match
+                student_fname = prev.first_name
+                student_lname = prev.last_name
+                student_grade = prev.grade_level
+                new_student = studentProfiles.objects.create(first_name= student_fname, last_name= student_lname, current_grade_level= student_grade, is_enrolled= True )
+                update_classroom = classroom_match.student.add(new_student)
+                prev.save()
+                invitation_match = studentInvitation.objects.get(id=prev.id)
 
-    if request.method == "POST":
-        form = studentInvitationForm(request.POST, request.FILES)
-        if form.is_valid():
-            prev = form.save(commit=False)
-            prev.created_by = user_match
-            prev.for_classroom = classroom_match
-            student_fname = prev.first_name
-            student_lname = prev.last_name
-            new_student = studentProfiles.objects.create(first_name= student_fname, last_name= student_lname, current_grade_level= grade_level , is_enrolled= True )
-            update_classroom = classroom_match.student.add(new_student)
-            prev.save()
-            invitation_match = studentInvitation.objects.get(id=prev.id)
+                invite_email = invitation_match.email
 
-            invite_email = invitation_match.email
-
-            if invite_email:
+                if invite_email:
+                    try:
+                        message = Mail(
+                            from_email='welcome@classplanit.co',
+                            to_emails=invite_email,
+                            subject="You're Invited",
+                            html_content= get_template('dashboard/student_invite_email.html').render({'invitation_match': invitation_match}))
+                    except:
+                        pass
                 try:
-                    message = Mail(
-                        from_email='welcome@classplanit.co',
-                        to_emails=invite_email,
-                        subject="You're Invited",
-                        html_content= get_template('dashboard/student_invite_email.html').render({'invitation_match': invitation_match}))
-                except:
+                    sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+                    response = sg.send(message)
+                    print(response.status_code)
+                    print(response.body)
+                    print(response.headers)
+                except Exception as e:
                     pass
-            try:
-                sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
-                response = sg.send(message)
-                print(response.status_code)
-                print(response.body)
-                print(response.headers)
-            except Exception as e:
-                pass
 
-            return redirect('classroom_settings', user_id=user_match.id, classroom_id=class_id, view_ref='Students', confirmation=1)
+                return redirect('classroom_settings', user_id=user_match.id, classroom_id=class_id, view_ref='Students', confirmation=1)
+            else:
+                return redirect('classroom_list')
         else:
+
             return redirect('classroom_list')
     else:
-        return redirect('classroom_list')
+        invite_match = studentInvitation.objects.get(id= invite_id)
+        invite_email = invite_match.email
+        if invite_email:
+            try:
+                message = Mail(
+                    from_email='welcome@classplanit.co',
+                    to_emails=invite_email,
+                    subject="You're Invited",
+                    html_content= get_template('dashboard/student_invite_email.html').render({'invitation_match': invite_match}))
+            except:
+                pass
+        try:
+            sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+            response = sg.send(message)
+            print(response.status_code)
+            print(response.body)
+            print(response.headers)
+        except Exception as e:
+            pass
+
+        return redirect('classroom_settings', user_id=user_match.id, classroom_id=class_id, view_ref='Students', confirmation=2)
 
 
-def AddTeacherToClassroom(request, user_id=None, class_id=None):
+def AddTeacherToClassroom(request, user_id=None, class_id=None, invite_id=None):
     user_match = User.objects.get(id=user_id)
     classoom_match = classroom.objects.get(id=class_id)
 
-    if request.method == "POST":
-        form = teacherInvitationForm(request.POST, request.FILES)
-        if form.is_valid():
-            prev = form.save(commit=False)
-            prev.created_by = user_match
-            prev.for_classroom = classoom_match
-            prev.save()
-            invitation_match = teacherInvitation.objects.get(id=prev.id)
+    invite_id = int(invite_id)
+    if invite_id == 0:
+        if request.method == "POST":
+            form = teacherInvitationForm(request.POST, request.FILES)
+            if form.is_valid():
+                prev = form.save(commit=False)
+                prev.created_by = user_match
+                prev.for_classroom = classoom_match
+                prev.is_pending = True
+                prev.save()
+                invitation_match = teacherInvitation.objects.get(id=prev.id)
 
-            invite_email = invitation_match.email
+                invite_email = invitation_match.email
 
-            if invite_email:
+                if invite_email:
+                    try:
+                        message = Mail(
+                            from_email='welcome@classplanit.co',
+                            to_emails=invite_email,
+                            subject="You're Invited",
+                            html_content= get_template('dashboard/teacher_invite_email.html').render({'invitation_match': invitation_match}))
+                    except:
+                        pass
                 try:
-                    message = Mail(
-                        from_email='welcome@classplanit.co',
-                        to_emails=invite_email,
-                        subject="You're Invited",
-                        html_content= get_template('dashboard/teacher_invite_email.html').render({'invitation_match': invitation_match}))
-                except:
+                    sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+                    response = sg.send(message)
+                    print(response.status_code)
+                    print(response.body)
+                    print(response.headers)
+                except Exception as e:
                     pass
-            try:
-                sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
-                response = sg.send(message)
-                print(response.status_code)
-                print(response.body)
-                print(response.headers)
-            except Exception as e:
-                pass
 
-            return redirect('classroom_settings', user_id=user_match.id, classroom_id=class_id, view_ref='Teachers', confirmation=1)
+                return redirect('classroom_settings', user_id=user_match.id, classroom_id=class_id, view_ref='Teachers', confirmation=1)
+            else:
+                return redirect('classroom_list')
         else:
             return redirect('classroom_list')
     else:
-        return redirect('classroom_list')
+        invite_match = teacherInvitation.objects.get(id= invite_id)
+        invite_email = invite_match.email
+        if invite_email:
+            try:
+                message = Mail(
+                    from_email='welcome@classplanit.co',
+                    to_emails=invite_email,
+                    subject="You're Invited",
+                    html_content= get_template('dashboard/teacher_invite_email.html').render({'invitation_match': invite_match}))
+            except:
+                pass
+        try:
+            sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+            response = sg.send(message)
+            print(response.status_code)
+            print(response.body)
+            print(response.headers)
+        except Exception as e:
+            pass
 
+        return redirect('classroom_settings', user_id=user_match.id, classroom_id=class_id, view_ref='Teachers', confirmation=2)
+
+#Adds or Removes Subjects
+def EditClassroomSubjects(request, user_id=None, class_id=None, subject_id=None, action=None):
+    user_match = User.objects.get(id=user_id)
+    classroom_profile = classroom.objects.get(id=class_id)
+    subject_match = standardSubjects.objects.get(id=subject_id)
+    
+    action = int(action)
+    if action == 0:
+        classroom_profile.subjects.add(subject_match)
+    else:
+        classroom_profile.subjects.remove(subject_match)
+    
+    return redirect('classroom_settings', user_id=user_match.id, classroom_id=class_id, view_ref='Subjects', confirmation=0)
+
+#Adds or Removes Grade Levels, also updates default single_grade
+def EditClassroomGradeLevels(request, user_id=None, class_id=None, grade_level_id=None, action=None):
+    user_match = User.objects.get(id=user_id)
+    classroom_profile = classroom.objects.get(id=class_id)
+    grade_level_match = gradeLevel.objects.get(id=grade_level_id)
+    
+    action = int(action)
+    if action == 0:
+        classroom_profile.grade_level.add(grade_level_match)
+    #updates the default grade level with the grade selected
+    elif action == 2:
+        current_default = classroom_profile.single_grade
+        classroom_profile.single_grade = grade_level_match
+        classroom_profile.grade_level.add(current_default)
+        classroom_profile.grade_level.remove(grade_level_match)
+        classroom_profile.save()
+    else:
+        classroom_profile.grade_level.remove(grade_level_match)
+    
+    return redirect('classroom_settings', user_id=user_match.id, classroom_id=class_id, view_ref='Grade-Levels', confirmation=0)
 
 
 def JoinStudentToClassroom(request, invite_ref=None):
@@ -342,6 +427,10 @@ def ClassroomSettingsView(request, user_id=None, classroom_id=None, view_ref=Non
     grade_list = gradeLevel.objects.filter(standards_set=class_profile.standards_set).order_by('grade')
     current_grade_levels = class_profile.grade_level
 
+    #get all students and support teachers in classroom
+    student_list = get_student_list(user_id, classroom_id)
+    teacher_list = get_teacher_list(user_id, classroom_id)
+
     #gets the classrooms teachers are main teacher on 
     classroom_profiles = classroom.objects.filter(main_teacher=user_profile)
     # the lessonObjective is a single lesson plan for one subject, one grade, in one classroom
@@ -351,7 +440,8 @@ def ClassroomSettingsView(request, user_id=None, classroom_id=None, view_ref=Non
     confirmation = int(confirmation)
     context = {'user_profile': user_profile, 'view_ref': view_ref, 'student_summary': student_summary, 'class_profile': class_profile,\
                'subject_results': subject_results, 'classroom_results': classroom_results, 'confirmation': confirmation, \
-               'subject_list': subject_list, 'current_subjects': current_subjects, 'grade_list': grade_list, 'current_grade_levels': current_grade_levels}
+               'subject_list': subject_list, 'current_subjects': current_subjects, 'grade_list': grade_list, 'current_grade_levels': current_grade_levels, \
+               'student_list': student_list, 'teacher_list': teacher_list}
     return render(request, 'dashboard/classrooms_settings.html', context)
 
 
