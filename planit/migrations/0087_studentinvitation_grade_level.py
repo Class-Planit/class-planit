@@ -11,9 +11,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='studentinvitation',
-            name='grade_level',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='planit.gradelevel'),
-        ),
+        
     ]

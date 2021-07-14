@@ -501,6 +501,19 @@ def StandardsTracking(request, user_id=None):
     return render(request, 'dashboard/app-analysis.html', {'user_profile': user_profile,})
 
 
+#Update the week_of to reflect a different active week
+def UpdateWeekOf(request, week_of, user_id=None, classroom_id=None, subject_id=None, action=None):
+    week_of = int(week_of)
+    action = int(action)
+    #prev week
+    if action == 1:
+        active_week = week_of - 1
+    #next week
+    else:
+        active_week = week_of + 1
+    
+    return redirect('Dashboard', week_of= active_week, subject_id= subject_id, classroom_id= classroom_id )
+
 
 #Main Teacher Dashboard View labeled as 'Overview'
 def Dashboard(request, week_of, subject_id, classroom_id):
@@ -551,11 +564,21 @@ def CreateObjective(request, user_id=None, week_of=None):
         user_classrooms = classroom.objects.filter(main_teacher=user_profile)
         subjects = []
         if user_classrooms:
+            #print(user_classrooms)
             for classroom_m in user_classrooms:
+                #print("--------------------------------")
+                #print("Classroom: ", classroom_m)
                 s_match = classroom_m.subjects.all()
                 subject_match = standardSubjects.objects.filter(id__in=s_match)
+                #print("Subjects: ", subject_match)
                 if subject_match not in subjects:
                     subjects.append(subject_match)
+
+        #for each_class in user_classrooms:
+        #    all_subjects = each_class.subjects.all()
+        #    for each_subject in all_subjects:
+        #        if each_subject not in subjects:
+        #            subjects.append(each_subject)
 
         if request.method == "POST":
             form = lessonObjectiveForm(request.POST, request.FILES)

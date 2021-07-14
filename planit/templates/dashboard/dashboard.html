@@ -5,6 +5,7 @@
 {% block content %}
 
 <main class="content">
+    <!--
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
         <div class="btn-toolbar">
             <button class="btn btn-primary btn-sm mr-2 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -24,17 +25,18 @@
             <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
         </div>
     </div>
+    -->
     <section class="section section-md ">
         <div class="container">
             <div class="row">
                 <div class="col-sm-2">
-                    <button type="button" class="btn btn-sm btn-block btn-outline-secondary">Previous Week</button>
+                    <a type="button" class="btn btn-sm btn-block btn-outline-secondary" href="{% url 'update_week_of' week_of=active_week user_id=user_profile.id subject_id=active_subject_id classroom_id=active_classroom_id action=1 %}">Previous Week</a>
                 </div>
                 <div class="col-sm-8">
                     
                 </div>
                 <div class="col-sm-2">
-                    <button type="button" class="btn btn-sm btn-block btn-outline-secondary">Next Week</button>
+                    <a type="button" class="btn btn-sm btn-block btn-outline-secondary" href="{% url 'update_week_of' week_of=active_week user_id=user_profile.id subject_id=active_subject_id classroom_id=active_classroom_id action=2 %}">Next Week</a>
                 </div>
             </div>
             <div class="row">
@@ -55,15 +57,36 @@
                     <div class="col-12 col-md-6 col-lg-3 align-items-center d-none d-md-flex">
                         <div class="form-group mb-0 mr-3">
                             <div class="dropdown">
+                                <!--
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Dropdown
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                    <li><a class="dropdown-item" href="{% url 'Dashboard' week_of=active_week subject_id='All' classroom_id=active_classroom_id %}">All subjects</a></li>
+                                    {% for subject in subject_results %}
+                                        {% if subject.id == active_subject_id %}
+                                            <li><a class="dropdown-item active" href="#" aria-current="true">{{ subject.1 }}</a></li>
+                                        {% else %}
+                                            <li><a class="dropdown-item" href="{% url 'Dashboard' week_of=active_week subject_id=subject.0 classroom_id=active_classroom_id %}">{{ subject.1 }}</a></li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            -->
+                                
                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                   Subject
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <a class="dropdown-item" href="{% url 'Dashboard' week_of='Current' subject_id='All' classroom_id=active_classroom_id %}">All subjects</a>
+                                    <a class="dropdown-item" href="{% url 'Dashboard' week_of=active_week subject_id='All' classroom_id=active_classroom_id %}">All subjects</a>
                                     {% for subject in subject_results %}
-                                    <a class="dropdown-item" href="{% url 'Dashboard' week_of='Current' subject_id=subject.0 classroom_id=active_classroom_id %}">{{ subject.1 }}</a>
+                                        {% if subject.0 == active_subject_id %}
+                                            <a class="dropdown-item active" href="#" aria-current="true">{{ subject.1 }} (active)</a>
+                                        {% else %}
+                                            <a class="dropdown-item" href="{% url 'Dashboard' week_of=active_week subject_id=subject.0 classroom_id=active_classroom_id %}">{{ subject.1 }}</a>
+                                        {% endif %}
                                     {% endfor %}
                                 </div>
+                                
                             </div>
                         </div>
                         <div class="form-group mb-0 mr-3">
@@ -72,21 +95,24 @@
                                   Classroom
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <a class="dropdown-item" href="{% url 'Dashboard' week_of='Current' subject_id=active_subject_id classroom_id='All' %}">All classrooms</a>
+                                    <a class="dropdown-item" href="{% url 'Dashboard' week_of=active_week subject_id=active_subject_id classroom_id='All' %}">All classrooms</a>
                                     {% for classroom in classroom_results %}
-                                    <a class="dropdown-item" href="{% url 'Dashboard' week_of='Current' subject_id=active_subject_id classroom_id=classroom.0 %}">{{ classroom.1 }}</a>
+                                    <a class="dropdown-item" href="{% url 'Dashboard' week_of=active_week subject_id=active_subject_id classroom_id=classroom.0 %}">{{ classroom.1 }}</a>
                                     {% endfor %}
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="col col-md-4 col-lg-3 col-xl-2 ml-auto">
+                        <!--
                         <div class="input-group">
                             <div class="input-group-prepend"><span class="input-group-text"><span class="fas fa-search"></span></span></div>
                             <input class="form-control" id="searchInputdashboard1" placeholder="Search" type="text" aria-label="Dashboard user search">
                         </div>
+                    -->
                     </div>
                     <div class="col-2 pl-0 d-none d-lg-flex">
+                        <!--
                         <div class="form-group mb-0">
                             <select class="custom-select" id="inlineFormCustomSelectMesages2">
                                 <option selected="selected">All</option>
@@ -96,8 +122,10 @@
                                 <option value="3">Canceled</option>
                             </select>
                         </div>
+                        -->
                     </div>
                     <div class="col-4 col-md-2 col-xl-1 pl-md-0 text-right">
+                        <!--
                         <div class="btn-group mr-2">
                             <button class="btn btn-link text-dark dropdown-toggle dropdown-toggle-split m-0 p-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="icon icon-sm icon-gray">
@@ -112,7 +140,7 @@
                                 <a class="dropdown-item font-weight-bold" href="#">30</a>
                             </div>
                         </div>
-                        
+                    -->
                     </div>
                 </div>
             </div>

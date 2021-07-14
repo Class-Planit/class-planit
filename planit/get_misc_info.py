@@ -4,7 +4,7 @@ from .models import *
 
 
 def get_active_week(current_week, week_of): 
-    if 'Current' in week_of:
+    if current_week == week_of:
         active_week = current_week
     else:
         try:

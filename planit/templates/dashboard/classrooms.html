@@ -2,8 +2,9 @@
 {% load static %}
 {% block content %}
                 
-<main class="content">
+<main class="content">   
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+        <!--
         <div class="btn-toolbar">
             <button class="btn btn-primary btn-sm mr-2 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="fas fa-plus mr-2"></span>New Item
@@ -20,10 +21,12 @@
             <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
             <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
         </div>
+        -->
     </div>
     <div class="table-settings mb-4">
         <div class="row justify-content-between align-items-center">
             <div class="col-12 col-md-6 col-lg-3 align-items-center d-none d-md-flex">
+                <!--
                 <div class="form-group mb-0 mr-3">
                     <select class="custom-select" id="inlineFormCustomSelectMesages">
                         <option selected="selected">Grade Level</option>
@@ -32,6 +35,7 @@
                         
                     </select>
                 </div>
+                -->
                 <div class="form-group mb-0 mr-3">
                     <div class="dropdown">
                         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -47,8 +51,8 @@
 
                 <div class="form-group mb-0 mr-3">
                     <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-bars"></i>
+                        <button class="btn btn-block btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-bars" ></i>
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Students' confirmation=0 %}">Settings</a>
@@ -57,6 +61,7 @@
                 </div>
                 
             </div>
+            <!--
             <div class="col col-md-4 col-lg-3 col-xl-2 ml-auto">
                 <div class="input-group">
                     <div class="input-group-prepend"><span class="input-group-text"><span class="fas fa-search"></span></span></div>
@@ -74,7 +79,7 @@
                     </select>
                 </div>
             </div>
-        
+            -->
         </div>
     </div>
     <div class="row">
@@ -82,7 +87,8 @@
             
         </div>
         <div class="col-lg-8">
-            <h2 class="h4 mb-4"><center>{{ class_match.classroom_title|title }}</center></h2>
+            <!--<h2 class="h4 mb-4"><center>{{ class_match.classroom_title|title }}</center></h2>-->
+            <h2 class="h4 mb-4"><center>Classroom: {{ class_profile }}</center></h2>
         </div>
         <div class="col-lg-2">
             
@@ -431,37 +437,6 @@
                         <br>
                     </div>
                 </div>
-                
-            
-            </div>
-        </div>
-       
-        <div class="col-12 col-xl-6 mb-4">
-            <div class="row">
-                <div class="col-12 mb-4">
-                    <div class="card border-light shadow-sm">
-                        <div class="card-body">
-                            <a id="subjects"></a>
-                        <h4>Class Subjects:</h4>
-                        <p>Current Subjects</p>
-                        {% for current in current_subject %}
-                        <li><i class="fas fa-check"></i> {{ current }}</li>
-                        {% endfor %}
-                        <hr>
-                        <p>Add Subjects:</p>
-                        {% for subject in matched_subject %}
-
-                       <li><a href="{% url 'add_subjects' user_id=user_profile.id class_id=class_match.id subject_id=subject.id %}#heading"> {{ subject }}</a>
-                        </li>
-
-                        {% endfor %}
-        
-                        </div>
-                        </div>
-                </div>
-                
-                        
-   
                 
             
             </div>
