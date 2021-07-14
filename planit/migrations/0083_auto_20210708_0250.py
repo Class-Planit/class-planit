@@ -28,17 +28,4 @@ class Migration(migrations.Migration):
             name='wiki_page',
             field=tinymce.models.HTMLField(blank=True, null=True),
         ),
-        migrations.CreateModel(
-            name='teacherInvitation',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('invite_ref', models.CharField(blank=True, max_length=255, null=True, verbose_name='Teacher Reference')),
-                ('first_name', models.CharField(blank=True, max_length=50, null=True)),
-                ('last_name', models.CharField(blank=True, max_length=50, null=True)),
-                ('email', models.EmailField(blank=True, max_length=254, null=True)),
-                ('is_pending', models.BooleanField(default=True)),
-                ('created_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-                ('for_classroom', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='planit.classroom')),
-            ],
-        ),
     ]
