@@ -28,6 +28,7 @@ class User(AbstractUser):
     is_student = models.BooleanField(default=False)
     is_archived = models.BooleanField(default=False)
     is_pending = models.BooleanField(default=False)
+    is_demo = models.BooleanField(default=False)
 
 
 

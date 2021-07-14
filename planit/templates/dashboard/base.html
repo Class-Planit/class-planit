@@ -140,7 +140,21 @@
                                       
                                   </a>
                                 </li>
-                          
+                                {% if 'Assignments' in page %}
+                                <li class="nav-item  active ">
+                                    {% else %}
+                                    <li class="nav-item">
+                                    {% endif %}
+                                  <a href="{% url 'student_performance' user_id=user_profile.id class_id=0 week_of='Current' %}" class="nav-link">
+                                      <span class="sidebar-icon"><span class="fas fa-clipboard-list"></span></span>
+                                      <span>Assignments</span>
+                                  </a>
+                                </li>
+                                {% if user_profile.is_demo %}
+                                <li role="separator" class="dropdown-divider mt-4 mb-3 border-blue"></li>
+                                <p><center>DEMO VERSION</center></p>
+                                <li role="separator" class="dropdown-divider mt-4 mb-3 border-blue"></li>
+                                {% else %}
                                 {% if 'Standards' in page %}
                                 <li class="nav-item  active ">
                                     {% else %}
@@ -153,16 +167,7 @@
                                 </li>
                                
                           
-                                {% if 'Assignments' in page %}
-                                <li class="nav-item  active ">
-                                    {% else %}
-                                    <li class="nav-item">
-                                    {% endif %}
-                                  <a href="{% url 'student_performance' user_id=user_profile.id class_id=0 week_of='Current' %}" class="nav-link">
-                                      <span class="sidebar-icon"><span class="fas fa-clipboard-list"></span></span>
-                                      <span>Assignments</span>
-                                  </a>
-                                </li>
+                                
 
                                 <li role="separator" class="dropdown-divider mt-4 mb-3 border-blue"></li>
                                 <li class="nav-item">
@@ -180,7 +185,7 @@
                                   </a>
                                 </li>
                               
-                           
+                           {% endif %}
                               </ul>
                             </div>
                           </nav>
