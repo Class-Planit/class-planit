@@ -405,14 +405,28 @@ def EditClassroomGradeLevels(request, user_id=None, class_id=None, grade_level_i
 
 def JoinStudentToClassroom(request, invite_ref=None):
     pass
+
+
 #view information for a single classroom 
 def ClassroomDashboard(request, user_id=None, class_id=None):
     current_year = datetime.datetime.now().year
     user_profile = User.objects.filter(username=request.user.username).first()
     class_profile = classroom.objects.get(id=class_id)
     student_summary = get_classroom_list_summary(user_profile.id, current_year, class_id)
-    return render(request, 'dashboard/classrooms.html', {'user_profile': user_profile, 'student_summary': student_summary, 'class_profile': class_profile})
 
+    #get all students in classroom
+    student_list = get_student_list(user_id, class_id)
+
+    #gets the classrooms teachers are main teacher on 
+    classroom_profiles = classroom.objects.filter(main_teacher=user_profile)
+    objective_matches = lessonObjective.objects.filter(lesson_classroom__in=classroom_profiles)
+    # gets the subjects and classrooms for the dropdown options and subjects display
+    subject_results, classroom_results = get_subject_and_classroom(objective_matches)
+
+    context = { 'user_profile': user_profile, 'student_summary': student_summary, 'class_profile': class_profile,\
+                'subject_results': subject_results, 'classroom_results': classroom_results, 'student_list': student_list}
+
+    return render(request, 'dashboard/classrooms.html', context)
 
 def ClassroomSettingsView(request, user_id=None, classroom_id=None, view_ref=None, confirmation=None): 
     current_year = datetime.datetime.now().year
@@ -422,9 +436,9 @@ def ClassroomSettingsView(request, user_id=None, classroom_id=None, view_ref=Non
         standard_set_match = school_user_match.standards_set
     else:
         standard_set_match = standardSet.objects.filter(Location='Texas Teks').first()
-
     class_profile = classroom.objects.get(id=classroom_id)
     student_summary = get_classroom_list_summary(user_profile.id, current_year, classroom_id)
+
     #get all of the standard subjects from the standards set 
     subject_list = standardSubjects.objects.filter(standards_set=class_profile.standards_set).filter(Q(is_admin=True) | Q(created_by=user_profile))
     current_subjects = class_profile.subjects
@@ -448,9 +462,9 @@ def ClassroomSettingsView(request, user_id=None, classroom_id=None, view_ref=Non
     confirmation = int(confirmation)
 
     if request.method == "POST":
-        form = teacherSubjectForm(request.POST, request.FILES)
-        if form.is_valid():
-            subject_title = form.cleaned_data.get('subject_title')
+        form_subject = teacherSubjectForm(request.POST, request.FILES)
+        if form_subject.is_valid():
+            subject_title = form_subject.cleaned_data.get('subject_title')
             new_subject = standardSubjects.objects.create(subject_title=subject_title, standards_set=standard_set_match, created_by=user_profile, is_admin=False)
             single_grade = new_subject.grade_level.add(default_grade)
             for grade in current_grade_level_list:
@@ -458,13 +472,22 @@ def ClassroomSettingsView(request, user_id=None, classroom_id=None, view_ref=Non
             update_subject = class_profile.subjects.add(new_subject)
             return redirect('classroom_settings', user_id=user_profile.id, classroom_id=class_profile.id, view_ref='Subjects', confirmation=0)
     else:
-        form = teacherSubjectForm()
+        form_subject = teacherSubjectForm()
 
+    if request.method == "POST":
+        form_class_title = classroomTitleForm(request.POST, request.FILES)
+        if form_class_title.is_valid():
+            classroom_title = form_class_title.cleaned_data.get('classroom_title')
+            class_profile.classroom_title = classroom_title
+            class_profile.save()
+            return redirect('classroom_settings', user_id=user_profile.id, classroom_id=class_profile.id, view_ref='Classroom-Title', confirmation=0)
+    else:
+        form_class_title = classroomTitleForm()
     
-    context = {'user_profile': user_profile, 'form': form, 'view_ref': view_ref, 'student_summary': student_summary, 'class_profile': class_profile,\
-               'subject_results': subject_results, 'classroom_results': classroom_results, 'confirmation': confirmation, \
-               'subject_list': subject_list, 'current_subjects': current_subjects, 'grade_list': grade_list, 'current_grade_levels': current_grade_levels, \
-               'student_list': student_list, 'teacher_list': teacher_list}
+    context = {'user_profile': user_profile, 'form_subject': form_subject, 'form_class_title': form_class_title, 'view_ref': view_ref,\
+               'student_summary': student_summary, 'class_profile': class_profile, 'subject_results': subject_results, 'classroom_results': classroom_results,\
+               'confirmation': confirmation, 'subject_list': subject_list, 'current_subjects': current_subjects, 'grade_list': grade_list,\
+               'current_grade_levels': current_grade_levels, 'student_list': student_list, 'teacher_list': teacher_list}
     return render(request, 'dashboard/classrooms_settings.html', context)
 
 

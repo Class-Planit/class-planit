@@ -3,70 +3,44 @@
 {% block content %}
                 
 <main class="content">
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
-        <div class="btn-toolbar">
-            <button class="btn btn-primary btn-sm mr-2 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="fas fa-plus mr-2"></span>New Item
-            </button>
-            <div class="dropdown-menu dashboard-dropdown dropdown-menu-left mt-2">
-                <a class="dropdown-item font-weight-bold" href="#" data-toggle="modal" data-target="#exampleModal"><span class="fas fa-tasks mr-2"></span>New Classroom</a>
-                <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-cloud-upload-alt mr-2"></span>New Student</a>
-
-                <div role="separator" class="dropdown-divider"></div>
-                <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-rocket text-danger mr-2"></span>New Co-Teacher</a>
-            </div>
+    <div class="container">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
         </div>
-        <div class="btn-group">
-            <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
-            <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
-        </div>
-    </div>
-    <div class="table-settings mb-4">
-        <div class="row justify-content-between align-items-center">
-            <div class="form-group mb-0 mr-3">
-                <div class="dropdown">
-                    <!--
-                        SUBJECT BUTTON NOT NEEDED ?
-
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      Subject
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="#">All subjects</a>
-                        {% for subject in subject_results %}
-                        <a class="dropdown-item" href="#">{{ subject.1 }}</a>
-                        {% endfor %}
-                    </div>
-                    -->
+        <div class="table-settings mb-4">
+            <div class="row justify-content-between align-items-center">
+                <div class="form-group mb-0 mr-3">
+                    <a type="button" class="btn btn-primary" href="{% url 'classroom_list' %}" style="color: white">
+                        <i class="fas fa-angle-left lg"></i> Back to Classroom Overview
+                    </a>
                 </div>
-            </div>
-            <div class="form-group mb-0 mr-3">
-                <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      Classroom
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        {% for classroom in classroom_results %}
-                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=classroom.0 view_ref='Students' confirmation=0 %}">{{ classroom.1 }}</a>
-                        {% endfor %}
+                <div class="form-group mb-0 mr-3">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Classrooms
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            {% for classroom in classroom_results %}
+                            <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=classroom.0 view_ref='Students' confirmation=0 %}">{{ classroom.1 }}</a>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col col-md-4 col-lg-3 col-xl-2 ml-auto">
-                <div class="input-group">
-                    <div class="input-group-prepend"><span class="input-group-text"><span class="fas fa-search"></span></span></div>
-                    <input class="form-control" id="searchInputdashboard1" placeholder="Search" type="text" aria-label="Dashboard user search">
+                <div class="col col-md-4 col-lg-3 col-xl-2 ml-auto">
+                    <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text"><span class="fas fa-search"></span></span></div>
+                        <input class="form-control" id="searchInputdashboard1" placeholder="Search" type="text" aria-label="Dashboard user search">
+                    </div>
                 </div>
-            </div>
-            <div class="col-2 pl-0 d-none d-lg-flex">
-                <div class="form-group mb-0">
-                    <select class="custom-select" id="inlineFormCustomSelectMesages2">
-                        <option selected="selected">All</option>
-                        <option value="1">Active</option>
-                        <option value="2">Inactive</option>
-                        <option value="3">Pending</option>
-                        <option value="3">Canceled</option>
-                    </select>
+                <div class="col-2 pl-0 d-none d-lg-flex">
+                    <div class="form-group mb-0">
+                        <select class="custom-select" id="inlineFormCustomSelectMesages2">
+                            <option selected="selected">All</option>
+                            <option value="1">Active</option>
+                            <option value="2">Inactive</option>
+                            <option value="3">Pending</option>
+                            <option value="3">Canceled</option>
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
@@ -140,7 +114,9 @@
                                                             <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                                         </button>
                                                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                            <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Students' confirmation=0 %}">Delete?</a>
+                                                            <!-- Copy link to invite -->
+                                                            <input type="text" value='https://www.classplanit.co/student/{{student.student_invite.invite_ref}}/' id="myInput" style="display: none;">
+                                                            <a class="dropdown-item" onclick="myFunction()">Copy invite link</a>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -154,7 +130,8 @@
                                                             <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                                         </button>
                                                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                            <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Students' confirmation=0 %}">Delete?</a>
+                                                            <a class="dropdown-item" href="#">View student</a>
+                                                            <a class="dropdown-item" href="#">Move to another classroom</a>                                                        
                                                         </div>
                                                     </div>
                                                 </td>
@@ -266,7 +243,9 @@
                                                             <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                                         </button>
                                                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                            <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Teachers' confirmation=0 %}">Copy invite link</a>
+                                                            <!-- Copy link to invite -->
+                                                            <input type="text" value='https://www.classplanit.co/{{ teacher.teacher_invite.invite_ref }}/' id="myInput" style="display: none;">
+                                                            <a class="dropdown-item" onclick="myFunction()">Copy invite link</a>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -279,7 +258,7 @@
                                                             <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                                         </button>
                                                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                            <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Teachers' confirmation=0 %}">Delete?</a>
+                                                            <a class="dropdown-item">Remove teacher</a>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -357,7 +336,6 @@
                                         {% for subject in class_profile.subjects.all %}
                                             <tr>
                                                 <td>{{ subject.subject_title }}</td>
-                                            <!--what href to use for Remove functionality?-->
                                             <td> <a href="{% url 'edit_classroom_subjects' user_id=user_profile.id class_id=class_profile.id subject_id=subject.id action=1 %}">Remove from classroom</a> </td>
                                             </tr>
                                         {% endfor %}
@@ -380,30 +358,24 @@
                                             {% if subject not in current_subjects.all %}
                                                 <tr>
                                                     <td>{{ subject }}</td>
-                                                <!--what href to use for Add functionality?-->
-                                                <td> <a href="{% url 'edit_classroom_subjects' user_id=user_profile.id class_id=class_profile.id subject_id=subject.id action=0 %}">Add to classroom</a> </td>
+                                                    <td> <a href="{% url 'edit_classroom_subjects' user_id=user_profile.id class_id=class_profile.id subject_id=subject.id action=0 %}">Add to classroom</a> </td>
                                                 </tr>
                                             {% endif %}
                                         {% endfor %}
                                         <tr>
-                                          
-                                            
                                             <td>
-
-                                            <button id='showAddSubject' onclick="showDivForm()">Add New Subject...</button>
-                                            <div id='showForm'  style="display:none;">
-                                                <form method="post">
-                                                    {% csrf_token %}
-                                                    {{ form.as_p }}
-                                                    <input type="submit" value="Add" class="btn btn-info">
-                                                </form>
-                                               
-                                            </div>
+                                                <a id='showAddSubject' onclick="showDivForm()">Add New Subject...</a>
+                                                <div id='showForm'  style="display:none;">
+                                                    <form method="post">
+                                                        {% csrf_token %}
+                                                        <div class="form-group">
+                                                            <label for="teacherSubjectForm" class="h6">Enter subject title:</label>
+                                                            <input type="text" class="form-control" id="subject_title" name='subject_title' placeholder="Subject title here...">
+                                                          </div>
+                                                        <input type="submit" value="Add" class="btn btn-primary">
+                                                    </form>
+                                                </div>
                                             </td>
-                                            
-                                           
-                                            <!--what href to use for Add functionality?-->
-                                            
                                         </tr>
                                     </tbody>
                                 </table>
@@ -447,7 +419,6 @@
                                             {% if grade != class_profile.single_grade %}
                                                 <tr>
                                                     <td>{{ grade }}</td>
-                                                <!--what href to use for Remove functionality?-->
                                                 <td> <a href="{% url 'edit_classroom_grade_levels' user_id=user_profile.id class_id=class_profile.id grade_level_id=grade.id action=1 %}">Remove </a> </td>
                                                 <td> <a href="{% url 'edit_classroom_grade_levels' user_id=user_profile.id class_id=class_profile.id grade_level_id=grade.id action=2 %}">Make default </a> </td>
                                                 </tr>
@@ -483,6 +454,14 @@
 
                 {% elif view_ref == 'Classroom-Title' %}
                     <h2 class="h5">Classroom Title settings options</h2>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="classroomTitleForm" class="h6">Enter new classroom title:</label>
+                            <input type="text" class="form-control" id="classroom_title" name='classroom_title' placeholder="Classroom title here...">
+                          </div>
+                        <input type="submit" value="Update" class="btn btn-primary">
+                    </form>
                 {% else %}
                     <h5>Default </h5>
                 {% endif %}
@@ -522,27 +501,6 @@
                         </div>
                     </div>
                 </div>
-                <!--
-                <div class="dropdown">
-                    <button class="btn btn-outline-secondary dropdown-toggle btn-block" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Manage members <i class="fas fa-chevron-down"></i>
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Students' confirmation=0 %}">Students</a>
-                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Teachers' confirmation=0 %}">Teachers</a>
-                    </div>
-                </div>
-                <div class="dropdown">
-                    <button class="btn btn-outline-secondary dropdown-toggle btn-block" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Update class aspects <i class="fas fa-chevron-down"></i>
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Classroom-Title' confirmation=0 %}">Classroom Title</a>
-                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Subjects' confirmation=0 %}">Subjects</a>
-                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Grade-Levels' confirmation=0 %}">Grade Levels</a>
-                    </div>
-                </div>
-                -->
             </div>
         </div>
     </div>     
