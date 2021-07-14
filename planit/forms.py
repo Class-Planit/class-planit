@@ -16,6 +16,9 @@ from tinymce.widgets import TinyMCE
 class teacherSubjectForm(forms.Form):
     subject_title = forms.CharField()
 
+class classroomTitleForm(forms.Form):
+    classroom_title = forms.CharField()
+
 class  lessonTextForm(forms.ModelForm):
 
     class Meta:
