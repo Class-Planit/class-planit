@@ -302,70 +302,74 @@ def AddStudentToClassroom(request, user_id=None, class_id=None, invite_id=None):
 
         return redirect('classroom_settings', user_id=user_match.id, classroom_id=class_id, view_ref='Students', confirmation=2)
 
-
+#Sends invite email for support teachers
 def AddTeacherToClassroom(request, user_id=None, class_id=None, invite_id=None):
     user_match = User.objects.get(id=user_id)
-    classoom_match = classroom.objects.get(id=class_id)
+    if class_id == None or class_id == 'None':
+        return redirect('registration_full', retry=False)
+    else:
+        classoom_match = classroom.objects.get(id=class_id)
 
-    invite_id = int(invite_id)
-    if invite_id == 0:
-        if request.method == "POST":
-            form = teacherInvitationForm(request.POST, request.FILES)
-            if form.is_valid():
-                prev = form.save(commit=False)
-                prev.created_by = user_match
-                prev.for_classroom = classoom_match
-                prev.is_pending = True
-                prev.save()
-                invitation_match = teacherInvitation.objects.get(id=prev.id)
+        invite_id = int(invite_id)
+        #invite_id to determine if resend(1) or first send(0)
+        if invite_id == 0:
+            if request.method == "POST":
+                form = teacherInvitationForm(request.POST, request.FILES)
+                if form.is_valid():
+                    prev = form.save(commit=False)
+                    prev.created_by = user_match
+                    prev.for_classroom = classoom_match
+                    prev.is_pending = True
+                    prev.save()
+                    invitation_match = teacherInvitation.objects.get(id=prev.id)
 
-                invite_email = invitation_match.email
+                    invite_email = invitation_match.email
 
-                if invite_email:
+                    if invite_email:
+                        try:
+                            message = Mail(
+                                from_email='welcome@classplanit.co',
+                                to_emails=invite_email,
+                                subject="You're Invited",
+                                html_content= get_template('dashboard/teacher_invite_email.html').render({'invitation_match': invitation_match}))
+                        except:
+                            pass
                     try:
-                        message = Mail(
-                            from_email='welcome@classplanit.co',
-                            to_emails=invite_email,
-                            subject="You're Invited",
-                            html_content= get_template('dashboard/teacher_invite_email.html').render({'invitation_match': invitation_match}))
-                    except:
+                        sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+                        response = sg.send(message)
+                        print(response.status_code)
+                        print(response.body)
+                        print(response.headers)
+                    except Exception as e:
                         pass
-                try:
-                    sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
-                    response = sg.send(message)
-                    print(response.status_code)
-                    print(response.body)
-                    print(response.headers)
-                except Exception as e:
-                    pass
 
-                return redirect('classroom_settings', user_id=user_match.id, classroom_id=class_id, view_ref='Teachers', confirmation=1)
+                    return redirect('classroom_settings', user_id=user_match.id, classroom_id=class_id, view_ref='Teachers', confirmation=1)
+                else:
+                    return redirect('classroom_list')
             else:
                 return redirect('classroom_list')
         else:
-            return redirect('classroom_list')
-    else:
-        invite_match = teacherInvitation.objects.get(id= invite_id)
-        invite_email = invite_match.email
-        if invite_email:
+            invite_match = teacherInvitation.objects.get(id= invite_id)
+            invite_email = invite_match.email
+            if invite_email:
+                try:
+                    message = Mail(
+                        from_email='welcome@classplanit.co',
+                        to_emails=invite_email,
+                        subject="You're Invited",
+                        html_content= get_template('dashboard/teacher_invite_email.html').render({'invitation_match': invite_match}))
+                except:
+                    pass
             try:
-                message = Mail(
-                    from_email='welcome@classplanit.co',
-                    to_emails=invite_email,
-                    subject="You're Invited",
-                    html_content= get_template('dashboard/teacher_invite_email.html').render({'invitation_match': invite_match}))
-            except:
+                sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+                response = sg.send(message)
+                print(response.status_code)
+                print(response.body)
+                print(response.headers)
+            except Exception as e:
                 pass
-        try:
-            sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
-            response = sg.send(message)
-            print(response.status_code)
-            print(response.body)
-            print(response.headers)
-        except Exception as e:
-            pass
 
-        return redirect('classroom_settings', user_id=user_match.id, classroom_id=class_id, view_ref='Teachers', confirmation=2)
+            return redirect('classroom_settings', user_id=user_match.id, classroom_id=class_id, view_ref='Teachers', confirmation=2)
 
 #Adds or Removes Subjects
 def EditClassroomSubjects(request, user_id=None, class_id=None, subject_id=None, action=None):
@@ -564,21 +568,16 @@ def CreateObjective(request, user_id=None, week_of=None):
         user_classrooms = classroom.objects.filter(main_teacher=user_profile)
         subjects = []
         if user_classrooms:
-            #print(user_classrooms)
             for classroom_m in user_classrooms:
-                #print("--------------------------------")
-                #print("Classroom: ", classroom_m)
                 s_match = classroom_m.subjects.all()
                 subject_match = standardSubjects.objects.filter(id__in=s_match)
-                #print("Subjects: ", subject_match)
-                if subject_match not in subjects:
-                    subjects.append(subject_match)
+                for subject in subject_match:
+                    subject_id = subject.id
+                    subject_title = subject.subject_title
+                    result = subject_id, subject_title
+                    if result not in subjects:
+                        subjects.append(result)
 
-        #for each_class in user_classrooms:
-        #    all_subjects = each_class.subjects.all()
-        #    for each_subject in all_subjects:
-        #        if each_subject not in subjects:
-        #            subjects.append(each_subject)
 
         if request.method == "POST":
             form = lessonObjectiveForm(request.POST, request.FILES)
@@ -993,6 +992,9 @@ def StudentPerformance(request, user_id, class_id, week_of):
     
 
     week_breakdown = get_weekly_brackets(user_id, start, current_week, current_year)
+    week_breakdown['low'] =  [ 2, 1, 2, 1, 2, 3, 4, 4, 2, 4, 3, 3]
+    week_breakdown['mid'] =  [14,12,11,14,10,12,14,13,13,14,13,15]
+    week_breakdown['high'] = [ 4, 7, 7, 5, 8, 5, 2, 3, 5, 2, 4, 2]
     top_lessons = get_demo_ks_brackets(user_id, start, current_week, current_year)
     student_results = get_student_results(user_id, start, current_week, current_year)
     return render(request, 'dashboard/tasks.html', {'user_profile': user_profile, 'all_themes': all_themes, 'week_breakdown': week_breakdown, 'top_lessons': top_lessons, 'student_results': student_results})

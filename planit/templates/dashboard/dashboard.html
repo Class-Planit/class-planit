@@ -5,8 +5,8 @@
 {% block content %}
 
 <main class="content">
-    <!--
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+        <!--
         <div class="btn-toolbar">
             <button class="btn btn-primary btn-sm mr-2 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="fas fa-plus mr-2"></span>New Task
@@ -24,19 +24,24 @@
             <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
             <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
         </div>
+        -->
     </div>
-    -->
+    <div class="form-group mb-0 mr-3">
+        <a type="button" class="btn btn-primary" href="{% url 'Dashboard' week_of='Current' subject_id='All' classroom_id='All' %}" style="color: white">
+            <i class="fas fa-angle-left lg"></i> Back to Current Week
+        </a>
+    </div>
     <section class="section section-md ">
         <div class="container">
             <div class="row">
                 <div class="col-sm-2">
-                    <a type="button" class="btn btn-sm btn-block btn-outline-secondary" href="{% url 'update_week_of' week_of=active_week user_id=user_profile.id subject_id=active_subject_id classroom_id=active_classroom_id action=1 %}">Previous Week</a>
+                    <a type="button" class="btn btn-sm btn-block btn-outline-secondary" href="{% url 'update_week_of' week_of=active_week user_id=user_profile.id subject_id='All' classroom_id='All' action=1 %}">Previous Week</a>
                 </div>
                 <div class="col-sm-8">
                     
                 </div>
                 <div class="col-sm-2">
-                    <a type="button" class="btn btn-sm btn-block btn-outline-secondary" href="{% url 'update_week_of' week_of=active_week user_id=user_profile.id subject_id=active_subject_id classroom_id=active_classroom_id action=2 %}">Next Week</a>
+                    <a type="button" class="btn btn-sm btn-block btn-outline-secondary" href="{% url 'update_week_of' week_of=active_week user_id=user_profile.id subject_id='All' classroom_id='All' action=2 %}">Next Week</a>
                 </div>
             </div>
             <div class="row">

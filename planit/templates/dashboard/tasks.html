@@ -5,6 +5,7 @@
             
 <main class="content">
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+        <!--
         <div class="btn-toolbar">
             <button class="btn btn-primary btn-sm mr-2 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="fas fa-plus mr-2"></span>New Task
@@ -21,6 +22,7 @@
             <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
             <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
         </div>
+    -->
     </div>
     <div class="row">
         <div class="col-12 col-xl-6 mb-4">
@@ -73,7 +75,6 @@
                             }, {
                                 name: 'High',
                                 data: {{ week_breakdown.high|safe }}
-
                             }]
                             });
                     </script>
@@ -88,6 +89,47 @@
                              <div class="row d-block d-md-flex align-items-center">
 
                                     <div class="col-12">
+                                        <div class="row d-flex align-items-center mb-1">
+                                            <div class="col-4 text-gray font-weight-bold px-0 small">
+                                                Social Studies Week 26
+                                            </div>
+                                            <div class="col-8 px-0">
+                                                <div class="progress progress-lg rounded mb-0">
+                                                    <div class="progress-bar bg-success rounded" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100" style="width: 85%;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row d-flex align-items-center mb-1">
+                                            <div class="col-4 text-gray font-weight-bold px-0 small">
+                                                English Week 26
+                                            </div>
+                                            <div class="col-8 px-0">
+                                                <div class="progress progress-lg rounded mb-0">
+                                                    <div class="progress-bar bg-success rounded" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row d-flex align-items-center mb-1">
+                                            <div class="col-4 text-gray font-weight-bold px-0 small">
+                                                Social Studies Week 27
+                                            </div>
+                                            <div class="col-8 px-0">
+                                                <div class="progress progress-lg rounded mb-0">
+                                                    <div class="progress-bar bg-success rounded" role="progressbar" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100" style="width: 65%;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row d-flex align-items-center mb-1">
+                                            <div class="col-4 text-gray font-weight-bold px-0 small">
+                                                English Week 27
+                                            </div>
+                                            <div class="col-8 px-0">
+                                                <div class="progress progress-lg rounded mb-0">
+                                                    <div class="progress-bar bg-success rounded" role="progressbar" aria-valuenow="73" aria-valuemin="0" aria-valuemax="100" style="width: 73%;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--
                                         {% for item in top_lessons %}
                                         <div class="row d-flex align-items-center mb-1">
                                             <div class="col-4 text-gray font-weight-bold px-0 small">
@@ -101,6 +143,7 @@
                                         </div>
                                       
                                       {% endfor %%}
+                                        -->
                                     </div>
 
                              </div>
@@ -112,7 +155,7 @@
                         <div class="card-body">
                             <h2 class="h5">Top Students:</h2>
                             <ul class="list-unstyled mb-0">
-                                <li class="mb-1">Student One - 80% <i class="fas fa-pull-right fa-thumbs-up"></i></li>
+                                <li class="mb-1">Bart Simpson - 85% <i class="fas fa-pull-right fa-thumbs-up"></i></li>
      
                             </ul>
                         </div>
@@ -123,7 +166,7 @@
                         <div class="card-body">
                             <h2 class="h5">Most Improved:</h2>
                             <ul class="list-unstyled mb-0">
-                                <li class="mb-1">Student One - 80% <i class="fas fa-pull-right fa-thumbs-up"></i></li>
+                                <li class="mb-1">Bart Simpson - 30% <i class="fas fa-pull-right fa-thumbs-up"></i></li>
      
                             </ul>
                         </div>
@@ -149,9 +192,57 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                <tr>
+                                    <td class="border-0">                                             
+                                        <a href="#" class="d-flex align-items-center">
+                                            
+                                            <div><span class="h6">Bart Simpson</span></div>
+                                        </a>
+                                    </td>
+                                    <td class="border-0 font-weight-bold">
+                                        3 
+                                        </td>
+                                    <td class="border-0 font-weight-bold">
+                                        85%
+                                        </td>
+                                        <td class="border-0 text-success">
+                                            <span class="fas fa-angle-up"></span>                                   
+                                            <span class="font-weight-bold">30%</span>
+                                        </td>
+                                    <td class="border-0 font-weight-bold">
+                                        10/15  
+                                    </td>
+                                
+                                </tr>
+                                <!-- End of Item -->
+                                <!-- Item -->
+                                <tr>
+                                    <td class="border-0">                                             
+                                        <a href="#" class="d-flex align-items-center">
+                                            
+                                            <div><span class="h6">Ferris Bueller</span></div>
+                                        </a>
+                                    </td>
+                                    <td class="border-0 font-weight-bold">
+                                        1
+                                    </td>
+                                
+                                    <td class="border-0 font-weight-bold">
+                                        55%
+                                    </td>
+                                    <td class="border-0 text-danger">
+                                        <span class="fas fa-angle-down"></span>                                   
+                                        <span class="font-weight-bold">5%</span>
+                                    </td>
+                                    <td class="border-0 font-weight-bold">
+                                        6/15
+                                    </td>
+                                
+                                </tr>
+                                <!--
                                 {% for student in student_results %}
                                     {% ifchanged student.student_id %}
-                                    <!-- Item -->
+                                    
                                     <tr>
                                         <td class="border-0 font-weight-bold">{{ student.student_name }}</td>
                                         <td class="border-0">   
@@ -194,9 +285,9 @@
                                         </td>
 
                                     </tr>
-                                    <!-- End of Item -->
                                     {% endifchanged %}
                                 {% endfor %}
+                                -->
                             </tbody>
                         </table>
                     </div>

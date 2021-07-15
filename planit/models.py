@@ -291,8 +291,15 @@ class teacherInvitation(models.Model):
     created_by = models.ForeignKey(User,
                                on_delete=models.CASCADE,
                                blank=True,
-                               null=True)
+                               null=True,
+                               related_name='created_by')
+    new_user= models.ForeignKey(User,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True,
+                               related_name='new_user')
     is_pending = models.BooleanField(default=True)
+    is_waitlist = models.BooleanField(default=True)
     
 
     def save(self, *args, **kwargs):
