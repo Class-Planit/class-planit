@@ -299,7 +299,7 @@ class teacherInvitation(models.Model):
                                null=True,
                                related_name='new_user')
     is_pending = models.BooleanField(default=True)
-    is_waitlist = models.BooleanField(default=True)
+    is_waitlist = models.BooleanField(default=False)
     
 
     def save(self, *args, **kwargs):

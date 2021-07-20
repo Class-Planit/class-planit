@@ -23,8 +23,8 @@ except ImportError:
 import pytesseract
 import csv, io
 from django.template.loader import get_template
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
+import sendgrid
+from sendgrid.helpers.mail import *
 from twilio.rest import Client
 from twilio.rest import TwilioRestClient
 from pytesseract import image_to_string
@@ -89,9 +89,9 @@ def Homepage(request):
                 print(response.headers)
             except Exception as e:
                 pass
-            return redirect('thank_you', user_id=user_id)
+            return redirect('thank_you', user_id=user_id, waitlist_inv=None)
         else:
-            return redirect('registration_full', retry=True)
+            return redirect('registration_full', retry=True, teacher_invite=None)
         
     else:
 
@@ -105,11 +105,12 @@ def Homepage(request):
 
 #Full Form Regstration if error on pop up modal
 def FormFull(request, retry=None):
-    
-    if 'True' in retry:
+    if retry != False and retry != "False":
         message = 'Something Went Wrong! Please complete your registration again.'
+        error_messages = retry
     else:
         message = "Let's Get Started!"
+        error_messages = None
     if request.method == "POST":
 
         form = TeacherForm(request.POST)
@@ -129,6 +130,11 @@ def FormFull(request, retry=None):
             
             welcome_message = 'Welcome to Class Planit, %s! We will be in touch when your account is activated.' % (username)
         
+            #create "empty" teacherInvitation (only created_by and is_waitlist)
+            user_match = User.objects.get(id=user_id)
+            new_waitlist_inv = teacherInvitation.objects.create(invite_ref= None, created_by= user_match, is_waitlist= True)
+            inv_ref = new_waitlist_inv.invite_ref
+
             to = str(my_number)
             if to:
                 try:
@@ -137,27 +143,135 @@ def FormFull(request, retry=None):
                             body=str(welcome_message),
                             to=to, from_=config('TWILIO_PHONE_NUMBER'))
                     message = Mail(
-                            from_email='welcome@classplanit.co',
+                            from_email='hello@classplanit.co',
                             to_emails=user_email,
                             subject='Welcome to Class Planit',
-                            html_content= get_template('dashboard/welcome_to_class_planit.html').render({'user': user}))
+                            html_content= get_template('homepage/welcome_to_classplanit.html').render({'user': user, 'waitlist_inv': inv_ref}))
                 except Exception as e:
                     pass
             try:
-                sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+                sg = SendGridAPIClient(config('SENDGRID_API_KEY'))
                 response = sg.send(message)
                 print(response.status_code)
                 print(response.body)
                 print(response.headers)
-            except Exception as e:
+            except:
                 pass
-            return redirect('thank_you', user_id=user_id)
+
+            
+            return redirect('thank_you', user_id=user_id, waitlist_inv=inv_ref, invited_by=None)
 
     else:
 
         form = TeacherForm()
     
-    return render(request, 'homepage/registration_full.html', {'form': form, 'message': message})
+    return render(request, 'homepage/registration_full.html', {'form': form, 'message': message, 'error_messages': error_messages})
+
+#Full Form Regstration for invited teachers to be placed on waitlist
+def FormFullInv(request, retry=None, invite_id=None):
+    if retry != False and retry != "False":
+        message = 'Something Went Wrong! Please complete your registration again.'
+        error_messages = retry
+    else:
+        message = "Let's Get Started!"
+        error_messages = None
+
+    invite_match = teacherInvitation.objects.filter(invite_ref= invite_id).first()
+    invited_by = invite_match.created_by
+    invited_by_name = invited_by.first_name, invited_by.last_name
+
+    if request.method == "POST":
+
+        form = TeacherForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            
+            user_email = form.cleaned_data.get('email')
+            my_number = form.cleaned_data.get('phone_number')
+            if '+1' in my_number:
+                pass
+            else:
+                my_number = '+1', my_number
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            user_id = user.id
+            
+            welcome_message = 'Welcome to Class Planit, %s! We will be in touch when your account is activated.' % (username)
+
+            #create "empty" teacherInvitation (only created_by and is_waitlist)
+            user_match = User.objects.get(id=user_id)
+            new_waitlist_inv = teacherInvitation.objects.create(invite_ref= None, created_by= user_match, is_waitlist= True)
+            inv_ref = new_waitlist_inv.invite_ref
+        
+            to = str(my_number)
+            if to:
+                try:
+                    client = Client(config('TWILIO_ACCOUNT_SID'), config('TWILIO_AUTH_TOKEN'))
+                    response = client.messages.create(
+                            body=str(welcome_message),
+                            to=to, from_=config('TWILIO_PHONE_NUMBER'))
+                    message = Mail(
+                            from_email='hello@classplanit.co',
+                            to_emails=user_email,
+                            subject='Welcome to Class Planit',
+                            html_content= get_template('homepage/welcome_to_classplanit.html').render({'user': user, 'waitlist_inv': inv_ref}))
+                except Exception as e:
+                    pass
+            try:
+                sg = SendGridAPIClient(config('SENDGRID_API_KEY'))
+                response = sg.send(message)
+                print(response.status_code)
+                print(response.body)
+                print(response.headers)
+            except:
+                pass
+               
+            return redirect('thank_you', user_id=user_id, waitlist_inv=inv_ref, invited_by=invited_by.id)
+
+    else:
+
+        form = TeacherForm()
+    
+    return render(request, 'homepage/registration_full_inv.html', {'form': form, 'message': message, 'error_messages': error_messages, 'invited_by_name': invited_by_name})
+
+#Teacher Questionnaire 
+def QuestionnaireFull(request):
+
+    if request.method == "POST":
+
+        form = teacherQuestionnaireForm(request.POST)
+        if form.is_valid():
+            form.save()
+            
+            return redirect('thank_you_questionnaire')
+    else:
+
+        form = teacherQuestionnaireForm()
+    
+    return render(request, 'homepage/teacher_questionnaire.html', {'form': form})
+
+#Thanks for submitting the questionnaire
+class ThankYouQuestionnaire(TemplateView):
+    template_name = 'homepage/thank_you_questionnaire.html' 
+
+    def get(self,request):
+        return render(request, 'homepage/thank_you_questionnaire.html', {})
+
+#Thank for Registering Page, we will get back to you
+#class ThankYou(TemplateView):
+#    template_name = 'homepage/thank_you.html' 
+#
+#    def get(self,request,user_id,waitlist_inv,invited_by):
+#        user_profile = User.objects.get(id=user_id)
+#
+#        return render(request, 'homepage/thank_you.html', {'user_profile': user_profile, 'waitlist_inv': waitlist_inv })
+
+#Thank for Registering Page, we will get back to you
+def ThankYou(request, user_id=None, waitlist_inv=None, invited_by=None): 
+    user_profile = User.objects.get(id=user_id)
+    
+    return render(request, 'homepage/thank_you.html', {'user_profile': user_profile, 'waitlist_inv': waitlist_inv, 'invited_by': invited_by })
 
 #User Login 
 def login_user(request):
@@ -305,8 +419,8 @@ def AddStudentToClassroom(request, user_id=None, class_id=None, invite_id=None):
 #Sends invite email for support teachers
 def AddTeacherToClassroom(request, user_id=None, class_id=None, invite_id=None):
     user_match = User.objects.get(id=user_id)
-    if class_id == None or class_id == 'None':
-        return redirect('registration_full', retry=False)
+    if (class_id == None) or (class_id == 'None'):
+        return redirect('registration_full', retry=False, invite_id=invite_id)
     else:
         classoom_match = classroom.objects.get(id=class_id)
 

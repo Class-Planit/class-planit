@@ -131,8 +131,17 @@
                 <div class="text-column col-md-6 col-sm-12 col-xs-12">
                 	<div class="inner">
                     	
-                        <h2>{% if user_profile.first_name %}{{ user_profile.first_name|title }} {{ user_profile.last_name|title }},{% endif %} Thanks for Signing Up!</h2>
+                        <h2>{% if user_profile.first_name %}{{ user_profile.first_name }} {{ user_profile.last_name }},{% endif %} Thanks for Signing Up!</h2>
                         <p>We are onboarding new teachers everyday for our beta version. We will be in touch shortly as we move through our waitlist.</p>
+                        <h3>Share your link below to invite other teachers to join the waitlist for Class Planit!</h3>
+                        <!-- Copy link to invite -->
+                        <input type="text" value='https://www.classplanit.co/False/{{ waitlist_inv }}/' id="myInput" style="display: none;">
+                        <br>
+                        <a class=" btn-style-two btn-sm" onclick="myFunction()" >Copy invite link</a>
+
+                        <hr>
+                        <p>We would love more information about you and your experiences as an educator. Please help us by clicking on the link below and completing a short questionnaire:</p>
+                        <a href="{% url 'questionnaire_full' %}" class="theme-btn btn-style-two">Complete A Questionnaire</a>
                         <a href="{% url 'homepage' %}" class="theme-btn btn-style-two">Back to Home</a>
                     </div>
                 </div>
@@ -231,7 +240,19 @@
 <script src="{% static 'js/homepage/wow.js' %}"></script>
 <script src="{% static 'js/homepage/validate.js' %}"></script>
 <script src="{% static 'js/homepage/script.js' %}"></script>
-
+<script>
+    function myFunction() {
+        /* Get the text field */
+        var copyText = document.getElementById("myInput");
+        /* Select the text field */
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); /* For mobile devices */
+        /* Copy the text inside the text field */
+        document.execCommand("copy");
+        /* Alert the copied text */
+        alert("Copied the link: " + copyText.value);
+}
+</script>
 
 </body>
 </html>

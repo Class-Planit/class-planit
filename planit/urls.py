@@ -22,9 +22,29 @@ urlpatterns = [
         view=Homepage,
         name='homepage'),
 
-    url(r'^full-form/(?P<retry>[\w\s]+)/',
+    url(r'^full-form/(?P<retry>.+)/',
         view=FormFull,
         name='registration_full'),
+
+    url(r'^full-form-inv/(?P<retry>[\w\s]+)/(?P<invite_id>[\w\s]+)/',
+        view=FormFullInv,
+        name='registration_full_inv'),
+
+    #url(r'^thanks/(?P<user_id>[\w\s]+)/(?P<waitlist_inv>[\w\s]+)/(?P<invited_by>[\w\s]+)/',
+    #    view=ThankYou.as_view(),
+    #    name='thank_you'),
+
+    url(r'^thanks/(?P<user_id>[\w\s]+)/(?P<waitlist_inv>[\w\s]+)/(?P<invited_by>[\w\s]+)/',
+        view=ThankYou,
+        name='thank_you'),
+
+    url(r'^questionnaire/',
+        view=QuestionnaireFull,
+        name='questionnaire_full'),
+
+    url(r'^thanks-questionnaire/',
+        view=ThankYouQuestionnaire.as_view(),
+        name='thank_you_questionnaire'),
 
     url(r'^update-week-of/(?P<week_of>[\w-]+)/(?P<user_id>[\w-]+)/(?P<subject_id>[\w-]+)/(?P<classroom_id>[\w-]+)/(?P<action>[\w-]+)/',
        view=UpdateWeekOf,
