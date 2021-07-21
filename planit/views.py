@@ -216,6 +216,11 @@ def FormFullInv(request, retry=None, invite_id=None):
                             to_emails=user_email,
                             subject='Welcome to Class Planit',
                             html_content= get_template('homepage/welcome_to_classplanit.html').render({'user': user, 'waitlist_inv': inv_ref}))
+                            #from_email='welcome@classplanit.co',
+                            #to_emails=user_email,
+                            #subject='Sending with Twilio SendGrid is Fun',
+                            #html_content='<strong>and easy to do anywhere, even with Python</strong>')
+
                 except Exception as e:
                     pass
             try:

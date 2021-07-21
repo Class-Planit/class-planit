@@ -620,6 +620,9 @@ class reccomendedTopics(models.Model):
                                      blank=True,
                                      related_name='removed_topics',
                                      null=True)
+    search_level = models.IntegerField(default = 1,
+                               blank=True,
+                               null=True)
 
     def __str__(self):
         return "%s" % (self.id)
