@@ -34,7 +34,7 @@ def get_student_list(user_id, class_id):
             student_ref = student_invite
 
         result = {'s_first': student.first_name, 's_last': student.last_name, 'g_level': student.current_grade_level, 'username': student_user,\
-                  'student_invite': student_ref, 'email': student_invite.email}
+                  'student_invite': student_ref, 'email': student_invite.email, 'student_id': student.student_username_id}
         student_list.append(result)
 
     student_list.sort(key=lambda x: x['s_last'])
@@ -63,3 +63,31 @@ def get_teacher_list(user_id, class_id):
     
     teacher_list.sort(key=lambda x: x['t_last'])
     return(teacher_list)
+
+def get_student_info(student_list):
+    #Each student in student_list has this info (already in alphabetical order)
+    #result = {'s_first': student.first_name, 's_last': student.last_name, 'g_level': student.current_grade_level, 'username': student_user,\
+    #          'student_invite': student_ref, 'email': student_invite.email, 'student_id': student.student_username_id}
+    student_info = []
+    print(student_list)
+    for student in student_list:
+        name = student['s_first'], student['s_last']
+        if student['username'] != None:
+            student_user = User.objects.get(id=student['student_id'])
+            print(student)
+            praises = studentPraise.objects.filter(student=student_user)
+            stickers = 5
+            performance = 'pos', 30
+            completion = [ 5, 6, 6 ]
+            average = 85
+            each_student = {'name': name, 'stickers': stickers, 'performance': performance, 'completion': completion, 'average': average}
+            student_info.append(each_student)
+        else:
+            stickers = 'n/a'
+            performance = 'null', 'n/a'
+            completion = [ 0, 0, 6 ]
+            average = 'n/a'
+            each_student = {'name': name, 'stickers': stickers, 'performance': performance, 'completion': completion, 'average': average}
+            student_info.append(each_student)
+
+    return(student_info)

@@ -2,7 +2,7 @@ from .models import *
 
 
 
-
+#Gets the class name, number of students, support teachers and classroom id
 def get_classroom_summary(user_id, date):
     user_profile = User.objects.get(id=user_id)
     classroom_profiles = classroom.objects.filter(main_teacher=user_profile)
@@ -10,8 +10,10 @@ def get_classroom_summary(user_id, date):
     for single_classroom in classroom_profiles:
         class_list_matches, created = classroomLists.objects.get_or_create(lesson_classroom=single_classroom, year=date)
         class_name = single_classroom.classroom_title
-        student_list = class_list_matches.students.all()
-        student_count = student_list.count()
+        student_list = single_classroom.student.all()
+        #student_count = student_list.count()
+        print(student_list)
+        student_count = len(student_list)
         shared_list = single_classroom.support_teachers.all()
         s_match = User.objects.filter(id__in=shared_list)
         shared_m = []

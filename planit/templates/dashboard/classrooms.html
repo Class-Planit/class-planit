@@ -3,52 +3,48 @@
 {% block content %}
                 
 <main class="content">   
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
-        <!--
-        <div class="btn-toolbar">
-            <button class="btn btn-primary btn-sm mr-2 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="fas fa-plus mr-2"></span>New Item
-            </button>
-            <div class="dropdown-menu dashboard-dropdown dropdown-menu-left mt-2">
-                <a class="dropdown-item font-weight-bold" href="#" data-toggle="modal" data-target="#exampleModal"><span class="fas fa-tasks mr-2"></span>New Classroom</a>
-                <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-cloud-upload-alt mr-2"></span>New Student</a>
+    <div class="container">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+            <!--
+                <div class="btn-toolbar">
+                <button class="btn btn-primary btn-sm mr-2 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="fas fa-plus mr-2"></span>New Item
+                </button>
+                <div class="dropdown-menu dashboard-dropdown dropdown-menu-left mt-2">
+                    <a class="dropdown-item font-weight-bold" href="#" data-toggle="modal" data-target="#exampleModal"><span class="fas fa-tasks mr-2"></span>New Classroom</a>
+                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-cloud-upload-alt mr-2"></span>New Student</a>
 
-                <div role="separator" class="dropdown-divider"></div>
-                <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-rocket text-danger mr-2"></span>New Co-Teacher</a>
+                    <div role="separator" class="dropdown-divider"></div>
+                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-rocket text-danger mr-2"></span>New Co-Teacher</a>
+                </div>
+            </div>
+            <div class="btn-group">
+                <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+            </div>
+            -->
+            <div class="form-group mb-0 mr-3">
+                <a type="button" class="btn btn-primary" href="{% url 'classroom_list' %}" style="color: white">
+                    <i class="fas fa-angle-left lg"></i> Back to All Classrooms
+                </a>
             </div>
         </div>
-        <div class="btn-group">
-            <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
-            <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
-        </div>
-        -->
-    </div>
-    <div class="table-settings mb-4">
-        <div class="row justify-content-between align-items-center">
-            <div class="col-12 col-md-6 col-lg-3 align-items-center d-none d-md-flex">
-                <!--
+        <div class="table-settings mb-4">
+            <div class="row justify-content-between align-items-center">
+                
                 <div class="form-group mb-0 mr-3">
-                    <select class="custom-select" id="inlineFormCustomSelectMesages">
-                        <option selected="selected">Grade Level</option>
-                        <option value="1">English</option>
-                        <option value="2">Math</option>
-                        
-                    </select>
-                </div>
-                -->
-                <div class="form-group mb-0 mr-3">
+                    
                     <div class="dropdown">
                         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Classrooms
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             {% for classroom in classroom_results %}
-                            <a class="dropdown-item" href="{% url 'classroom_single' user_id=user_profile.id class_id=classroom.0 %}">{{ classroom.1 }}</a>
+                            <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=classroom.0 view_ref='Students' confirmation=0 %}">{{ classroom.1 }}</a>
                             {% endfor %}
                         </div>
                     </div>
                 </div>
-
                 <div class="form-group mb-0 mr-3">
                     <div class="dropdown">
                         <button class="btn btn-block btn-outline-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -60,26 +56,28 @@
                     </div>
                 </div>
                 
-            </div>
-            <!--
-            <div class="col col-md-4 col-lg-3 col-xl-2 ml-auto">
-                <div class="input-group">
-                    <div class="input-group-prepend"><span class="input-group-text"><span class="fas fa-search"></span></span></div>
-                    <input class="form-control" id="searchInputdashboard1" placeholder="Search" type="text" aria-label="Dashboard user search">
+                <div class="col col-md-4 col-lg-3 col-xl-2 ml-auto">
+                    <!--
+                    <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text"><span class="fas fa-search"></span></span></div>
+                        <input class="form-control" id="searchInputdashboard1" placeholder="Search" type="text" aria-label="Dashboard user search">
+                    </div>
+                    -->
+                </div>
+                <div class="col-2 pl-0 d-none d-lg-flex">
+                    <!--
+                    <div class="form-group mb-0">
+                        <select class="custom-select" id="inlineFormCustomSelectMesages2">
+                            <option selected="selected">All</option>
+                            <option value="1">Active</option>
+                            <option value="2">Inactive</option>
+                            <option value="3">Pending</option>
+                            <option value="3">Canceled</option>
+                        </select>
+                    </div>
+                    -->
                 </div>
             </div>
-            <div class="col-2 pl-0 d-none d-lg-flex">
-                <div class="form-group mb-0">
-                    <select class="custom-select" id="inlineFormCustomSelectMesages2">
-                        <option selected="selected">All</option>
-                        <option value="1">Active</option>
-                        <option value="2">Inactive</option>
-                        <option value="3">Pending</option>
-                        <option value="3">Canceled</option>
-                    </select>
-                </div>
-            </div>
-            -->
         </div>
     </div>
     <div class="row">
@@ -162,6 +160,39 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                <!--
+                                {% for student in student_info %}
+                                    <tr>
+                                        <td class="border-0">                                             
+                                            <a href="#" class="d-flex align-items-center">
+                                                
+                                                <div><span class="h6">{{ student.name.0 }} {{ student.name.1 }}</span></div>
+                                            </a>
+                                        </td>
+                                        <td class="border-0 font-weight-bold">
+                                            {{ student.stickers }} 
+                                            </td>
+                                        {% if student.performance.0 == 'pos' %}
+                                            <td class="border-0 text-success">
+                                                <span class="fas fa-angle-up"></span> 
+                                        {% elif student.performance.0 == 'neg' %}
+                                            <td class="border-0 text-danger">
+                                                <span class="fas fa-angle-down"></span> 
+                                        {% else %}
+                                            <td class="border-0 text-gray">
+                                                <span class="fas fa-equals"></span> 
+                                        {% endif %}                                  
+                                            <span class="font-weight-bold">{{ student.performance.1 }}%</span>
+                                        </td>
+                                        <td class="border-0 font-weight-bold">
+                                            {{ student.completion.0 }} / {{ student.completion.1 }} / {{ student.completion.2 }}
+                                            </td>
+                                        <td class="border-0 font-weight-bold">
+                                            {{ student.average }}%
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                -->
                                 <!-- Item -->
                                 <tr>
                                     <td class="border-0">                                             

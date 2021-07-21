@@ -27,14 +27,15 @@
         -->
     </div>
     <div class="form-group mb-0 mr-3">
-        <a type="button" class="btn btn-primary" href="{% url 'Dashboard' week_of='Current' subject_id='All' classroom_id='All' %}" style="color: white">
-            <i class="fas fa-angle-left lg"></i> Back to Current Week
-        </a>
-    </div>
-    <div class="form-group mb-0 mr-3">
-        <a type="button" class="btn btn-primary" href="{% url 'registration_full_inv' retry=False invite_id=None %}" style="color: white">
-            JUST FOR TESTING THE WAITLIST FORM
-        </a>
+        {% if current_week == active_week %}
+            <a type="button" class="btn btn-primary" href="{% url 'Dashboard' week_of='Current' subject_id='All' classroom_id='All' %}" style="color: white">
+                Displaying Current Week
+            </a>
+        {% else %}
+            <a type="button" class="btn btn-primary" href="{% url 'Dashboard' week_of='Current' subject_id='All' classroom_id='All' %}" style="color: white">
+                <i class="fas fa-angle-left lg"></i> Back to Current Week
+            </a>
+        {% endif %}
     </div>
     <section class="section section-md ">
         <div class="container">

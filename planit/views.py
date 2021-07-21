@@ -532,9 +532,10 @@ def ClassroomDashboard(request, user_id=None, class_id=None):
     class_profile = classroom.objects.get(id=class_id)
     student_summary = get_classroom_list_summary(user_profile.id, current_year, class_id)
 
-    #get all students in classroom
+    #get all students in classroom and info
     student_list = get_student_list(user_id, class_id)
-
+    student_info = get_student_info(student_list)
+    
     #gets the classrooms teachers are main teacher on 
     classroom_profiles = classroom.objects.filter(main_teacher=user_profile)
     objective_matches = lessonObjective.objects.filter(lesson_classroom__in=classroom_profiles)
@@ -542,7 +543,8 @@ def ClassroomDashboard(request, user_id=None, class_id=None):
     subject_results, classroom_results = get_subject_and_classroom(objective_matches)
 
     context = { 'user_profile': user_profile, 'student_summary': student_summary, 'class_profile': class_profile,\
-                'subject_results': subject_results, 'classroom_results': classroom_results, 'student_list': student_list}
+                'subject_results': subject_results, 'classroom_results': classroom_results, 'student_list': student_list,\
+                'student_info': student_info}
 
     return render(request, 'dashboard/classrooms.html', context)
 
