@@ -216,6 +216,7 @@ def FormFullInv(request, retry=None, invite_id=None):
                             to_emails=user_email,
                             subject='Welcome to Class Planit',
                             html_content= get_template('homepage/welcome_to_classplanit.html').render({'user': user, 'waitlist_inv': inv_ref}))
+
                 except Exception as e:
                     pass
             try:
