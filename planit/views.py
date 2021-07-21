@@ -137,10 +137,11 @@ def FormFull(request, retry=None):
                             body=str(welcome_message),
                             to=to, from_=config('TWILIO_PHONE_NUMBER'))
                     message = Mail(
-                            from_email='welcome@classplanit.co',
-                            to_emails=user_email,
-                            subject='Welcome to Class Planit',
-                            html_content= get_template('dashboard/welcome_to_class_planit.html').render({'user': user}))
+                                from_email='welcome@classplanit.co',
+                                to_emails=user_email,
+                                subject='Sending with Twilio SendGrid is Fun',
+                                html_content='<strong>and easy to do anywhere, even with Python</strong>')
+
                 except Exception as e:
                     pass
             try:
