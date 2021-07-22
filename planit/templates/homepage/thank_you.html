@@ -133,15 +133,14 @@
                     	
                         <h2>{% if user_profile.first_name %}{{ user_profile.first_name }} {{ user_profile.last_name }},{% endif %} Thanks for Signing Up!</h2>
                         <p>We are onboarding new teachers everyday for our beta version. We will be in touch shortly as we move through our waitlist.</p>
+                        <p>We would love more information about you and your experiences as an educator. Please help us by clicking on the link below and completing a short questionnaire:</p>
+                        <a href="{% url 'questionnaire_full' %}" class="theme-btn btn-style-two">Complete A Questionnaire</a>
+                        <hr>
                         <h3>Share your link below to invite other teachers to join the waitlist for Class Planit!</h3>
                         <!-- Copy link to invite -->
                         <input type="text" value='https://www.classplanit.co/False/{{ waitlist_inv }}/' id="myInput" style="display: none;">
                         <br>
                         <a class=" btn-style-two btn-sm" onclick="myFunction()" >Copy invite link</a>
-
-                        <hr>
-                        <p>We would love more information about you and your experiences as an educator. Please help us by clicking on the link below and completing a short questionnaire:</p>
-                        <a href="{% url 'questionnaire_full' %}" class="theme-btn btn-style-two">Complete A Questionnaire</a>
                         <hr>
                         <h3>Stay up to date with Class Planit on social media!</h3>
                         
