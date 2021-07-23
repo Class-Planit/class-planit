@@ -45,13 +45,17 @@ def get_description_string(topic_id, user_id):
 
 
 def openai_term_labels(user_id, topic_term, subject, grade):
+    print('Starting')
+    admin_subjects = ['Physical Education', 'Health Education', 'Spanish Language', 'Science', 'Social Studies', 'Mathematics', 'English', 'Venture']
+    if subject in admin_subjects:
+        path3 = f'planit/files/{subject}/{grade}/examples.csv'
+    else:
+        path3 = f'planit/files/default/{grade}/examples.csv'
 
-    path3 = f'planit/files/{subject}/{grade}/examples.csv'
-   
     description = get_description_string(topic_term.id, user_id)
     wording = f'term: {topic_term.item} description: {description}'
     #this is for the mi and blooms level assignment
-    
+
     try:
         with open(path3) as f:
 
@@ -64,6 +68,10 @@ def openai_term_labels(user_id, topic_term, subject, grade):
                 examples.append(example_wording)
                 labels.append(line[1])
 
+            print('##########')
+            print(examples)
+            print('##########')
+
             response = openai.Classification.create(
                         search_model="ada", 
                         model="curie",
@@ -71,18 +79,21 @@ def openai_term_labels(user_id, topic_term, subject, grade):
                         query=wording,
                         labels=labels)
     except:
-        path = f'planit/files/English/Eight/examples.csv'
+        path = f'planit/files/default/Eight/examples.csv'
         with open(path) as f:
 
             examples = []
             labels = []
             for line in f:
                 line = line.split(',')
-                
+
                 example_wording = [line[0], line[1]]
                 examples.append(example_wording)
                 labels.append(line[1])
 
+            print('##########')
+            print(examples)
+            print('##########')
             response = openai.Classification.create(
                         search_model="ada", 
                         model="curie",
@@ -90,7 +101,9 @@ def openai_term_labels(user_id, topic_term, subject, grade):
                         query=wording,
                         labels=labels)
 
-    
+
+
+    print('Ending')
     return(response['label'].upper())
 
 
@@ -104,17 +117,20 @@ def activity_score(sentence):
 def get_single_types_activity(topic_list):
     word_list = []
     for topic in topic_list:
-        
+
         word = topic.item
         topic_types = topic.topic_type.all()
         t_matches = topicTypes.objects.filter(id__in=topic_types)
         for tt in t_matches:
             topic_t = tt.item
+
             all_templates = LearningDemonstrationTemplate.objects.filter(topic_type=tt)
+
             for temp in all_templates:
                 result =  temp.content
                 sentence  = result.replace(topic_t, word)
                 result = sentence, word, topic_t, 'single'
+                print(result)
                 word_list.append(result)
 
 

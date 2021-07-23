@@ -1,5 +1,5 @@
 {% load static %}
-{% load tailwind_tags %}
+
 <!--
 
 =========================================================
@@ -67,7 +67,7 @@
     <link type="text/css" href="{% static 'css/dashboard/rocket.css' %}" rel="stylesheet">
     
     <!-- NOTICE: You can use the _analytics.html partial to include production code specific code & trackers -->
-    {% tailwind_css %}
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script src="{% static 'forms_ajaxified/js/forms_ajaxified.js' %}"></script>
@@ -83,9 +83,10 @@
         </div>
 
         <nav class="navbar navbar-dark navbar-theme-primary col-12 d-md-none">
-    <a class="navbar-brand mr-lg-5" href="../../index.html">
-        <img class="navbar-brand-dark" src="../../assets/img/brand/light.svg" alt="Pixel logo" /> <img class="navbar-brand-light" src="../../assets/img/brand/dark.svg" alt="Pixel Logo Dark" />
-    </a>
+  <a class="navbar-brand mr-lg-5" href="{% url 'Dashboard' week_of='Current' subject_id='All' classroom_id='All' %}">
+      <img class="navbar-brand-dark" src="{% static 'images/dashboard/circle_logo.svg' %}" alt="cp" /> <img class="navbar-brand-light" src="{% static 'images/dashboard/circle_logo.svg' %}" alt="cp" />
+  </a>
+    
     <div class="d-flex align-items-center">
         <button class="navbar-toggler d-md-none collapsed" type="button" data-toggle="collapse" data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
