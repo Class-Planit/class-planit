@@ -1,0 +1,8 @@
+"term: Abstinence description: The practice of refraining from doing some action or using some thing. For example, choosing to refrain from sexual behaviors for a period of time.", 'VOC',
+"term: Balanced meal description: Meal that includes one food from each food group.", 'PSYS',
+"term: Cardiovascular description: The heart, blood vessels, and blood, which provide oxygen and nutrients to the body.", 'POW',
+"term: Bystander description:  Someone who witnesses an act or event without participating.", 'TOP',
+"term: Caloric needs assessment description: A determination of caloric intake needs based on one’s age,gender, activity level and need to lose, gain, or maintain weight. ", 'CALC',
+"term: Consent description:  An agreement made or permission given without coercion, such as withoutforce, threats, manipulation, or intimidation.", 'KT',
+"term: Nutrition facts label description: A label found on the outside packages of food that states the number of servings in the container, the number of calories in each serving, and the amount of nutrientsin each serving.", 'WWP',
+"term: U.S. Dietary Guidelines description: A series of dietary recommendations intended to improve cardiovascular health.", 'LWANF',

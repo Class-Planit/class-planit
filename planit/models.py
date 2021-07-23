@@ -1059,8 +1059,13 @@ class lessonTemplates(models.Model):
     wording = models.CharField(max_length=1000,
                         blank=True,
                         null=True)
+    single_topic = models.ForeignKey(topicTypes,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True) 
     components = models.ManyToManyField(topicTypes,
-                                     blank=True)
+                                     blank=True,
+                                     related_name='multi_topics')
     story = models.ForeignKey(shortStory,
                                on_delete=models.SET_NULL,
                                blank=True,
