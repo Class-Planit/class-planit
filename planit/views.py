@@ -1282,6 +1282,7 @@ def TopicUploadTwo(request):
         standard_match = standardSet.objects.filter(Location=Standard_Set).first()
         matched_grade = gradeLevel.objects.filter(grade=Grade_Level, standards_set=standard_match).first()
         matched_subject = standardSubjects.objects.filter(subject_title=Subject, standards_set=standard_match, grade_level=matched_grade).first()
+        
         topic_match, created = topicTypes.objects.get_or_create(item=topic_type)
         new_topic, created = topicInformation.objects.get_or_create(subject=matched_subject, grade_level=matched_grade, standard_set=standard_match, topic=topic, item=item)
         new_description, created =  topicDescription.objects.get_or_create(description=Description) 

@@ -60,14 +60,122 @@ stop_words = ['i', "'", "'" '!', '.', ':', ',', '[', ']', '(', ')', '?', "'see",
 TAG_RE = re.compile(r'<[^>]+>')
 
 
+def get_transcript_nouns(match_textlines):
+    full_sent_list = []
+    
+    results = tokenize.sent_tokenize(match_textlines)
+
+    for sent in results:
+        new_list = []
+        sent = ' '.join(sent.split())
+        is_verb = False
+        is_noun = False
+        is_long = False
+        sent = sent.replace('|', ' ')
+        sent_blob = TextBlob(sent)
+        sent_tagger = sent_blob.pos_tags
+        
+
+        for y in sent_tagger:
+            
+            if len(y[1]) > 2:
+                is_long = True
+            else: 
+                pass    
+            if 'NNP' in y[1]:
+                is_noun = True
+            elif 'NNPS' in y[1]:
+                is_noun = True
+            elif 'NN' in y[1]:
+                is_noun = True
+            elif 'JJ' in y[1]:
+                is_noun = True
+            else:
+                pass
+
+            remove_list = ['illustrations', 'cartoon', 'Figure', 'they', 'those', 'Circle ', 'Education.com']
+            results = []
+            if is_noun and is_long:
+
+                sent = re.sub(r'\(.*\)', '', sent)
+                sent = re.sub('Chapter', '', sent)
+                sent = re.sub('Rule Britannia!', '', sent)
+                sent = re.sub('Description', '', sent)
+                if any(word in sent for word in remove_list):
+                    pass
+                else:
+                    for item in sent_tagger:
+                        is_noun = False
+                        if 'NNP' in item[1]:
+                            is_noun = True
+                        elif 'NNPS' in item[1]:
+                            is_noun = True
+                        elif 'NN' in item[1]:
+                            is_noun = True
+                        elif 'JJ' in item[1]:
+                            is_noun = True
+                        if is_noun:
+                            if item[0] not in stop_words:
+                                new_list.append(item)
+        for item in new_list:
+            index = new_list.index(item)
+            result = item, index    
+            if result not in full_sent_list:
+                full_sent_list.append(result)
+
+
+    final_list = []
+    for item in full_sent_list:
+        first_word = item[0][0]
+        word_index = item[1]
+        next_index = word_index + 1
+        next_next_word = word_index + 2
+        for y in full_sent_list:
+            if y[1] == next_index:
+                second_word = y[0][0]
+
+                combine_wording = first_word + ' ' + second_word
+                for x in full_sent_list:
+                    if x[1] == next_next_word:
+                        third_word = x[0][0]
+                        combine_wording = combine_wording + ' ' + third_word
+                
+                if combine_wording not in final_list:
+                    final_list.append(combine_wording)
+    
+    if final_list:
+        pass
+    else:
+        for item in full_sent_list:
+            first_word = item[0][0]
+            for word in match_textlines.split():
+
+                if first_word.lower() == word.lower():
+                    if first_word not in final_list:
+                        final_list.append(first_word)
+
+
+
+
+    return(final_list)
+
+
 
 def get_transcript(video_id):
-    full_trans = YouTubeTranscriptApi.get_transcript(video_id)
+    try:
+        full_trans = YouTubeTranscriptApi.get_transcript(video_id)
 
-    all_lines = []
-    for line in full_trans:
-        text = line['text']
-        all_lines.append(text)
+        all_lines = []
+        for line in full_trans:
+            text = line['text']
+            all_lines.append(text)
+        
+        full_lines = '. '.join(all_lines)
+        full_lines = full_lines.strip()
+
+        line_results = get_transcript_nouns(full_lines)
+    except:
+        pass
 
 
 
