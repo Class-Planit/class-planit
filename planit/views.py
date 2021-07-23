@@ -43,6 +43,7 @@ from .get_students import *
 from .get_wikipedia import *
 from .get_seach_results import *
 from .get_misc_info import *
+from .fix_types import *
 ##################| Homepage Views |#####################
 #Homepage Landing Page
 def Homepage(request):
@@ -642,6 +643,9 @@ def UpdateWeekOf(request, week_of, user_id=None, classroom_id=None, subject_id=N
 
 #Main Teacher Dashboard View labeled as 'Overview'
 def Dashboard(request, week_of, subject_id, classroom_id):
+    #run to fix the incorrect topic types
+    fix_incorrect_types()
+
     #get active and current week number (active being the week the teacher is on and current meaning the actual week in the calendar)
     week_info = get_week_info(week_of)
 
@@ -1283,7 +1287,9 @@ def TopicUploadTwo(request):
         matched_grade = gradeLevel.objects.filter(grade=Grade_Level, standards_set=standard_match).first()
         matched_subject = standardSubjects.objects.filter(subject_title=Subject, standards_set=standard_match, grade_level=matched_grade).first()
         
-        topic_match, created = topicTypes.objects.get_or_create(item=topic_type)
+        checked = check_topic_type(topic_type)
+        corrected_topic = checked[1]
+        topic_match, created = topicTypes.objects.get_or_create(item=corrected_topic)
         new_topic, created = topicInformation.objects.get_or_create(subject=matched_subject, grade_level=matched_grade, standard_set=standard_match, topic=topic, item=item)
         new_description, created =  topicDescription.objects.get_or_create(description=Description) 
         add_description = new_topic.description.add(new_description)
