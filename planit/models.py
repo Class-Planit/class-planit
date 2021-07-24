@@ -76,6 +76,14 @@ class gradeLevel(models.Model):
         return "%s" % (self.grade_labels)
 
 
+class waitlistUserInfo(models.Model):
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    country = models.CharField(max_length=100)
+    grade_levels = models.CharField(max_length=100)
+    subjects = models.CharField(max_length=100)
+    school_name = models.CharField(max_length=100)
+
 class teacherQuestionnaire(models.Model):
 
     current_grade = models.CharField(max_length=100,

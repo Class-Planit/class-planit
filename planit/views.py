@@ -43,6 +43,7 @@ from .get_students import *
 from .get_wikipedia import *
 from .get_seach_results import *
 from .get_misc_info import *
+from .fix_types import *
 ##################| Homepage Views |#####################
 #Homepage Landing Page
 def Homepage(request):
@@ -158,8 +159,7 @@ def FormFull(request, retry=None):
             except:
                 pass
 
-            
-            return redirect('thank_you', user_id=user_id, waitlist_inv=inv_ref, invited_by=None)
+            return redirect('registration_info', user_id=user_id, waitlist_inv=inv_ref, invited_by=None)
 
     else:
 
@@ -216,10 +216,6 @@ def FormFullInv(request, retry=None, invite_id=None):
                             to_emails=user_email,
                             subject='Welcome to Class Planit',
                             html_content= get_template('homepage/welcome_to_classplanit.html').render({'user': user, 'waitlist_inv': inv_ref}))
-                            #from_email='welcome@classplanit.co',
-                            #to_emails=user_email,
-                            #subject='Sending with Twilio SendGrid is Fun',
-                            #html_content='<strong>and easy to do anywhere, even with Python</strong>')
 
                 except Exception as e:
                     pass
@@ -232,13 +228,30 @@ def FormFullInv(request, retry=None, invite_id=None):
             except:
                 pass
                
-            return redirect('thank_you', user_id=user_id, waitlist_inv=inv_ref, invited_by=invited_by.id)
+            return redirect('registration_info', user_id=user_id, waitlist_inv=inv_ref, invited_by=invited_by.id)
 
     else:
 
         form = TeacherForm()
     
     return render(request, 'homepage/registration_full_inv.html', {'form': form, 'message': message, 'error_messages': error_messages, 'invited_by_name': invited_by_name})
+
+#Full Form Info for waitlist sign ups
+def FormInfo(request, user_id=None, waitlist_inv=None, invited_by=None):
+    if request.method == "POST":
+
+        form = waitlistUserInfoForm(request.POST)
+        if form.is_valid():
+            form.save()
+
+            return redirect('thank_you', user_id=user_id, waitlist_inv=waitlist_inv, invited_by=invited_by)
+
+    else:
+
+        form = waitlistUserInfoForm()
+    
+    return render(request, 'homepage/registration_info.html', {'form': form})
+
 
 #Teacher Questionnaire 
 def QuestionnaireFull(request):
@@ -642,6 +655,9 @@ def UpdateWeekOf(request, week_of, user_id=None, classroom_id=None, subject_id=N
 
 #Main Teacher Dashboard View labeled as 'Overview'
 def Dashboard(request, week_of, subject_id, classroom_id):
+    #run to fix the incorrect topic types
+    fix_incorrect_types()
+
     #get active and current week number (active being the week the teacher is on and current meaning the actual week in the calendar)
     week_info = get_week_info(week_of)
 
@@ -1283,7 +1299,9 @@ def TopicUploadTwo(request):
         matched_grade = gradeLevel.objects.filter(grade=Grade_Level, standards_set=standard_match).first()
         matched_subject = standardSubjects.objects.filter(subject_title=Subject, standards_set=standard_match, grade_level=matched_grade).first()
         
-        topic_match, created = topicTypes.objects.get_or_create(item=topic_type)
+        checked = check_topic_type(topic_type)
+        corrected_topic = checked[1]
+        topic_match, created = topicTypes.objects.get_or_create(item=corrected_topic)
         new_topic, created = topicInformation.objects.get_or_create(subject=matched_subject, grade_level=matched_grade, standard_set=standard_match, topic=topic, item=item)
         new_description, created =  topicDescription.objects.get_or_create(description=Description) 
         add_description = new_topic.description.add(new_description)
