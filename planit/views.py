@@ -1401,6 +1401,37 @@ def SelectTopic(request):
         lesson_match = lessonObjective.objects.get(id=lesson_id)
         topic_match = topicInformation.objects.get(id=topic_id)
         update_lesson = lesson_match.objectives_topics.add(topic_match)
+        
+
+        check_topic = topic_match.topic_type.all()
+        if check_topic:
+            pass
+        else:
+            print(user_id, topic_match, lesson_match.subject, lesson_match.current_grade_level)
+            result = openai_term_labels(user_id, topic_match, lesson_match.subject, lesson_match.current_grade_level)
+            
+            result = result.strip("'")
+            if result:
+                tt_new, created = topicTypes.objects.get_or_create(item=result)
+                add_tt = topic_match.topic_type.add(tt_new)
+
+        list_one = []
+        list_two = []
+        for desc in topic_match.description.all():
+            list_one.append(desc)
+            list_two.append(desc)
+
+        for desc1 in list_one:
+            for desc2 in list_two:
+                if desc1.id == desc2.id:
+                    pass
+                else:
+                    print(desc1.description, desc2.description)
+                    is_dup = check_duplicate_strings(desc1.description, desc2.description)
+                    print(is_dup)
+                    if is_dup:
+                        topic_match.topic_type.remove(desc2)
+        
 
         description_list = []
         for desc in topic_match.description.all():

@@ -60,7 +60,7 @@ TAG_RE = re.compile(r'<[^>]+>')
 
 
 def create_terms(key_term_list, lesson_id, matched_grade, user_id, standard_set):
-
+   
     lesson_match = lessonObjective.objects.get(id=lesson_id)
     user_profile = User.objects.get(id=user_id)
     subject = lesson_match.subject
@@ -82,6 +82,25 @@ def create_terms(key_term_list, lesson_id, matched_grade, user_id, standard_set)
 
             description_create, created = topicDescription.objects.get_or_create(description=item[1], topic_id=topic_term.id,  is_admin = False, created_by = user_profile)
             topic_term.description.add(description_create)
+            list_one = []
+            list_two = []
+            for desc in topic_term.description.all():
+                list_one.append(desc)
+                list_two.append(desc)
+
+
+            for desc1 in list_one:
+                for desc2 in list_two:
+                    if desc1.id == desc2.id:
+                        pass
+                    else:
+                        
+                        is_dup = check_duplicate_strings(desc1.description, desc2.description)
+                   
+                        if is_dup:
+                            topic_term.description.remove(desc2)
+                            desc2.delete()
+
             topic_t = topic_term.topic_type.all()
             tt_matches = topicTypes.objects.filter(id__in=topic_t)
             tt_results = []
@@ -101,3 +120,27 @@ def create_terms(key_term_list, lesson_id, matched_grade, user_id, standard_set)
 
     print('done')
 
+def string_word_count(string):
+    string_split = string.split()
+    word_lengths = []
+    for word in string_split:
+        count = len(word)
+        word_lengths.append(str(count))
+    
+
+    word_num = ''.join(word_lengths)
+
+    word_num = int(word_num)
+    return(word_num)
+
+def check_duplicate_strings(string1, string2):
+    string1_split = string_word_count(string1)
+    string2_split = string_word_count(string2)
+
+
+    if string1_split == string2_split:
+        is_duplicate = True
+    else:
+        is_duplicate = False
+
+    return(is_duplicate)

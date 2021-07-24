@@ -348,15 +348,18 @@ def wiki_results(lesson_id, user_id, standards_nouns):
     
     for search_item in standards_nouns:
         inital_search = wikipedia.search(str(search_item))
-        if inital_search[0] not in wiki_initial:
-                wiki_initial.append(inital_search[0])
+        wikipage = wikipedia.page(inital_search[0])
+        wiki_image = wikipage.images[0]
+        result = inital_search[0], wiki_image
+        if result not in wiki_initial:
+            wiki_initial.append(result)
 
-    for search_item in wiki_initial:
+    for search_item, image in wiki_initial:
         wiki_search = wiki_wiki.page(str(search_item))
-
+        
         if wiki_search.exists():
             r_search = wiki_search.fullurl
-            wiki_t = r_search, search_item.title()
+            wiki_t = r_search, search_item.title(), image
             print(wiki_t)
             w_summary = get_wiki_term_summary(search_item, wiki_search)
             sim_score = check_topic_relevance(w_summary, lesson_id)
@@ -370,14 +373,17 @@ def wiki_results(lesson_id, user_id, standards_nouns):
     wiki_count = 0
     for wiki_title in wiki_titles:
         matched_topic = topicInformation.objects.filter(item=wiki_title[1]).first()
-
+        
         if matched_topic:
+            if wiki_title[2]:
+                matched_topic.image_url = wiki_title[2]
+                matched_topic.save()
             lesson_match = lessonObjective.objects.filter(id=lesson_id, objectives_topics=matched_topic)
 
             if lesson_match:
                 link_list = []
-                
-                textbook_match, created = textBookTitle.objects.get_or_create(title=wiki_title[0])
+              
+                textbook_match, created = textBookTitle.objects.get_or_create(title=wiki_title[0], prim_topic_id=matched_topic.id)
 
                 if created:
                     #gets main item summary 

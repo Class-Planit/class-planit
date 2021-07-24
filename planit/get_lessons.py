@@ -410,37 +410,40 @@ def label_blooms_activities_analytics(lesson_id):
     #this counts the number of occurences of each blooms level and divides by the total number to get a %
     class_objectives = lessonObjective.objects.get(id=lesson_id)
     matched_activities = selectedActivity.objects.filter(lesson_overview=class_objectives, is_selected=True)
-
-    bl_list = []
-    bl_names = ('Remember', 'Understand', 'Analyze',  'Evaluate',  'Create')
-    for activity in matched_activities:
-        act_bl = int(activity.bloom)
-        bl_list.append(act_bl)
-
-
-    bl_list.sort()
-
-    bl_count = len(bl_list)
+    if matched_activities:
+        bl_list = []
+        bl_names = ('Remember', 'Understand', 'Analyze',  'Evaluate',  'Create')
+        for activity in matched_activities:
+            act_bl = int(activity.bloom)
+            bl_list.append(act_bl)
 
 
-    bl_length = len(set(str(bl_count)))
+        bl_list.sort()
 
-    #the blooms number is used as an index to find the color and label in the progress bar 
-    colors = ('bg-primary', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-warning')
-    bl_names = ('Remember', 'Understand', 'Analyze',  'Evaluate',  'Create')
-    bl_Count = [1,2,3,4,5]
-    bl_list_full = []
-    for item in bl_Count:
-        item_count = bl_list.count(item)
-        zero_count = item - 1 
-        name = bl_names[zero_count]
-        color = colors[zero_count]
-        avg = item_count/bl_count * 100 
-        results = {'name': name, 'count': avg, 'color': color}
-        if results not in bl_list_full:
-            bl_list_full.append(results)
+        bl_count = len(bl_list)
 
 
+        bl_length = len(set(str(bl_count)))
+
+        #the blooms number is used as an index to find the color and label in the progress bar 
+        colors = ('bg-primary', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-warning')
+        bl_names = ('Remember', 'Understand', 'Analyze',  'Evaluate',  'Create')
+        bl_Count = [1,2,3,4,5]
+        bl_list_full = []
+        for item in bl_Count:
+            item_count = bl_list.count(item)
+            zero_count = item - 1 
+            name = bl_names[zero_count]
+            color = colors[zero_count]
+            avg = item_count/bl_count * 100 
+            results = {'name': name, 'count': avg, 'color': color}
+            if results not in bl_list_full:
+                bl_list_full.append(results)
+
+
+    
+    else:
+        bl_list_full = None
     return(bl_list_full)
 
 
@@ -453,34 +456,37 @@ def label_mi_activities_analytics(lesson_id):
 
     mi_list = []
 
-    for activity in matched_activities:
-        act_mi = int(activity.mi)
-        mi_list.append(act_mi)
+    if matched_activities:
+        for activity in matched_activities:
+            act_mi = int(activity.mi)
+            mi_list.append(act_mi)
 
 
-    mi_list.sort() 
+        mi_list.sort() 
 
 
-    mi_count = len(mi_list)
+        mi_count = len(mi_list)
 
 
-    mi_length = len(set(str(mi_count)))
+        mi_length = len(set(str(mi_count)))
 
-    #the mi number is used as an index to find the color and label in the progress bar 
-    colors = ('bg-primary', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-warning')
-    mi_names = ('Verbal',  'Visual', 'Musical', 'Movement', 'Logical')
-    mi_Count = [1,2,3,4,5]
-    mi_list_full = []
-    for item in mi_Count:
-        item_count = mi_list.count(item)
-        zero_count = item - 1 
-        name = mi_names[zero_count]
-        color = colors[zero_count]
-        avg = item_count/mi_count * 100 
-        results = {'name': name, 'count': avg, 'color': color}
-        if results not in mi_list_full:
-            mi_list_full.append(results)
+        #the mi number is used as an index to find the color and label in the progress bar 
+        colors = ('bg-primary', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-warning')
+        mi_names = ('Verbal',  'Visual', 'Musical', 'Movement', 'Logical')
+        mi_Count = [1,2,3,4,5]
+        mi_list_full = []
+        for item in mi_Count:
+            item_count = mi_list.count(item)
+            zero_count = item - 1 
+            name = mi_names[zero_count]
+            color = colors[zero_count]
+            avg = item_count/mi_count * 100 
+            results = {'name': name, 'count': avg, 'color': color}
+            if results not in mi_list_full:
+                mi_list_full.append(results)
 
+    else:
+        mi_list_full = None
     return(mi_list_full)
 
 
@@ -606,8 +612,8 @@ def get_lesson_sections(text_overview, class_id, lesson_id, user_id):
     standard_set = classroom_profile.standards_set
     class_objectives = lessonObjective.objects.get(id=lesson_id)
     subject = class_objectives.subject
-    grade_list = classroom_profile.grade_level.all()
-    matched_grade = gradeLevel.objects.filter(id__in=grade_list).first()
+    matched_grade = class_objectives.current_grade_level
+
     all_selected = selectedActivity.objects.filter(lesson_overview=class_objectives, is_selected=True)
     for item in all_selected:
         is_selected = False

@@ -335,6 +335,9 @@ class textBookTitle(models.Model):
     is_admin = models.BooleanField(default=False)
     wiki_page = tinymce_models.HTMLField(blank=True,
                                null=True)
+    prim_topic_id = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
 
     def __str__(self):
         return "%s" % (self.title)
@@ -469,6 +472,7 @@ class topicInformation(models.Model):
     is_admin = models.BooleanField(default=True)
     from_wiki = models.BooleanField(default=False)
     is_secondary = models.BooleanField(default=False)
+    
 
     def get_remote_image(self):
         if self.image_url and not self.image_file:
