@@ -113,6 +113,12 @@ class textBookTitleForm(forms.ModelForm):
         model = textBookTitle
         fields = '__all__'
 
+class waitlistUserInfoForm(forms.ModelForm):
+
+    class Meta:
+        model = waitlistUserInfo
+        fields = '__all__'
+
 class TeacherForm(UserCreationForm):
     username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'example: EdnaK'}))
     first_name = forms.CharField(max_length=30, required=False, widget=forms.TextInput(attrs={'placeholder': 'example: Edna'}), help_text='Optional.')

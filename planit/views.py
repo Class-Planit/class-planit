@@ -159,8 +159,7 @@ def FormFull(request, retry=None):
             except:
                 pass
 
-            
-            return redirect('thank_you', user_id=user_id, waitlist_inv=inv_ref, invited_by=None)
+            return redirect('registration_info', user_id=user_id, waitlist_inv=inv_ref, invited_by=None)
 
     else:
 
@@ -217,10 +216,6 @@ def FormFullInv(request, retry=None, invite_id=None):
                             to_emails=user_email,
                             subject='Welcome to Class Planit',
                             html_content= get_template('homepage/welcome_to_classplanit.html').render({'user': user, 'waitlist_inv': inv_ref}))
-                            #from_email='welcome@classplanit.co',
-                            #to_emails=user_email,
-                            #subject='Sending with Twilio SendGrid is Fun',
-                            #html_content='<strong>and easy to do anywhere, even with Python</strong>')
 
                 except Exception as e:
                     pass
@@ -233,13 +228,30 @@ def FormFullInv(request, retry=None, invite_id=None):
             except:
                 pass
                
-            return redirect('thank_you', user_id=user_id, waitlist_inv=inv_ref, invited_by=invited_by.id)
+            return redirect('registration_info', user_id=user_id, waitlist_inv=inv_ref, invited_by=invited_by.id)
 
     else:
 
         form = TeacherForm()
     
     return render(request, 'homepage/registration_full_inv.html', {'form': form, 'message': message, 'error_messages': error_messages, 'invited_by_name': invited_by_name})
+
+#Full Form Info for waitlist sign ups
+def FormInfo(request, user_id=None, waitlist_inv=None, invited_by=None):
+    if request.method == "POST":
+
+        form = waitlistUserInfoForm(request.POST)
+        if form.is_valid():
+            form.save()
+
+            return redirect('thank_you', user_id=user_id, waitlist_inv=waitlist_inv, invited_by=invited_by)
+
+    else:
+
+        form = waitlistUserInfoForm()
+    
+    return render(request, 'homepage/registration_info.html', {'form': form})
+
 
 #Teacher Questionnaire 
 def QuestionnaireFull(request):

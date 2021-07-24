@@ -30,6 +30,10 @@ urlpatterns = [
         view=FormFullInv,
         name='registration_full_inv'),
 
+    url(r'^full-info/(?P<user_id>[\w\s]+)/(?P<waitlist_inv>[\w\s]+)/(?P<invited_by>[\w\s]+)/',
+        view=FormInfo,
+        name='registration_info'),
+
     #url(r'^thanks/(?P<user_id>[\w\s]+)/(?P<waitlist_inv>[\w\s]+)/(?P<invited_by>[\w\s]+)/',
     #    view=ThankYou.as_view(),
     #    name='thank_you'),
