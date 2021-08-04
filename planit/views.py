@@ -131,9 +131,9 @@ def FormFull(request, retry=None):
             
             welcome_message = 'Welcome to Class Planit, %s! We will be in touch when your account is activated.' % (username)
         
-            #create "empty" teacherInvitation (only created_by and is_waitlist)
+            #create "empty" teacherInvitations (only created_by and is_waitlist)
             user_match = User.objects.get(id=user_id)
-            new_waitlist_inv = teacherInvitation.objects.create(invite_ref= None, created_by= user_match, is_waitlist= True)
+            new_waitlist_inv = teacherInvitations.objects.create(invite_ref= None, created_by= user_match, is_waitlist= True)
             inv_ref = new_waitlist_inv.invite_ref
 
             to = str(my_number)
@@ -176,7 +176,7 @@ def FormFullInv(request, retry=None, invite_id=None):
         message = "Let's Get Started!"
         error_messages = None
 
-    invite_match = teacherInvitation.objects.filter(invite_ref= invite_id).first()
+    invite_match = teacherInvitations.objects.filter(invite_ref= invite_id).first()
     invited_by = invite_match.created_by
     invited_by_name = invited_by.first_name, invited_by.last_name
 
@@ -199,9 +199,9 @@ def FormFullInv(request, retry=None, invite_id=None):
             
             welcome_message = 'Welcome to Class Planit, %s! We will be in touch when your account is activated.' % (username)
 
-            #create "empty" teacherInvitation (only created_by and is_waitlist)
+            #create "empty" teacherInvitations (only created_by and is_waitlist)
             user_match = User.objects.get(id=user_id)
-            new_waitlist_inv = teacherInvitation.objects.create(invite_ref= None, created_by= user_match, is_waitlist= True)
+            new_waitlist_inv = teacherInvitations.objects.create(invite_ref= None, created_by= user_match, is_waitlist= True)
             inv_ref = new_waitlist_inv.invite_ref
         
             to = str(my_number)
@@ -446,14 +446,14 @@ def AddTeacherToClassroom(request, user_id=None, class_id=None, invite_id=None):
         #invite_id to determine if resend(1) or first send(0)
         if invite_id == 0:
             if request.method == "POST":
-                form = teacherInvitationForm(request.POST, request.FILES)
+                form = teacherInvitationsForm(request.POST, request.FILES)
                 if form.is_valid():
                     prev = form.save(commit=False)
                     prev.created_by = user_match
                     prev.for_classroom = classoom_match
                     prev.is_pending = True
                     prev.save()
-                    invitation_match = teacherInvitation.objects.get(id=prev.id)
+                    invitation_match = teacherInvitations.objects.get(id=prev.id)
 
                     invite_email = invitation_match.email
 
@@ -481,7 +481,7 @@ def AddTeacherToClassroom(request, user_id=None, class_id=None, invite_id=None):
             else:
                 return redirect('classroom_list')
         else:
-            invite_match = teacherInvitation.objects.get(id= invite_id)
+            invite_match = teacherInvitations.objects.get(id= invite_id)
             invite_email = invite_match.email
             if invite_email:
                 try:

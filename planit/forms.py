@@ -39,10 +39,10 @@ class  studentInvitationForm(forms.ModelForm):
         fields = '__all__'
 
 
-class  teacherInvitationForm(forms.ModelForm):
+class  teacherInvitationsForm(forms.ModelForm):
 
     class Meta:
-        model = teacherInvitation
+        model = teacherInvitations
         fields = '__all__'
 
 

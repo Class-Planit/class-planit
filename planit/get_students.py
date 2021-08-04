@@ -63,7 +63,7 @@ def get_teacher_list(user_id, class_id):
         teacher_list.append(result)
 
     #contains all the teachers pending for the classroom
-    all_invites = teacherInvitation.objects.filter(for_classroom= classroom_profile, is_pending= True)
+    all_invites = teacherInvitations.objects.filter(for_classroom= classroom_profile, is_pending= True)
     for invite in all_invites:
         result = {'t_first': invite.first_name, 't_last': invite.last_name, 'email': invite.email, 'teacher_invite': invite}
         teacher_list.append(result)
