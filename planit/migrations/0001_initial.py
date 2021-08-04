@@ -309,7 +309,6 @@ class Migration(migrations.Migration):
                 ('topic_id', models.IntegerField(blank=True, default=0, null=True)),
                 ('description', models.CharField(blank=True, max_length=1000, null=True)),
                 ('is_admin', models.BooleanField(default=True)),
-                ('is_generated', models.BooleanField(default=False)),
                 ('created_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),

@@ -770,7 +770,7 @@ def build_term_description(wiki_result, user_profile, is_secondary, lesson_objec
                     get_desc_summary = get_desciption_summary(term, full_desc)
 
                     new_description.description = full_desc
-                    new_description.is_generated = True
+                    new_description.is_gen = True
                     new_description.save()
                 add_description = match_topic.description.add(new_description)
                 top_id = match_topic.id

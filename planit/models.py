@@ -473,7 +473,7 @@ class topicDescription(models.Model):
                                blank=True,
                                null=True)
     is_admin = models.BooleanField(default=True)
-    is_generated = models.BooleanField(default=False)
+    is_gen = models.BooleanField(default=False)
     
     def __str__(self):
         return "%s" % (self.description)
