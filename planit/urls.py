@@ -161,6 +161,12 @@ urlpatterns = [
         view=SelectYoutubeVideo,
         name='add_youtube_video'),
 
+
+    url(r'^add-selected_question/$',
+        view=AddSelectedQuestion,
+        name='add_selected_question'),
+
+        
     url(r'^standard-tracking/$',
         view=StandardsTracking,
         name='standard_tracker'),
@@ -201,6 +207,10 @@ urlpatterns = [
     url(r'^updated-term-options/(?P<lesson_id>[\w-]+)/(?P<class_id>[\w-]+)/$',
         view=UpdateKeyTerms,
         name='update_terms_options'),
+
+    url(r'^updated-big-questions/(?P<lesson_id>[\w-]+)/(?P<class_id>[\w-]+)/$',
+        view=UpdateBigQuestions,
+        name='update_big_questions'),
 
     url(r'^remove-term-options/(?P<lesson_id>[\w-]+)/(?P<class_id>[\w-]+)/$',
         view=RemoveKeyTerms,

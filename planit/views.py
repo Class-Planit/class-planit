@@ -765,7 +765,7 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
         link = result['link']
         if link:
             vid_id = video_id(link)
-            youtube_create, created = youtubeSearchResult.objects.get_or_create(lesson_plan=lesson_match, title=result['title'], vid_id=vid_id)
+            youtube_create, created = youtubeSearchResult.objects.get_or_create(lesson_plan=lesson_match, title=result['title'], link=link, vid_id=vid_id)
             vid_id_list.append(youtube_create)
 
     context = {'user_profile': user_profile, 'new_text': new_text, 'vid_id_list': vid_id_list, 'classroom_profile': classroom_profile, 'lesson_match': lesson_match}
@@ -1219,6 +1219,9 @@ def StudentSAAnswer(request, user_id=None, lesson_id=None, worksheet_id=None, qu
     else:
         return HttpResponse("Request method is not a GET")
 
+
+#def VideoReview(request, user_id, video_id):
+
 ###### end student answer handling fuctions ##############
 
 
@@ -1402,8 +1405,9 @@ def SelectYoutubeVideo(request):
         video_match = youtubeSearchResult.objects.get(id=video_id)
         video_match.is_selected = True
         video_match.save()
-        get_transcript(video_match.vid_id)
-        context = {'message': 'Video added'}
+        vid_trans = get_transcript(video_match.vid_id, video_match.id, lesson_id)
+        print(video_match.link)
+        context = {'title': video_match.title , 'link': video_match.link}
 
         return JsonResponse(context)
     else:
@@ -1425,7 +1429,7 @@ def SelectTopic(request):
         if check_topic:
             pass
         else:
-            print(user_id, topic_match, lesson_match.subject, lesson_match.current_grade_level)
+            
             result = openai_term_labels(user_id, topic_match, lesson_match.subject, lesson_match.current_grade_level)
             
             result = result.strip("'")
@@ -1444,9 +1448,9 @@ def SelectTopic(request):
                 if desc1.id == desc2.id:
                     pass
                 else:
-                    print(desc1.description, desc2.description)
+                   
                     is_dup = check_duplicate_strings(desc1.description, desc2.description)
-                    print(is_dup)
+                    
                     if is_dup:
                         topic_match.topic_type.remove(desc2)
         
@@ -1493,6 +1497,29 @@ def SelectActivity(request):
     else:
         return HttpResponse("Request method is not a GET")
 
+
+def AddSelectedQuestion(request):
+    if request.method == 'GET':
+        user_profile = User.objects.filter(username=request.user.username).first()
+        user_id = user_profile.id
+        quest_id = request.GET['quest_id']
+        lesson_id = request.GET['lesson_id']
+        activity_id = int(quest_id)
+        lesson_id = int(lesson_id)
+        lesson_match = lessonObjective.objects.get(id=lesson_id)
+        quest_match = googleRelatedQuestions.objects.get(id=quest_id)
+
+        quest_match.is_selected = True 
+        quest_match.save()
+
+
+        context = {'question': quest_match.question, 'answer': quest_match.snippet}
+
+        return JsonResponse(context)
+    else:
+        return HttpResponse("Request method is not a GET")
+
+
 def SelectStandards(request, lesson_id):
     user = User.objects.filter(id=request.user.id).first()
     lesson_match = lessonObjective.objects.get(id=lesson_id)
@@ -1518,16 +1545,23 @@ def RemoveKeyTerms(request, lesson_id, class_id):
         lesson_match = lessonObjective.objects.get(id=lesson_id)
         teacher_input = lesson_match.teacher_objective
         match_recs = reccomendedTopics.objects.filter(matched_lesson=lesson_match).first()
-        if match_recs:
-            rt = match_recs.rec_topics.all()
-            matched_rt = topicInformation.objects.filter(id__in=rt)
+        match_score = match_recs.single_score.all()
+        top_ids = []
+        for item in match_score:
+            match_recs.single_score.remove(item)
+            if item.is_displayed:
+                item.is_displayed = False
+                item.save()
+                top_ids.append(item.single_rec_topics_id)
+
+        if top_ids:
+            matched_rt = topicInformation.objects.filter(id__in=top_ids)
             for top in matched_rt:
                 add_remove = match_recs.removed_topics.add(top)
                 remove_rec = match_recs.rec_topics.remove(top)
         
-        update_term_list = generate_term_recs(teacher_input, class_id, lesson_id, user_profile.id)
-
-        context = {"data": update_term_list, "message": "your message"}
+        
+        context = {"message": "your message"}
 
 
         return JsonResponse(context)
@@ -1602,12 +1636,25 @@ def UpdateKeyTerms(request, lesson_id, class_id):
         teacher_input = lesson_match.teacher_objective
         #pulls from acivity_builder.py
         update_term_list = generate_term_recs(teacher_input, class_id, lesson_id, user_profile.id)
+
         context = {"data": update_term_list, "message": "your message"}
 
         return JsonResponse(context)
     else:
         return HttpResponse("Request method is not a GET")
 
+#this functions updates the ket terms recommended in the word clouds 
+def UpdateBigQuestions(request, lesson_id, class_id):
+    if request.method == 'GET':
+        user_profile = User.objects.filter(id=request.user.id).first()
+        lesson_match = lessonObjective.objects.get(id=lesson_id)
+        teacher_input = lesson_match.teacher_objective
+        #pulls from acivity_builder.py
+        returns_list = get_big_ideas(teacher_input, class_id, lesson_id, user_profile.id)
+        context = {"data": returns_list, "message": "your message"}
+        return JsonResponse(context)
+    else:
+        return HttpResponse("Request method is not a GET")
 
 #this function finds the most relevant Standards at the begining of the lesson plan. 
 def UpdateStandards(request, lesson_id, class_id):

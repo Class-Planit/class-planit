@@ -24,20 +24,27 @@ def get_student_list(user_id, class_id):
     
     student_list = []
     for student in student_profile_matches:
-        student_invite = studentInvitation.objects.filter(first_name= student.first_name, last_name= student.last_name, for_classroom= classroom_profile).first()
-        #if student doesn't have a username, they are still pending
-        if student.student_username:
-            student_user = User.objects.get(id=student.student_username_id)
-            student_ref = None
-        else:
-            student_user = None 
-            student_ref = student_invite
+        if student:
+            student_invite = studentInvitation.objects.filter(first_name= student.first_name, last_name= student.last_name, for_classroom= classroom_profile).first()
+            if student_invite:
+                email = student_invite.email
+            else:
+                email = None 
+            #if student doesn't have a username, they are still pending
+            if student.student_username:
+                student_user = User.objects.get(id=student.student_username_id)
+                student_ref = None
+            else:
+                student_user = None 
+                student_ref = student_invite
 
-        result = {'s_first': student.first_name, 's_last': student.last_name, 'g_level': student.current_grade_level, 'username': student_user,\
-                  'student_invite': student_ref, 'email': student_invite.email, 'student_id': student.student_username_id}
-        student_list.append(result)
+            result = {'s_first': student.first_name, 's_last': student.last_name, 'g_level': student.current_grade_level, 'username': student_user,\
+                    'student_invite': student_ref, 'email': email, 'student_id': student.student_username_id}
+            student_list.append(result)
 
-    student_list.sort(key=lambda x: x['s_last'])
+    if student_list:
+        student_list.sort(key=lambda x: x['s_last'])
+        
     return(student_list)
 
 

@@ -480,6 +480,9 @@ class topicInformation(models.Model):
     is_admin = models.BooleanField(default=True)
     from_wiki = models.BooleanField(default=False)
     is_secondary = models.BooleanField(default=False)
+    topic_id = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
     
 
     def get_remote_image(self):
@@ -618,12 +621,27 @@ class lessonPDFImage(models.Model):
     def __str__(self):
         return "%s" % (self.id)
 
+class singleRec(models.Model):
+    single_rec_topics = models.ForeignKey(topicInformation,
+                                     on_delete=models.SET_NULL,
+                                     blank=True,
+                                     null=True)
+    sim_score = models.CharField(max_length=10,
+                                       blank=True,
+                                       null=True)
+    is_displayed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return "%s-%s" % (self.single_rec_topics, self.sim_score)
 
 class reccomendedTopics(models.Model):
     matched_lesson = models.ForeignKey(lessonObjective,
                                on_delete=models.SET_NULL,
                                blank=True,
                                null=True)
+    single_score = models.ManyToManyField(singleRec,
+                                     blank=True,
+                                     null=True)
     rec_topics = models.ManyToManyField(topicInformation,
                                      blank=True,
                                      related_name='reccomended_topics',
@@ -740,6 +758,16 @@ class googleSearchResult(models.Model):
     def __str__(self):
         return "%s" % (self.id)
 
+class youtubeLine(models.Model):
+    vid_id = models.CharField(max_length=1000)
+    line_num = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
+    transcript_text = models.CharField(max_length=500)
+
+    def __str__(self):
+        return "%s" % (self.transcript_text)
+
 class youtubeSearchResult(models.Model):
     is_selected = models.BooleanField(default=False)
     lesson_plan = models.ForeignKey(lessonObjective,
@@ -752,6 +780,9 @@ class youtubeSearchResult(models.Model):
                                blank=True,
                                null=True)
     vid_id = models.CharField(max_length=1000)
+    transcript_lines = models.ManyToManyField(youtubeLine,
+                                     blank=True)
+
 
     def __str__(self):
         return "%s" % (self.title)
@@ -813,6 +844,11 @@ class googleRelatedQuestions(models.Model):
     question = models.CharField(max_length=500)
     link = models.CharField(max_length=500)
     snippet = models.CharField(max_length=1000)
+    relevance = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
+    is_selected = models.BooleanField(default=False)
+
 
 class weeklyObjectives(models.Model):
     week_of = models.CharField(max_length=10)
@@ -1091,7 +1127,11 @@ class lessonTemplates(models.Model):
     grouping = models.CharField(max_length=500,
                         blank=True,
                         null=True)
-    ks_demo = models.CharField(max_length=1000,
+    ks_demo = models.ForeignKey(LearningDemonstrationTemplate,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True) 
+    models.CharField(max_length=1000,
                         blank=True,
                         null=True)
     bloom = models.IntegerField(default = 0,
@@ -1151,6 +1191,9 @@ class selectedActivity(models.Model):
                                blank=True,
                                null=True)
     template_id = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
+    demo_num = models.IntegerField(default = 0,
                                blank=True,
                                null=True)
     is_admin = models.BooleanField(default=False)
@@ -1273,7 +1316,11 @@ class topicQuestion(models.Model):
     is_admin = models.BooleanField(default=True)
     original_num = models.IntegerField(default = 0,
                                blank=True,
-                               null=True)	
+                               null=True)
+    trans_line_num = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
+    is_video = models.BooleanField(default=False)	
 
     def __str__(self):
         return "%s" % (self.Question)

@@ -166,6 +166,21 @@ def openai_term_labels(user_id, topic_term, subject, grade):
 
 
     
+def build_on_activtity(act_string):
+    prompt = "%s." % (act_string)
+    response = openai.Completion.create(
+        engine="davinci",
+        prompt=prompt,
+        temperature=0.3,
+        max_tokens=64,
+        top_p=1,
+        frequency_penalty=0.5,
+        presence_penalty=0
+        )
+
+
+    result = response['choices'][0]
+    return(result['text'])
 
 
    
@@ -190,8 +205,8 @@ def get_single_types_activity(topic_list):
             for temp in all_templates:
                 result =  temp.content
                 sentence  = result.replace(topic_t, word)
-                result = sentence, word, topic_t, 'single'
-                print(result)
+                result = sentence, word, topic_t, 'single', temp.id
+            
                 word_list.append(result)
 
 
