@@ -665,7 +665,7 @@ class singleRec(models.Model):
                                      on_delete=models.SET_NULL,
                                      blank=True,
                                      null=True)
-    sim_score = models.CharField(max_length=10,
+    sim_score = models.CharField(max_length=100,
                                        blank=True,
                                        null=True)
     is_displayed = models.BooleanField(default=False)
