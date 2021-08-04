@@ -958,7 +958,7 @@ def generate_term_recs(teacher_input, class_id, lesson_id, user_id):
                 top_id = top[0]
                 sim_score = top[1]
                 top_match = topicInformation.objects.get(id=top_id)
-                create_rec, created = singleRec.objects.get_or_create(single_rec_topics=top_id, sim_score=sim_score)
+                create_rec, created = singleRec.objects.get_or_create(single_rec_topics_id=top_id, sim_score=sim_score)
                 
                 current_rec_list.rec_topics.add(top_match)
                 current_rec_list.single_score.add(create_rec)
