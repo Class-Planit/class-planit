@@ -650,7 +650,6 @@ class Migration(migrations.Migration):
             name='reccomendedTopics',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('search_level', models.IntegerField(blank=True, default=1, null=True)),
                 ('matched_lesson', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='planit.lessonobjective')),
                 ('rec_topics', models.ManyToManyField(blank=True, null=True, related_name='reccomended_topics', to='planit.topicInformation')),
                 ('removed_topics', models.ManyToManyField(blank=True, null=True, related_name='removed_topics', to='planit.topicInformation')),
