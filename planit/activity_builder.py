@@ -765,7 +765,7 @@ def build_term_description(wiki_result, user_profile, is_secondary, lesson_objec
                     if init_topic is not None:
                         match_topic.topic_id == int(init_topic)
                         match_topic.save()
-                new_description, created = topicDescription.objects.get_or_create(topic_id=match_topic.id, created_by=user_profile, is_admin=False, is_generated=True)
+                new_description, created = topicDescription.objects.get_or_create(topic_id=match_topic.id, created_by=user_profile, is_admin=False, is_gen=True)
                 if created:
                     get_desc_summary = get_desciption_summary(term, full_desc)
 
