@@ -285,7 +285,6 @@ class Migration(migrations.Migration):
                 ('header', models.CharField(blank=True, max_length=500, null=True)),
                 ('line_text', models.CharField(blank=True, max_length=1000, null=True)),
                 ('line_lemma', models.CharField(blank=True, max_length=1000, null=True)),
-                ('term_created', models.BooleanField(default=False)),
             ],
         ),
         migrations.CreateModel(
