@@ -295,7 +295,6 @@ class Migration(migrations.Migration):
                 ('title', models.TextField(max_length=500)),
                 ('lesson_id_num', models.IntegerField(blank=True, default=0, null=True)),
                 ('is_admin', models.BooleanField(default=False)),
-                ('wiki_page', tinymce.models.HTMLField(blank=True, null=True)),
                 ('grade_level', models.ManyToManyField(blank=True, related_name='book_grade', to='planit.gradeLevel')),
                 ('standards_set', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='planit.standardset')),
                 ('subject', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='planit.standardsubjects')),
