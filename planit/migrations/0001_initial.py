@@ -702,7 +702,6 @@ class Migration(migrations.Migration):
                 ('is_multi', models.BooleanField(default=False)),
                 ('components', models.ManyToManyField(blank=True, related_name='multi_topics', to='planit.topicTypes')),
                 ('grade_level', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='planit.gradelevel')),
-                ('single_topic', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='planit.topictypes')),
                 ('story', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='planit.shortstory')),
                 ('subject', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='planit.standardsubjects')),
             ],
