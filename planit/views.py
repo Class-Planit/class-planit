@@ -171,7 +171,7 @@ def FormFull(request, retry=None):
             except:
                 pass
 
-            return redirect('registration_info', user_id=user_id, waitlist_inv=inv_ref, invited_by=None)
+            return redirect('Dashboard', week_of='Current', subject_id='All', classroom_id='All')
 
     else:
 
@@ -240,7 +240,7 @@ def FormFullInv(request, retry=None, invite_id=None):
             except:
                 pass
                
-            return redirect('registration_info', user_id=user_id, waitlist_inv=inv_ref, invited_by=invited_by.id)
+            return redirect('Dashboard', week_of='Current', subject_id='All', classroom_id='All')
 
     else:
 
