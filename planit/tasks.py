@@ -105,6 +105,10 @@ def retention_activity(lesson_wording):
 
 def get_new_lesson(demo_wording, topic, d_type, t_type, lesson_id, user_id, demo_id):
 
+    mi_labels = [' ', 'Verbal', 'Visual', 'Musical', 'Movement', 'Logical']
+    bl_labels = [' ', 'Remember', 'Understand', 'Apply', 'Analyze', 'Evaluate', 'Create']
+    colors = [' ', 'primary', 'secondary', 'success', 'danger', 'warning', 'light']
+    font_a  = [' ', 'microphone', 'eye', 'music', 'walking', 'puzzle-piece']
 
     user_profile = User.objects.get(id=user_id)
 
@@ -148,7 +152,9 @@ def get_new_lesson(demo_wording, topic, d_type, t_type, lesson_id, user_id, demo
         new_wording = lesson_wording.replace('DEMO_KS', demo_wording)
 
         if new_wording:
-            new, created = selectedActivity.objects.get_or_create(created_by=user_profile , ks_demo=demo_wording, template_id=temp.id , lesson_overview = lesson_match, lesson_text = new_wording, verb = verb, work_product = work_product, ret_rate=ret_rate, bloom = bloom, demo_num=demo_id, mi = mi, is_admin = False)
+            new, created = selectedActivity.objects.get_or_create(created_by=user_profile , ks_demo=demo_wording, template_id=temp.id , lesson_overview = lesson_match, lesson_text = new_wording, verb = verb, work_product = work_product, ret_rate=ret_rate, \
+                                                                bloom = bloom, demo_num=demo_id, mi = mi, is_admin = False, \
+                                                                bl_color=colors[bloom], bl_labels=bl_labels[bloom], mi_color=colors[mi], mi_labels=mi_labels[mi], mi_icon=font_a[mi])
             lesson_list.append(new)
 
 

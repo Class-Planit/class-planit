@@ -1243,10 +1243,26 @@ class selectedActivity(models.Model):
                                null=True)
     is_admin = models.BooleanField(default=False)
     is_selected = models.BooleanField(default=False)
+    is_rejected = models.BooleanField(default=False)
     objectives_topics = models.ManyToManyField(topicInformation,
                                      blank=True,
                                      related_name='activitiy_topic',
                                      null=True)
+    mi_labels = models.CharField(max_length=50,
+                        blank=True,
+                        null=True)
+    bl_labels = models.CharField(max_length=50,
+                        blank=True,
+                        null=True)
+    bl_color = models.CharField(max_length=50,
+                        blank=True,
+                        null=True)
+    mi_color = models.CharField(max_length=50,
+                        blank=True,
+                        null=True)
+    mi_icon  = models.CharField(max_length=50,
+                        blank=True,
+                        null=True)
     
 
     def __str__(self):

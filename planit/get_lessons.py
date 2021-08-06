@@ -55,6 +55,7 @@ from youtube_transcript_api import YouTubeTranscriptApi
 from .get_key_terms import *
 from .get_activities import *
 from .activity_builder import *
+from .tasks import *
 stop_words = ['i', "'", "'" '!', '.', ':', ',', '[', ']', '(', ')', '?', "'see", "see", 'x', '...',  'student', 'learn', 'objective', 'students', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', "you're", "you've", "you'll", "you'd", 'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', "she's", 'her', 'hers', 'herself', 'it', "it's", 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', "that'll", 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', "don't", 'should', "should've", 'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 'aren', "aren't", 'couldn', "couldn't", 'didn', "didn't", 'doesn', "doesn't", 'hadn', "hadn't", 'hasn', "hasn't", 'haven', "haven't", 'isn', "isn't", 'ma', 'mightn', "mightn't", 'mustn', "mustn't", 'needn', "needn't", 'shan', "shan't", 'shouldn', "shouldn't", 'wasn', "wasn't", 'weren', "weren't", 'won', "won't", 'wouldn', "wouldn't"]
 
 TAG_RE = re.compile(r'<[^>]+>')
@@ -184,6 +185,8 @@ def get_lessons_ajax(lesson_id, user_id):
     demo_ks = lesson_match.objectives_demonstration.all()
     grouping = 'in groups of two'
     act_match = selectedActivity.objects.filter(lesson_overview = lesson_match, is_selected=True)
+    rec_act_match = selectedActivity.objects.filter(lesson_overview = lesson_match, is_selected=False)
+
     matched_activities = []
     temp_ids_list = []
     for sent in act_match:
@@ -195,147 +198,151 @@ def get_lessons_ajax(lesson_id, user_id):
 
 
     topic_list = topicInformation.objects.filter(id__in=topic_matches)
-    multi_activity = get_multiple_types_activity(topic_list)
-    
-    teacher_objective = lesson_match.teacher_objective
-    topic_results = []
-    full_result = []
-    topic_ids = []
-    for item in topic_list:
-        
-        topic_types = item.topic_type.all()
-        
-
-        topic_items = []
-        for tt in topic_types:
-            masked_info = tt.item
-            topic_id = tt.id
-            topic_ids.append(topic_id)
-            topic_items.append(masked_info)
-            topic_results.append(masked_info)
-
-        replacement = item, topic_items
-        full_result.append(replacement)
-            
-
-    words_list_full = ' '.join([str(i) for i in topic_results])
-    words_list_full = words_list_full.split()
-
-    wordfreq = []
-    for w in words_list_full:
-        result = w, words_list_full.count(w)
-        wordfreq.append(result)
-    wordfreq.sort(key=lambda x: x[1], reverse=True)
-    wordfreq = set(wordfreq)
-    
-    
-    wording_list = []
-
-    for item in demo_ks:
-        wording = item.content
-        topic_types = []
-        if item.topic_id:
-            topic_match = topicInformation.objects.filter(id=item.topic_id).first()
-            if topic_match:
-                topic_two = topic_match.topic_type.all()
-                for topic in topic_two:
-                    topic_types.append(topic)
-
-        if wording not in wording_list:
-            results = wording, topic_types
-            wording_list.append(results)
-
-
-
-    single_activities = get_single_types_activity(topic_list)
-
-    for line in single_activities:
-        if line not in wording_list:
-            wording_list.append(line)
-
-   
-    
-    for topic_item in wordfreq:
-        
-        #this is for multiple or the same topic items 
-        if topic_item[1] > 1:
-
-            result_list = []
-            for item in full_result:
-                if topic_item[0] in item[1]:
-                    result = item[0]
-                    result_list.append(result)
-
-            
-
-            plural_noun = get_plural_types_activity(result_list)
-
-            for item in plural_noun:
-                if item not in wording_list:
-                    wording_list.append(item) 
-
-
-            multi_noun = get_multiple_types_activity(result_list)
-
-            for item in multi_noun:
-                if item not in wording_list:
-                    wording_list.append(item) 
-
-
-
-        else:
-        #this is for single topic items    
-            result_list = []
-            for item in full_result:
-                if topic_item[0] in item[1]:
-                    result_one = item[0]
-                    result_list.append(result_one)
-                    
-                    topic_one = result_one.topic_type.all()
-                    topic_list = []
-                    for item in topic_one:
-                        topic_list.append(item)
-                    
-                    demo_ks_match = LearningDemonstrationTemplate.objects.filter(topic_type__in=topic_one)
-                    for demo in demo_ks_match:
-                        wording = demo.content
-
-                        topic_two = demo.topic_type.all()
-
-                        for item in topic_two:
-                            new_wording = wording.replace(str(item), result_one.item)  
-                            result = new_wording, result_one.item, item, 'single', demo.id            
-                            if result not in wording_list:
-                                wording_list.append(result) 
-
-    mi_labels = [' ', 'Verbal', 'Visual', 'Musical', 'Movement', 'Logical']
-    bl_labels = [' ', 'Remember', 'Understand', 'Apply', 'Analyze', 'Evaluate', 'Create']
-    colors = [' ', 'primary', 'secondary', 'success', 'danger', 'warning', 'light']
-    font_a  = [' ', 'microphone', 'eye', 'music', 'walking', 'puzzle-piece']
     activities_full = []
+    if rec_act_match.count() <= 5: 
+        multi_activity = get_multiple_types_activity(topic_list)
+        
+        teacher_objective = lesson_match.teacher_objective
+        topic_results = []
+        full_result = []
+        topic_ids = []
+        for item in topic_list:
+            
+            topic_types = item.topic_type.all()
+            
+
+            topic_items = []
+            for tt in topic_types:
+                masked_info = tt.item
+                topic_id = tt.id
+                topic_ids.append(topic_id)
+                topic_items.append(masked_info)
+                topic_results.append(masked_info)
+
+            replacement = item, topic_items
+            full_result.append(replacement)
+                
+
+        words_list_full = ' '.join([str(i) for i in topic_results])
+        words_list_full = words_list_full.split()
+
+        wordfreq = []
+        for w in words_list_full:
+            result = w, words_list_full.count(w)
+            wordfreq.append(result)
+        wordfreq.sort(key=lambda x: x[1], reverse=True)
+        wordfreq = set(wordfreq)
+        
+        
+        wording_list = []
+
+        for item in demo_ks:
+            wording = item.content
+            topic_types = []
+            if item.topic_id:
+                topic_match = topicInformation.objects.filter(id=item.topic_id).first()
+                if topic_match:
+                    topic_two = topic_match.topic_type.all()
+                    for topic in topic_two:
+                        topic_types.append(topic)
+
+            if wording not in wording_list:
+                results = wording, topic_types
+                wording_list.append(results)
+
+
+
+        single_activities = get_single_types_activity(topic_list)
+
+        for line in single_activities:
+            if line not in wording_list:
+                wording_list.append(line)
+
     
-    demo_list_sect = []
+        
+        for topic_item in wordfreq:
+            
+            #this is for multiple or the same topic items 
+            if topic_item[1] > 1:
 
-    lesson_full_List = []
-    random.shuffle(wording_list)
-    for line in wording_list:
+                result_list = []
+                for item in full_result:
+                    if topic_item[0] in item[1]:
+                        result = item[0]
+                        result_list.append(result)
 
-        sentence = line[0]
-        topic = line[1]
-        t_type = line[2]
-        d_type = line[3]
-        demo_id = line[4]
-        wording_split = sentence.split()
-        first_word = wording_split[0]
-        tokens = nlp(first_word)
-        new_verb = tokens[0]._.inflect('VBG')
-        new_demo = sentence.replace(first_word, new_verb) 
+                
 
-        lesson_full = get_new_lesson(new_demo, topic, d_type, t_type, lesson_id, user_profile.id, demo_id)
-        for item in lesson_full:
-            lesson_full_List.append(item)
+                plural_noun = get_plural_types_activity(result_list)
 
-    random.shuffle(lesson_full_List)
+                for item in plural_noun:
+                    if item not in wording_list:
+                        wording_list.append(item) 
+
+
+                multi_noun = get_multiple_types_activity(result_list)
+
+                for item in multi_noun:
+                    if item not in wording_list:
+                        wording_list.append(item) 
+
+
+
+            else:
+            #this is for single topic items    
+                result_list = []
+                for item in full_result:
+                    if topic_item[0] in item[1]:
+                        result_one = item[0]
+                        result_list.append(result_one)
+                        
+                        topic_one = result_one.topic_type.all()
+                        topic_list = []
+                        for item in topic_one:
+                            topic_list.append(item)
+                        
+                        demo_ks_match = LearningDemonstrationTemplate.objects.filter(topic_type__in=topic_one)
+                        for demo in demo_ks_match:
+                            wording = demo.content
+
+                            topic_two = demo.topic_type.all()
+
+                            for item in topic_two:
+                                new_wording = wording.replace(str(item), result_one.item)  
+                                result = new_wording, result_one.item, item, 'single', demo.id            
+                                if result not in wording_list:
+                                    wording_list.append(result) 
+
+        mi_labels = [' ', 'Verbal', 'Visual', 'Musical', 'Movement', 'Logical']
+        bl_labels = [' ', 'Remember', 'Understand', 'Apply', 'Analyze', 'Evaluate', 'Create']
+        colors = [' ', 'primary', 'secondary', 'success', 'danger', 'warning', 'light']
+        font_a  = [' ', 'microphone', 'eye', 'music', 'walking', 'puzzle-piece']
+        
+        
+        demo_list_sect = []
+
+        lesson_full_List = []
+        random.shuffle(wording_list)
+        for line in wording_list:
+
+            sentence = line[0]
+            topic = line[1]
+            t_type = line[2]
+            d_type = line[3]
+            demo_id = line[4]
+            wording_split = sentence.split()
+            first_word = wording_split[0]
+            tokens = nlp(first_word)
+            new_verb = tokens[0]._.inflect('VBG')
+            new_demo = sentence.replace(first_word, new_verb) 
+
+            lesson_full = get_new_lesson(new_demo, topic, d_type, t_type, lesson_id, user_profile.id, demo_id)
+            for item in lesson_full:
+                lesson_full_List.append(item)
+            random.shuffle(lesson_full_List)
+    else:        
+        lesson_full_List = rec_act_match[:5]
+
     for item in lesson_full_List:
         temp_id = item.template_id
         text_s = item.lesson_text
@@ -346,7 +353,7 @@ def get_lessons_ajax(lesson_id, user_id):
         matching = item.template_id
         if matching not in temp_ids_list:
             temp_ids_list.append(matching)
-            activity = {'id': item.id, 'activity': item.lesson_text, 'bl_color': colors[bl], 'bl_label': bl_labels[bl], 'mi_color': colors[mi], 'mi_label': mi_labels[mi], 'mi_icon': font_a[mi], 'ret':ret}
+            activity = {'id': item.id, 'activity': item.lesson_text, 'bl_color': item.bl_color, 'bl_label': item.bl_labels, 'mi_color': item.mi_color, 'mi_label': item.mi_labels, 'mi_icon': item.mi_icon, 'ret':ret}
             activities_full.append(activity)
     
 

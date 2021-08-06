@@ -108,33 +108,65 @@ def get_keywords(text):
 
 
 def check_matches_topics(item_one, item_two):
-    answer_term = item_one.lower()
-    description = item_two.lower()
 
-    full_answer = []
-    for word in answer_term.split():
-        index_num = answer_term.index(word)
-        result = word, index_num
-        full_answer.append(result)
+    
+    answer_term = item_one.lower().split()
+    description = item_two.lower().split()
+    answer_length = len(answer_term)
 
-    if full_answer:
-        first_word = full_answer[0]
+    print(answer_term, description)
+    final_results = []
+    results = []
+    for word in description:
+        for ans in answer_term:
+            if word == ans:
+                if word not in results:
+                    results.append(word)
 
-    full_description = []
-    for word in description.split():
-        index_num = description.index(word)
-        result = word, index_num
-        full_description.append(result)
 
-    print('---------------------') 
-    print('Starting')
-    matched_words = []
-    for desc in full_description:
-        if first_word[0] in desc[0]:
-            print(desc)
+ 
+    if len(results) == answer_length:
+        first_index = description.index(results[0])
+        last_index = description.index(results[-1])
+        last_index = last_index + 1
+        try:
+            find_string = description[first_index:last_index]
+            final_string = ' '.join(find_string)
+            description = ' '.join(description)
+            new_description = description.replace(final_string, '__________')
+            result = final_string.title(), new_description
+            final_results.append(result)
+        except:
+            pass
 
-    print('---------------------')    
-    if any(word in answer_term.split() for word in description.split()):
+    if final_results:
+        return(final_results[0])
+    else:
+        return(None)
+
+
+def check_topic_match_all(item_one, item_two):
+    punc = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
+    for ele in item_two:
+        if ele in punc:
+            item_two = item_two.replace(ele, "")
+            
+    answer_term = item_one.lower().split()
+    description = item_two.lower().split()
+    answer_length = len(answer_term)
+
+
+    results = []
+    for word in description:
+        for ans in answer_term:
+            if word == ans:
+                if word not in results:
+                    results.append(word)
+
+    print('-------------')
+    print(len(results), answer_length)
+    print('-------------')
+    if len(results) == answer_length:
         return(True)
     else:
         return(False)
@@ -240,7 +272,7 @@ def find_mc_incorrects(descriptions, topic):
 
 
 def get_question_text(lesson_id, user_profile):
-    
+    topicQuestion.objects.all().delete()
     class_objectives = lessonObjective.objects.get(id=lesson_id)
     subject = class_objectives.subject
 
@@ -282,49 +314,50 @@ def get_question_text(lesson_id, user_profile):
             pass
         else:
             check_match = check_matches_topics(topic[0], topic[1])
+            print(check_match)
             if check_match:
-                sentence = topic[1]
-                Answer = topic[0]
-                Question = sentence.replace(Answer, '_________')
+                Question = check_match[1]
+                Answer = check_match[0]
                 question_type = questionType.objects.filter(item='fill_in_the_blank').first()
                 if 'textbook' in topic[3]:
                     new_question, created = topicQuestion.objects.get_or_create(subject	= subject, linked_text=topic[4], question_type = question_type, lesson_overview=class_objectives, Question = Question, Correct = Answer, is_admin = False)
                 else:
                     new_question, created = topicQuestion.objects.get_or_create(subject	= subject, linked_topic=topic[4], question_type = question_type, lesson_overview=class_objectives, Question = Question, Correct = Answer, is_admin = False)
                 
-                if new_question not in all_topic_lines:
-
-                    all_topic_lines.append(new_question.id)
-
-                get_statement = true_false_statements(descriptions, topic)
-                get_incorrects =  find_mc_incorrects(descriptions, topic)   
-                if get_statement:
-                    Answer = topic[0]
-                    Question = topic[1]
-                    
-                    question_type = questionType.objects.filter(item='true_false').first()
-                    new_question, created = topicQuestion.objects.get_or_create(subject	= subject, question_type = question_type, Question = Question, Correct = Answer, lesson_overview=class_objectives, item=topic[0], is_admin = False)
+                if new_question:
                     if new_question not in all_topic_lines:
 
                         all_topic_lines.append(new_question.id)
-
-                if get_incorrects:
-                    for line in get_incorrects[:2]:
-                        Answer = line[0]
-                        in_one = line[1]
-                        in_two = line[2]
-                        in_three = line[3]
-                        sentence = topic[1]
-                        Question = sentence.replace(Answer, '_________')
-                        question_type = questionType.objects.filter(item='multi_choice').first()
-                        if 'textbook' in topic[3]: 
-                            new_question, created = topicQuestion.objects.get_or_create(subject	= subject, linked_text=topic[4], question_type = question_type, Question = Question, Correct = Answer, lesson_overview=class_objectives,  item=topic[0], Incorrect_One=in_one, Incorrect_Two=in_two, Incorrect_Three=in_three, is_admin = False)
-                        else:
-                            new_question, created = topicQuestion.objects.get_or_create(subject	= subject, linked_topic=topic[4], question_type = question_type, Question = Question, Correct = Answer, lesson_overview=class_objectives,  item=topic[0], Incorrect_One=in_one, Incorrect_Two=in_two, Incorrect_Three=in_three, is_admin = False)
-
+                else:
+                    get_statement = true_false_statements(descriptions, topic)
+                    get_incorrects =  find_mc_incorrects(descriptions, topic)   
+                    if get_statement:
+                        Answer = topic[0]
+                        Question = topic[1]
+                        
+                        question_type = questionType.objects.filter(item='true_false').first()
+                        new_question, created = topicQuestion.objects.get_or_create(subject	= subject, question_type = question_type, Question = Question, Correct = Answer, lesson_overview=class_objectives, item=topic[0], is_admin = False)
                         if new_question not in all_topic_lines:
 
                             all_topic_lines.append(new_question.id)
+
+                    if get_incorrects:
+                        for line in get_incorrects[:2]:
+                            Answer = line[0]
+                            in_one = line[1]
+                            in_two = line[2]
+                            in_three = line[3]
+                            sentence = topic[1]
+                            Question = sentence.replace(Answer, '_________')
+                            question_type = questionType.objects.filter(item='multi_choice').first()
+                            if 'textbook' in topic[3]: 
+                                new_question, created = topicQuestion.objects.get_or_create(subject	= subject, linked_text=topic[4], question_type = question_type, Question = Question, Correct = Answer, lesson_overview=class_objectives,  item=topic[0], Incorrect_One=in_one, Incorrect_Two=in_two, Incorrect_Three=in_three, is_admin = False)
+                            else:
+                                new_question, created = topicQuestion.objects.get_or_create(subject	= subject, linked_topic=topic[4], question_type = question_type, Question = Question, Correct = Answer, lesson_overview=class_objectives,  item=topic[0], Incorrect_One=in_one, Incorrect_Two=in_two, Incorrect_Three=in_three, is_admin = False)
+
+                            if new_question not in all_topic_lines:
+
+                                all_topic_lines.append(new_question.id)
    
             else:
                 questions = ['What ', 'Where ', 'How ', 'When ', 'Which ']
@@ -335,6 +368,7 @@ def get_question_text(lesson_id, user_profile):
                         is_question = False
 
                 if is_question:
+
                     Question = topic[1]
                     question_type = questionType.objects.filter(item='short_answer').first()
                     if 'textbook' in topic[3]:
@@ -347,15 +381,21 @@ def get_question_text(lesson_id, user_profile):
                 else:
                     Answer = topic[0]
                     Question = topic[1]
-                    
-                    question_type = questionType.objects.filter(item='short_answer').first()
-                    if 'textbook' in topic[3]:
-                        new_question, created = topicQuestion.objects.get_or_create(subject	= subject, lesson_overview=class_objectives, linked_text=topic[4], question_type = question_type, Question = Question, Correct = Answer, is_admin = False)
+                    check_match = check_topic_match_all(topic[0], topic[1])
+                    print('----------')
+                    print(check_match)
+                    print('----------')
+                    if check_match:
+                        pass
                     else:
-                        new_question, created = topicQuestion.objects.get_or_create(subject	= subject, lesson_overview=class_objectives, linked_topic=topic[4], question_type = question_type, Question = Question, Correct = Answer, is_admin = False)
-                    if new_question not in all_topic_lines:
+                        question_type = questionType.objects.filter(item='short_answer').first()
+                        if 'textbook' in topic[3]:
+                            new_question, created = topicQuestion.objects.get_or_create(subject	= subject, lesson_overview=class_objectives, linked_text=topic[4], question_type = question_type, Question = Question, Correct = Answer, is_admin = False)
+                        else:
+                            new_question, created = topicQuestion.objects.get_or_create(subject	= subject, lesson_overview=class_objectives, linked_topic=topic[4], question_type = question_type, Question = Question, Correct = Answer, is_admin = False)
+                        if new_question not in all_topic_lines:
 
-                        all_topic_lines.append(new_question.id)
+                            all_topic_lines.append(new_question.id)
 
 
     return(all_topic_lines)

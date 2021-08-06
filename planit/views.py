@@ -762,7 +762,6 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
 
     lesson_topics = topicInformation.objects.filter(id__in=lesson_match.objectives_topics.all())
 
-    
     new_text, created = lessonText.objects.get_or_create(matched_lesson=lesson_match)
     
     youtube_search = youtube_results(lesson_match.teacher_objective, lesson_id)
@@ -1424,6 +1423,8 @@ def SelectYoutubeVideo(request):
         return JsonResponse(context)
     else:
         return HttpResponse("Request method is not a GET")
+
+
 
 def SelectTopic(request):
     #function to add topic to lesson when its selected 

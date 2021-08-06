@@ -38,7 +38,8 @@
          
          <!-- Fontawesome -->
          <link type="text/css" href="{% static 'vendor/dashboard/fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
-         
+         <link rel="stylesheet" href="path/to/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
          <!-- Prism -->
          <link type="text/css" href="{% static 'vendor/dashboard/prismjs/themes/prism.css' %}" rel="stylesheet">
          
@@ -185,11 +186,7 @@
     
     
             </div>
-            <div class="btn-group mr-2">
-                <button  onclick="window.print();return false;" type="button" class="btn btn-sm btn-outline-secondary">Share with Colleague</button>
            
-    
-            </div>
         </div>
         <div class="row">
             
@@ -537,10 +534,22 @@
                             <div class="row align-items-center">
                                 <div class="col">
                               
-                                <div class="showhim"><h2 class="h5">Key Terms:</h2>
-                                    <div class="showme"><a class="remove-standard" href="#" >load more terms <i class="fa fa-refresh" aria-hidden="true"></i> </a></div>
-                                  </div>
-                                </div>
+                                <h2 class="h5">Key Terms:</h2>
+                               <a class="remove-standard" href="#" ><i class="fa fa-sync-alt" style="float: right"></i> </a>
+                               <hr>
+                               <form  action="#" method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
+                               <div class="input-group rounded">
+                                <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search"
+                                  aria-describedby="search-addon" />
+
+                                <span class="input-group-text border-0" id="search-addon">
+                                <button type="submit" class="btn btn-block btn-primary btn-sm"><i class="fas fa-search"></i></button>
+                                  
+                                </span>
+                              </div> 
+                              </form>
+                              <hr>
                                 
                             </div>
                         </div>
@@ -798,7 +807,7 @@
         },
         success: function(response) {
         $("#youtube_links").append(
-            "<li>" + response.title + " : " + response.link + "</li>"
+            "<li>" + response.title + " <br>: <a href='" + response.link + "' >" + response.link + "</a></li>"
             
         );
             
@@ -808,34 +817,6 @@
 });
 </script> 
 
-
-<script type="text/javascript">
-    $(document).on("click", ".selectvideo", function(){
-    var elm = $(this);
-    var id = elm.data('id');
-    var vidid;
-    vidid = $(this).attr("data-vidid");
-    var lessid;
-    lessid = $(this).attr("data-lessid");
-    $.ajax(
-    {
-        type:"GET",
-        url: "/add-youtube-video/",
-        data:{
-                video_id: vidid,
-                lesson_id: lessid
-        },
-        success: function(response) {
-        $("#youtube_links").append(
-            "<li>" + response.title + " : " + response.link + "</li>"
-            
-        );
-            
-    }
-
-    })
-});
-</script>
 
 <!----| Select Big Question |-->
 <script type="text/javascript">
@@ -946,7 +927,7 @@ document.getElementById('big_questions_selected').scrollIntoView();
             + item.mi_color +
             ' mr-1"><span class="fas fa-'
             + item.mi_icon +
-            '"></span>  ' 
+            '"></span> ' 
             + item.mi_label +
             '</span></h6></div><div class="col-6"><p class="font-weight-normal text-gray">Rentention: ' 
             + item.ret +

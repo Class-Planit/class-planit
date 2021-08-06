@@ -159,7 +159,9 @@ def openai_term_labels(user_id, topic_term, subject, grade):
                         examples=examples,
                         query=wording,
                         labels=labels)
-
+            print('---------')
+            print(response['label'].upper())
+            print('---------')
             return(response['label'].upper())
     except:
         return('KT')
