@@ -143,12 +143,13 @@
                                 {% if item.linked_text %}
                                     {% ifchanged item.linked_text %}
                                         {% if item.Question %}
+                                        <a href="{% url 'digital_activities' user_id=user_profile.id class_id=class_id lesson_id=lesson_id subject=subject_match_full.id page='AddQuestion' worksheet_id=0 act_id='False' question_id=forloop.counter0 %}#heading"><i class="fa fa-edit" style="color:lightgray;float: right" ></i> </a>
                                         <a href="{% url 'digital_activities' user_id=user_profile.id class_id=class_id lesson_id=lesson_id subject=subject_match_full.id page='AddQuestion' worksheet_id=0 act_id='False' question_id=forloop.counter0 %}#heading">
                                         <li>{{ forloop.counter }}. {{ item.Question }}</li>
-                                        <p>Correct: {{ item.Correct }}
+                                        <p><small style="color:orange"> Correct Answer:  {{ item.Correct }}
                                             {% if item.Incorrect_One %}
                                             | Incorrect: {{ item.Incorrect_One }}, {{ item.Incorrect_Two }}, {{ item.Incorrect_Three }}
-                                            {% endif %}
+                                            {% endif %}</small>
                                         </p>
                                         </a>
                                         {% endif %}
@@ -157,24 +158,26 @@
                                     {% if item.linked_topic %}
                                         {% ifchanged item.linked_topic %}
                                         {% if item.Question %}
+                                        <a href="{% url 'digital_activities' user_id=user_profile.id class_id=class_id lesson_id=lesson_id subject=subject_match_full.id page='AddQuestion' worksheet_id=0 act_id='False' question_id=forloop.counter0 %}#heading"><i class="fa fa-edit" style="color:lightgray;float: right"></i> </a>
                                         <a href="{% url 'digital_activities' user_id=user_profile.id class_id=class_id lesson_id=lesson_id subject=subject_match_full.id page='AddQuestion' worksheet_id=0 act_id='False' question_id=forloop.counter0 %}#heading">
                                         <li>{{ forloop.counter }}. {{ item.Question }}</li>
-                                        <p>Correct: {{ item.Correct }}
+                                        <p><small style="color:orange"> Correct Answer: {{ item.Correct }}
                                             {% if item.Incorrect_One %}
                                             | Incorrect: {{ item.Incorrect_One }}, {{ item.Incorrect_Two }}, {{ item.Incorrect_Three }}
-                                            {% endif %}
+                                            {% endif %}</small> 
                                         </p>
                                         </a>
                                         {% endif %}
                                         {% endifchanged %}
                                     {% else %}
                                         {% if item.Question %}
+                                        <a href="{% url 'digital_activities' user_id=user_profile.id class_id=class_id lesson_id=lesson_id subject=subject_match_full.id page='AddQuestion' worksheet_id=0 act_id='False' question_id=forloop.counter0 %}#heading"><i class="fa fa-edit" style="color:lightgray;float: right"></i> </a>
                                             <a href="{% url 'digital_activities' user_id=user_profile.id class_id=class_id lesson_id=lesson_id subject=subject_match_full.id page='AddQuestion' worksheet_id=0 act_id='False' question_id=forloop.counter0 %}#heading">
                                             <li>{{ forloop.counter }}. {{ item.Question }}</li>
-                                            <p>Correct: {{ item.Correct }}
+                                            <p><small style="color:orange">Correct Answer: {{ item.Correct }}
                                                 {% if item.Incorrect_One %}
                                                 | Incorrect: {{ item.Incorrect_One }}, {{ item.Incorrect_Two }}, {{ item.Incorrect_Three }}
-                                                {% endif %}
+                                                {% endif %}</small> 
                                             </p>
                                             </a>
                                             {% endif %}

@@ -123,21 +123,22 @@ def check_matches_topics(item_one, item_two):
                 if word not in results:
                     results.append(word)
 
-
+    
  
     if len(results) == answer_length:
-        first_index = description.index(results[0])
-        last_index = description.index(results[-1])
-        last_index = last_index + 1
-        try:
-            find_string = description[first_index:last_index]
-            final_string = ' '.join(find_string)
-            description = ' '.join(description)
-            new_description = description.replace(final_string, '__________')
-            result = final_string.title(), new_description
-            final_results.append(result)
-        except:
-            pass
+        if answer_term[0] == results[0]:
+            first_index = description.index(results[0])
+            last_index = description.index(results[-1])
+            last_index = last_index + 1
+            try:
+                find_string = description[first_index:last_index]
+                final_string = ' '.join(find_string)
+                description = ' '.join(description)
+                new_description = description.replace(final_string, '__________')
+                result = final_string.title(), new_description
+                final_results.append(result)
+            except:
+                pass
 
     if final_results:
         return(final_results[0])
@@ -150,7 +151,7 @@ def check_topic_match_all(item_one, item_two):
     for ele in item_two:
         if ele in punc:
             item_two = item_two.replace(ele, "")
-            
+
     answer_term = item_one.lower().split()
     description = item_two.lower().split()
     answer_length = len(answer_term)
