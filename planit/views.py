@@ -240,7 +240,8 @@ def FormFullInv(request, retry=None, invite_id=None):
             except:
                 pass
                
-            return redirect('Dashboard', week_of='Current', subject_id='All', classroom_id='All')
+            
+            return redirect('classroom_list')
 
     else:
 
@@ -351,13 +352,14 @@ class AboutUs(TemplateView):
 #classroom list for teacher 
 
 def ClassroomLists(request):
+    current_date = datetime.datetime.now()
     current_year = datetime.datetime.now().year
     current_week = date.today().isocalendar()[1] 
     user_profile = User.objects.filter(username=request.user.username).first()
     standard_set_match = user_profile.standards_set
     grade_list = gradeLevel.objects.filter(standards_set=standard_set_match).order_by('grade')
 
-    class_summary = get_classroom_summary(user_profile.id, current_year)
+    class_summary = get_classroom_summary(user_profile.id, current_year, current_date)
     
     
     page = 'Classrooms'

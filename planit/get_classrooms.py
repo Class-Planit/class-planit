@@ -1,12 +1,27 @@
 from .models import *
 
 
-
 #Gets the class name, number of students, support teachers and classroom id
-def get_classroom_summary(user_id, date):
+def get_classroom_summary(user_id, date, current_date):
     user_profile = User.objects.get(id=user_id)
+    class_string = "%s 's demo class" % (user_profile.username)
+    stand_match = user_profile.standards_set
+    
     classroom_profiles = classroom.objects.filter(main_teacher=user_profile)
     final_list = []
+    if classroom_profiles:
+        pass
+    else:
+        subject_match = standardSubjects.objects.filter(subject_title='Mathematics').first()
+        grade_match = gradeLevel.objects.filter(grade='08').first()
+        if grade_match:
+            end_date = current_date + relativedelta(years=1)
+            new_year, created = academicYear.objects.get_or_create(start_date=current_date, end_date=end_date, planning_teacher=user_profile)
+            add_demo, created = classroom.objects.get_or_create(main_teacher=user_profile, single_grade=grade_match, academic_year=new_year, standards_set=stand_match, classroom_title=class_string)
+            if subject_match:
+                add_demo.subjects.add(subject_match)
+
+    classroom_profiles = classroom.objects.filter(main_teacher=user_profile)
     for single_classroom in classroom_profiles:
         class_list_matches, created = classroomLists.objects.get_or_create(lesson_classroom=single_classroom, year=date)
         class_name = single_classroom.classroom_title
