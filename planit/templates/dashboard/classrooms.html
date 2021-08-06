@@ -3,7 +3,7 @@
 {% block content %}
                 
 <main class="content">   
-    <div class="container">
+
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
             <!--
                 <div class="btn-toolbar">
@@ -29,6 +29,7 @@
                 </a>
             </div>
         </div>
+        
         <div class="table-settings mb-4">
             <div class="row justify-content-between align-items-center">
                 
@@ -40,7 +41,7 @@
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             {% for classroom in classroom_results %}
-                            <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=classroom.0 view_ref='Students' confirmation=0 %}">{{ classroom.1 }}</a>
+                            <a class="dropdown-item" href="{% url 'classroom_single' user_id=user_profile.id class_id=classroom.0%}">{{ classroom.1 }}</a>
                             {% endfor %}
                         </div>
                     </div>
@@ -79,7 +80,7 @@
                 </div>
             </div>
         </div>
-    </div>
+
     <div class="row">
         <div class="col-lg-2">
             
@@ -91,165 +92,6 @@
         <div class="col-lg-2">
             
         </div>
-    </div>
-    
-    <div class="row">
-        {% if class_summary %}
-        <div class="col-12 mb-4">
-            <div class="card border-light shadow-sm">
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-centered table-nowrap mb-0 rounded">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th class="border-0">Classroom Name</th>
-                                    
-                                    <th class="border-0">Students</th>
-                                    <th class="border-0">Student Performance</th>
-                                    <th class="border-0">Grade Level</th>
-                                    <th class="border-0">Class Average</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Item -->
-                                <tr>
-                                    <td class="border-0">                                             
-                                        <a href="#" class="d-flex align-items-center">
-                                            <img class="mr-2 image image-small rounded-circle" alt="Image placeholder" src="{% static 'images/letters/e_purple.png' %}">
-                                            <div><span class="h6">First Grade</span></div>
-                                        </a>
-                                    </td>
-                                    <td class="border-0 font-weight-bold">
-                                        3 
-                                        </td>
-                                    <td class="border-0 text-success">
-                                        <span class="fas fa-angle-up"></span>                                   
-                                        <span class="font-weight-bold">30%</span>
-                                    </td>
-                                    
-                                    <td class="border-0">
-                                        1st grade
-                                    </td>
-                                    <td class="border-0 font-weight-bold">
-                                        85%  
-                                    </td>
-                                
-                                </tr>
-                                <!-- End of Item -->
-
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% else %}
-        <div class="col-12 mb-4">
-            <div class="card border-light shadow-sm">
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-centered table-nowrap mb-0 rounded">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th class="border-0">Student Name</th>
-                                    
-                                    <th class="border-0">Stickers</th>
-                                    <th class="border-0">Student Performance</th>
-                                    <th class="border-0">Completion Rate</th>
-                                    <th class="border-0">Student Average</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!--
-                                {% for student in student_info %}
-                                    <tr>
-                                        <td class="border-0">                                             
-                                            <a href="#" class="d-flex align-items-center">
-                                                
-                                                <div><span class="h6">{{ student.name.0 }} {{ student.name.1 }}</span></div>
-                                            </a>
-                                        </td>
-                                        <td class="border-0 font-weight-bold">
-                                            {{ student.stickers }} 
-                                            </td>
-                                        {% if student.performance.0 == 'pos' %}
-                                            <td class="border-0 text-success">
-                                                <span class="fas fa-angle-up"></span> 
-                                        {% elif student.performance.0 == 'neg' %}
-                                            <td class="border-0 text-danger">
-                                                <span class="fas fa-angle-down"></span> 
-                                        {% else %}
-                                            <td class="border-0 text-gray">
-                                                <span class="fas fa-equals"></span> 
-                                        {% endif %}                                  
-                                            <span class="font-weight-bold">{{ student.performance.1 }}%</span>
-                                        </td>
-                                        <td class="border-0 font-weight-bold">
-                                            {{ student.completion.0 }} / {{ student.completion.1 }} / {{ student.completion.2 }}
-                                            </td>
-                                        <td class="border-0 font-weight-bold">
-                                            {{ student.average }}%
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                                -->
-                                <!-- Item -->
-                                <tr>
-                                    <td class="border-0">                                             
-                                        <a href="#" class="d-flex align-items-center">
-                                            
-                                            <div><span class="h6">Bart Simpson</span></div>
-                                        </a>
-                                    </td>
-                                    <td class="border-0 font-weight-bold">
-                                        3 
-                                        </td>
-                                    <td class="border-0 text-success">
-                                        <span class="fas fa-angle-up"></span>                                   
-                                        <span class="font-weight-bold">30%</span>
-                                    </td>
-                                    
-                                    <td class="border-0 font-weight-bold">
-                                        10/15
-                                        </td>
-                                    <td class="border-0 font-weight-bold">
-                                        85%  
-                                    </td>
-                                
-                                </tr>
-                                <!-- End of Item -->
-                                <!-- Item -->
-                                <tr>
-                                    <td class="border-0">                                             
-                                        <a href="#" class="d-flex align-items-center">
-                                            
-                                            <div><span class="h6">Ferris Bueller</span></div>
-                                        </a>
-                                    </td>
-                                    <td class="border-0 font-weight-bold">
-                                        1
-                                    </td>
-                                    <td class="border-0 text-danger">
-                                        <span class="fas fa-angle-down"></span>                                   
-                                        <span class="font-weight-bold">5%</span>
-                                    </td>
-                                
-                                    <td class="border-0 font-weight-bold">
-                                    6/15
-                                    </td>
-                                    <td class="border-0 font-weight-bold">
-                                    55%  
-                                    </td>
-                                
-                                </tr>
-                                <!-- End of Item -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endif %}
     </div>
     <div class="row">
         <div class="col-12 col-xl-6 mb-4">
@@ -472,6 +314,113 @@
             
             </div>
         </div>
+    </div>
+    <div class="row">
+        {% if class_summary %}
+        <div class="col-12 mb-4">
+            <div class="card border-light shadow-sm">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-centered table-nowrap mb-0 rounded">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th class="border-0">Classroom Name</th>
+                                    
+                                    <th class="border-0">Students</th>
+                                    <th class="border-0">Student Performance</th>
+                                    <th class="border-0">Grade Level</th>
+                                    <th class="border-0">Class Average</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Item -->
+                                <tr>
+                                    <td class="border-0">                                             
+                                        <a href="#" class="d-flex align-items-center">
+                                            <img class="mr-2 image image-small rounded-circle" alt="Image placeholder" src="{% static 'images/letters/e_purple.png' %}">
+                                            <div><span class="h6">First Grade</span></div>
+                                        </a>
+                                    </td>
+                                    <td class="border-0 font-weight-bold">
+                                        3 
+                                        </td>
+                                    <td class="border-0 text-success">
+                                        <span class="fas fa-angle-up"></span>                                   
+                                        <span class="font-weight-bold">30%</span>
+                                    </td>
+                                    
+                                    <td class="border-0">
+                                        1st grade
+                                    </td>
+                                    <td class="border-0 font-weight-bold">
+                                        85%  
+                                    </td>
+                                
+                                </tr>
+                                <!-- End of Item -->
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12 mb-4">
+            <div class="card border-light shadow-sm">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-centered table-nowrap mb-0 rounded">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th class="border-0">Student Id</th>
+                                    <th class="border-0">Student Name</th>
+                                    <th class="border-0">Sticker Recieved</th>
+                                    <th class="border-0">Completed Worksheets</th>
+                                    <th class="border-0">Assigned Worksheets</th>
+                                    <th class="border-0">Student Average</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for student in student_info %}
+                                    <tr>
+                                        <td class="border-0 font-weight-bold">
+                                            {{ student.student_id }} 
+                                        </td>
+                                        <td class="border-0">                                             
+                                            <a href="#" class="d-flex align-items-center">
+                                                <div><span class="h6">{{ student.name.0 }} {{ student.name.1 }}</span></div>
+                                            </a>
+                                        </td>
+                                        <td class="border-0 font-weight-bold">
+                                            {{ student.stickers }} 
+                                        </td>
+                                        <td class="border-0 font-weight-bold">
+                                            {{ student.completed_ws }} 
+                                        </td>
+                                        <td class="border-0 font-weight-bold">
+                                            {{ student.assigned_ws }}
+                                            </td>
+                                        <td class="border-0 font-weight-bold">
+                                            {% if student.average == "student still pending" %}
+                                                {{ student.average }}
+                                            {% else %}
+                                                {{ student.average }}%
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% if no_students == True %}
+                            <h5>Add students to the classroom via classroom settings. You can access settings through <i class="fas fa-bars" ></i> at top of the page > Settings > Students</h5>
+                            <br> <h5>Or click <a href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=class_profile.id view_ref='Students' confirmation=0 %}">here</a>.</h5>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
 
 

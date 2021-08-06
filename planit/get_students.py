@@ -36,9 +36,12 @@ def get_student_list(user_id, class_id):
         result = {'s_first': student.first_name, 's_last': student.last_name, 'g_level': student.current_grade_level, 'username': student_user,\
                   'student_invite': student_ref, 'email': student_invite.email, 'student_id': student.student_username_id}
         student_list.append(result)
-
-    student_list.sort(key=lambda x: x['s_last'])
-    return(student_list)
+    if student_list != []:
+        student_list.sort(key=lambda x: x['s_last'])
+        no_students = False
+    else:
+        no_students = True
+    return(student_list, no_students)
 
 
 def get_teacher_list(user_id, class_id):
@@ -74,20 +77,36 @@ def get_student_info(student_list):
         name = student['s_first'], student['s_last']
         if student['username'] != None:
             student_user = User.objects.get(id=student['student_id'])
+            student_id = student_user.id
             print(student)
-            praises = studentPraise.objects.filter(student=student_user)
-            stickers = 5
-            performance = 'pos', 30
-            completion = [ 5, 6, 6 ]
+            praises = studentPraise.objects.filter(student=student_user).order_by('week_of')
+            print(praises)
+            if praises:
+                recent_sticker = praises[0]
+                stickers = recent_sticker.sent_date
+                print(stickers)
+            else:
+                stickers = "no stickers"
+            
+
+            #studentWorksheetAnswerFull is created whenever a student starts an assigned worksheet. 
+            #Once they complete the worksheet the is_submitted is True and they is a completion_date generated. 
+            #You can sum up the total of these that are created and divide by the number of students in the class.
+            #filter by assigned_by
+            completed_ws = 6
+            total_ws = 6
+            #studentWorksheetAnswerFull also has a score field that calculates the students score on submission. 
+            #You can get the avg of all the student scores from here.
             average = 85
-            each_student = {'name': name, 'stickers': stickers, 'performance': performance, 'completion': completion, 'average': average}
+            each_student = {'student_id': student_id, 'name': name, 'stickers': stickers, 'completed_ws': completed_ws, 'assigned_ws': total_ws, 'average': average}
             student_info.append(each_student)
         else:
-            stickers = 'n/a'
-            performance = 'null', 'n/a'
-            completion = [ 0, 0, 6 ]
-            average = 'n/a'
-            each_student = {'name': name, 'stickers': stickers, 'performance': performance, 'completion': completion, 'average': average}
+            student_id = "pending"
+            stickers = 0
+            completed_ws = 0
+            total_ws = 6
+            average = 'student still pending'
+            each_student = {'student_id': student_id, 'name': name, 'stickers': stickers, 'completed_ws': completed_ws, 'assigned_ws': total_ws, 'average': average}
             student_info.append(each_student)
 
     return(student_info)

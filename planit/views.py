@@ -551,7 +551,7 @@ def ClassroomDashboard(request, user_id=None, class_id=None):
     student_summary = get_classroom_list_summary(user_profile.id, current_year, class_id)
 
     #get all students in classroom and info
-    student_list = get_student_list(user_id, class_id)
+    student_list, no_students = get_student_list(user_id, class_id)
     student_info = get_student_info(student_list)
     
     #gets the classrooms teachers are main teacher on 
@@ -562,7 +562,7 @@ def ClassroomDashboard(request, user_id=None, class_id=None):
 
     context = { 'user_profile': user_profile, 'student_summary': student_summary, 'class_profile': class_profile,\
                 'subject_results': subject_results, 'classroom_results': classroom_results, 'student_list': student_list,\
-                'student_info': student_info}
+                'student_info': student_info, 'no_students': no_students}
 
     return render(request, 'dashboard/classrooms.html', context)
 
@@ -588,7 +588,7 @@ def ClassroomSettingsView(request, user_id=None, classroom_id=None, view_ref=Non
     default_grade = class_profile.single_grade
 
     #get all students and support teachers in classroom
-    student_list = get_student_list(user_id, classroom_id)
+    student_list, no_students = get_student_list(user_id, classroom_id)
     teacher_list = get_teacher_list(user_id, classroom_id)
 
     #gets the classrooms teachers are main teacher on 
