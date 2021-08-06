@@ -5,37 +5,40 @@
 {% block content %}
 
 <main class="content">
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
-        <!--
-        <div class="btn-toolbar">
-            <button class="btn btn-primary btn-sm mr-2 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="fas fa-plus mr-2"></span>New Task
-            </button>
-            <div class="dropdown-menu dashboard-dropdown dropdown-menu-left mt-2">
-                <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-tasks mr-2"></span>New Task</a>
-                <a class="dropdown-item font-weight-bold" href="#">
-                    Upload Files</a>
-                <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-user-shield mr-2"></span>Preview Security</a>
-                <div role="separator" class="dropdown-divider"></div>
-                <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-rocket text-danger mr-2"></span>Upgrade to Pro</a>
+    <div class="container">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+            <!--
+            <div class="btn-toolbar">
+                <button class="btn btn-primary btn-sm mr-2 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="fas fa-plus mr-2"></span>New Task
+                </button>
+                <div class="dropdown-menu dashboard-dropdown dropdown-menu-left mt-2">
+                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-tasks mr-2"></span>New Task</a>
+                    <a class="dropdown-item font-weight-bold" href="#">
+                        Upload Files</a>
+                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-user-shield mr-2"></span>Preview Security</a>
+                    <div role="separator" class="dropdown-divider"></div>
+                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-rocket text-danger mr-2"></span>Upgrade to Pro</a>
+                </div>
             </div>
+            <div class="btn-group mr-2">
+                <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+            </div>
+            -->
         </div>
-        <div class="btn-group mr-2">
-            <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
-            <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+    
+        <div class="form-group mb-0 mr-3">
+            {% if current_week == active_week %}
+                <a type="button" class="btn btn-primary" href="{% url 'Dashboard' week_of='Current' subject_id='All' classroom_id='All' %}" style="color: white">
+                    Displaying Current Week
+                </a>
+            {% else %}
+                <a type="button" class="btn btn-primary" href="{% url 'Dashboard' week_of='Current' subject_id='All' classroom_id='All' %}" style="color: white">
+                    <i class="fas fa-angle-left lg"></i> Back to Current Week
+                </a>
+            {% endif %}
         </div>
-        -->
-    </div>
-    <div class="form-group mb-0 mr-3">
-        {% if current_week == active_week %}
-            <a type="button" class="btn btn-primary" href="{% url 'Dashboard' week_of='Current' subject_id='All' classroom_id='All' %}" style="color: white">
-                Displaying Current Week
-            </a>
-        {% else %}
-            <a type="button" class="btn btn-primary" href="{% url 'Dashboard' week_of='Current' subject_id='All' classroom_id='All' %}" style="color: white">
-                <i class="fas fa-angle-left lg"></i> Back to Current Week
-            </a>
-        {% endif %}
     </div>
     <section class="section section-md ">
         <div class="container">

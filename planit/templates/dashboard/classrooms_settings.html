@@ -7,49 +7,49 @@
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
         </div>
         <div class="table-settings mb-4">
-            <div class="row justify-content-between align-items-center">
-                <div class="form-group mb-0 mr-3">
-                    <a type="button" class="btn btn-primary" href="{% url 'classroom_single' user_id=user_profile.id class_id=class_profile.id %}" style="color: white">
-                        <i class="fas fa-angle-left lg"></i> Back to Classroom Overview
-                    </a>
-                </div>
+
+            <div class="form-group mb-0 mr-3">
+                <a type="button" class="btn btn-primary" href="{% url 'classroom_single' user_id=user_profile.id class_id=class_profile.id %}" style="color: white">
+                    <i class="fas fa-angle-left lg"></i> Back to Classroom Overview
+                </a>
+            </div>
+            <br>
+            <div class="form-group mb-0 mr-3">
                 
-                <div class="form-group mb-0 mr-3">
-                    
-                    <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Classrooms
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            {% for classroom in classroom_results %}
-                            <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=classroom.0 view_ref='Students' confirmation=0 %}">{{ classroom.1 }}</a>
-                            {% endfor %}
-                        </div>
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Classrooms
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        {% for classroom in classroom_results %}
+                        <a class="dropdown-item" href="{% url 'classroom_settings' user_id=user_profile.id classroom_id=classroom.0 view_ref='Students' confirmation=0 %}">{{ classroom.1 }}</a>
+                        {% endfor %}
                     </div>
-                </div>
-                
-                <div class="col col-md-4 col-lg-3 col-xl-2 ml-auto">
-                    <!--
-                    <div class="input-group">
-                        <div class="input-group-prepend"><span class="input-group-text"><span class="fas fa-search"></span></span></div>
-                        <input class="form-control" id="searchInputdashboard1" placeholder="Search" type="text" aria-label="Dashboard user search">
-                    </div>
-                    -->
-                </div>
-                <div class="col-2 pl-0 d-none d-lg-flex">
-                    <!--
-                    <div class="form-group mb-0">
-                        <select class="custom-select" id="inlineFormCustomSelectMesages2">
-                            <option selected="selected">All</option>
-                            <option value="1">Active</option>
-                            <option value="2">Inactive</option>
-                            <option value="3">Pending</option>
-                            <option value="3">Canceled</option>
-                        </select>
-                    </div>
-                    -->
                 </div>
             </div>
+            
+            <div class="col col-md-4 col-lg-3 col-xl-2 ml-auto">
+                <!--
+                <div class="input-group">
+                    <div class="input-group-prepend"><span class="input-group-text"><span class="fas fa-search"></span></span></div>
+                    <input class="form-control" id="searchInputdashboard1" placeholder="Search" type="text" aria-label="Dashboard user search">
+                </div>
+                -->
+            </div>
+            <div class="col-2 pl-0 d-none d-lg-flex">
+                <!--
+                <div class="form-group mb-0">
+                    <select class="custom-select" id="inlineFormCustomSelectMesages2">
+                        <option selected="selected">All</option>
+                        <option value="1">Active</option>
+                        <option value="2">Inactive</option>
+                        <option value="3">Pending</option>
+                        <option value="3">Canceled</option>
+                    </select>
+                </div>
+                -->
+            </div>
+
         </div>
     </div>
     <div class="row">
@@ -484,7 +484,7 @@
                             <li style="list-style: none;"><i class="fas fa-caret-right"></i> edit and add new subjects to your classroom</li> 
                             <li style="list-style: none;"><i class="fas fa-caret-right"></i> edit and add new grade levels to your classroom</li> 
                             <br>
-                            <p>Get started by adding subjects and grade levels to your classroom</p>
+                            <p>Get started by adding subjects and grade levels to your classroom...</p>
                         </div>
                     </div>
                 {% endif %}
