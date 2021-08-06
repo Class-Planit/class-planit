@@ -295,21 +295,25 @@
                                   </tr>
                                   {% endfor %}
                                 </tbody>
-                            </table>
-                  
+                            </table>    
+                    
                             </div>
                         <hr>
                         </div>
 
                     </div>
+                    <div id='key_term_bottom'></div>
                     {% else %}
                     <div class='demo-dfree myDivToPrint' id='demo-dfree'>
                         
                        {{ new_text.overview|safe }}
                     </div>
+                    <div id='key_term_bottom'></div>
                     {% endif %}
                 </form>
+                
             </div>
+
             <div class="col-lg-3">
                
                 <div id='standard-list'>
@@ -434,7 +438,7 @@
                            
                             <li><a href="#" class="card-link">Student Performance</a></li>
                             <li><a href="#" class="card-link">Standards Tracking</a></li>
-    
+
                     </div>
                     </div>
                 </div>
@@ -534,7 +538,7 @@
                                 <div class="col">
                               
                                 <div class="showhim"><h2 class="h5">Key Terms:</h2>
-                                    <div class="showme"><a class="remove-standard" href="#" >load more terms</a></div>
+                                    <div class="showme"><a class="remove-standard" href="#" >load more terms <i class="fa fa-refresh" aria-hidden="true"></i> </a></div>
                                   </div>
                                 </div>
                                 
@@ -762,15 +766,15 @@
             },
             success: function(response) {
             elm.remove();
-            $("#key-term-section").append(
+            $("#key-term-section").prepend(
                 "<tr><th scope='row'>"  + response.term + "</th><td>" + response.description + "</td></tr>"
                 
-            );
-                
+            );    
         }
 
         })
     });
+    
 </script> 
 
 
@@ -805,6 +809,34 @@
 </script> 
 
 
+<script type="text/javascript">
+    $(document).on("click", ".selectvideo", function(){
+    var elm = $(this);
+    var id = elm.data('id');
+    var vidid;
+    vidid = $(this).attr("data-vidid");
+    var lessid;
+    lessid = $(this).attr("data-lessid");
+    $.ajax(
+    {
+        type:"GET",
+        url: "/add-youtube-video/",
+        data:{
+                video_id: vidid,
+                lesson_id: lessid
+        },
+        success: function(response) {
+        $("#youtube_links").append(
+            "<li>" + response.title + " : " + response.link + "</li>"
+            
+        );
+            
+    }
+
+    })
+});
+</script>
+
 <!----| Select Big Question |-->
 <script type="text/javascript">
     $(document).on("click", ".selectquestion", function(){
@@ -832,11 +864,12 @@
 
     })
 });
+document.getElementById('big_questions_selected').scrollIntoView();
 </script> 
 
 <!----| Update Term Options |-->
 <script type="text/javascript">
-    setInterval(function(){
+    var intervalID = setInterval(function(){
     var overview = document.getElementById('not-selected-topics');
     htmlContent = overview.innerHTML,
     $.ajax(
@@ -862,6 +895,7 @@
 
     })
 }, 8000);
+
 </script> 
 
 
@@ -886,7 +920,7 @@
 
 <!----| Update Activity Options |-->
 <script type="text/javascript">
-    setInterval(function(){
+    let myVar = setInterval(function(){
     var overview = document.getElementById('not-selected-activities');
     htmlContent = overview.innerHTML,
     $.ajax(

@@ -120,15 +120,16 @@ class waitlistUserInfoForm(forms.ModelForm):
         fields = '__all__'
 
 class TeacherForm(UserCreationForm):
-    username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'example: EdnaK'}))
-    first_name = forms.CharField(max_length=30, required=False, widget=forms.TextInput(attrs={'placeholder': 'example: Edna'}), help_text='Optional.')
-    last_name = forms.CharField(max_length=30, required=False, widget=forms.TextInput(attrs={'placeholder': 'example: Krabappel'}), help_text='Optional.')
-    email = forms.EmailField(max_length=254, widget=forms.TextInput(attrs={'placeholder': 'example@none.com'}), help_text='Required. Inform a valid email address.')
-    phone_number = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'placeholder': '+12345678900'}),required=False, help_text='Optional.')
+    username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Username...'}))
+    first_name = forms.CharField(max_length=30, required=False, widget=forms.TextInput(attrs={'placeholder': 'First Name...'}), help_text='Optional.')
+    last_name = forms.CharField(max_length=30, required=False, widget=forms.TextInput(attrs={'placeholder': 'Last Name...'}), help_text='Optional.')
+    email = forms.EmailField(max_length=254, widget=forms.TextInput(attrs={'placeholder': 'Email...'}), help_text='Required. Inform a valid email address.')
+    phone_number = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'placeholder': 'Phone...'}),required=False, help_text='Optional.')
+
 
     class Meta(UserCreationForm.Meta):
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email', 'phone_number', 'password1', 'password2')
+        fields = ('username', 'first_name', 'last_name', 'email', 'phone_number', 'password1', 'password2', 'standards_set', 'city', 'state')
 
     @transaction.atomic
     def save(self):

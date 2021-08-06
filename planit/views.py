@@ -48,7 +48,7 @@ from .fix_types import *
 #Homepage Landing Page
 def Homepage(request):
     
-
+    standards_match = standardSet.objects.all()
     if request.method == "POST":
 
         form = TeacherForm(request.POST)
@@ -100,12 +100,13 @@ def Homepage(request):
     
     choice = random.choice([1, 2])
     if choice == 1:
-        return render(request, 'dashboard/index3.html', {'form': form})
+        return render(request, 'dashboard/index3.html', {'form': form, 'standards_match': standards_match})
     else:
-        return render(request, 'dashboard/index3.html', {'form': form})
+        return render(request, 'dashboard/index3.html', {'form': form, 'standards_match': standards_match})
 
 #Full Form Regstration if error on pop up modal
 def FormFull(request, retry=None):
+    standards_match = standardSet.objects.all()
     if retry != False and retry != "False":
         message = 'Something Went Wrong! Please complete your registration again.'
         error_messages = retry
@@ -121,6 +122,7 @@ def FormFull(request, retry=None):
             
             user_email = form.cleaned_data.get('email')
             my_number = form.cleaned_data.get('phone_number')
+           
             if '+1' in my_number:
                 pass
             else:
@@ -128,7 +130,17 @@ def FormFull(request, retry=None):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             user_id = user.id
-            
+            standards_set = form.cleaned_data.get('standards_set')
+            if standards_set == 0:
+                user.standards_set = None
+            else:
+                standard_match = standardSet.objects.get(id=standards_set.id)
+                user.standards_set = standard_match
+                user.save()
+
+            school_user_match = school_user.objects.get(user=user_id)
+            school_user_match.standards_set = standard_match
+
             welcome_message = 'Welcome to Class Planit, %s! We will be in touch when your account is activated.' % (username)
         
             #create "empty" teacherInvitations (only created_by and is_waitlist)
@@ -165,7 +177,7 @@ def FormFull(request, retry=None):
 
         form = TeacherForm()
     
-    return render(request, 'homepage/registration_full.html', {'form': form, 'message': message, 'error_messages': error_messages})
+    return render(request, 'homepage/registration_full.html', {'form': form, 'message': message, 'error_messages': error_messages, 'standards_match': standards_match})
 
 #Full Form Regstration for invited teachers to be placed on waitlist
 def FormFullInv(request, retry=None, invite_id=None):
@@ -342,8 +354,7 @@ def ClassroomLists(request):
     current_year = datetime.datetime.now().year
     current_week = date.today().isocalendar()[1] 
     user_profile = User.objects.filter(username=request.user.username).first()
-    s_user_match = school_user.objects.get(user=user_profile.id)
-    standard_set_match = s_user_match.standards_set
+    standard_set_match = user_profile.standards_set
     grade_list = gradeLevel.objects.filter(standards_set=standard_set_match).order_by('grade')
 
     class_summary = get_classroom_summary(user_profile.id, current_year)
@@ -893,6 +904,7 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
     return render(request, 'dashboard/activity_builder_2.html', {'user_profile': user_profile, 'get_worksheet': get_worksheet, 'all_matched_questions': all_matched_questions, 'question_match': question_match, 'question_id': question_id, 'next_q': next_q, 'background_img': background_img, 'worksheet_theme': worksheet_theme, 'current_question': current_question, \
                                                                  'matched_questions': matched_questions, 'subject_match_full': subject_match_full, 'current_week': current_week, 'page': page, 'class_id': class_id, 'subject': subject, 'lesson_id': lesson_id, \
                                                                   'short_answer': short_answer, 'fib':fib, 'multi_choice':multi_choice, 'unknown':unknown})
+
 
 
 #Edit already created or recommended Question
@@ -1452,7 +1464,7 @@ def SelectTopic(request):
                     is_dup = check_duplicate_strings(desc1.description, desc2.description)
                     
                     if is_dup:
-                        topic_match.topic_type.remove(desc2)
+                        topic_match.description.remove(desc2)
         
 
         description_list = []

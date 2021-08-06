@@ -38,8 +38,12 @@ def get_student_list(user_id, class_id):
                 student_user = None 
                 student_ref = student_invite
 
+            
             result = {'s_first': student.first_name, 's_last': student.last_name, 'g_level': student.current_grade_level, 'username': student_user,\
                     'student_invite': student_ref, 'email': email, 'student_id': student.student_username_id}
+            print('---------')
+            print(result)
+            print('---------')
             student_list.append(result)
 
     if student_list:

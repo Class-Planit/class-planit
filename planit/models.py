@@ -29,7 +29,12 @@ class User(AbstractUser):
     is_archived = models.BooleanField(default=False)
     is_pending = models.BooleanField(default=False)
     is_demo = models.BooleanField(default=False)
-
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    standards_set = models.ForeignKey(standardSet,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
 
 
 

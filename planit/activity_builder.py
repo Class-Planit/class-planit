@@ -857,7 +857,7 @@ def generate_term_recs(teacher_input, class_id, lesson_id, user_id):
     word_count = 0
 
 
-    if rec_count < 40:
+    if rec_count < 20:
         
         #demonstrations of knowledge are parts of an activity that says what we want students to know 
         #by the end of the activity ie "identify importance of teh Emancipation Proclaimation"
@@ -911,7 +911,7 @@ def generate_term_recs(teacher_input, class_id, lesson_id, user_id):
                 not_selected_topics.append(result)
 
 
-        if word_count < 5:
+        if word_count < 3:
 
 
             get_objective_matches = get_topic_matches(class_objectives, topic_count, grade_list, subject, standard_set, lesson_id, user_id)

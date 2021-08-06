@@ -108,9 +108,33 @@ def get_keywords(text):
 
 
 def check_matches_topics(item_one, item_two):
-    text_split = item_one.lower()
-    standard_split = item_two.lower()
-    if text_split in standard_split:
+    answer_term = item_one.lower()
+    description = item_two.lower()
+
+    full_answer = []
+    for word in answer_term.split():
+        index_num = answer_term.index(word)
+        result = word, index_num
+        full_answer.append(result)
+
+    if full_answer:
+        first_word = full_answer[0]
+
+    full_description = []
+    for word in description.split():
+        index_num = description.index(word)
+        result = word, index_num
+        full_description.append(result)
+
+    print('---------------------') 
+    print('Starting')
+    matched_words = []
+    for desc in full_description:
+        if first_word[0] in desc[0]:
+            print(desc)
+
+    print('---------------------')    
+    if any(word in answer_term.split() for word in description.split()):
         return(True)
     else:
         return(False)

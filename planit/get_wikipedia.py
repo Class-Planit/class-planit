@@ -474,7 +474,7 @@ def wiki_results(lesson_id, user_id, standards_nouns):
                             
                             a_string = line.rstrip("\n")
                             final_line = re.sub(r'\[.*\]', '', a_string)
-                            
+                            print()
 
 
                             for word in link_list:
@@ -504,7 +504,7 @@ def wiki_results(lesson_id, user_id, standards_nouns):
                     
                     for word in word_full:
                       
-                        if word_counts <= 5:
+                        if word_counts <= 3:
                             textline_matches = textBookBackground.objects.filter(textbook=textbook_match, header=word.header)
                             line_wording = []
                             for line in textline_matches:

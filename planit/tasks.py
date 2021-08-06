@@ -130,7 +130,13 @@ def get_new_lesson(demo_wording, topic, d_type, t_type, lesson_id, user_id, demo
         lesson_templates = lessonTemplates.objects.filter(components__in=tt_match, grade_level=grade_match, subject=subject_match, is_multi=False, is_plural=False)
 
 
+    full_template_list = []
+    for item in lesson_templates:
+        lesson_wording = item.wording
+        full_template_list.append(lesson_wording)
 
+
+    
     lesson_list = []
     for temp in lesson_templates:
         lesson_wording = temp.wording
