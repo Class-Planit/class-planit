@@ -29,7 +29,12 @@ class User(AbstractUser):
     is_archived = models.BooleanField(default=False)
     is_pending = models.BooleanField(default=False)
     is_demo = models.BooleanField(default=False)
-
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    standards_set = models.ForeignKey(standardSet,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
 
 
 
@@ -319,7 +324,46 @@ class teacherInvitation(models.Model):
     def __str__(self):
         return "%s - %s" % (self.invite_ref, self.email)
    
+class teacherInvitations(models.Model):
+    invite_ref = models.CharField(_('Teacher Reference'),
+                                   max_length=255,
+                                   blank=True,
+                                   null=True)
+    first_name = models.CharField(max_length=50,
+                                  blank=True,
+                                  null=True)
+    last_name = models.CharField(max_length=50,
+                                 blank=True,
+                                 null=True)
+    email = models.EmailField(blank=True,
+                              null=True)
+    for_classroom = models.ForeignKey(classroom,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    created_by = models.ForeignKey(User,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True,
+                               related_name='created_by1')
+    new_user= models.ForeignKey(User,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True,
+                               related_name='new_user1')
+    is_pending = models.BooleanField(default=True)
+    is_waitlist = models.BooleanField(default=False)
+    
 
+    def save(self, *args, **kwargs):
+        # This to check if it creates a new or updates an old instance
+        if self.pk is None:
+            self.invite_ref= token_generator.make_token(8)
+        super(teacherInvitations, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return "%s - %s" % (self.invite_ref, self.email)
+   
 class textBookTitle(models.Model):
     title = models.TextField(max_length=500)
     grade_level = models.ManyToManyField(gradeLevel,
@@ -342,6 +386,9 @@ class textBookTitle(models.Model):
                                null=True)
     is_admin = models.BooleanField(default=False)
     wiki_page = tinymce_models.HTMLField(blank=True,
+                               null=True)
+    prim_topic_id = models.IntegerField(default = 0,
+                               blank=True,
                                null=True)
 
     def __str__(self):
@@ -431,7 +478,7 @@ class topicDescription(models.Model):
                                blank=True,
                                null=True)
     is_admin = models.BooleanField(default=True)
-    is_generated = models.BooleanField(default=False)
+    is_gen = models.BooleanField(default=False)
     
     def __str__(self):
         return "%s" % (self.description)
@@ -460,10 +507,11 @@ class topicInformation(models.Model):
                                      blank=True)
     topic_type = models.ManyToManyField(topicTypes,
                                      blank=True)
-    image_name = models.CharField(max_length=200,
-                                       blank=True,
+    image_name = models.CharField(max_length=500,
+                                        blank=True,
                                        null=True)
-    image_url = models.URLField(blank=True,
+    image_url = models.URLField(max_length=500,
+                                blank=True,
                                 null=True)
     image_file = models.ImageField(upload_to='images/topic/',
                                        blank=True,
@@ -477,6 +525,10 @@ class topicInformation(models.Model):
     is_admin = models.BooleanField(default=True)
     from_wiki = models.BooleanField(default=False)
     is_secondary = models.BooleanField(default=False)
+    topic_id = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
+    
 
     def get_remote_image(self):
         if self.image_url and not self.image_file:
@@ -614,12 +666,27 @@ class lessonPDFImage(models.Model):
     def __str__(self):
         return "%s" % (self.id)
 
+class singleRec(models.Model):
+    single_rec_topics = models.ForeignKey(topicInformation,
+                                     on_delete=models.SET_NULL,
+                                     blank=True,
+                                     null=True)
+    sim_score = models.CharField(max_length=100,
+                                       blank=True,
+                                       null=True)
+    is_displayed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return "%s-%s" % (self.single_rec_topics, self.sim_score)
 
 class reccomendedTopics(models.Model):
     matched_lesson = models.ForeignKey(lessonObjective,
                                on_delete=models.SET_NULL,
                                blank=True,
                                null=True)
+    single_score = models.ManyToManyField(singleRec,
+                                     blank=True,
+                                     null=True)
     rec_topics = models.ManyToManyField(topicInformation,
                                      blank=True,
                                      related_name='reccomended_topics',
@@ -628,7 +695,7 @@ class reccomendedTopics(models.Model):
                                      blank=True,
                                      related_name='removed_topics',
                                      null=True)
-    search_level = models.IntegerField(default = 1,
+    searched_level = models.IntegerField(default = 1,
                                blank=True,
                                null=True)
 
@@ -736,6 +803,16 @@ class googleSearchResult(models.Model):
     def __str__(self):
         return "%s" % (self.id)
 
+class youtubeLine(models.Model):
+    vid_id = models.CharField(max_length=1000)
+    line_num = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
+    transcript_text = models.CharField(max_length=500)
+
+    def __str__(self):
+        return "%s" % (self.transcript_text)
+
 class youtubeSearchResult(models.Model):
     is_selected = models.BooleanField(default=False)
     lesson_plan = models.ForeignKey(lessonObjective,
@@ -748,6 +825,9 @@ class youtubeSearchResult(models.Model):
                                blank=True,
                                null=True)
     vid_id = models.CharField(max_length=1000)
+    transcript_lines = models.ManyToManyField(youtubeLine,
+                                     blank=True)
+
 
     def __str__(self):
         return "%s" % (self.title)
@@ -809,6 +889,11 @@ class googleRelatedQuestions(models.Model):
     question = models.CharField(max_length=500)
     link = models.CharField(max_length=500)
     snippet = models.CharField(max_length=1000)
+    relevance = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
+    is_selected = models.BooleanField(default=False)
+
 
 class weeklyObjectives(models.Model):
     week_of = models.CharField(max_length=10)
@@ -1087,7 +1172,11 @@ class lessonTemplates(models.Model):
     grouping = models.CharField(max_length=500,
                         blank=True,
                         null=True)
-    ks_demo = models.CharField(max_length=1000,
+    ks_demo = models.ForeignKey(LearningDemonstrationTemplate,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True) 
+    models.CharField(max_length=1000,
                         blank=True,
                         null=True)
     bloom = models.IntegerField(default = 0,
@@ -1147,6 +1236,9 @@ class selectedActivity(models.Model):
                                blank=True,
                                null=True)
     template_id = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
+    demo_num = models.IntegerField(default = 0,
                                blank=True,
                                null=True)
     is_admin = models.BooleanField(default=False)
@@ -1269,7 +1361,11 @@ class topicQuestion(models.Model):
     is_admin = models.BooleanField(default=True)
     original_num = models.IntegerField(default = 0,
                                blank=True,
-                               null=True)	
+                               null=True)
+    trans_line_num = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
+    is_video = models.BooleanField(default=False)	
 
     def __str__(self):
         return "%s" % (self.Question)

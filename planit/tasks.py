@@ -103,7 +103,7 @@ def retention_activity(lesson_wording):
 
 
 
-def get_new_lesson(demo_wording, topic, d_type, t_type, lesson_id, user_id):
+def get_new_lesson(demo_wording, topic, d_type, t_type, lesson_id, user_id, demo_id):
 
 
     user_profile = User.objects.get(id=user_id)
@@ -130,7 +130,13 @@ def get_new_lesson(demo_wording, topic, d_type, t_type, lesson_id, user_id):
         lesson_templates = lessonTemplates.objects.filter(components__in=tt_match, grade_level=grade_match, subject=subject_match, is_multi=False, is_plural=False)
 
 
+    full_template_list = []
+    for item in lesson_templates:
+        lesson_wording = item.wording
+        full_template_list.append(lesson_wording)
 
+
+    
     lesson_list = []
     for temp in lesson_templates:
         lesson_wording = temp.wording
@@ -140,10 +146,12 @@ def get_new_lesson(demo_wording, topic, d_type, t_type, lesson_id, user_id):
         bloom = temp.bloom
         mi = temp.mi
         new_wording = lesson_wording.replace('DEMO_KS', demo_wording)
+
         if new_wording:
-            new, created = selectedActivity.objects.get_or_create(created_by=user_profile , ks_demo=demo_wording, template_id=temp.id , lesson_overview = lesson_match, lesson_text = new_wording, verb = verb, work_product = work_product, ret_rate=ret_rate, bloom = bloom, mi = mi, is_admin = False)
+            new, created = selectedActivity.objects.get_or_create(created_by=user_profile , ks_demo=demo_wording, template_id=temp.id , lesson_overview = lesson_match, lesson_text = new_wording, verb = verb, work_product = work_product, ret_rate=ret_rate, bloom = bloom, demo_num=demo_id, mi = mi, is_admin = False)
             lesson_list.append(new)
-    
+
+
     return(lesson_list)
 
 
@@ -313,19 +321,19 @@ def get_topic_matches(self, teacher_input, tokens_without_sw, class_objectives, 
 def match_standard(self, teacher_input, standard_set, subject, grade_list):
    
     standards_list = []
-    for grade in grade_list:
-        obj = singleStandard.objects.filter(subject=subject, standards_set=standard_set, grade_level=grade)        
-        for standard in obj:
-            objective = str(standard.standard_objective) +  str(standard.competency)
-            result = standard.id, objective
-            standard_full = objective.split()
-            standard_full_joined = ' '.join([str(i) for i in standard_full if not i in stop_words])
-            text_tokens = word_tokenize(teacher_input)
 
-            tokens_without_sw = [word for word in text_tokens if not word in stop_words]
-            full_result = standard.id, standard_full_joined
+    obj = singleStandard.objects.filter(subject=subject, standards_set=standard_set, grade_level=grade_list)        
+    for standard in obj:
+        objective = str(standard.standard_objective) +  str(standard.competency)
+        result = standard.id, objective
+        standard_full = objective.split()
+        standard_full_joined = ' '.join([str(i) for i in standard_full if not i in stop_words])
+        text_tokens = word_tokenize(teacher_input)
 
-            standards_list.append(full_result) 
+        tokens_without_sw = [word for word in text_tokens if not word in stop_words]
+        full_result = standard.id, standard_full_joined
+
+        standards_list.append(full_result) 
     
 
     return(standards_list)
@@ -459,12 +467,13 @@ def get_lessons_full(self, topic_list, demo_ks, lesson_id, user_id):
 
                         for item in topic_two:
                             new_wording = wording.replace(str(item), result_one.item)  
-                            result = new_wording, result_list
+                            result = new_wording, result_list, demo.id
                           
                             if result not in wording_list:
                                 wording_list.append(result) 
 
   
+    
     for line in wording_list:
         wording = line[0]
         wording_split = wording.split()
@@ -472,7 +481,7 @@ def get_lessons_full(self, topic_list, demo_ks, lesson_id, user_id):
         tokens = nlp(first_word)
         new_verb = tokens[0]._.inflect('VBG')
         new_demo = wording.replace(first_word, new_verb) 
-        lesson_full = get_new_lesson(new_demo, line[1], lesson_id, user_id)
+        lesson_full = get_new_lesson(new_demo, line[1], lesson_id, user_id, line[2])
 
 
     return(wording_list)
@@ -500,15 +509,15 @@ def upload_standards(self):
 
             obj, created = singleStandard.objects.get_or_create(standards_set=new_standard_set, subject=new_subject, grade_level=new_grade, skill_topic=skill_topic, standard_objective=standard_objective, competency=competency)
 
-@shared_task(bind=True)
-def activity_builder_task(self, teacher_input, class_id, lesson_id, user_id):
+
+def activity_builder_task(teacher_input, class_id, lesson_id, user_id):
 
     classroom_profile = classroom.objects.get(id=class_id)
-    
-    grade_list = classroom_profile.grade_level.all()
+    class_objectives = lessonObjective.objects.get(id=lesson_id)
+    grade_list = class_objectives.current_grade_level
     standard_set = classroom_profile.standards_set
     
-    class_objectives = lessonObjective.objects.get(id=lesson_id)
+    
 
     subject = class_objectives.subject
     grade_standards = []

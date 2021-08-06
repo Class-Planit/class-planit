@@ -48,7 +48,7 @@ from .fix_types import *
 #Homepage Landing Page
 def Homepage(request):
     
-
+    standards_match = standardSet.objects.all()
     if request.method == "POST":
 
         form = TeacherForm(request.POST)
@@ -100,12 +100,13 @@ def Homepage(request):
     
     choice = random.choice([1, 2])
     if choice == 1:
-        return render(request, 'dashboard/index3.html', {'form': form})
+        return render(request, 'dashboard/index3.html', {'form': form, 'standards_match': standards_match})
     else:
-        return render(request, 'dashboard/index3.html', {'form': form})
+        return render(request, 'dashboard/index3.html', {'form': form, 'standards_match': standards_match})
 
 #Full Form Regstration if error on pop up modal
 def FormFull(request, retry=None):
+    standards_match = standardSet.objects.all()
     if retry != False and retry != "False":
         message = 'Something Went Wrong! Please complete your registration again.'
         error_messages = retry
@@ -121,6 +122,7 @@ def FormFull(request, retry=None):
             
             user_email = form.cleaned_data.get('email')
             my_number = form.cleaned_data.get('phone_number')
+           
             if '+1' in my_number:
                 pass
             else:
@@ -128,12 +130,22 @@ def FormFull(request, retry=None):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             user_id = user.id
-            
+            standards_set = form.cleaned_data.get('standards_set')
+            if standards_set == 0:
+                user.standards_set = None
+            else:
+                standard_match = standardSet.objects.get(id=standards_set.id)
+                user.standards_set = standard_match
+                user.save()
+
+            school_user_match = school_user.objects.get(user=user_id)
+            school_user_match.standards_set = standard_match
+
             welcome_message = 'Welcome to Class Planit, %s! We will be in touch when your account is activated.' % (username)
         
-            #create "empty" teacherInvitation (only created_by and is_waitlist)
+            #create "empty" teacherInvitations (only created_by and is_waitlist)
             user_match = User.objects.get(id=user_id)
-            new_waitlist_inv = teacherInvitation.objects.create(invite_ref= None, created_by= user_match, is_waitlist= True)
+            new_waitlist_inv = teacherInvitations.objects.create(invite_ref= None, created_by= user_match, is_waitlist= True)
             inv_ref = new_waitlist_inv.invite_ref
 
             to = str(my_number)
@@ -165,7 +177,7 @@ def FormFull(request, retry=None):
 
         form = TeacherForm()
     
-    return render(request, 'homepage/registration_full.html', {'form': form, 'message': message, 'error_messages': error_messages})
+    return render(request, 'homepage/registration_full.html', {'form': form, 'message': message, 'error_messages': error_messages, 'standards_match': standards_match})
 
 #Full Form Regstration for invited teachers to be placed on waitlist
 def FormFullInv(request, retry=None, invite_id=None):
@@ -176,7 +188,7 @@ def FormFullInv(request, retry=None, invite_id=None):
         message = "Let's Get Started!"
         error_messages = None
 
-    invite_match = teacherInvitation.objects.filter(invite_ref= invite_id).first()
+    invite_match = teacherInvitations.objects.filter(invite_ref= invite_id).first()
     invited_by = invite_match.created_by
     invited_by_name = invited_by.first_name, invited_by.last_name
 
@@ -199,9 +211,9 @@ def FormFullInv(request, retry=None, invite_id=None):
             
             welcome_message = 'Welcome to Class Planit, %s! We will be in touch when your account is activated.' % (username)
 
-            #create "empty" teacherInvitation (only created_by and is_waitlist)
+            #create "empty" teacherInvitations (only created_by and is_waitlist)
             user_match = User.objects.get(id=user_id)
-            new_waitlist_inv = teacherInvitation.objects.create(invite_ref= None, created_by= user_match, is_waitlist= True)
+            new_waitlist_inv = teacherInvitations.objects.create(invite_ref= None, created_by= user_match, is_waitlist= True)
             inv_ref = new_waitlist_inv.invite_ref
         
             to = str(my_number)
@@ -342,8 +354,7 @@ def ClassroomLists(request):
     current_year = datetime.datetime.now().year
     current_week = date.today().isocalendar()[1] 
     user_profile = User.objects.filter(username=request.user.username).first()
-    s_user_match = school_user.objects.get(user=user_profile.id)
-    standard_set_match = s_user_match.standards_set
+    standard_set_match = user_profile.standards_set
     grade_list = gradeLevel.objects.filter(standards_set=standard_set_match).order_by('grade')
 
     class_summary = get_classroom_summary(user_profile.id, current_year)
@@ -446,14 +457,14 @@ def AddTeacherToClassroom(request, user_id=None, class_id=None, invite_id=None):
         #invite_id to determine if resend(1) or first send(0)
         if invite_id == 0:
             if request.method == "POST":
-                form = teacherInvitationForm(request.POST, request.FILES)
+                form = teacherInvitationsForm(request.POST, request.FILES)
                 if form.is_valid():
                     prev = form.save(commit=False)
                     prev.created_by = user_match
                     prev.for_classroom = classoom_match
                     prev.is_pending = True
                     prev.save()
-                    invitation_match = teacherInvitation.objects.get(id=prev.id)
+                    invitation_match = teacherInvitations.objects.get(id=prev.id)
 
                     invite_email = invitation_match.email
 
@@ -481,7 +492,7 @@ def AddTeacherToClassroom(request, user_id=None, class_id=None, invite_id=None):
             else:
                 return redirect('classroom_list')
         else:
-            invite_match = teacherInvitation.objects.get(id= invite_id)
+            invite_match = teacherInvitations.objects.get(id= invite_id)
             invite_email = invite_match.email
             if invite_email:
                 try:
@@ -765,7 +776,7 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
         link = result['link']
         if link:
             vid_id = video_id(link)
-            youtube_create, created = youtubeSearchResult.objects.get_or_create(lesson_plan=lesson_match, title=result['title'], vid_id=vid_id)
+            youtube_create, created = youtubeSearchResult.objects.get_or_create(lesson_plan=lesson_match, title=result['title'], link=link, vid_id=vid_id)
             vid_id_list.append(youtube_create)
 
     context = {'user_profile': user_profile, 'new_text': new_text, 'vid_id_list': vid_id_list, 'classroom_profile': classroom_profile, 'lesson_match': lesson_match}
@@ -893,6 +904,7 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
     return render(request, 'dashboard/activity_builder_2.html', {'user_profile': user_profile, 'get_worksheet': get_worksheet, 'all_matched_questions': all_matched_questions, 'question_match': question_match, 'question_id': question_id, 'next_q': next_q, 'background_img': background_img, 'worksheet_theme': worksheet_theme, 'current_question': current_question, \
                                                                  'matched_questions': matched_questions, 'subject_match_full': subject_match_full, 'current_week': current_week, 'page': page, 'class_id': class_id, 'subject': subject, 'lesson_id': lesson_id, \
                                                                   'short_answer': short_answer, 'fib':fib, 'multi_choice':multi_choice, 'unknown':unknown})
+
 
 
 #Edit already created or recommended Question
@@ -1219,6 +1231,9 @@ def StudentSAAnswer(request, user_id=None, lesson_id=None, worksheet_id=None, qu
     else:
         return HttpResponse("Request method is not a GET")
 
+
+#def VideoReview(request, user_id, video_id):
+
 ###### end student answer handling fuctions ##############
 
 
@@ -1402,8 +1417,9 @@ def SelectYoutubeVideo(request):
         video_match = youtubeSearchResult.objects.get(id=video_id)
         video_match.is_selected = True
         video_match.save()
-        get_transcript(video_match.vid_id)
-        context = {'message': 'Video added'}
+        vid_trans = get_transcript(video_match.vid_id, video_match.id, lesson_id)
+        print(video_match.link)
+        context = {'title': video_match.title , 'link': video_match.link}
 
         return JsonResponse(context)
     else:
@@ -1419,6 +1435,37 @@ def SelectTopic(request):
         lesson_match = lessonObjective.objects.get(id=lesson_id)
         topic_match = topicInformation.objects.get(id=topic_id)
         update_lesson = lesson_match.objectives_topics.add(topic_match)
+        
+
+        check_topic = topic_match.topic_type.all()
+        if check_topic:
+            pass
+        else:
+            
+            result = openai_term_labels(user_id, topic_match, lesson_match.subject, lesson_match.current_grade_level)
+            
+            result = result.strip("'")
+            if result:
+                tt_new, created = topicTypes.objects.get_or_create(item=result)
+                add_tt = topic_match.topic_type.add(tt_new)
+
+        list_one = []
+        list_two = []
+        for desc in topic_match.description.all():
+            list_one.append(desc)
+            list_two.append(desc)
+
+        for desc1 in list_one:
+            for desc2 in list_two:
+                if desc1.id == desc2.id:
+                    pass
+                else:
+                   
+                    is_dup = check_duplicate_strings(desc1.description, desc2.description)
+                    
+                    if is_dup:
+                        topic_match.description.remove(desc2)
+        
 
         description_list = []
         for desc in topic_match.description.all():
@@ -1462,6 +1509,29 @@ def SelectActivity(request):
     else:
         return HttpResponse("Request method is not a GET")
 
+
+def AddSelectedQuestion(request):
+    if request.method == 'GET':
+        user_profile = User.objects.filter(username=request.user.username).first()
+        user_id = user_profile.id
+        quest_id = request.GET['quest_id']
+        lesson_id = request.GET['lesson_id']
+        activity_id = int(quest_id)
+        lesson_id = int(lesson_id)
+        lesson_match = lessonObjective.objects.get(id=lesson_id)
+        quest_match = googleRelatedQuestions.objects.get(id=quest_id)
+
+        quest_match.is_selected = True 
+        quest_match.save()
+
+
+        context = {'question': quest_match.question, 'answer': quest_match.snippet}
+
+        return JsonResponse(context)
+    else:
+        return HttpResponse("Request method is not a GET")
+
+
 def SelectStandards(request, lesson_id):
     user = User.objects.filter(id=request.user.id).first()
     lesson_match = lessonObjective.objects.get(id=lesson_id)
@@ -1487,16 +1557,23 @@ def RemoveKeyTerms(request, lesson_id, class_id):
         lesson_match = lessonObjective.objects.get(id=lesson_id)
         teacher_input = lesson_match.teacher_objective
         match_recs = reccomendedTopics.objects.filter(matched_lesson=lesson_match).first()
-        if match_recs:
-            rt = match_recs.rec_topics.all()
-            matched_rt = topicInformation.objects.filter(id__in=rt)
+        match_score = match_recs.single_score.all()
+        top_ids = []
+        for item in match_score:
+            match_recs.single_score.remove(item)
+            if item.is_displayed:
+                item.is_displayed = False
+                item.save()
+                top_ids.append(item.single_rec_topics_id)
+
+        if top_ids:
+            matched_rt = topicInformation.objects.filter(id__in=top_ids)
             for top in matched_rt:
                 add_remove = match_recs.removed_topics.add(top)
                 remove_rec = match_recs.rec_topics.remove(top)
         
-        update_term_list = generate_term_recs(teacher_input, class_id, lesson_id, user_profile.id)
-
-        context = {"data": update_term_list, "message": "your message"}
+        
+        context = {"message": "your message"}
 
 
         return JsonResponse(context)
@@ -1571,12 +1648,25 @@ def UpdateKeyTerms(request, lesson_id, class_id):
         teacher_input = lesson_match.teacher_objective
         #pulls from acivity_builder.py
         update_term_list = generate_term_recs(teacher_input, class_id, lesson_id, user_profile.id)
+
         context = {"data": update_term_list, "message": "your message"}
 
         return JsonResponse(context)
     else:
         return HttpResponse("Request method is not a GET")
 
+#this functions updates the ket terms recommended in the word clouds 
+def UpdateBigQuestions(request, lesson_id, class_id):
+    if request.method == 'GET':
+        user_profile = User.objects.filter(id=request.user.id).first()
+        lesson_match = lessonObjective.objects.get(id=lesson_id)
+        teacher_input = lesson_match.teacher_objective
+        #pulls from acivity_builder.py
+        returns_list = get_big_ideas(teacher_input, class_id, lesson_id, user_profile.id)
+        context = {"data": returns_list, "message": "your message"}
+        return JsonResponse(context)
+    else:
+        return HttpResponse("Request method is not a GET")
 
 #this function finds the most relevant Standards at the begining of the lesson plan. 
 def UpdateStandards(request, lesson_id, class_id):

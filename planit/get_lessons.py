@@ -60,6 +60,9 @@ stop_words = ['i', "'", "'" '!', '.', ':', ',', '[', ']', '(', ')', '?', "'see",
 TAG_RE = re.compile(r'<[^>]+>')
 
 
+
+
+
 def get_transcript_nouns(match_textlines):
     full_sent_list = []
     
@@ -68,114 +71,54 @@ def get_transcript_nouns(match_textlines):
     for sent in results:
         new_list = []
         sent = ' '.join(sent.split())
-        is_verb = False
-        is_noun = False
-        is_long = False
-        sent = sent.replace('|', ' ')
+
         sent_blob = TextBlob(sent)
         sent_tagger = sent_blob.pos_tags
         
-
         for y in sent_tagger:
-            
-            if len(y[1]) > 2:
-                is_long = True
-            else: 
-                pass    
+              
             if 'NNP' in y[1]:
-                is_noun = True
+                full_sent_list.append(y[0])
             elif 'NNPS' in y[1]:
-                is_noun = True
+                full_sent_list.append(y[0])
             elif 'NN' in y[1]:
-                is_noun = True
-            elif 'JJ' in y[1]:
-                is_noun = True
-            else:
-                pass
+                full_sent_list.append(y[0])
 
-            remove_list = ['illustrations', 'cartoon', 'Figure', 'they', 'those', 'Circle ', 'Education.com']
-            results = []
-            if is_noun and is_long:
+    if full_sent_list:
+        full_sent_list = full_sent_list[0]
+        return(full_sent_list)
 
-                sent = re.sub(r'\(.*\)', '', sent)
-                sent = re.sub('Chapter', '', sent)
-                sent = re.sub('Rule Britannia!', '', sent)
-                sent = re.sub('Description', '', sent)
-                if any(word in sent for word in remove_list):
-                    pass
-                else:
-                    for item in sent_tagger:
-                        is_noun = False
-                        if 'NNP' in item[1]:
-                            is_noun = True
-                        elif 'NNPS' in item[1]:
-                            is_noun = True
-                        elif 'NN' in item[1]:
-                            is_noun = True
-                        elif 'JJ' in item[1]:
-                            is_noun = True
-                        if is_noun:
-                            if item[0] not in stop_words:
-                                new_list.append(item)
-        for item in new_list:
-            index = new_list.index(item)
-            result = item, index    
-            if result not in full_sent_list:
-                full_sent_list.append(result)
+def get_transcript(video_id, video_db_id, lesson_id):
+    video_match = youtubeSearchResult.objects.get(id=video_db_id)
 
+    lesson_match = lessonObjective.objects.get(id=lesson_id)
+    worksheet_full, created = worksheetFull.objects.get_or_create(lesson_overview=lesson_match, title=video_match.vid_id)
+    full_trans = YouTubeTranscriptApi.get_transcript(video_id)
 
-    final_list = []
-    for item in full_sent_list:
-        first_word = item[0][0]
-        word_index = item[1]
-        next_index = word_index + 1
-        next_next_word = word_index + 2
-        for y in full_sent_list:
-            if y[1] == next_index:
-                second_word = y[0][0]
-
-                combine_wording = first_word + ' ' + second_word
-                for x in full_sent_list:
-                    if x[1] == next_next_word:
-                        third_word = x[0][0]
-                        combine_wording = combine_wording + ' ' + third_word
-                
-                if combine_wording not in final_list:
-                    final_list.append(combine_wording)
+    all_lines = []
+    for line in full_trans:
+        text = line['text']
+        text = text.strip()
+        all_lines.append(text)
     
-    if final_list:
-        pass
-    else:
-        for item in full_sent_list:
-            first_word = item[0][0]
-            for word in match_textlines.split():
+    new_lines = []
+    line_count = 0
+    for line in all_lines:
+        line_count = line_count + 1
+        line_create = youtubeLine.objects.create(vid_id=video_id, line_num=line_count, transcript_text=line)
+        video_match.transcript_lines.add(line_create)
+        if(line_count%4==0):
+            noun_result = get_transcript_nouns(line)
+            if noun_result:
+                if noun_result in line:
+                    new_line = line.replace(noun_result, "_________")
+                    create_question = topicQuestion.objects.create(is_video=True, lesson_overview=lesson_match, subject=lesson_match.subject, Question=new_line, Correct=noun_result, item=video_db_id, explanation=line, trans_line_num=line_count)
+                    worksheet_full.questions.add(create_question)
 
-                if first_word.lower() == word.lower():
-                    if first_word not in final_list:
-                        final_list.append(first_word)
+    
+    return('Done')
 
 
-
-
-    return(final_list)
-
-
-
-def get_transcript(video_id):
-    try:
-        full_trans = YouTubeTranscriptApi.get_transcript(video_id)
-
-        all_lines = []
-        for line in full_trans:
-            text = line['text']
-            all_lines.append(text)
-        
-        full_lines = '. '.join(all_lines)
-        full_lines = full_lines.strip()
-
-        line_results = get_transcript_nouns(full_lines)
-    except:
-        pass
 
 
 
@@ -244,7 +187,8 @@ def get_lessons_ajax(lesson_id, user_id):
     matched_activities = []
     temp_ids_list = []
     for sent in act_match:
-        temp_ids_list.append(sent.template_id)
+        matching = sent.template_id
+        temp_ids_list.append(matching)
         matched_activities.append(sent.lesson_text)
 
 
@@ -360,7 +304,7 @@ def get_lessons_ajax(lesson_id, user_id):
 
                         for item in topic_two:
                             new_wording = wording.replace(str(item), result_one.item)  
-                            result = new_wording, result_one.item, item, 'single'            
+                            result = new_wording, result_one.item, item, 'single', demo.id            
                             if result not in wording_list:
                                 wording_list.append(result) 
 
@@ -372,37 +316,40 @@ def get_lessons_ajax(lesson_id, user_id):
     
     demo_list_sect = []
 
+    lesson_full_List = []
+    random.shuffle(wording_list)
     for line in wording_list:
-        
+
         sentence = line[0]
         topic = line[1]
         t_type = line[2]
         d_type = line[3]
-
+        demo_id = line[4]
         wording_split = sentence.split()
         first_word = wording_split[0]
         tokens = nlp(first_word)
         new_verb = tokens[0]._.inflect('VBG')
         new_demo = sentence.replace(first_word, new_verb) 
-       
-        lesson_full = get_new_lesson(new_demo, topic, d_type, t_type, lesson_id, user_profile.id)
 
+        lesson_full = get_new_lesson(new_demo, topic, d_type, t_type, lesson_id, user_profile.id, demo_id)
         for item in lesson_full:
-            temp_id = item.template_id
-            text_s = item.lesson_text
-            text_demo = item.ks_demo
-            bl = item.bloom
-            mi = item.mi
-            ret = item.ret_rate
-            if text_demo not in demo_list_sect:
-                demo_list_sect.append(text_demo)
-                if text_s not in matched_activities:
-                    if temp_id not in temp_ids_list:
-                        temp_ids_list.append(temp_id)
-                        activity = {'id': item.id, 'activity': item.lesson_text, 'bl_color': colors[bl], 'bl_label': bl_labels[bl], 'mi_color': colors[mi], 'mi_label': mi_labels[mi], 'mi_icon': font_a[mi], 'ret':ret}
-                        activities_full.append(activity)
+            lesson_full_List.append(item)
+
+    random.shuffle(lesson_full_List)
+    for item in lesson_full_List:
+        temp_id = item.template_id
+        text_s = item.lesson_text
+        text_demo = item.ks_demo
+        bl = item.bloom
+        mi = item.mi
+        ret = item.ret_rate
+        matching = item.template_id
+        if matching not in temp_ids_list:
+            temp_ids_list.append(matching)
+            activity = {'id': item.id, 'activity': item.lesson_text, 'bl_color': colors[bl], 'bl_label': bl_labels[bl], 'mi_color': colors[mi], 'mi_label': mi_labels[mi], 'mi_icon': font_a[mi], 'ret':ret}
+            activities_full.append(activity)
     
-    
+
     return(activities_full)
 
 def label_blooms_activities_analytics(lesson_id):
@@ -410,37 +357,40 @@ def label_blooms_activities_analytics(lesson_id):
     #this counts the number of occurences of each blooms level and divides by the total number to get a %
     class_objectives = lessonObjective.objects.get(id=lesson_id)
     matched_activities = selectedActivity.objects.filter(lesson_overview=class_objectives, is_selected=True)
-
-    bl_list = []
-    bl_names = ('Remember', 'Understand', 'Analyze',  'Evaluate',  'Create')
-    for activity in matched_activities:
-        act_bl = int(activity.bloom)
-        bl_list.append(act_bl)
-
-
-    bl_list.sort()
-
-    bl_count = len(bl_list)
+    if matched_activities:
+        bl_list = []
+        bl_names = ('Remember', 'Understand', 'Analyze',  'Evaluate',  'Create')
+        for activity in matched_activities:
+            act_bl = int(activity.bloom)
+            bl_list.append(act_bl)
 
 
-    bl_length = len(set(str(bl_count)))
+        bl_list.sort()
 
-    #the blooms number is used as an index to find the color and label in the progress bar 
-    colors = ('bg-primary', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-warning')
-    bl_names = ('Remember', 'Understand', 'Analyze',  'Evaluate',  'Create')
-    bl_Count = [1,2,3,4,5]
-    bl_list_full = []
-    for item in bl_Count:
-        item_count = bl_list.count(item)
-        zero_count = item - 1 
-        name = bl_names[zero_count]
-        color = colors[zero_count]
-        avg = item_count/bl_count * 100 
-        results = {'name': name, 'count': avg, 'color': color}
-        if results not in bl_list_full:
-            bl_list_full.append(results)
+        bl_count = len(bl_list)
 
 
+        bl_length = len(set(str(bl_count)))
+
+        #the blooms number is used as an index to find the color and label in the progress bar 
+        colors = ('bg-primary', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-warning')
+        bl_names = ('Remember', 'Understand', 'Analyze',  'Evaluate',  'Create')
+        bl_Count = [1,2,3,4,5]
+        bl_list_full = []
+        for item in bl_Count:
+            item_count = bl_list.count(item)
+            zero_count = item - 1 
+            name = bl_names[zero_count]
+            color = colors[zero_count]
+            avg = item_count/bl_count * 100 
+            results = {'name': name, 'count': avg, 'color': color}
+            if results not in bl_list_full:
+                bl_list_full.append(results)
+
+
+    
+    else:
+        bl_list_full = None
     return(bl_list_full)
 
 
@@ -453,34 +403,37 @@ def label_mi_activities_analytics(lesson_id):
 
     mi_list = []
 
-    for activity in matched_activities:
-        act_mi = int(activity.mi)
-        mi_list.append(act_mi)
+    if matched_activities:
+        for activity in matched_activities:
+            act_mi = int(activity.mi)
+            mi_list.append(act_mi)
 
 
-    mi_list.sort() 
+        mi_list.sort() 
 
 
-    mi_count = len(mi_list)
+        mi_count = len(mi_list)
 
 
-    mi_length = len(set(str(mi_count)))
+        mi_length = len(set(str(mi_count)))
 
-    #the mi number is used as an index to find the color and label in the progress bar 
-    colors = ('bg-primary', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-warning')
-    mi_names = ('Verbal',  'Visual', 'Musical', 'Movement', 'Logical')
-    mi_Count = [1,2,3,4,5]
-    mi_list_full = []
-    for item in mi_Count:
-        item_count = mi_list.count(item)
-        zero_count = item - 1 
-        name = mi_names[zero_count]
-        color = colors[zero_count]
-        avg = item_count/mi_count * 100 
-        results = {'name': name, 'count': avg, 'color': color}
-        if results not in mi_list_full:
-            mi_list_full.append(results)
+        #the mi number is used as an index to find the color and label in the progress bar 
+        colors = ('bg-primary', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-warning')
+        mi_names = ('Verbal',  'Visual', 'Musical', 'Movement', 'Logical')
+        mi_Count = [1,2,3,4,5]
+        mi_list_full = []
+        for item in mi_Count:
+            item_count = mi_list.count(item)
+            zero_count = item - 1 
+            name = mi_names[zero_count]
+            color = colors[zero_count]
+            avg = item_count/mi_count * 100 
+            results = {'name': name, 'count': avg, 'color': color}
+            if results not in mi_list_full:
+                mi_list_full.append(results)
 
+    else:
+        mi_list_full = None
     return(mi_list_full)
 
 
@@ -606,8 +559,8 @@ def get_lesson_sections(text_overview, class_id, lesson_id, user_id):
     standard_set = classroom_profile.standards_set
     class_objectives = lessonObjective.objects.get(id=lesson_id)
     subject = class_objectives.subject
-    grade_list = classroom_profile.grade_level.all()
-    matched_grade = gradeLevel.objects.filter(id__in=grade_list).first()
+    matched_grade = class_objectives.current_grade_level
+
     all_selected = selectedActivity.objects.filter(lesson_overview=class_objectives, is_selected=True)
     for item in all_selected:
         is_selected = False

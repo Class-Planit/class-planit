@@ -83,7 +83,7 @@
             	<div class="outer-container clearfix">
                     <!--Logo Box-->
                     <div class="logo-box">
-                        <div class="logo"><a href="{% url 'homepage' %}"><img src="{% static 'images/homepage/class_planit.png' %}" alt=""></a></div>
+                        <div class="logo"><a href="https://www.classplanit.co/"><img src="{% static 'images/homepage/class_planit.png' %}" alt=""></a></div>
                     </div>
                     
                     <!--Nav Outer-->
@@ -102,7 +102,7 @@
                             
                             <div class="navbar-collapse collapse scroll-nav clearfix">
                                 <ul class="navigation clearfix">
-                                    <li><a href="{% url 'homepage' %}">Back to Home</a>
+                                    <li><a href="https://www.classplanit.co/">Back to Home</a>
                                     </li>
                                                                  
                                  </ul>
@@ -128,30 +128,103 @@
     	<div class="auto-container">
         	<div class="row clearfix">
             	<!--Text Column-->
-                <div class="text-column col-md-6 col-sm-12 col-xs-12">
+                <div class="text-column col-md-8 col-sm-12 col-xs-12">
                     <h1>Welcome to Class Planit! </h1>
-                    <h3>Fill out the form below to be added to the waitlist.</h3>
+                    <h3>Fill out the form below to be added to get started.</h3>
                 	<div class="inner">
                         <h2>{{ message }}</h2>
-
-                        <hr>
-                        <form method="POST" enctype="multipart/form-data">
-                            {% csrf_token %}
-
-                            {% for field in form %}
+                        {% if form.errors %}
+                        {% for field in form %}
                             {% for error in field.errors %}
-                                  <p style="color: red">{{ error }}</p>
+                            <h3>Sign Up Error: <span class="badge badge-danger">{{ field.label }}: {{ error }}</span></h3>
                             {% endfor %}
-                        
-                            <p>{{ field.label_tag }}<br>
-                            {{ field }}</p>
-                             
+                        {% endfor %}
+                        {% endif %}
+                        <hr>
+                        <form action="" method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <label>Your Name:</label>
+                            <div class="row clearfix">
                                 
-                              
-                            {% endfor %}
-                            
-                            <button type="submit">Next</button>
+                                <div class="col-md-6">
+                                  <input type="text" class="form-control" name='first_name' id='first_name' placeholder="First name">
+                                </div>
+                                <div class="col-md-6">
+                                  <input type="text" class="form-control" name='last_name' id='last_name' placeholder="Last name">
+                                </div>
+                              </div>
+                              <br>
+                              <div class="form-group">
+                                <label for="exampleInputEmail1">Username:</label>
+                                <input type="text" name='username' id='username' class="form-control">
+                              </div>
+                              <hr>
+
+                            <div class="form-group">
+                              <label for="exampleInputEmail1">Email address</label>
+                              <input type="email" class="form-control" name='email' id='email' aria-describedby="emailHelp" placeholder="Enter email">
+                              <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                            </div>
+                            <label>Location:</label>
+                            <div class="row clearfix">
+                                
+                                <div class="col-md-6">
+                                  <input type="text" class="form-control" name='city' id='city' placeholder="City">
+                                </div>
+                                <div class="col-md-6">
+                                  <input type="text" class="form-control" name='state' id='state' placeholder="State">
+                                </div>
+                              </div>
+                              <br>
+                              <div class="form-group">
+                                <label for="exampleFormControlSelect1">Standards Addressed</label>
+                                <select class="form-control" name='standards_set' id='standards_set'>
+                                    {% for stand in standards_match %}
+                                  <option value={{ stand.id }}>{{ stand.Location }}</option>
+                                  {% endfor %}
+                    
+                                </select>
+                              </div>
+                            <div class="form-group">
+                                <div class="form-group">
+                                    
+                                        <label for="exampleInputPassword1">Create Password</label>
+                                        <input class="form-control" placeholder="Password" id="password1" name='password1' type="password" required>
+                                        <div class="input-group-append">
+                                            
+                                            <span class="input-group-text">
+                                                <a onclick="revealPassword()">
+                                                <i class="far fa-eye"></i>
+                                                </a>
+                                            </span>
+                                            
+                                        </div>
+                               
+                                </div>
+                          
+                            </div>
+                            <div class="form-group">
+                                <div class="form-group">
+                                   
+                                        <label for="exampleInputPassword1">Re-Enter Password</label>
+                                        <input class="form-control" placeholder="Password" id="password2" name='password2' type="password" required>
+                                        <div class="input-group-append">
+                                            
+                                            <span class="input-group-text">
+                                                <a onclick="revealPassword2()">
+                                                <i class="far fa-eye"></i>
+                                                </a>
+                                            </span>
+                                            
+                                        </div>
+                                
+                                </div>
+                          
+                            </div>
+                        
+                            <button type="submit" class="btn btn-primary">Let's Planit!</button>
                           </form>
+         
                     </div>
                 </div>
                 
@@ -198,7 +271,7 @@
                                         <h3>Company</h3>
                                         <div class="links">
                                             <ul>
-                                                <li><a href="{% url 'about_us' %}">About us</a></li>
+                                                <li><a href="https://www.classplanit.co/about/">About us</a></li>
   
                                             </ul>
                                         </div>
@@ -249,7 +322,29 @@
 <script src="{% static 'js/homepage/wow.js' %}"></script>
 <script src="{% static 'js/homepage/validate.js' %}"></script>
 <script src="{% static 'js/homepage/script.js' %}"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+ 
+<script>
+    function revealPassword() {
+       var x = document.getElementById("password1");
+       if (x.type === "password") {
+           x.type = "text";
+       } else {
+           x.type = "password";
+       }
+       }
+</script>
 
+<script>
+    function revealPassword2() {
+       var x = document.getElementById("password2");
+       if (x.type === "password") {
+           x.type = "text";
+       } else {
+           x.type = "password";
+       }
+       }
+</script>
 
 </body>
 </html>

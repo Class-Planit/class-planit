@@ -239,14 +239,23 @@
                                 {% endfor %}    
                             </ul>      
                         </h5>
-                     
+                        <div class="showhim"><h2>The Big Questions:</h2>
+                            <div class="showme">What are the main ideas you want students to understand?:</div>
+                        
+                        </div>
+                        <div id="big_questions_selected">
+                            <h6>Q: </h6>
+                            <h6>A: </h6>
+                        </div>
+                        <br>
                         <div class="showhim"><h2>Digital Resources:</h2>
                             <div class="showme">Additional Study Material for students online:</div>
-                        
+                        <li> </li>
                         </div>
                         <div id="youtube_links">
 
                         </div>
+                        
                         <hr>
                             <div>
                                 <div class="showhim"><h2>Key Terms:</h2>
@@ -286,21 +295,25 @@
                                   </tr>
                                   {% endfor %}
                                 </tbody>
-                            </table>
-                  
+                            </table>    
+                    
                             </div>
                         <hr>
                         </div>
 
                     </div>
+                    <div id='key_term_bottom'></div>
                     {% else %}
                     <div class='demo-dfree myDivToPrint' id='demo-dfree'>
                         
                        {{ new_text.overview|safe }}
                     </div>
+                    <div id='key_term_bottom'></div>
                     {% endif %}
                 </form>
+                
             </div>
+
             <div class="col-lg-3">
                
                 <div id='standard-list'>
@@ -425,7 +438,7 @@
                            
                             <li><a href="#" class="card-link">Student Performance</a></li>
                             <li><a href="#" class="card-link">Standards Tracking</a></li>
-    
+
                     </div>
                     </div>
                 </div>
@@ -484,6 +497,7 @@
                     </div>
                 </div>
              
+                
                 <div class="col-12 px-0 mb-4">
                     
                     <div class="card">
@@ -501,7 +515,22 @@
                     </div>
                 </div>
                 
-                
+                <div class="col-12 px-0 mb-4">
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                <h2 class="h5">Big Questions:</h2>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <div id='big-questions'></div>
+                       
+                        
+                    </div>
+                </div>
                 <div class="col-12 px-0 mb-4">
                     <div class="card border-light shadow-sm">
                         <div class="card-header">
@@ -509,7 +538,7 @@
                                 <div class="col">
                               
                                 <div class="showhim"><h2 class="h5">Key Terms:</h2>
-                                    <div class="showme"><a class="remove-standard" href="#" >load more terms</a></div>
+                                    <div class="showme"><a class="remove-standard" href="#" >load more terms <i class="fa fa-refresh" aria-hidden="true"></i> </a></div>
                                   </div>
                                 </div>
                                 
@@ -737,15 +766,15 @@
             },
             success: function(response) {
             elm.remove();
-            $("#key-term-section").append(
+            $("#key-term-section").prepend(
                 "<tr><th scope='row'>"  + response.term + "</th><td>" + response.description + "</td></tr>"
                 
-            );
-                
+            );    
         }
 
         })
     });
+    
 </script> 
 
 
@@ -779,9 +808,68 @@
 });
 </script> 
 
+
+<script type="text/javascript">
+    $(document).on("click", ".selectvideo", function(){
+    var elm = $(this);
+    var id = elm.data('id');
+    var vidid;
+    vidid = $(this).attr("data-vidid");
+    var lessid;
+    lessid = $(this).attr("data-lessid");
+    $.ajax(
+    {
+        type:"GET",
+        url: "/add-youtube-video/",
+        data:{
+                video_id: vidid,
+                lesson_id: lessid
+        },
+        success: function(response) {
+        $("#youtube_links").append(
+            "<li>" + response.title + " : " + response.link + "</li>"
+            
+        );
+            
+    }
+
+    })
+});
+</script>
+
+<!----| Select Big Question |-->
+<script type="text/javascript">
+    $(document).on("click", ".selectquestion", function(){
+    var elm = $(this);
+    var id = elm.data('id');
+    var lessid;
+    lessid = $(this).attr("data-lessid");
+    var questid;
+    questid = $(this).attr("data-questid");
+    $.ajax(
+    {
+        type:"GET",
+        url: "/add-selected_question/",
+        data:{
+                quest_id: questid,
+                lesson_id: lessid,
+        },
+        success: function(response) {
+        $("#big_questions_selected").append(
+            "<h6>Q: " + response['question'] + " </h6><p>A: " + response['answer'] + "</p><br>"
+            
+        );
+            
+    }
+
+    })
+});
+document.getElementById('big_questions_selected').scrollIntoView();
+</script> 
+
 <!----| Update Term Options |-->
 <script type="text/javascript">
-    setInterval(function(){
+    var intervalID = setInterval(function(){
     var overview = document.getElementById('not-selected-topics');
     htmlContent = overview.innerHTML,
     $.ajax(
@@ -807,10 +895,11 @@
 
     })
 }, 8000);
+
 </script> 
 
 
-<!----| Update Term Options |-->
+<!----| Remove Standard |-->
 <script type="text/javascript">
     $(document).on("click", ".remove-standard", function(){
     var overview = document.getElementById('not-selected-topics');
@@ -823,18 +912,6 @@
         
         success: function(response) {
         $("#not-selected-topics").empty(); 
-        $.each(response.data, function (i, item) {
-    	$("#not-selected-topics").append(
-            '<a class="btn btn-sm btn-outline-secondary selecttopic myDIV" id="like'
-            + item.id +
-            '" href="#" data-topid="'
-            + item.id +
-            '" data-lessid="{{ lesson_match.id }}" data-toggle="tooltip" data-placement="top" title="'
-            + item.descriptions + 
-            '" class="tooltip">'
-            + item.term +
-            '</a>');
-        });
     }
 
     })
@@ -843,7 +920,7 @@
 
 <!----| Update Activity Options |-->
 <script type="text/javascript">
-    setInterval(function(){
+    let myVar = setInterval(function(){
     var overview = document.getElementById('not-selected-activities');
     htmlContent = overview.innerHTML,
     $.ajax(
@@ -880,6 +957,36 @@
     })
 }, 8002);
 </script> 
+
+<!----| Update Big Questions |-->
+<script type="text/javascript">
+    setInterval(function(){
+    var overview = document.getElementById('big-questions');
+    htmlContent = overview.innerHTML,
+    $.ajax(
+    {
+        type:"GET",
+        url: "/updated-big-questions/{{ lesson_match.id}}/{{ classroom_profile.id }}/",
+        
+        success: function(response) {
+        $("#big-questions").empty();     
+        $.each(response.data, function (i, item) {
+        $("#big-questions").append(
+            '<a class="selectquestion myDIV" id="like'
+            + item['id'] +
+            '" href="#" data-questid="'
+            + item['id'] +
+            '" data-lessid="{{ lesson_match.id }}" data-toggle="tooltip" data-placement="top" title="'
+            + item['snippet'] + 
+            '" class="tooltip"><li>'
+            + item['question'] +
+            '</li></a><br>');
+        });
+    }
+
+    })
+}, 8020);
+</script>
 
 
 

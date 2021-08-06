@@ -4,7 +4,11 @@ from .models import *
 
 #checks that the topic type is a valid format (only uppercase, no / or spaces)
 def check_topic_type(topic):
-    old_topic = topic.item
+    if isinstance(topic, str):
+        old_topic = topic
+    else:
+        old_topic = topic.item
+        
     #only use the first half of / for correct_topic
     index = old_topic.find("/")
     if index != -1:
@@ -31,7 +35,7 @@ def check_topic_type(topic):
 def fix_incorrect_types():
     #get all Topics in topic_list
     topic_list = topicTypes.objects.filter()
-    print(topic_list)
+
 
     #for each_topic in topic_list
     for each_topic in topic_list:

@@ -12,7 +12,7 @@ def get_classroom_summary(user_id, date):
         class_name = single_classroom.classroom_title
         student_list = single_classroom.student.all()
         #student_count = student_list.count()
-        print(student_list)
+
         student_count = len(student_list)
         shared_list = single_classroom.support_teachers.all()
         s_match = User.objects.filter(id__in=shared_list)
