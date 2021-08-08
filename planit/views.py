@@ -674,7 +674,7 @@ def Dashboard(request, week_of, subject_id, classroom_id):
     #run to fix the incorrect topic types
     fix_incorrect_types()
 
-    topicQuestions.objects.all().delete()
+    topicQuestion.objects.all().delete()
     #get active and current week number (active being the week the teacher is on and current meaning the actual week in the calendar)
     week_info = get_week_info(week_of)
 
