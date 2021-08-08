@@ -273,7 +273,7 @@ def find_mc_incorrects(descriptions, topic):
 
 
 def get_question_text(lesson_id, user_profile):
-    topicQuestion.objects.all().delete()
+    topicQuestionitem.objects.all().delete()
     class_objectives = lessonObjective.objects.get(id=lesson_id)
     subject = class_objectives.subject
 
@@ -321,9 +321,9 @@ def get_question_text(lesson_id, user_profile):
                 Answer = check_match[0]
                 question_type = questionType.objects.filter(item='fill_in_the_blank').first()
                 if 'textbook' in topic[3]:
-                    new_question, created = topicQuestion.objects.get_or_create(subject	= subject, linked_text=topic[4], question_type = question_type, lesson_overview=class_objectives, Question = Question, Correct = Answer, is_admin = False)
+                    new_question, created = topicQuestionitem.objects.get_or_create(subject	= subject, linked_text=topic[4], question_type = question_type, lesson_overview=class_objectives, Question = Question, Correct = Answer, is_admin = False)
                 else:
-                    new_question, created = topicQuestion.objects.get_or_create(subject	= subject, linked_topic=topic[4], question_type = question_type, lesson_overview=class_objectives, Question = Question, Correct = Answer, is_admin = False)
+                    new_question, created = topicQuestionitem.objects.get_or_create(subject	= subject, linked_topic=topic[4], question_type = question_type, lesson_overview=class_objectives, Question = Question, Correct = Answer, is_admin = False)
                 
                 if new_question:
                     if new_question not in all_topic_lines:
@@ -337,7 +337,7 @@ def get_question_text(lesson_id, user_profile):
                         Question = topic[1]
                         
                         question_type = questionType.objects.filter(item='true_false').first()
-                        new_question, created = topicQuestion.objects.get_or_create(subject	= subject, question_type = question_type, Question = Question, Correct = Answer, lesson_overview=class_objectives, item=topic[0], is_admin = False)
+                        new_question, created = topicQuestionitem.objects.get_or_create(subject	= subject, question_type = question_type, Question = Question, Correct = Answer, lesson_overview=class_objectives, item=topic[0], is_admin = False)
                         if new_question not in all_topic_lines:
 
                             all_topic_lines.append(new_question.id)
@@ -352,9 +352,9 @@ def get_question_text(lesson_id, user_profile):
                             Question = sentence.replace(Answer, '_________')
                             question_type = questionType.objects.filter(item='multi_choice').first()
                             if 'textbook' in topic[3]: 
-                                new_question, created = topicQuestion.objects.get_or_create(subject	= subject, linked_text=topic[4], question_type = question_type, Question = Question, Correct = Answer, lesson_overview=class_objectives,  item=topic[0], Incorrect_One=in_one, Incorrect_Two=in_two, Incorrect_Three=in_three, is_admin = False)
+                                new_question, created = topicQuestionitem.objects.get_or_create(subject	= subject, linked_text=topic[4], question_type = question_type, Question = Question, Correct = Answer, lesson_overview=class_objectives,  item=topic[0], Incorrect_One=in_one, Incorrect_Two=in_two, Incorrect_Three=in_three, is_admin = False)
                             else:
-                                new_question, created = topicQuestion.objects.get_or_create(subject	= subject, linked_topic=topic[4], question_type = question_type, Question = Question, Correct = Answer, lesson_overview=class_objectives,  item=topic[0], Incorrect_One=in_one, Incorrect_Two=in_two, Incorrect_Three=in_three, is_admin = False)
+                                new_question, created = topicQuestionitem.objects.get_or_create(subject	= subject, linked_topic=topic[4], question_type = question_type, Question = Question, Correct = Answer, lesson_overview=class_objectives,  item=topic[0], Incorrect_One=in_one, Incorrect_Two=in_two, Incorrect_Three=in_three, is_admin = False)
 
                             if new_question not in all_topic_lines:
 
@@ -373,9 +373,9 @@ def get_question_text(lesson_id, user_profile):
                     Question = topic[1]
                     question_type = questionType.objects.filter(item='short_answer').first()
                     if 'textbook' in topic[3]:
-                        new_question, created = topicQuestion.objects.get_or_create(subject	= subject, lesson_overview=class_objectives, question_type = question_type, linked_text=topic[4], Question = Question, Correct = None, is_admin = False)
+                        new_question, created = topicQuestionitem.objects.get_or_create(subject	= subject, lesson_overview=class_objectives, question_type = question_type, linked_text=topic[4], Question = Question, Correct = None, is_admin = False)
                     else:
-                        new_question, created = topicQuestion.objects.get_or_create(subject	= subject, lesson_overview=class_objectives, linked_topic=topic[4], question_type = question_type, Question = Question, Correct = None, is_admin = False)
+                        new_question, created = topicQuestionitem.objects.get_or_create(subject	= subject, lesson_overview=class_objectives, linked_topic=topic[4], question_type = question_type, Question = Question, Correct = None, is_admin = False)
                     if new_question not in all_topic_lines:
 
                         all_topic_lines.append(new_question.id)
@@ -391,9 +391,9 @@ def get_question_text(lesson_id, user_profile):
                     else:
                         question_type = questionType.objects.filter(item='short_answer').first()
                         if 'textbook' in topic[3]:
-                            new_question, created = topicQuestion.objects.get_or_create(subject	= subject, lesson_overview=class_objectives, linked_text=topic[4], question_type = question_type, Question = Question, Correct = Answer, is_admin = False)
+                            new_question, created = topicQuestionitem.objects.get_or_create(subject	= subject, lesson_overview=class_objectives, linked_text=topic[4], question_type = question_type, Question = Question, Correct = Answer, is_admin = False)
                         else:
-                            new_question, created = topicQuestion.objects.get_or_create(subject	= subject, lesson_overview=class_objectives, linked_topic=topic[4], question_type = question_type, Question = Question, Correct = Answer, is_admin = False)
+                            new_question, created = topicQuestionitem.objects.get_or_create(subject	= subject, lesson_overview=class_objectives, linked_topic=topic[4], question_type = question_type, Question = Question, Correct = Answer, is_admin = False)
                         if new_question not in all_topic_lines:
 
                             all_topic_lines.append(new_question.id)
@@ -437,7 +437,7 @@ def match_lesson_questions(teacher_input, class_id, lesson_id):
 
         for grade in grade_list:
                 
-                obj = topicQuestion.objects.filter(subject=subject, standard_set=standard_set, grade_level=grade)
+                obj = topicQuestionitem.objects.filter(subject=subject, standard_set=standard_set, grade_level=grade)
                 
                 if obj:
 

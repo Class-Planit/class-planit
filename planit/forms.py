@@ -55,7 +55,7 @@ class  teacherInvitationsForm(forms.ModelForm):
 class  topicQuestionForm(forms.ModelForm):
 
     class Meta:
-        model = topicQuestion
+        model = topicQuestionitem
         fields = ('Question', 'Correct', 'Incorrect_One', 'Incorrect_Two')
 
 

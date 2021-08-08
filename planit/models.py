@@ -1323,9 +1323,7 @@ class storyFull(models.Model):
     def __str__(self):
         return "%s" % (self.Title)
 
-
-
-class topicQuestion(models.Model):
+class topicQuestionitem(models.Model):
     lesson_overview = models.ForeignKey(lessonObjective,
                                on_delete=models.SET_NULL,
                                blank=True,
@@ -1423,6 +1421,85 @@ class topicQuestion(models.Model):
     def __str__(self):
         return "%s" % (self.Question)
 
+
+class topicQuestion(models.Model):
+    lesson_overview = models.ForeignKey(lessonObjective,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    subject	= models.ForeignKey(standardSubjects,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    grade_level = models.ForeignKey(gradeLevel,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True) 	
+    standard_set = models.ForeignKey(standardSet,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    created_by = models.ForeignKey(User,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True)
+    topic_type = models.ManyToManyField(topicTypes,
+                                     blank=True)	
+    topic_story = models.ManyToManyField(storyFull,
+                                     blank=True)
+    linked_text = models.ForeignKey(textBookBackground,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True) 
+    linked_topic = models.ForeignKey(topicInformation,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True) 
+    item = models.CharField(max_length=200,
+                                       blank=True,
+                                       null=True)	
+    question_type = models.ForeignKey(questionType,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True) 
+    question_points = models.IntegerField(default = 1,
+                               blank=True,
+                               null=True)		
+    Question = models.CharField(max_length=2500,
+                        blank=True,
+                        null=True)	
+	
+    Correct	= models.CharField(max_length=1000,
+                        blank=True,
+                        null=True)
+
+    Incorrect_One = models.CharField(max_length=1000,
+                        blank=True,
+                        null=True)	
+ 	
+    Incorrect_Two = models.CharField(max_length=1000,
+                        blank=True,
+                        null=True)	
+    	 	
+    Incorrect_Three	= models.CharField(max_length=1000,
+                        blank=True,
+                        null=True)
+    	
+    explanation	= models.CharField(max_length=1500,
+                        blank=True,
+                        null=True)
+    is_admin = models.BooleanField(default=True)
+    original_num = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
+    trans_line_num = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
+    is_video = models.BooleanField(default=False)	
+
+    def __str__(self):
+        return "%s" % (self.Question)
+
 class worksheetSection(models.Model):
     section_title	= models.CharField(max_length=200,
                         blank=True,
@@ -1433,7 +1510,7 @@ class worksheetSection(models.Model):
     section_image = models.ImageField(upload_to='images/question/',
                                        blank=True,
                                        null=True) 
-    questions = models.ManyToManyField(topicQuestion,
+    questions = models.ManyToManyField(topicQuestionitem,
                                      blank=True)
 
     def __str__(self):
@@ -1506,7 +1583,7 @@ class worksheetFull(models.Model):
                                blank=True,
                                related_name='worksheet_image',
                                null=True)
-    questions = models.ManyToManyField(topicQuestion,
+    questions = models.ManyToManyField(topicQuestionitem,
                                      blank=True)
     total_possible = models.IntegerField(default = 0,
                                blank=True,
@@ -1554,7 +1631,7 @@ class studentQuestionAnswer(models.Model):
     nickname = models.CharField(max_length=200,
                         blank=True,
                         null=True)
-    question_num = models.ForeignKey(topicQuestion,
+    question_num = models.ForeignKey(topicQuestionitem,
                                on_delete=models.CASCADE,
                                blank=True,
                                null=True)

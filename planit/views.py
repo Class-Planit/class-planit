@@ -819,7 +819,7 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
     get_worksheet = worksheetFull.objects.filter(id=worksheet_id).first()
     question_matches = get_worksheet.questions.all()
     if question_matches:
-        all_matched_questions = topicQuestion.objects.filter(id__in=question_matches)
+        all_matched_questions = topicQuestionitem.objects.filter(id__in=question_matches)
 
         for item in all_matched_questions:
             question = item.Question
@@ -841,12 +841,12 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
             question_matches = get_worksheet.questions.all()
 
             if question_matches:
-                m_questions = all_matched_questions = topicQuestion.objects.filter(id__in=question_matches)
+                m_questions = all_matched_questions = topicQuestionitem.objects.filter(id__in=question_matches)
                 matched_questions = []
                 for item in m_questions:
                     matched_questions.append(item)
             else:
-                new_question = topicQuestion.objects.create(created_by=user_profile, subject=subject_match_full, Question='Click Here to Add Question', is_admin=False)
+                new_question = topicQuestionitem.objects.create(created_by=user_profile, subject=subject_match_full, Question='Click Here to Add Question', is_admin=False)
                 get_worksheet.questions.add(new_question)
         else:
             worksheet_title = '%s: %s %s for week of %s' % (user_profile, subject_match_full, current_week)
@@ -862,12 +862,12 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
             if matched_questions:
                 pass
             else:
-                new_question = topicQuestion.objects.create(created_by=user_profile, subject=subject_match_full, Question='Click Here to Add Question', is_admin=False)
+                new_question = topicQuestionitem.objects.create(created_by=user_profile, subject=subject_match_full, Question='Click Here to Add Question', is_admin=False)
                 get_worksheet.questions.add(new_question)
             all_matched_questions = []
         
         question_matches = get_worksheet.questions.all()
-        matched_questions = all_matched_questions = topicQuestion.objects.filter(id__in=question_matches)
+        matched_questions = all_matched_questions = topicQuestionitem.objects.filter(id__in=question_matches)
 
         
 
@@ -877,7 +877,7 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
             elif 'New' in question_id:
                 is_new = True
                 q = 0 
-                question_match = current_question =  topicQuestion.objects.create(created_by=user_profile, subject=subject_match_full, is_admin=False)
+                question_match = current_question =  topicQuestionitem.objects.create(created_by=user_profile, subject=subject_match_full, is_admin=False)
                 get_worksheet.questions.add(question_match)
             else:
                 q = int(question_id)
@@ -905,14 +905,14 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
         get_worksheet, created = worksheetFull.objects.get_or_create(created_by=user_profile, title=worksheet_title, lesson_overview=lesson_match)
         question_matches = get_worksheet.questions.all()
 
-        check_lesson_questions = topicQuestion.objects.filter(id__in=question_matches)
+        check_lesson_questions = topicQuestionitem.objects.filter(id__in=question_matches)
 
         if check_lesson_questions:
-            all_matched_questions = topicQuestion.objects.filter(lesson_overview=lesson_match)
-            matched_questions = topicQuestion.objects.filter(id__in=question_matches)
+            all_matched_questions = topicQuestionitem.objects.filter(lesson_overview=lesson_match)
+            matched_questions = topicQuestionitem.objects.filter(id__in=question_matches)
         else:
             text_questions_one = get_question_text(lesson_id, user_profile)
-            matched_questions = topicQuestion.objects.filter(id__in=text_questions_one).order_by('?')[:10]
+            matched_questions = topicQuestionitem.objects.filter(id__in=text_questions_one).order_by('?')[:10]
             line_match = []
             for quest in matched_questions:
                 l_text = quest.linked_text
@@ -926,7 +926,7 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
                     line_match.append(result)
                     get_worksheet.questions.add(quest)
 
-            all_matched_questions = topicQuestion.objects.filter(id__in=text_questions_one)
+            all_matched_questions = topicQuestionitem.objects.filter(id__in=text_questions_one)
     
         lesson_standards = singleStandard.objects.filter(id__in=lesson_match.objectives_standards.all())
         topic_matches = lesson_match.objectives_topics.all()
@@ -944,7 +944,7 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
             question_id = 0
         elif 'New' in question_id:
             is_new = True
-            question_match = current_question =  topicQuestion.objects.create(created_by=user_profile, subject=subject_match_full, is_admin=False)
+            question_match = current_question =  topicQuestionitem.objects.create(created_by=user_profile, subject=subject_match_full, is_admin=False)
             get_worksheet.questions.add(question_match)
             q = 0 
         else:
@@ -955,7 +955,7 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
             elif 'New' in question_id:
                 is_new = True
                 q = 0
-                question_match = current_question =  topicQuestion.objects.create(created_by=user_profile, subject=subject_match_full, is_admin=False)
+                question_match = current_question =  topicQuestionitem.objects.create(created_by=user_profile, subject=subject_match_full, is_admin=False)
                 get_worksheet.questions.add(question_match)
             else:
                 question_match = current_question = None
@@ -989,7 +989,7 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
     if 'False' in act_id:
         pass
     else:
-        question_match = current_question = topicQuestion.objects.get(id=act_id)
+        question_match = current_question = topicQuestionitem.objects.get(id=act_id)
 
     if question_match:
         question_match_id = question_match.id
@@ -1023,8 +1023,8 @@ def NewDigitalActivities(request, user_id=None, worksheet_id=None, question_id=N
 def EditQuestions(request, user_id=None, class_id=None, subject=None, lesson_id=None, worksheet_id=None, page=None, act_id=None, question_id=None):
     user_profile = User.objects.get(id=user_id)
     worksheet_match = worksheetFull.objects.get(id=worksheet_id)
-    question_match = topicQuestion.objects.get(id=question_id)
-    current_question = topicQuestion.objects.get(id=question_id)
+    question_match = topicQuestionitem.objects.get(id=question_id)
+    current_question = topicQuestionitem.objects.get(id=question_id)
     if question_match.is_admin:
         current_question.pk = None
         current_question.save()
@@ -1042,7 +1042,7 @@ def EditQuestions(request, user_id=None, class_id=None, subject=None, lesson_id=
     
     subject_match = standardSubjects.objects.get(id=subject)
     if request.method == "POST":
-        form = topicQuestionForm(request.POST, request.FILES, instance=current_question)
+        form = topicQuestionitemForm(request.POST, request.FILES, instance=current_question)
 
         if form.is_valid():
             prev = form.save(commit=False)
@@ -1057,12 +1057,12 @@ def EditQuestions(request, user_id=None, class_id=None, subject=None, lesson_id=
 def NewQuestions(request, user_id=None, class_id=None, subject=None, lesson_id=None, worksheet_id=None, page=None, act_id=None, question_id=None):
     user_profile = User.objects.get(id=user_id)
     worksheet_match = worksheetFull.objects.get(id=worksheet_id)
-    current_question = topicQuestion.objects.create(created_by=user_profile, is_admin=False)
+    current_question = topicQuestionitem.objects.create(created_by=user_profile, is_admin=False)
     worksheet_match.questions.add(current_question)
 
     subject_match = standardSubjects.objects.get(id=subject)
     if request.method == "POST":
-        form = topicQuestionForm(request.POST, request.FILES, instance=current_question)
+        form = topicQuestionitemForm(request.POST, request.FILES, instance=current_question)
 
         if form.is_valid():
             prev = form.save(commit=False)
@@ -1082,7 +1082,7 @@ def StudentWorksheetStart(request, lesson_id=None, worksheet_id=None, question_i
     worksheet_match = worksheetFull.objects.get(id=worksheet_id)
     if user_profile:
         question_matches = worksheet_match.questions.all()
-        matched_questions = topicQuestion.objects.filter(id__in=question_matches)
+        matched_questions = topicQuestionitem.objects.filter(id__in=question_matches)
         student_answer_sheet, created = studentWorksheetAnswerFull.objects.get_or_create(student=user_profile, worksheet_assignment=worksheet_match)
         s_answers = student_answer_sheet.student_answers.all()
         single_answers = studentQuestionAnswer.objects.filter(id__in=s_answers)
@@ -1161,7 +1161,7 @@ def StudentWorksheetSubmit(request, user_id=None, lesson_id=None, worksheet_id=N
     worksheet_match = worksheetFull.objects.get(id=worksheet_id)
 
     question_matches = worksheet_match.questions.all()
-    matched_questions = topicQuestion.objects.filter(id__in=question_matches)
+    matched_questions = topicQuestionitem.objects.filter(id__in=question_matches)
     student_answer_sheet = studentWorksheetAnswerFull.objects.filter(student=user_profile, worksheet_assignment=worksheet_match).first()
     s_answers = student_answer_sheet.student_answers.all()
     single_answers = studentQuestionAnswer.objects.filter(id__in=s_answers)
@@ -1321,7 +1321,7 @@ def StudentMCSelect(request, user_id=None, lesson_id=None, worksheet_id=None):
         question_id = request.GET['question_id']
         question = request.GET['question']
         answer = request.GET['answer']
-        match_question = topicQuestion.objects.get(id=question_id)
+        match_question = topicQuestionitem.objects.get(id=question_id)
         correct_answer = match_question.Correct
         single_answer, created = studentQuestionAnswer.objects.get_or_create(worksheet_assignment=worksheet_match, student=user_profile, question_num=match_question)
         single_answer.question = question
@@ -1347,7 +1347,7 @@ def StudentFIBAnswer(request, user_id=None, lesson_id=None, worksheet_id=None, q
         user_profile = User.objects.filter(username=request.user.username).first()
         worksheet_match = worksheetFull.objects.get(id=worksheet_id)
         student_answer_key, created  = studentWorksheetAnswerFull.objects.get_or_create(student=user_profile, worksheet_assignment=worksheet_match)
-        match_question = topicQuestion.objects.get(id=question_id)
+        match_question = topicQuestionitem.objects.get(id=question_id)
         correct_answer = match_question.Correct
         question = match_question.Question
         answer = request.GET["fibanswer"]
@@ -1375,7 +1375,7 @@ def StudentSAAnswer(request, user_id=None, lesson_id=None, worksheet_id=None, qu
         user_profile = User.objects.filter(username=request.user.username).first()
         worksheet_match = worksheetFull.objects.get(id=worksheet_id)
         student_answer_key, created  = studentWorksheetAnswerFull.objects.get_or_create(student=user_profile, worksheet_assignment=worksheet_match)
-        match_question = topicQuestion.objects.get(id=question_id)
+        match_question = topicQuestionitem.objects.get(id=question_id)
         question = match_question.Question
         answer = request.GET["saanswer"]
 
@@ -1990,7 +1990,7 @@ def AddQuestionImage(request, class_id=None, lesson_id=None, subject=None, works
     user_profile = User.objects.filter(username=request.user.username).first()
 
     question_id = int(question_id)
-    question_match = topicQuestion.objects.get(id=question_id)
+    question_match = topicQuestionitem.objects.get(id=question_id)
     if request.method == 'GET':
         title = request.GET['title']
         d_url = request.GET['d_url']

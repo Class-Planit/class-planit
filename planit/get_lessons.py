@@ -113,7 +113,7 @@ def get_transcript(video_id, video_db_id, lesson_id):
             if noun_result:
                 if noun_result in line:
                     new_line = line.replace(noun_result, "_________")
-                    create_question = topicQuestion.objects.create(is_video=True, lesson_overview=lesson_match, subject=lesson_match.subject, Question=new_line, Correct=noun_result, item=video_db_id, explanation=line, trans_line_num=line_count)
+                    create_question = topicQuestionitem.objects.create(is_video=True, lesson_overview=lesson_match, subject=lesson_match.subject, Question=new_line, Correct=noun_result, item=video_db_id, explanation=line, trans_line_num=line_count)
                     worksheet_full.questions.add(create_question)
 
     
