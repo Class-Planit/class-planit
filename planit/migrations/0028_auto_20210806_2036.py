@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='topicquestion',
             name='Question_Image',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='question_image', to='planit.userimageupload'),
+            field=models.ForeignKey(blank=True, default=False, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='question_image', to='planit.userimageupload'),
         ),
         migrations.AlterField(
             model_name='topicquestion',
