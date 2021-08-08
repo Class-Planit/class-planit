@@ -61,7 +61,34 @@ class school_user(models.Model):
         return "%s" % (self.user)
 
  
+class userImageUpload(models.Model):
+    title	= models.CharField(max_length=20,
+                        blank=True,
+                        null=True)
+    uploaded_image = models.ImageField(upload_to='images/question/',
+                                        blank=True,
+                                        null=True) 
+    image_url = models.URLField(max_length=500,
+                                blank=True,
+                                null=True)
+    created_by = models.ForeignKey(User,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True)
+    uploaded_date = models.DateField(blank=True,
+                                   null=True)
 
+    def get_remote_image(self):
+        if self.image_url and not self.uploaded_image:
+            result = urllib.urlretrieve(self.uploaded_image)
+            self.uploaded_image.save(
+                    os.path.basename(self.image_url),
+                    File(open(result[0]))
+                    )
+            self.save()
+
+    def __str__(self):
+        return "%s" % (self.image_url)
 
 
 class gradeLevel(models.Model):
@@ -1344,33 +1371,43 @@ class topicQuestion(models.Model):
     Question = models.CharField(max_length=2500,
                         blank=True,
                         null=True)	
-    Question_Image = models.ImageField(upload_to='images/question/',
-                                       blank=True,
-                                       null=True) 	
+    Question_Image = models.ForeignKey(userImageUpload,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               related_name='question_image',
+                               null=True) 	
     Correct	= models.CharField(max_length=1000,
                         blank=True,
                         null=True)
-    correct_image = models.ImageField(upload_to='images/question/',
-                                       blank=True,
-                                       null=True) 	
+    correct_image = models.ForeignKey(userImageUpload,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               related_name='correct_image',
+                               null=True)	
     Incorrect_One = models.CharField(max_length=1000,
                         blank=True,
                         null=True)	
-    in_one_image = models.ImageField(upload_to='images/question/',
-                                       blank=True,
-                                       null=True) 	
+    in_one_image = models.ForeignKey(userImageUpload,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               related_name='Incorrect_One_image',
+                               null=True) 	
     Incorrect_Two = models.CharField(max_length=1000,
                         blank=True,
                         null=True)	
-    in_two_image = models.ImageField(upload_to='images/question/',
-                                       blank=True,
-                                       null=True) 	
+    in_two_image = models.ForeignKey(userImageUpload,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               related_name='Incorrect_Two_image',
+                               null=True) 	 	
     Incorrect_Three	= models.CharField(max_length=1000,
                         blank=True,
                         null=True)
-    in_three_image = models.ImageField(upload_to='images/question/',
-                                       blank=True,
-                                       null=True) 
+    in_three_image = models.ForeignKey(userImageUpload,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               related_name='Incorrect_Three_image',
+                               null=True) 	
     explanation	= models.CharField(max_length=1500,
                         blank=True,
                         null=True)
@@ -1411,16 +1448,7 @@ class userNickname(models.Model):
     def __str__(self):
         return "%s" % (self.name)
 
-class userImageUpload(models.Model):
-    title	= models.CharField(max_length=20,
-                        blank=True,
-                        null=True)
-    uploaded_image = models.ImageField(upload_to='images/question/',
-                                        blank=True,
-                                        null=True) 
 
-    def __str__(self):
-        return "%s" % (self.title)
 
 class worksheetTheme(models.Model):
     demo_image = models.ForeignKey(userImageUpload,
@@ -1466,15 +1494,33 @@ class worksheetFull(models.Model):
                                blank=True,
                                null=True)
     is_admin = models.BooleanField(default=False)
+    is_complete = models.BooleanField(default=False)
     title	= models.CharField(max_length=200,
                         blank=True,
                         null=True)
-    worksheet_image = models.ImageField(upload_to='images/question/',
-                                       blank=True,
-                                       null=True) 
+    ws_description = models.CharField(max_length=500,
+                        blank=True,
+                        null=True)
+    worksheet_image = models.ForeignKey(userImageUpload,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               related_name='worksheet_image',
+                               null=True)
     questions = models.ManyToManyField(topicQuestion,
                                      blank=True)
     total_possible = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
+    grade_level = models.ForeignKey(gradeLevel,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    standards_set = models.ForeignKey(standardSet,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    subject = models.ForeignKey(standardSubjects,
+                               on_delete=models.SET_NULL,
                                blank=True,
                                null=True)
 

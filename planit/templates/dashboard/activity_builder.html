@@ -186,7 +186,7 @@
     
     
             </div>
-           
+            
         </div>
         <div class="row">
             
@@ -256,7 +256,7 @@
                         <hr>
                             <div>
                                 <div class="showhim"><h2>Key Terms:</h2>
-                                    <div class="showme">Outline teh key topics, people, places, and terms you want students to know at the end of the activities:</div>
+                                    <div class="showme">Outline the key topics, people, places, and terms you want students to know at the end of the activities:</div>
                                 
                                 </div>
                             <table class="table" >
@@ -524,7 +524,7 @@
                             </div>
                         </div>
                         <div id='big-questions'></div>
-                       
+                        
                         
                     </div>
                 </div>
@@ -535,20 +535,24 @@
                                 <div class="col">
                               
                                 <h2 class="h5">Key Terms:</h2>
+                                <div id='topicmessage'></div>
                                <a class="remove-standard" href="#" ><i class="fa fa-sync-alt" style="float: right"></i> </a>
                                <hr>
-                               <form  action="#" method="POST" enctype="multipart/form-data">
+                               <form id="myform">
                                 {% csrf_token %}
-                               <div class="input-group rounded">
-                                <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search"
-                                  aria-describedby="search-addon" />
+                            <div class="row">
+                               
+                                <input type="search" class="form-control rounded" id='search_item' name='search_item' placeholder="Search" aria-label="Search"
+                                aria-describedby="search-addon" />
+                                <input type="hidden" id="search_ref" name="search_ref" value="1">
+                                
+                                <input type="submit" class="btn btn-primary" value="Search" />
+                            </div>
+                            <form>
+                            <hr>
+                            <div class="tagcloud" id='search-results'>
 
-                                <span class="input-group-text border-0" id="search-addon">
-                                <button type="submit" class="btn btn-block btn-primary btn-sm"><i class="fas fa-search"></i></button>
-                                  
-                                </span>
-                              </div> 
-                              </form>
+                            </div>
                               <hr>
                                 
                             </div>
@@ -658,6 +662,56 @@
     });
 </script>
 
+
+<script>
+    // Submit post on submit
+     $('#myform').on('submit', function(event){
+         event.preventDefault();
+
+         create_search();
+         $("#search-results").append(' Searching...');
+     });
+ 
+     // AJAX for posting
+     function create_search() {
+         $.ajax({
+             url : "/search-wiki/{{ lesson_match.id }}/", // the endpoint
+             type : "POST", // http method
+             data : {
+                 csrfmiddlewaretoken: '{{ csrf_token }}',
+                 search_item : $('#search_item').val(),
+                 search_ref : $('#search_ref').val(),
+ 
+             }, // data sent with the post request
+ 
+             // handle a successful response
+             success: function(response) {
+                $("#search-results").empty(); 
+                $.each(response.data, function (i, item) {
+                $("#search-results").append(
+                    '<a class="btn btn-sm btn-outline-secondary selecttopic myDIV" id="like'
+                    + item.id +
+                    '" href="#" data-topid="'
+                    + item.id +
+                    '" data-lessid="{{ lesson_match.id }}" data-toggle="tooltip" data-placement="top" title="'
+                    + item.descriptions + 
+                    '" class="tooltip">'
+                    + item.term +
+                    '</a>');
+             });
+             },
+ 
+             // handle a non-successful response
+             error : function(xhr,errmsg,err) {
+                 $('#comment-form').prepend("<div class='alert alert-danger'><button type='button' class='close' data-dismiss='alert'>&times;</button>Oop! Error happend!</div>"); // add the error to the dom
+                 //console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+             }
+         });
+     }
+ </script>
+ 
+ 
+
 <!----| Select Interval Save TinyMce Text |-->
 <script type="text/javascript">
     setInterval(function(){
@@ -704,6 +758,7 @@
 <!----| Select Activity |-->
 <script type="text/javascript">
     $(document).on("click", ".selectactivity", function(){
+    event.preventDefault();
     var elm = $(this);
     var id = elm.data('id');
     var actpid;
@@ -721,6 +776,7 @@
         success: function(response) {
         elm.remove();
         $("#activity-div").append("<li id='activity'>" + response.text + "</li>");
+        $("#actionmessage").append("<p>" + response.message + "</p>");
     }
 
 })
@@ -759,12 +815,15 @@
 <!----| Select Topic |-->
 <script type="text/javascript">
         $(document).on("click", ".selecttopic", function(){
+        event.preventDefault();
+
         var elm = $(this);
         var id = elm.data('id');
         var topid;
         topid = $(this).attr("data-topid");
         var lessid;
         lessid = $(this).attr("data-lessid");
+        
         $.ajax(
         {
             type:"GET",
@@ -775,6 +834,12 @@
             },
             success: function(response) {
             elm.remove();
+            $("#topicmessage").empty();
+            $("#topicmessage").append('<div class="alert alert-success alert-dismissible fade show" role="alert">'
+                 + response.message + 
+                 ' <button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                    <span aria-hidden="true">&times;</span>\
+                </button></div>');
             $("#key-term-section").prepend(
                 "<tr><th scope='row'>"  + response.term + "</th><td>" + response.description + "</td></tr>"
                 
@@ -784,19 +849,22 @@
         })
     });
     
+    
 </script> 
-
 
 
 <!----| Select Video |-->
 <script type="text/javascript">
     $(document).on("click", ".selectvideo", function(){
+    $(this).css("background-color", "orange");
+    event.preventDefault();
     var elm = $(this);
     var id = elm.data('id');
     var vidid;
     vidid = $(this).attr("data-vidid");
     var lessid;
     lessid = $(this).attr("data-lessid");
+   
     $.ajax(
     {
         type:"GET",
@@ -821,6 +889,7 @@
 <!----| Select Big Question |-->
 <script type="text/javascript">
     $(document).on("click", ".selectquestion", function(){
+    event.preventDefault();
     var elm = $(this);
     var id = elm.data('id');
     var lessid;
@@ -859,6 +928,7 @@ document.getElementById('big_questions_selected').scrollIntoView();
         url: "/updated-term-options/{{ lesson_match.id}}/{{ classroom_profile.id }}/",
         
         success: function(response) {
+        
         $("#not-selected-topics").empty(); 
         $.each(response.data, function (i, item) {
     	$("#not-selected-topics").append(
@@ -883,6 +953,7 @@ document.getElementById('big_questions_selected').scrollIntoView();
 <!----| Remove Standard |-->
 <script type="text/javascript">
     $(document).on("click", ".remove-standard", function(){
+    event.preventDefault();
     var overview = document.getElementById('not-selected-topics');
     htmlContent = overview.innerHTML,
     $("#not-selected-topics").empty(); 
@@ -892,7 +963,20 @@ document.getElementById('big_questions_selected').scrollIntoView();
         url: "/remove-term-options/{{ lesson_match.id}}/{{ classroom_profile.id }}/",
         
         success: function(response) {
+        $document.getElementById('#not-selected-topics').scrollIntoView();
         $("#not-selected-topics").empty(); 
+        $.each(response.data, function (i, item) {
+    	$("#not-selected-topics").append(
+            '<a class="btn btn-sm btn-outline-secondary selecttopic myDIV" id="like'
+            + item.id +
+            '" href="#" data-topid="'
+            + item.id +
+            '" data-lessid="{{ lesson_match.id }}" data-toggle="tooltip" data-placement="top" title="'
+            + item.descriptions + 
+            '" class="tooltip">'
+            + item.term +
+            '</a>');
+        }); 
     }
 
     })

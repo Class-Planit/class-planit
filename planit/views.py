@@ -44,6 +44,9 @@ from .get_wikipedia import *
 from .get_seach_results import *
 from .get_misc_info import *
 from .fix_types import *
+from django.http import JsonResponse
+from django.core import serializers
+from .get_search import *
 ##################| Homepage Views |#####################
 #Homepage Landing Page
 def Homepage(request):
@@ -780,7 +783,8 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
             youtube_create, created = youtubeSearchResult.objects.get_or_create(lesson_plan=lesson_match, title=result['title'], link=link, vid_id=vid_id)
             vid_id_list.append(youtube_create)
 
-    context = {'user_profile': user_profile, 'new_text': new_text, 'vid_id_list': vid_id_list, 'classroom_profile': classroom_profile, 'lesson_match': lesson_match}
+    form = UserSearchForm()
+    context = {'user_profile': user_profile, 'form': form, 'new_text': new_text, 'vid_id_list': vid_id_list, 'classroom_profile': classroom_profile, 'lesson_match': lesson_match}
     return render(request, 'dashboard/activity_builder.html', context)
 
 
@@ -807,43 +811,156 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
     current_week = date.today().isocalendar()[1] 
     user_profile = User.objects.filter(id=user_id).first()
 
-    classroom_profile = classroom.objects.get(id=class_id)
-    grade_list = classroom_profile.grade_level.all()
-    grade_match = gradeLevel.objects.filter(id__in=grade_list).first()
-    standard_match = standardSet.objects.get(id=classroom_profile.standards_set_id)
-
-    lesson_match = lessonObjective.objects.get(id=lesson_id)
-    subject_match = lesson_match.subject_id
-    subject_match_full = standardSubjects.objects.get(id=subject_match) 
-
-
-    worksheet_title = '%s: %s %s for week of %s' % (user_profile, classroom_profile, subject_match_full, current_week) 
-    get_worksheet, created = worksheetFull.objects.get_or_create(created_by=user_profile, title=worksheet_title, lesson_overview=lesson_match)
+    is_new = False
+    lesson_id = int(lesson_id)
+    matched_questions = []
+    question_match = []
+    current_question = []
+    get_worksheet = worksheetFull.objects.filter(id=worksheet_id).first()
     question_matches = get_worksheet.questions.all()
+    if question_matches:
+        all_matched_questions = topicQuestion.objects.filter(id__in=question_matches)
 
-    check_lesson_questions = topicQuestion.objects.filter(id__in=question_matches)
-    
-    if check_lesson_questions:
-        all_matched_questions = topicQuestion.objects.filter(lesson_overview=lesson_match)
-        matched_questions = topicQuestion.objects.filter(id__in=question_matches)
-    else:
-        text_questions_one = get_question_text(lesson_id, user_profile)
-        matched_questions = topicQuestion.objects.filter(id__in=text_questions_one).order_by('?')[:10]
-        line_match = []
-        for quest in matched_questions:
-            l_text = quest.linked_text
-            l_topic = quest.linked_topic
-            if l_text:
-                result = l_text
+        for item in all_matched_questions:
+            question = item.Question
+            if question:
+                pass
             else:
-                result = l_topic
+                image = item.Question_Image
+                if image:
+                    pass
+                else:
+                    get_worksheet.questions.remove(item) 
+                    item.delete()
 
-            if result not in line_match:
-                line_match.append(result)
-                get_worksheet.questions.add(quest)
-        all_matched_questions = topicQuestion.objects.filter(id__in=text_questions_one)
+    if lesson_id == 0:
+        
+        subject_match_full = standardSubjects.objects.get(id=get_worksheet.subject_id) 
+
+        if get_worksheet:
+            question_matches = get_worksheet.questions.all()
+
+            if question_matches:
+                m_questions = all_matched_questions = topicQuestion.objects.filter(id__in=question_matches)
+                matched_questions = []
+                for item in m_questions:
+                    matched_questions.append(item)
+            else:
+                new_question = topicQuestion.objects.create(created_by=user_profile, subject=subject_match_full, Question='Click Here to Add Question', is_admin=False)
+                get_worksheet.questions.add(new_question)
+        else:
+            worksheet_title = '%s: %s %s for week of %s' % (user_profile, subject_match_full, current_week)
+            get_worksheet = worksheetFull.objects.filter(created_by=user_profile, title=worksheet_title)
+            if get_worksheet:
+                worksheet_count = get_worksheet.count()
+                new_num = worksheet_count + 1 
+                worksheet_title = '%s: %s %s for week of %s - (%s)' % (user_profile, subject_match_full, current_week, new_num)
+            else:
+                get_worksheet = worksheetFull.objects.create(created_by=user_profile, title=worksheet_title)
+                
+            match_questions = get_worksheet.questions.all()
+            if matched_questions:
+                pass
+            else:
+                new_question = topicQuestion.objects.create(created_by=user_profile, subject=subject_match_full, Question='Click Here to Add Question', is_admin=False)
+                get_worksheet.questions.add(new_question)
+            all_matched_questions = []
+        
+        question_matches = get_worksheet.questions.all()
+        matched_questions = all_matched_questions = topicQuestion.objects.filter(id__in=question_matches)
+
+        
+
+        if matched_questions:
+            if 'None' in question_id:
+                q = 0
+            elif 'New' in question_id:
+                is_new = True
+                q = 0 
+                question_match = current_question =  topicQuestion.objects.create(created_by=user_profile, subject=subject_match_full, is_admin=False)
+                get_worksheet.questions.add(question_match)
+            else:
+                q = int(question_id)
+                question_match = current_question = matched_questions[q]
+
+            next_q = q + 1
+            
+        else:
+            question_match = current_question = None
+            next_q = 1
+            question_id = 0
+
+    else:
+        classroom_profile = classroom.objects.get(id=class_id)
+        grade_list = classroom_profile.grade_level.all()
+        grade_match = gradeLevel.objects.filter(id__in=grade_list).first()
+        standard_match = standardSet.objects.get(id=classroom_profile.standards_set_id)
+
+        lesson_match = lessonObjective.objects.get(id=lesson_id)
+        subject_match = lesson_match.subject_id
+        subject_match_full = standardSubjects.objects.get(id=subject_match) 
+
+
+        worksheet_title = '%s: %s %s for week of %s' % (user_profile, classroom_profile, subject_match_full, current_week) 
+        get_worksheet, created = worksheetFull.objects.get_or_create(created_by=user_profile, title=worksheet_title, lesson_overview=lesson_match)
+        question_matches = get_worksheet.questions.all()
+
+        check_lesson_questions = topicQuestion.objects.filter(id__in=question_matches)
+
+        if check_lesson_questions:
+            all_matched_questions = topicQuestion.objects.filter(lesson_overview=lesson_match)
+            matched_questions = topicQuestion.objects.filter(id__in=question_matches)
+        else:
+            text_questions_one = get_question_text(lesson_id, user_profile)
+            matched_questions = topicQuestion.objects.filter(id__in=text_questions_one).order_by('?')[:10]
+            line_match = []
+            for quest in matched_questions:
+                l_text = quest.linked_text
+                l_topic = quest.linked_topic
+                if l_text:
+                    result = l_text
+                else:
+                    result = l_topic
+
+                if result not in line_match:
+                    line_match.append(result)
+                    get_worksheet.questions.add(quest)
+
+            all_matched_questions = topicQuestion.objects.filter(id__in=text_questions_one)
     
+        lesson_standards = singleStandard.objects.filter(id__in=lesson_match.objectives_standards.all())
+        topic_matches = lesson_match.objectives_topics.all()
+        topic_lists_selected = topicInformation.objects.filter(id__in=topic_matches).order_by('item')
+        topic_images = []
+        for tp in topic_lists_selected:
+            if tp.image_url:
+                pass
+            else:
+                tp_image = get_possible_images(tp.item, tp.id)
     
+        if 'None' in question_id:
+            question_match = current_question = None
+            next_q = 1
+            question_id = 0
+        elif 'New' in question_id:
+            is_new = True
+            question_match = current_question =  topicQuestion.objects.create(created_by=user_profile, subject=subject_match_full, is_admin=False)
+            get_worksheet.questions.add(question_match)
+            q = 0 
+        else:
+            if matched_questions:
+                q = int(question_id)
+                next_q = q + 1
+                question_match = current_question = matched_questions[q]
+            elif 'New' in question_id:
+                is_new = True
+                q = 0
+                question_match = current_question =  topicQuestion.objects.create(created_by=user_profile, subject=subject_match_full, is_admin=False)
+                get_worksheet.questions.add(question_match)
+            else:
+                question_match = current_question = None
+                next_q = 1
+                question_id = 0
 
     short_answer  = []
     fib = []
@@ -865,19 +982,8 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
             unknown.append(quest)
 
 
-    if 'None' in question_id:
-        question_match = current_question = None
-        next_q = 1
-        question_id = 0
-    else:
-        if matched_questions:
-            q = int(question_id)
-            next_q = q + 1
-            question_match = current_question = matched_questions[q]
-        else:
-            question_match = current_question = None
-            next_q = 1
-            question_id = 0
+    
+    
     
 
     if 'False' in act_id:
@@ -885,47 +991,64 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
     else:
         question_match = current_question = topicQuestion.objects.get(id=act_id)
 
-    lesson_standards = singleStandard.objects.filter(id__in=lesson_match.objectives_standards.all())
-    topic_matches = lesson_match.objectives_topics.all()
-    topic_lists_selected = topicInformation.objects.filter(id__in=topic_matches).order_by('item')
-    topic_images = []
-    for tp in topic_lists_selected:
-        if tp.image_url:
-            pass
-        else:
-            tp_image = get_possible_images(tp.item, tp.id)
-            
+    if question_match:
+        question_match_id = question_match.id
+    else:
+        question_match_id = 0
+    #selected_images = userImageUpload.objects.filter()
+    recent_uploads = userImageUpload.objects.filter(created_by=user_profile).order_by('-uploaded_date')        
 
+    recent_uploads = recent_uploads[:10]
     worksheet_theme = worksheetTheme.objects.get(id=1)
 
     img_id = worksheet_theme.background_image
 
     background_img = userImageUpload.objects.filter(id=worksheet_theme.background_image_id).first()
-
-    return render(request, 'dashboard/activity_builder_2.html', {'user_profile': user_profile, 'get_worksheet': get_worksheet, 'all_matched_questions': all_matched_questions, 'question_match': question_match, 'question_id': question_id, 'next_q': next_q, 'background_img': background_img, 'worksheet_theme': worksheet_theme, 'current_question': current_question, \
-                                                                 'matched_questions': matched_questions, 'subject_match_full': subject_match_full, 'current_week': current_week, 'page': page, 'class_id': class_id, 'subject': subject, 'lesson_id': lesson_id, \
+    form = UserSearchForm()
+    return render(request, 'dashboard/activity_builder_2.html', {'user_profile': user_profile, 'is_new': is_new, 'form': form, 'recent_uploads': recent_uploads, 'get_worksheet': get_worksheet, 'all_matched_questions': all_matched_questions, 'question_match': question_match, 'question_id': question_id, 'next_q': next_q, 'background_img': background_img, 'worksheet_theme': worksheet_theme, 'current_question': current_question, \
+                                                                 'matched_questions': matched_questions, 'question_match_id': question_match_id, 'subject_match_full': subject_match_full, 'current_week': current_week, 'page': page, 'class_id': class_id, 'subject': subject, 'lesson_id': lesson_id, \
                                                                   'short_answer': short_answer, 'fib':fib, 'multi_choice':multi_choice, 'unknown':unknown})
 
 
+def NewDigitalActivities(request, user_id=None, worksheet_id=None, question_id=None):
+    current_week = date.today().isocalendar()[1] 
+    user_profile = User.objects.filter(id=user_id).first()
+
+    worksheet_match = worksheetFull.objects.get(id=worksheet_id)
+    
+    page = 'Preview'
+    return render(request, 'dashboard/new_worksheet_builder.html', {'page': page, 'worksheet_match': worksheet_match, 'user_profile': user_profile})
 
 #Edit already created or recommended Question
 def EditQuestions(request, user_id=None, class_id=None, subject=None, lesson_id=None, worksheet_id=None, page=None, act_id=None, question_id=None):
     user_profile = User.objects.get(id=user_id)
-    question_match = topicQuestion.objects.get(id=question_id)
-    question_type = question_match.question_type
     worksheet_match = worksheetFull.objects.get(id=worksheet_id)
+    question_match = topicQuestion.objects.get(id=question_id)
+    current_question = topicQuestion.objects.get(id=question_id)
+    if question_match.is_admin:
+        current_question.pk = None
+        current_question.save()
+        current_question.original_num = question_match.id
+        current_question.is_admin = False
+        current_question.save()
+        worksheet_match.questions.remove(question_match)
+        worksheet_match.questions.add(current_question)
+    else:
+        current_question = question_match
+
+
+    question_type = question_match.question_type
+   
+    
     subject_match = standardSubjects.objects.get(id=subject)
     if request.method == "POST":
-        form = topicQuestionForm(request.POST, request.FILES, instance=question_match)
+        form = topicQuestionForm(request.POST, request.FILES, instance=current_question)
 
         if form.is_valid():
             prev = form.save(commit=False)
-            prev.question_type = question_type
-            prev.subject = subject_match
-            prev.is_admin = False
-            prev.created_by = user_profile
             prev.save()
-            worksheet_match.questions.add(prev)
+
+            
 
     return redirect('digital_activities', user_id=user_id, class_id=class_id, lesson_id=lesson_id, subject=1, page='Preview', worksheet_id=worksheet_id, act_id='False', question_id=0)
 
@@ -934,17 +1057,18 @@ def EditQuestions(request, user_id=None, class_id=None, subject=None, lesson_id=
 def NewQuestions(request, user_id=None, class_id=None, subject=None, lesson_id=None, worksheet_id=None, page=None, act_id=None, question_id=None):
     user_profile = User.objects.get(id=user_id)
     worksheet_match = worksheetFull.objects.get(id=worksheet_id)
+    current_question = topicQuestion.objects.create(created_by=user_profile, is_admin=False)
+    worksheet_match.questions.add(current_question)
+
     subject_match = standardSubjects.objects.get(id=subject)
     if request.method == "POST":
-        form = topicQuestionForm(request.POST, request.FILES)
+        form = topicQuestionForm(request.POST, request.FILES, instance=current_question)
 
         if form.is_valid():
             prev = form.save(commit=False)
-            prev.subject = subject_match
-            prev.is_admin = False
-            prev.created_by = user_profile
             prev.save()
-            worksheet_match.questions.add(prev)
+
+            
         return redirect('digital_activities', user_id=user_id, class_id=class_id, lesson_id=lesson_id, subject=1, page='Preview', worksheet_id=worksheet_id, act_id='False', question_id=0)
 
 ############################################
@@ -1134,20 +1258,54 @@ def StudentLogin(request, lesson_id=None, worksheet_id=None):
 def StudentPerformance(request, user_id, class_id, week_of):
     all_themes = studentPraiseTheme.objects.all()
     user_profile = User.objects.get(id=user_id)
+    standard_set = user_profile.standards_set
     current_year = datetime.datetime.now().year
     current_week = date.today().isocalendar()[1]
     start = current_week - 12
     if start < 1:
         start = 1
     
+    teacher_classes = classroom.objects.filter(main_teacher=user_profile)
+    all_grades = []
+    all_subjects = []
 
+    for t_class in teacher_classes:
+        g_levels = t_class.grade_level.all()
+        s_levels = t_class.subjects.all()
+        if s_levels:
+            for sl in s_levels:
+                all_subjects.append(sl.id)
+        for gl in g_levels:
+            all_grades.append(gl.id)  
+        s_level = t_class.single_grade
+        all_grades.append(s_level.id)
+
+    subject_options = standardSubjects.objects.filter(id__in=all_subjects).order_by('subject_title')
+    grade_options = gradeLevel.objects.filter(id__in=all_grades).order_by('grade')
+
+    
     week_breakdown = get_weekly_brackets(user_id, start, current_week, current_year)
     week_breakdown['low'] =  [ 2, 1, 2, 1, 2, 3, 4, 4, 2, 4, 3, 3]
     week_breakdown['mid'] =  [14,12,11,14,10,12,14,13,13,14,13,15]
     week_breakdown['high'] = [ 4, 7, 7, 5, 8, 5, 2, 3, 5, 2, 4, 2]
     top_lessons = get_demo_ks_brackets(user_id, start, current_week, current_year)
     student_results = get_student_results(user_id, start, current_week, current_year)
-    return render(request, 'dashboard/tasks.html', {'user_profile': user_profile, 'all_themes': all_themes, 'week_breakdown': week_breakdown, 'top_lessons': top_lessons, 'student_results': student_results})
+
+    if request.method == "POST":
+        form = worksheetFullForm(request.POST, request.FILES)
+        if form.is_valid():
+            prev = form.save(commit=False)
+            prev.created_by = user_profile
+            prev.standards_set = standard_set 
+            if user_profile.is_superuser:
+                prev.is_admin = True
+            else:
+                prev.is_admin = False
+            prev.save()
+            return redirect('new_digital_activities', user_id=user_id, worksheet_id=prev.id, question_id=0)
+    else:
+        form = worksheetFullForm()
+    return render(request, 'dashboard/assignments.html', {'user_profile': user_profile, 'form': form, 'subject_options': subject_options, 'grade_options': grade_options, 'all_themes': all_themes, 'week_breakdown': week_breakdown, 'top_lessons': top_lessons, 'student_results': student_results})
 
 
 ####### these functions handle the students answers as they go through the digital worksheet #########
@@ -1439,7 +1597,14 @@ def SelectTopic(request):
         topic_match = topicInformation.objects.get(id=topic_id)
         update_lesson = lesson_match.objectives_topics.add(topic_match)
         
-
+        match_recs = reccomendedTopics.objects.filter(matched_lesson=lesson_match).first()
+        sing_recs = match_recs.single_score.all()
+        sing_match = singleRec.objects.filter(id__in=sing_recs)
+        rec_top_match = sing_match.filter(single_rec_topics_id=topic_id).first()
+        rec_rec = match_recs.single_score.remove(rec_top_match)
+        add_remove = match_recs.removed_topics.add(topic_match)
+        remove_rec = match_recs.rec_topics.remove(topic_match)
+        print(match_recs)
         check_topic = topic_match.topic_type.all()
         if check_topic:
             pass
@@ -1486,7 +1651,8 @@ def SelectTopic(request):
                     description_list.append(result)
         description_list = ' '.join(description_list)
         final = "<ul>%s</ul>" % (description_list)
-        context = {'term': topic_match.item, 'description': final}
+        message = '<strong>%s</strong> has been added!' % (topic_match.item)
+        context = {'term': topic_match.item, 'description': final, 'message': message}
 
         return JsonResponse(context)
     else:
@@ -1572,12 +1738,30 @@ def RemoveKeyTerms(request, lesson_id, class_id):
         if top_ids:
             matched_rt = topicInformation.objects.filter(id__in=top_ids)
             for top in matched_rt:
+                rec_rec = match_recs.single_score.remove(top)
                 add_remove = match_recs.removed_topics.add(top)
                 remove_rec = match_recs.rec_topics.remove(top)
         
-        
-        context = {"message": "your message"}
 
+        match_recs = reccomendedTopics.objects.filter(matched_lesson=lesson_match).first()
+        match_score = match_recs.single_score.all()
+        single_recs = singleRec.objects.filter(id__in=match_score)
+        match_score_count = match_score.count() 
+        update_term_list = []
+        if match_score_count >= 10:
+            for rec in single_recs[:15]:
+                single_rec = rec.single_rec_topics_id
+                match_topic = topicInformation.objects.get(id=single_rec)
+                descriptions = get_description_string(match_topic.id, user_profile.id)
+                result = {'id': match_topic.id, 'term': match_topic.item, 'descriptions': descriptions} 
+                if result not in update_term_list:
+                    update_term_list.append(result)
+        
+        else:
+            #pulls from acivity_builder.py
+            update_term_list = generate_term_recs(teacher_input, class_id, lesson_id, user_profile.id)
+
+        context = {"data": update_term_list, "message": "your message"}
 
         return JsonResponse(context)
     else:
@@ -1649,8 +1833,27 @@ def UpdateKeyTerms(request, lesson_id, class_id):
         user_profile = User.objects.filter(id=request.user.id).first()
         lesson_match = lessonObjective.objects.get(id=lesson_id)
         teacher_input = lesson_match.teacher_objective
-        #pulls from acivity_builder.py
-        update_term_list = generate_term_recs(teacher_input, class_id, lesson_id, user_profile.id)
+        match_recs = reccomendedTopics.objects.filter(matched_lesson=lesson_match).first()
+        if match_recs:
+            match_score = match_recs.single_score.all()
+            single_recs = singleRec.objects.filter(id__in=match_score)
+            match_score_count = match_score.count() 
+        else:
+            match_score = None
+            match_score_count = 0
+        update_term_list = []
+
+        if match_score_count >= 10:
+            for rec in single_recs[:15]:
+                single_rec = rec.single_rec_topics_id
+                match_topic = topicInformation.objects.get(id=single_rec)
+                descriptions = get_description_string(match_topic.id, user_profile.id)
+                result = {'id': match_topic.id, 'term': match_topic.item, 'descriptions': descriptions} 
+                if result not in update_term_list:
+                    update_term_list.append(result)
+        else:
+            #pulls from acivity_builder.py
+            update_term_list = generate_term_recs(teacher_input, class_id, lesson_id, user_profile.id)
 
         context = {"data": update_term_list, "message": "your message"}
 
@@ -1723,6 +1926,96 @@ def UpdateLessonActivities(request, lesson_id, class_id):
     else:
         return HttpResponse("Request method is not a GET")
 
+
+def GoogleImageSearch(request, worksheet_id, question_id):
+
+    # request should be ajax and method should be POST.
+    if request.method == "POST":
+        # get the form data
+        form = UserSearchForm(request.POST)
+        # save the data and after fetch the object in instance
+        if form.is_valid():
+            # serialize in new friend object in json
+            q = form.cleaned_data.get('search_item')
+            search_ref = form.cleaned_data.get('search_ref')
+            search_results = get_search_images(q, search_ref)
+            # send to client side.
+            context = {"data": search_results, "message": "your message"}
+            
+            return JsonResponse(context)
+        else:
+            # some form errors occured.
+            return JsonResponse({"error": form.errors}, status=400)
+
+    else:
+        return HttpResponse("Request method is not a GET")
+
+
+def SearchKeyTerm(request, lesson_id):
+    user_profile = User.objects.filter(id=request.user.id).first()
+    class_objectives = lessonObjective.objects.get(id=lesson_id)
+
+    topic_matches = class_objectives.objectives_topics.all()
+    topics = topicInformation.objects.filter(id__in=topic_matches)
+
+    # request should be ajax and method should be POST.
+    if request.method == "POST":
+        # get the form data
+        form = UserSearchForm(request.POST)
+        # save the data and after fetch the object in instance
+        if form.is_valid():
+            # serialize in new friend object in json
+            q = form.cleaned_data.get('search_item')
+            search_ref = form.cleaned_data.get('search_ref')
+            search_results = search_wiki_topics(topics, lesson_id, user_profile, q)
+            print('------------')
+            print(search_results)
+            print('------------')
+            # send to client side.
+            context = {"data": search_results, "message": "your message"}
+            
+            return JsonResponse(context)
+        else:
+            # some form errors occured.
+            return JsonResponse({"error": form.errors}, status=400)
+
+    else:
+        return HttpResponse("Request method is not a GET")
+
+
+def AddQuestionImage(request, class_id=None, lesson_id=None, subject=None, worksheet_id=None, question_id=None):
+    print('Starting')
+    current_date = datetime.datetime.now()
+    worksheet_match = worksheetFull.objects.get(id=worksheet_id)
+    user_profile = User.objects.filter(username=request.user.username).first()
+
+    question_id = int(question_id)
+    question_match = topicQuestion.objects.get(id=question_id)
+    if request.method == 'GET':
+        title = request.GET['title']
+        d_url = request.GET['d_url']
+        img_ref = request.GET['img_ref']
+
+
+        create_image, created = userImageUpload.objects.get_or_create(image_url=d_url, title=title, created_by=user_profile, uploaded_date=current_date)
+        img_ref = int(img_ref)
+        if img_ref == 1:
+            question_match.Question_Image = create_image
+            question_match.save()
+        if img_ref == 2:
+            question_match.correct_image = create_image
+            question_match.save()
+
+        worksheet_match.questions.add(question_match)
+        question_image = str(question_match.Question_Image)
+        correct_one = str(question_match.correct_image)
+        context = {'question': question_image, 'correct_image': correct_one}
+
+         
+        return JsonResponse(context)
+ 
+    else:
+        return HttpResponse("Request method is not a GET")
 #############################################################
 ######    End Data Analytics and Ai powered functions #######
 #############################################################

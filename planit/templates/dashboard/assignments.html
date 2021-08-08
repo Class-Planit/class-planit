@@ -5,24 +5,13 @@
             
 <main class="content">
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
-        <!--
-        <div class="btn-toolbar">
-            <button class="btn btn-primary btn-sm mr-2 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="fas fa-plus mr-2"></span>New Task
-            </button>
-            <div class="dropdown-menu dashboard-dropdown dropdown-menu-left mt-2">
-                <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-tasks mr-2"></span>New Task</a>
-                <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-cloud-upload-alt mr-2"></span>Upload Files</a>
-                <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-user-shield mr-2"></span>Preview Security</a>
-                <div role="separator" class="dropdown-divider"></div>
-                <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-rocket text-danger mr-2"></span>Upgrade to Pro</a>
-            </div>
-        </div>
+  
+
         <div class="btn-group">
-            <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
-            <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+            <button type="button" data-toggle="modal" data-target="#exampleModal" class="btn btn-sm btn-outline-secondary">New Worksheet</button>
+           
         </div>
-    -->
+   
     </div>
     <div class="row">
         <div class="col-12 col-xl-6 mb-4">
@@ -297,5 +286,50 @@
     </div>
 
 </main>
-
+     <!-- Modal -->
+     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Create a New Worksheet</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            
+            <div class="modal-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="title">Worksheet Title</label>
+                        <input type="text" class="form-control" id="title" name='title'>
+                      </div>
+                      <div class="form-group">
+                        <label for="title">Descriptions</label>
+                        <input type="text" class="form-control" id="ws_description" name='ws_description'>
+                      </div>
+                      <div class="form-group">
+                        <label for="grade_level">Grade Level</label>
+                        <select class="form-control" id="grade_level" name='grade_level'>
+                          {% for gl in grade_options %}
+                            <option value={{ gl.id }}>{{ gl }}</option>
+                        {% endfor %}
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <select class="form-control" id="subject" name='subject'>
+                          {% for sl in subject_options %}
+                            <option value={{ sl.id }}>{{ sl }}</option>
+                        {% endfor %}
+                        </select>
+                      </div>
+                    <input type="submit" value="Let's Planit" class="btn btn-info">
+                </form>
+            
+            </div>
+    
+        </div>
+        </div>
+    </div>
 {% endblock %}

@@ -226,6 +226,12 @@ urlpatterns = [
         view=DigitalActivities,
         name='digital_activities'),
 
+
+    url(r'^new-worksheet-builder/(?P<user_id>[\w-]+)/(?P<worksheet_id>[\w-]+)/(?P<question_id>[\w-]+)/$',
+        view=NewDigitalActivities,
+        name='new_digital_activities'),
+
+
     url(r'^edit-question/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<lesson_id>[\w-]+)/(?P<page>[\w-]+)/(?P<worksheet_id>[\w-]+)/(?P<act_id>[\w-]+)/(?P<question_id>[\w-]+)/$',
         view=EditQuestions,
         name='edit_question'),
@@ -237,6 +243,22 @@ urlpatterns = [
     url(r'^standards_upload/$',
         view=StandardUploadTwo,
         name='standards_upload'),
+
+
+    url(r'^search-image/(?P<worksheet_id>[\w-]+)/(?P<question_id>[\w-]+)/$',
+        view=GoogleImageSearch,
+        name='google_image_search'),
+
+
+    url(r'^search-wiki/(?P<lesson_id>[\w-]+)/$',
+        view=SearchKeyTerm,
+        name='search_key_term'),
+
+
+    url(r'^add-question-image/(?P<class_id>[\w-]+)/(?P<lesson_id>[\w-]+)/(?P<subject>[\w-]+)/(?P<worksheet_id>[\w-]+)/(?P<question_id>[\w-]+)/$', 
+        view=AddQuestionImage,
+        name='add_question_image'),
+
 
     url(r'^topic_upload/$',
         view=TopicUploadTwo,

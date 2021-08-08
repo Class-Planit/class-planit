@@ -89,6 +89,9 @@ def get_desciption_summary(item, full_desc):
                     )
         results = response['choices'][0]
 
+        print('---------')
+        print('get_desciption_summary', results['text'])
+        print('---------')
         final = clean_sentences(results['text'])
         return(final)
 
@@ -160,7 +163,7 @@ def openai_term_labels(user_id, topic_term, subject, grade):
                         query=wording,
                         labels=labels)
             print('---------')
-            print(response['label'].upper())
+            print('openai', response['label'].upper())
             print('---------')
             return(response['label'].upper())
     except:

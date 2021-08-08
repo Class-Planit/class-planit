@@ -27,6 +27,7 @@ class topicDescriptionAdmin(admin.ModelAdmin):
 
 
 
+admin.site.register(singleRec)
 admin.site.register(reccomendedTopics)
 admin.site.register(lessonStandardRecommendation)
 admin.site.register(User)

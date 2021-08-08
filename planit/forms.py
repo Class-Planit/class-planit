@@ -16,6 +16,12 @@ from tinymce.widgets import TinyMCE
 class teacherSubjectForm(forms.Form):
     subject_title = forms.CharField()
 
+
+
+class UserSearchForm(forms.Form):
+    search_item = forms.CharField()
+    search_ref = forms.CharField()
+
 class classroomTitleForm(forms.Form):
     classroom_title = forms.CharField()
 
@@ -50,7 +56,7 @@ class  topicQuestionForm(forms.ModelForm):
 
     class Meta:
         model = topicQuestion
-        fields = '__all__'
+        fields = ('Question', 'Correct', 'Incorrect_One', 'Incorrect_Two')
 
 
 class lessonObjectiveForm(forms.ModelForm):
@@ -83,6 +89,14 @@ class LearningDemonstrationForm(forms.ModelForm):
     class Meta:
         model = LearningDemonstration
         fields = '__all__'
+
+
+class worksheetFullForm(forms.ModelForm):
+
+    class Meta:
+        model = worksheetFull
+        fields = '__all__'
+
 
 
 class topicInformationForm(forms.ModelForm):

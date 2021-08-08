@@ -91,12 +91,18 @@ def get_student_results(user_id, week_of_start, week_of_finsih, year):
     for student in student_all:
 
         student_match = User.objects.get(id=student.student_id)
-        student_name = '%s %s' % (student_match.first_name, student_match.last_name[0])
-        all_assignments = studentWorksheetAnswerFull.objects.filter(student=student_match, worksheet_assignment__in=assignment_matches, is_submitted=True).order_by('completion_date')
-        student_avg = all_assignments.aggregate(Avg('score'))
-        s_avg = math.trunc(student_avg['score__avg'])
-        student_complete = all_assignments.count()
         
+        student_name = '%s %s' % (student_match.first_name, student_match.last_name[:1])
+        all_assignments = studentWorksheetAnswerFull.objects.filter(student=student_match, worksheet_assignment__in=assignment_matches, is_submitted=True).order_by('completion_date')
+        
+        if all_assignments:
+            student_avg = all_assignments.aggregate(Avg('score'))
+            s_avg = math.trunc(student_avg['score__avg'])
+            student_complete = all_assignments.count()
+        else:
+            student_avg = 0
+            s_avg = 0
+            student_complete = 0
         get_trend = get_student_trend(all_assignments)
         get_praise = get_student_praise_count(student_match, week_of_start, week_of_finsih, year)
     

@@ -744,10 +744,12 @@ def get_description_string(topic_id, user_id):
 
 def build_term_description(wiki_result, user_profile, is_secondary, lesson_objective):
     term = wiki_result[0]
-    description = wiki_result[1][1]
+    description = wiki_result[1]
     sim_score = wiki_result[2]
     init_topic = wiki_result[3]
-
+    print('--------------')
+    print('build_term_description', description)
+    print('------------')
     if len(description) > 5:
         
         is_annual_year = term.isdecimal()
@@ -847,7 +849,7 @@ def generate_term_recs(teacher_input, class_id, lesson_id, user_id):
                 current_rec_list.single_score.remove(rec)
                 current_rec_list.rec_topics.remove(rec_topics)
 
-
+    single_score_list_count = single_score_list.count()
     removed_t = current_rec_list.removed_topics.all()
     total_recs = current_rec_list.rec_topics.all()
     rec_count = total_recs.count()
@@ -857,7 +859,7 @@ def generate_term_recs(teacher_input, class_id, lesson_id, user_id):
     word_count = 0
 
 
-    if rec_count < 20:
+    if single_score_list_count < 20:
         
         #demonstrations of knowledge are parts of an activity that says what we want students to know 
         #by the end of the activity ie "identify importance of teh Emancipation Proclaimation"
@@ -958,8 +960,9 @@ def generate_term_recs(teacher_input, class_id, lesson_id, user_id):
                 top_id = top[0]
                 sim_score = top[1]
                 top_match = topicInformation.objects.get(id=top_id)
-                create_rec, created = singleRec.objects.get_or_create(single_rec_topics_id=top_id, sim_score=sim_score)
-                
+                create_rec, created = singleRec.objects.get_or_create(single_rec_topics_id=top_id)
+                create_rec.sim_score = sim_score
+                create_rec.save()
                 current_rec_list.rec_topics.add(top_match)
                 current_rec_list.single_score.add(create_rec)
 
@@ -971,7 +974,7 @@ def generate_term_recs(teacher_input, class_id, lesson_id, user_id):
                 final_list.append(result)
 
     else:
-        for term in current_rec_list.single_score.all():
+        for term in current_rec_list.rec_topics.all():
             rec_id = term.id
             topic_id = term.single_rec_topics_id
             score = term.sim_score
@@ -981,9 +984,7 @@ def generate_term_recs(teacher_input, class_id, lesson_id, user_id):
 
     final_list.sort(key=lambda x: x[1], reverse=True)
 
-    print('==============')
-    print(final_list)
-    print('==============')
+
     top_ten = final_list[:10]
     top_ten_list = []
     for top in top_ten:
@@ -999,6 +1000,28 @@ def generate_term_recs(teacher_input, class_id, lesson_id, user_id):
             top_ten_list.append(result)
 
     return(top_ten_list)
+
+def search_wiki_topics(topics, lesson_id, user_profile, q):
+    standard_nouns = [q,]
+    final_list = build_wiki_topic_list(None, lesson_id, user_profile, standard_nouns)
+    top_ten = final_list[:10]
+    top_ten_list = []
+    for top in top_ten:
+        top_id = top[0]
+        rec_match, created = singleRec.objects.get_or_create(single_rec_topics_id=top_id)
+        rec_match.sim_score = top[1]
+        rec_match.save()
+        rec_match.is_displayed = True
+        rec_match.save()
+        top_match = topicInformation.objects.get(id=top_id)
+        descriptions = get_description_string(top_match.id, user_profile.id)
+        
+        result = {'id': top_match.id, 'term': top_match.item, 'descriptions': descriptions} 
+        if result not in top_ten_list:
+            top_ten_list.append(result)
+
+    return(top_ten_list)
+
 
 
 def get_big_ideas(teacher_input, class_id, lesson_id, user_id):
@@ -1067,7 +1090,7 @@ def get_big_ideas(teacher_input, class_id, lesson_id, user_id):
                 
                 if check_snippet > .15:
                     update_snippet = text_summary_nltk(snippet, item['question'], 3)
-                    if update_snippet[1]:
+                    if update_snippet:
                         new_snippet = update_snippet[1]
                     else:
                         new_snippet = snippet
