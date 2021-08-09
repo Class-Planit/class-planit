@@ -217,4 +217,3 @@ django-redis-cache
 youtube-transcript-api
 django-tailwind
 Wikipedia-API
-newrelic==6.8.0.163
