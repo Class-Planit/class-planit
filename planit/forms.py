@@ -29,6 +29,11 @@ class UserSearchForm(forms.Form):
 class classroomTitleForm(forms.Form):
     classroom_title = forms.CharField()
 
+class standardsTrackingInfoForm(forms.ModelForm):
+    class Meta:
+        model = standardsTrackingInfo
+        fields = '__all__'
+
 class  lessonTextForm(forms.ModelForm):
 
     class Meta:

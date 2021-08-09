@@ -74,44 +74,51 @@ def get_teacher_list(user_id, class_id):
     teacher_list.sort(key=lambda x: x['t_last'])
     return(teacher_list)
 
-def get_student_info(student_list):
+def get_student_info(student_list, user_id):
     #Each student in student_list has this info (already in alphabetical order)
     #result = {'s_first': student.first_name, 's_last': student.last_name, 'g_level': student.current_grade_level, 'username': student_user,\
     #          'student_invite': student_ref, 'email': student_invite.email, 'student_id': student.student_username_id}
     student_info = []
-    print(student_list)
+    user_profile = User.objects.get(id=user_id)
     for student in student_list:
         name = student['s_first'], student['s_last']
         if student['username'] != None:
             student_user = User.objects.get(id=student['student_id'])
             student_id = student_user.id
-            print(student)
-            praises = studentPraise.objects.filter(student=student_user).order_by('week_of')
-            print(praises)
+            praises = studentPraise.objects.filter(student=student_user).order_by('-week_of')
             if praises:
                 recent_sticker = praises[0]
                 stickers = recent_sticker.sent_date
-                print(stickers)
             else:
                 stickers = "no stickers"
             
-
             #studentWorksheetAnswerFull is created whenever a student starts an assigned worksheet. 
             #Once they complete the worksheet the is_submitted is True and they is a completion_date generated. 
-            #You can sum up the total of these that are created and divide by the number of students in the class.
             #filter by assigned_by
-            completed_ws = 6
-            total_ws = 6
-            #studentWorksheetAnswerFull also has a score field that calculates the students score on submission. 
-            #You can get the avg of all the student scores from here.
-            average = 85
+            teacher_ws = studentWorksheetAnswerFull.objects.filter(student=student_user, assigned_by=user_profile)
+            completed_ws = 0
+            total_ws = 0
+            total_score = 0
+            if teacher_ws:
+                for worksheet in teacher_ws:
+                    if worksheet.is_submitted == True:
+                        completed_ws += 1
+                        ws_score = float(worksheet.score)
+                        total_score += ws_score
+                    total_ws += 1
+            if completed_ws != 0:
+                average = total_score / completed_ws
+            else:
+                average = total_score
+            #ensure that only XX.X% for average
+            average = round(average, 1)
             each_student = {'student_id': student_id, 'name': name, 'stickers': stickers, 'completed_ws': completed_ws, 'assigned_ws': total_ws, 'average': average}
             student_info.append(each_student)
         else:
             student_id = "pending"
-            stickers = 0
+            stickers = "no stickers"
             completed_ws = 0
-            total_ws = 6
+            total_ws = "n/a"
             average = 'student still pending'
             each_student = {'student_id': student_id, 'name': name, 'stickers': stickers, 'completed_ws': completed_ws, 'assigned_ws': total_ws, 'average': average}
             student_info.append(each_student)

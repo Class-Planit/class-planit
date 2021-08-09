@@ -171,6 +171,13 @@ urlpatterns = [
         view=StandardsTracking,
         name='standard_tracker'),
 
+    url(r'^narrow-standard-tracking/(?P<subject_id>[\w-]+)/(?P<classroom_id>[\w-]+)/',
+        view=NarrowStandardsTracking,
+        name='narrow_standard_tracker'),
+
+    url(r'^single-standard-tracking/(?P<subject_id>[\w-]+)/(?P<classroom_id>[\w-]+)/(?P<standard_id>[\w-]+)/',
+        view=SingleStandardsTracking,
+        name='single_standard_tracker'),
 
     url(r'^sel-activity/$',
         view=SelectActivity,

@@ -1,0 +1,84 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+{% block content %}          
+    <main class="content">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+            <div class="btn-toolbar">
+                
+            </div>
+        </div>
+        
+        <h2 class="h4 mb-4"><center>Standards Tracking</center></h2><br>
+        <h4 class="h5 mb-4"><center>Skill topics that fall under the subject, {{ tracking_subject }}, and classroom, {{ tracking_classroom }}...</center></h4>
+        
+        <!--
+        {% for each_standard in all_standards %}
+            <h3>----------------------------------------------------</h3>
+            <p>{{ each_standard.id }}</p> 
+            <p>{{ each_standard.skill_topic }}</p> 
+            <p>{{ each_standard.standard_objective }}</p>  
+            <p>{{ each_standard.competency }}</p>
+        {% endfor %}
+        -->
+        <div class="row">
+            <div class="col-12 mb-4">
+                <div class="card border-light shadow-sm">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-centered table-nowrap mb-0 rounded">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th class="border-0">Skill Topic</th>
+                                        <th class="border-0">Standard Objective</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for each_standard in all_standards %}
+                                        {% ifchanged each_standard.standard_objective %}
+                                        <tr>
+                                            <td>
+                                                {{ each_standard.skill_topic }}
+                                            </td>
+                                            <td>
+                                                {{ each_standard.standard_objective }}
+                                            </td>
+                                        </tr>
+                                        {% endifchanged %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="footer section py-5">
+<div class="container-fluid">
+<div class="row">
+<div class="col-12 col-lg-6 mb-4 mb-lg-0">
+<p class="mb-0 text-center text-xl-left">Copyright © 2019-<span class="current-year"></span> <a class="text-primary font-weight-normal" href="https://themesberg.com" target="_blank">Themesberg</a></p>
+</div>
+
+<div class="col-12 col-lg-6">
+<!-- List -->
+<ul class="list-inline list-group-flush list-group-borderless text-center text-xl-right mb-0">
+    <li class="list-inline-item px-0 px-sm-2">
+        <a href="https://themesberg.com/about">About</a>
+    </li>
+    <li class="list-inline-item px-0 px-sm-2">
+        <a href="https://themesberg.com/themes">Themes</a>
+    </li>
+    <li class="list-inline-item px-0 px-sm-2">
+        <a href="https://themesberg.com/blog">Blog</a>
+    </li>
+    <li class="list-inline-item px-0 px-sm-2">
+        <a href="https://themesberg.com/contact">Contact</a>
+    </li>
+</ul>
+<!-- End List -->
+</div>
+</div>
+</div>
+</footer>
+    </main>
+{% endblock %}

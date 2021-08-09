@@ -15,7 +15,7 @@
             </div>
             <br>
             <div class="form-group mb-0 mr-3">
-                
+                {% if num_classrooms > 1 %}
                 <div class="dropdown">
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Classrooms
@@ -26,6 +26,7 @@
                         {% endfor %}
                     </div>
                 </div>
+                {% endif %}
             </div>
             
             <div class="col col-md-4 col-lg-3 col-xl-2 ml-auto">
@@ -478,11 +479,11 @@
                             <br>
                             <h6 class="card-subtitle mb-2 text-muted">What to do next?</h6>
                             <p class="card-text">In the dropdowns to the right, you have the options to:</p>
-                            <li style="list-style: none;"><i class="fas fa-caret-right"></i> edit and add new students to your classroom</li>
-                            <li style="list-style: none;"><i class="fas fa-caret-right"></i> edit and add new supporting teachers to your classroom</li>
-                            <li style="list-style: none;"><i class="fas fa-caret-right"></i> update your classroom title</li> 
-                            <li style="list-style: none;"><i class="fas fa-caret-right"></i> edit and add new subjects to your classroom</li> 
-                            <li style="list-style: none;"><i class="fas fa-caret-right"></i> edit and add new grade levels to your classroom</li> 
+                            <li style="list-style: none;"><i class="fas fa-circle" style="font-size: 7px;"></i> edit and add new students to your classroom</li>
+                            <li style="list-style: none;"><i class="fas fa-circle" style="font-size: 7px;"></i> edit and add new supporting teachers to your classroom</li>
+                            <li style="list-style: none;"><i class="fas fa-circle" style="font-size: 7px;"></i> update your classroom title</li> 
+                            <li style="list-style: none;"><i class="fas fa-circle" style="font-size: 7px;"></i> edit and add new subjects to your classroom</li> 
+                            <li style="list-style: none;"><i class="fas fa-circle" style="font-size: 7px;"></i> edit and add new grade levels to your classroom</li> 
                             <br>
                             <p>Get started by adding subjects and grade levels to your classroom...</p>
                         </div>
