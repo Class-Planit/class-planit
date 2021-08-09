@@ -1091,7 +1091,7 @@ def get_big_ideas(teacher_input, class_id, lesson_id, user_id):
                 if check_snippet > .15:
                     update_snippet = text_summary_nltk(snippet, item['question'], 3)
                     if update_snippet:
-                        new_snippet = update_snippet[1]
+                        new_snippet = update_snippet
                     else:
                         new_snippet = snippet
                     create_question, created = googleRelatedQuestions.objects.get_or_create(lesson_plan=class_objectives, question=item['question'], link=item['link'], snippet=new_snippet)

@@ -1,0 +1,302 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+         <!-- Primary Meta Tags -->
+         <title>Class Planit</title>
+         <meta charset="utf-8">
+         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+         <meta name="title" content="Helping teachers create, share, and assess more engaging lessons">
+         <meta name="author" content="Class Planit">
+         <meta name="description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better lessons in minutes.">
+         <meta name="keywords" content="lesson plans, teacher pay teachers, worksheets" />
+         <link rel="canonical" href="www.classplanit.co">
+         
+         <!-- Open Graph / Facebook -->
+         <meta property="og:type" content="website">
+         <meta property="og:url" content="www.classplanit.co">
+         <meta property="og:title" content="Class Planit - helping teachers create, share, and assess more engaging lessons.">
+         <meta property="og:description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better lessons in minutes.">
+         <meta property="og:image" content="www.classplanit.co">
+         
+         <!-- Twitter -->
+         <meta property="twitter:card" content="summary_large_image">
+         <meta property="twitter:url" content="www.classplanit.co">
+         <meta property="twitter:title" content="Class Planit - helping teachers create, share, and assess more engaging lessons.">
+         <meta property="twitter:description" content="Plan More Engaging Lessons - Generate Resources from Your Lessons - Start creating better lessons in minutes.">
+         <meta property="twitter:image" content="{% static 'images/dashboard/twitter_image.png' %}">
+         
+         <!-- Favicon -->
+         <link rel="apple-touch-icon" sizes="120x120" href="{% static 'images/dashboard/icon_120.png' %}">
+         <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/dashboard/icon_40.png' %}">
+         <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/dashboard/icon_40.png' %}">
+         
+         <link rel="mask-icon" href="{% static 'images/dashboard/icon.svg' %}" color="#ffffff">
+         <meta name="msapplication-TileColor" content="#ffffff">
+         <meta name="theme-color" content="#ffffff">
+         
+    
+         <!-- Fontawesome -->
+         <link type="text/css" href="{% static 'vendor/dashboard/fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+         
+         <!-- Prism -->
+         <link type="text/css" href="{% static 'vendor/dashboard/prismjs/themes/prism.css' %}" rel="stylesheet">
+         
+         <!-- VectorMap -->
+         <link rel="stylesheet" href="{% static 'vendor/dashboard/jqvmap/dist/jqvmap.min.css' %}">
+         
+         <!-- Rocket CSS -->
+         <link type="text/css" href="{% static 'css/dashboard/rocket.css' %}" rel="stylesheet">
+     
+  <script src="https://cdn.tiny.cloud/1/0ak6ftt9ng9va9e98pl0iwxwwh0rb1tipwsg8it4mjmcbkjb/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+</head>
+<body>
+    <div class="preloader bg-soft flex-column justify-content-center align-items-center">
+        <img class="loader-element" src="{% static 'images/dashboard/circle_logo.svg' %}" height="50" alt="Rocket logo">
+    </div>
+    
+            <nav class="navbar navbar-dark navbar-theme-primary col-12 d-md-none">
+                <a class="navbar-brand mr-lg-5" href="{% url 'Dashboard' week_of='Current' subject_id='All' classroom_id='All' %}">
+                    <img class="navbar-brand-dark" src="{% static 'images/dashboard/circle_logo.svg' %}" alt="cp" /> <img class="navbar-brand-light" src="{% static 'images/dashboard/circle_logo.svg' %}" alt="cp" />
+                </a>
+        <div class="d-flex align-items-center">
+            <button class="navbar-toggler d-md-none collapsed" type="button" data-toggle="collapse" data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+    </nav>
+ 
+            <div class="container-fluid bg-soft">
+                <div class="row">
+                    <div class="col-12">
+    
+    <div class="bg-white">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+            <div class="btn-toolbar">
+                <a href="{% url 'Dashboard' week_of='Current' subject_id='All' classroom_id='All'  %}" class="btn btn-sm btn-outline-secondary"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+    
+    
+            </div>
+
+        </div>
+        <div class="row">
+       
+            <div class="col-lg-6">
+                {% if 'THREE' in step %}
+                <h6>Already Assigned:</h6>
+                {% for s_class in selected_classrooms %}
+                <i class="material-icons">
+                    check_box
+                </i> {{ s_class }}
+                {% endfor %}
+                <hr>
+                <h6>Assign to Classrooms:</h6>
+
+                {% for classroom in all_classrooms %}
+                <a href="{% url 'add_classroom_assignment' user_id=user_profile.id week_of=week_of class_id=classroom.id worksheet_id=worksheet_match.id lesson_id=lesson_id assign_id=assign_id step='Three'   %}">
+                    <i class="material-icons">
+                        check_box_outline_blank
+                    </i> {{ classroom }}
+
+                </a>
+                {% endfor %}
+
+                {% elif 'TWO' in step %}
+                <a href="{% url 'create_classroom_assignment' user_id=user_profile.id week_of=week_of class_id=class_id worksheet_id=worksheet_match.id lesson_id=lesson_id assign_id=assign_id step='THREE'   %}" type="button" class="btn btn-primary">Next</a>
+              
+                    {% for item in worksheet_themes %}
+                    <h6>{{ forloop.counter }}.</h6>
+                    <a href="{% url 'add_theme_assignment' user_id=user_profile.id week_of=week_of class_id=class_id worksheet_id=worksheet_match.id lesson_id=lesson_id assign_id=assign_id step='TWO' theme_id=item.id %}">
+                        {% if item.demo_image %} 
+                            {% for option in image_ids %}
+                            
+                                {% if item.demo_image_id == option.id %}
+                                    {% if option.uploaded_image %}
+                                    <figure><img class="xv-superimage" style="max-height:300px;max-width:300px;" src="{{ option.uploaded_image.url }}" alt=""></figure>
+                                    {% else %}
+                                    <figure><img class="xv-superimage" style="max-height:300px;max-width:300px;" src="{{ option.image_url }}" alt=""></figure>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </a>
+                    <hr>
+                    {% endfor %}
+                {% else %}
+                <div class="col-12 px-0 mb-4">
+                    <div class="card border-light shadow-sm">
+                        <div class="card-body">
+
+                        <form action="" method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="form-group">
+                            <label for="worksheet_title">Worksheet Title:</label>
+                            <input type="text" class="form-control" name='worksheet_title' {% if worksheet_match.title %}value='{{worksheet_match.title}}'{% endif %}  id="worksheet_title">
+                            </div>
+                            <div class="form-group">
+                            <label for="worksheet_description">Worksheet Description:</label>
+                            <input type="text" class="form-control" name='worksheet_description' {% if worksheet_match.ws_description %}value='{{worksheet_match.ws_description}}'{% endif %} id="worksheet_description">
+                            </div>
+                            <div class="form-group">
+                            <label for="worksheet_date">Worksheet Due Date:</label>
+                            <input type="date" class="form-control" id="worksheet_date" name="worksheet_date">
+                            </div>
+                            
+                            <br>
+                            <button type="submit">Next</button>
+                        </form>
+                        </div>
+                    </div>
+                </div>
+
+                {% endif %}
+              
+            <div class='container'>
+            <div class="row justify-content-between  align-items-center bg-white ">
+                <div class="col-12">
+                
+                </div>
+                
+            </div>
+            </div>  
+                       
+  
+            </div>
+            <div class="col-lg-3">
+
+             {% if selected_theme %}
+             <h5>Selected Theme:</h5>
+                {% for option in image_ids %}   
+                    {% if selected_theme.demo_image_id == option.id %}
+                        {% if option.uploaded_image %}
+                        <figure><img class="xv-superimage" style="max-height:300px;max-width:300px;" src="{{ option.uploaded_image.url }}" alt=""></figure>
+                        {% else %}
+                        <figure><img class="xv-superimage" style="max-height:300px;max-width:300px;" src="{{ option.image_url }}" alt=""></figure>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+                <br>
+                <div style="background-color:{{ selected_theme.background_color }};">
+                <br>
+                <h5 style="color:{{ selected_theme.primary }};">Worksheet Question</h5>
+                <p style="color:{{ selected_theme.secondary }};">Worksheet Answer</p>
+                <br>    
+                </div>
+               
+            {% endif %}
+            </div>
+            <div class="col-lg-3">
+                <div class="col-12 px-0 mb-4">
+                    <div class="card border-light shadow-sm">
+                       
+                        <div class="card-body">
+                            <h2 class="h5">Links:</h2>
+                            
+                           
+                            <li><a href="{% url 'digital_activities' user_id=user_profile.id class_id=class_id lesson_id=lesson_id subject=subject page='Preview' worksheet_id=worksheet_match.id act_id='False' question_id=0 %}#heading" class="card-link">Digital Worksheet</a></li>
+                        
+                            <li><a href="#" class="card-link">Student Performance</a></li>
+                            <li><a href="#" class="card-link">Standards Tracking</a></li>
+    
+                    </div>
+                    </div>
+                </div>
+                <div class="col-12 px-0 mb-4">
+                    <div class="card border-light shadow-sm">
+                        <div class="card-body">
+                    
+                            <button type="button" class="btn btn-link" onclick="showsaDiv()"><i class="fas fa-angle-left"></i> Short Answer (3)</button>
+                         
+                             <hr>
+                            <button type="button" class="btn btn-link" onclick="showfilDiv()" ><i class="fas fa-angle-left"></i> Fill in the Blank (1)</button>
+                            <hr>
+                            <button type="button" class="btn btn-link" onclick="showmcDiv()"><i class="fas fa-angle-left"></i> Multiple Choice (2)</button>
+                            <hr>
+                            
+                           
+
+                           
+                        </div>
+                    </div>
+                </div>
+
+                    <div class="col-12 px-0 mb-4">
+                        <div class="card border-light shadow-sm">
+                           
+                            <div class="card-body">
+                                <h2 class="h5">Digital Worksheets:</h2>
+                                <li><a href="#" class="card-link">View My Worksheets</a></li>
+                                <li><a href="#" class="card-link">Go to Class Planit Worksheet Library</a></li>
+            
+            
+                        </div>
+                        </div>
+                    </div>
+   
+                {% if uploaded_images %}
+                <div class="col-12 px-0 mb-4">
+                    <div class="card border-light shadow-sm">
+                        <div class="card-header">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                <h2 class="h5">Picture Library:</h2>
+                                </div>
+                                <div class="col text-right">
+                                    <a href="#" class="btn btn-sm btn-secondary">Add New</a>
+                                </div>
+                            </div>
+                        </div>
+    
+                        {% for image in uploaded_images %}
+                        <div class="main_image">
+                         <img class="img-fluid" src="{{ image.image_image.url }}" alt="" width="200"/>
+                     </div>
+                         {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+         
+        </div>
+        
+      <br>
+
+    </div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script>
+    // Data Picker Initialization
+$('.datepicker').datepicker();
+</script>
+   
+  <!-- Core -->
+  <script src="{% static 'vendor/dashboard/jquery/dist/jquery.min.js' %}"></script>
+  <script src="{% static 'vendor/dashboard/popper.js/dist/umd/popper.min.js' %}"></script>
+  <script src="{% static 'vendor/dashboard/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'vendor/dashboard/headroom.js/dist/headroom.min.js' %}"></script>
+  
+  <!-- Vendor JS -->
+  <script src="{% static 'vendor/dashboard/countup.js/dist/countUp.min.js' %}"></script>
+  <script src="{% static 'vendor/dashboard/jquery-countdown/dist/jquery.countdown.min.js' %}"></script>
+  <script src="{% static 'vendor/dashboard/smooth-scroll/dist/smooth-scroll.polyfills.min.js' %}"></script>
+  <script src="{% static 'vendor/dashboard/prismjs/prism.js' %}"></script>
+  
+  <!-- Chartist -->
+  <script src="{% static 'vendor/dashboard/chartist/dist/chartist.min.js' %}"></script>
+  <script src="{% static 'vendor/dashboard/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js' %}"></script>
+  
+  <!-- Vector Maps -->
+  <script src="{% static 'vendor/dashboard/jqvmap/dist/jquery.vmap.min.js' %}"></script>
+  <script src="{% static 'vendor/dashboard/jqvmap/dist/maps/jquery.vmap.world.js' %}"></script>
+  
+  <!-- Rocket JS -->
+  <script src="{% static 'js/dashboard/rocket.js' %}"></script>
+      <!-- NOTICE: You can use the _analytics.html partial to include production code specific code & trackers -->
+  
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+   
+
+</body>
+</html>

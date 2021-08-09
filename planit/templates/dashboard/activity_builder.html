@@ -29,7 +29,7 @@
          
          <!-- Favicon -->
          <link rel="apple-touch-icon" sizes="120x120" href="{% static 'images/dashboard/icon_120.png' %}">
-         <link rel="icon" type="image/png" sizes="32x32" href="{% static 'mages/icon_40.png' %}">
+         <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/dashboard/icon_40.png' %}">
          <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/dashboard/icon_40.png' %}">
          
          <link rel="mask-icon" href="{% static 'images/dashboard/icon.svg' %}" color="#ffffff">
@@ -38,8 +38,7 @@
          
          <!-- Fontawesome -->
          <link type="text/css" href="{% static 'vendor/dashboard/fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
-         <link rel="stylesheet" href="path/to/bootstrap/css/bootstrap.min.css">
-        <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+
          <!-- Prism -->
          <link type="text/css" href="{% static 'vendor/dashboard/prismjs/themes/prism.css' %}" rel="stylesheet">
          
@@ -165,8 +164,8 @@
     </div>
     
             <nav class="navbar navbar-dark navbar-theme-primary col-12 d-md-none">
-        <a class="navbar-brand mr-lg-5" href="../../index.html">
-            <img class="navbar-brand-dark" src="../../assets/img/brand/light.svg" alt="Pixel logo" /> <img class="navbar-brand-light" src="../../assets/img/brand/dark.svg" alt="Pixel Logo Dark" />
+        <a class="navbar-brand mr-lg-5" href="{% url 'Dashboard' week_of='Current' subject_id='All' classroom_id='All' %}">
+            <img class="navbar-brand-dark" src="{% static 'images/dashboard/circle_logo.svg' %}" alt="Pixel logo" /> <img class="navbar-brand-light" src="{% static 'images/dashboard/circle_logo.svg' %}" alt="Pixel Logo Dark" />
         </a>
         <div class="d-flex align-items-center">
             <button class="navbar-toggler d-md-none collapsed" type="button" data-toggle="collapse" data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
@@ -1321,9 +1320,9 @@ tinymce.init({
 
   </script>
 
-<script src="{% static 'base/js/tinymce/tinymce.min.js' %}"></script> 
- <script src="{% static 'base/js/tinymce/tinymce.min.js' %}"></script>
-  <script type="text/javascript" src="{% static 'base/js/tinymce/custom.js' %}" ></script>
+  
+  
+   
   <!-- Core -->
   <script src="{% static 'vendor/dashboard/jquery/dist/jquery.min.js' %}"></script>
   <script src="{% static 'vendor/dashboard/popper.js/dist/umd/popper.min.js' %}"></script>
@@ -1350,7 +1349,7 @@ tinymce.init({
   
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-  <script src="{% static 'forms_ajaxified/js/forms_ajaxified.js' %}"></script>
+   
 
 </body>
 </html>

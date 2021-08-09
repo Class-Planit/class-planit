@@ -28,7 +28,7 @@
          
          <!-- Favicon -->
          <link rel="apple-touch-icon" sizes="120x120" href="{% static 'images/dashboard/icon_120.png' %}">
-         <link rel="icon" type="image/png" sizes="32x32" href="{% static 'mages/icon_40.png' %}">
+         <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/dashboard/icon_40.png' %}">
          <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/dashboard/icon_40.png' %}">
          
          <link rel="mask-icon" href="{% static 'images/dashboard/icon.svg' %}" color="#ffffff">
@@ -91,7 +91,7 @@
                         <a href="{% url 'digital_activities' user_id=user_profile.id class_id=class_id lesson_id=lesson_id subject=subject_match_full.id page='Preview' worksheet_id=get_worksheet.id act_id='False' question_id=0 %}#heading" type="button" title="View Worksheet" class="btn btn-warning btn-sm"><i class="material-icons" style="color:white">format_list_numbered_rtl</i></a>
                         <a href="{% url 'digital_activities' user_id=user_profile.id class_id=class_id lesson_id=lesson_id subject=subject_match_full.id page='Digital' worksheet_id=get_worksheet.id act_id='False' question_id=0 %}#heading" type="button" title="Preview Digital Worksheet" class="btn btn-warning btn-sm"><i class="material-icons" style="color:white">smart_display</i></a>
                         <a href="{% url 'digital_activities' user_id=user_profile.id class_id=class_id lesson_id=lesson_id subject=subject_match_full.id page='AddQuestion' worksheet_id=get_worksheet.id act_id='False' question_id='New' %}#heading" type="button" title="Add Question" class="btn btn-warning btn-sm"><i class="material-icons" style="color:white">add_circle_outline</i></a>
-                        <a href="{% url 'student_dashboard' lesson_id=lesson_id worksheet_id=get_worksheet.id question_id=0 %}" type="button" title="Assign to Students" class="btn btn-warning btn-sm"><i class="material-icons" style="color:white">assignment_ind</i></a>
+                        <a href="{% url 'create_classroom_assignment' user_id=user_profile.id week_of=week_of class_id=class_id worksheet_id=get_worksheet.id lesson_id=lesson_id assign_id='None' step='One' %}" type="button" title="Assign to Students" class="btn btn-warning btn-sm"><i class="material-icons" style="color:white">assignment_ind</i></a>
                       </div>
         <hr>
                    {% if 'Digital' in page %}
@@ -1094,8 +1094,8 @@ document.getElementById('big_questions_selected').scrollIntoView();
     }
     
   </script>
- <script src="{% static 'base/js/tinymce/tinymce.min.js' %}"></script>
-  <script type="text/javascript" src="{% static 'base/js/tinymce/custom.js' %}" ></script>
+  
+   
   <!-- Core -->
   <script src="{% static 'vendor/dashboard/jquery/dist/jquery.min.js' %}"></script>
   <script src="{% static 'vendor/dashboard/popper.js/dist/umd/popper.min.js' %}"></script>
@@ -1122,7 +1122,7 @@ document.getElementById('big_questions_selected').scrollIntoView();
   
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-  <script src="{% static 'forms_ajaxified/js/forms_ajaxified.js' %}"></script>
+   
 
 </body>
 </html>

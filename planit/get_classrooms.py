@@ -45,3 +45,8 @@ def get_classroom_summary(user_id, date, current_date):
     return(final_list)
 
 
+def get_levels_of_understanding(class_id, current_year, current_week, user_profile):
+    current_classroom = classroom.objects.get(id=class_id)
+    start_week = current_week - 4
+    end_week = current_week
+    assignment_matches = worksheetClassAssignment.objects.filter(assigned_classrooms=current_classroom, academic_year=current_year, week_of__range=[start_week, end_week])

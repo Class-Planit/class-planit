@@ -561,15 +561,26 @@ def JoinStudentToClassroom(request, invite_ref=None):
 
 #view information for a single classroom 
 def ClassroomDashboard(request, user_id=None, class_id=None):
+    user_profile = User.objects.get(id=user_id)
+    current_date = datetime.datetime.now()
     current_year = datetime.datetime.now().year
+    current_academic_year = academicYear.objects.filter(planning_teacher=user_profile, is_active=True).first()
+    if current_academic_year:
+        pass
+    else:
+        end_date = current_date + relativedelta(years=1)
+        current_academic_year, created = academicYear.objects.get_or_create(start_date=current_date, end_date=end_date, planning_teacher=user_profile)
+    
     user_profile = User.objects.filter(username=request.user.username).first()
     class_profile = classroom.objects.get(id=class_id)
+    current_week = date.today().isocalendar()[1]
     student_summary = get_classroom_list_summary(user_profile.id, current_year, class_id)
 
     #get all students in classroom and info
     student_list, no_students = get_student_list(user_id, class_id)
     student_info = get_student_info(student_list)
     
+    understanding_breakdown = get_levels_of_understanding(class_id, current_academic_year, current_week, user_profile)
     #gets the classrooms teachers are main teacher on 
     classroom_profiles = classroom.objects.filter(main_teacher=user_profile)
     objective_matches = lessonObjective.objects.filter(lesson_classroom__in=classroom_profiles)
@@ -810,14 +821,18 @@ def EditObjectiveStandards(request, user_id=None, class_id=None, subject=None, l
 def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson_id=None, worksheet_id=None, page=None, act_id=None, question_id=None):
     current_week = date.today().isocalendar()[1] 
     user_profile = User.objects.filter(id=user_id).first()
-
+    week_of = current_week = date.today().isocalendar()[1] 
     is_new = False
     lesson_id = int(lesson_id)
     matched_questions = []
     question_match = []
     current_question = []
     get_worksheet = worksheetFull.objects.filter(id=worksheet_id).first()
-    question_matches = get_worksheet.questions.all()
+    if get_worksheet:
+        question_matches = get_worksheet.questions.all()
+    else:
+        question_matches = None
+
     if question_matches:
         all_matched_questions = topicQuestionitem.objects.filter(id__in=question_matches)
 
@@ -1005,7 +1020,7 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
 
     background_img = userImageUpload.objects.filter(id=worksheet_theme.background_image_id).first()
     form = UserSearchForm()
-    return render(request, 'dashboard/activity_builder_2.html', {'user_profile': user_profile, 'is_new': is_new, 'form': form, 'recent_uploads': recent_uploads, 'get_worksheet': get_worksheet, 'all_matched_questions': all_matched_questions, 'question_match': question_match, 'question_id': question_id, 'next_q': next_q, 'background_img': background_img, 'worksheet_theme': worksheet_theme, 'current_question': current_question, \
+    return render(request, 'dashboard/activity_builder_2.html', {'user_profile': user_profile, 'week_of': week_of, 'is_new': is_new, 'form': form, 'recent_uploads': recent_uploads, 'get_worksheet': get_worksheet, 'all_matched_questions': all_matched_questions, 'question_match': question_match, 'question_id': question_id, 'next_q': next_q, 'background_img': background_img, 'worksheet_theme': worksheet_theme, 'current_question': current_question, \
                                                                  'matched_questions': matched_questions, 'question_match_id': question_match_id, 'subject_match_full': subject_match_full, 'current_week': current_week, 'page': page, 'class_id': class_id, 'subject': subject, 'lesson_id': lesson_id, \
                                                                   'short_answer': short_answer, 'fib':fib, 'multi_choice':multi_choice, 'unknown':unknown})
 
@@ -1070,6 +1085,95 @@ def NewQuestions(request, user_id=None, class_id=None, subject=None, lesson_id=N
 
             
         return redirect('digital_activities', user_id=user_id, class_id=class_id, lesson_id=lesson_id, subject=1, page='Preview', worksheet_id=worksheet_id, act_id='False', question_id=0)
+
+
+def CreateClassroomAssignment(request, user_id=None, week_of=None, class_id=None, worksheet_id=None, lesson_id=None, assign_id=None, step=None):
+    user_profile = User.objects.get(id=user_id)
+    worksheet_match = worksheetFull.objects.get(id=worksheet_id)
+    all_classrooms = classroom.objects.filter(main_teacher=user_profile)
+    selected_classrooms = []
+    if 'None' in assign_id:
+        pass
+    else:
+        assignment_match = worksheetClassAssignment.objects.get(id=assign_id)
+        s_classrooms = assignment_match.assigned_classrooms.all()
+        if s_classrooms:
+            selected_classrooms = classroom.objects.filter(id__in=s_classrooms)
+            all_classrooms = all_classrooms.exclude(id__in=s_classrooms)
+    
+    s_theme = worksheet_match.worksheet_theme_id
+    if s_theme:
+        selected_theme = worksheetTheme.objects.get(id=s_theme)
+    else:
+        selected_theme = None
+
+    current_year = datetime.datetime.now().year
+    current_academic_year = academicYear.objects.filter(planning_teacher=user_profile, is_active=True).first()
+    if 'None' in class_id:
+        classroom_profile = None
+    else:
+        classroom_profile = classroom.objects.get(id=class_id)
+    if 'None' in lesson_id:
+        lesson_match = None
+    else:
+        lesson_match = lessonObjective.objects.get(id=lesson_id)
+
+    
+    worksheet_themes = worksheetTheme.objects.filter(is_admin=True, is_active=True)
+    image_list = []
+    for item in worksheet_themes:
+        image_result = item.demo_image_id
+        image_list.append(image_result)
+
+    
+    image_ids = userImageUpload.objects.filter(id__in=image_list)
+    if request.method == "POST":
+        form = classroomAssignmentForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            worksheet_title = form.cleaned_data.get('worksheet_title')
+            worksheet_description = form.cleaned_data.get('worksheet_description')
+            worksheet_date = form.cleaned_data.get('worksheet_date')
+
+            worksheet_match.title = worksheet_title
+            worksheet_match.ws_description = worksheet_description
+            worksheet_match.save()
+
+            if lesson_match:
+                assignment_match, created = worksheetClassAssignment.objects.get_or_create(lesson_overview=lesson_match, subject=worksheet_match.subject, week_of=week_of, created_by=user_profile, worksheet_full=worksheet_match, academic_year=current_academic_year)
+            else:
+                assignment_match, created = worksheetClassAssignment.objects.get_or_create(subject=worksheet_match.subject, week_of=week_of, created_by=user_profile, worksheet_full=worksheet_match, academic_year=current_academic_year)
+
+            assignment_match.due_date = worksheet_date
+            assignment_match.total_possible = worksheet_match.total_possible
+            assignment_match.save()
+
+            return redirect('create_classroom_assignment', user_id=user_profile.id, week_of=week_of, class_id=class_id, worksheet_id=worksheet_id, lesson_id=lesson_id, assign_id=assignment_match.id, step='TWO')
+    else:
+        form = classroomAssignmentForm()
+
+    context = {'form': form, 'week_of': week_of, 'all_classrooms': all_classrooms, 'selected_classrooms': selected_classrooms, 'selected_theme': selected_theme, 'step': step, 'user_profile': user_profile, 'assign_id': assign_id, 'class_id': class_id, 'subject': worksheet_match.subject, 'worksheet_match': worksheet_match, 'lesson_id': lesson_id, 'worksheet_themes': worksheet_themes, 'image_ids': image_ids}
+    return render(request, 'dashboard/create_assignments.html', context)
+
+
+def AddThemeAssignment(request, user_id=None, week_of=None, class_id=None, worksheet_id=None, lesson_id=None, assign_id=None, step=None, theme_id=None):
+    user_profile = User.objects.get(id=user_id)
+    worksheet_match = worksheetFull.objects.get(id=worksheet_id)
+
+    theme_match = worksheetTheme.objects.get(id=theme_id)
+    worksheet_match.worksheet_theme = theme_match
+    worksheet_match.save()
+    return redirect('create_classroom_assignment', user_id=user_profile.id, week_of=week_of, class_id=class_id, worksheet_id=worksheet_id, lesson_id=lesson_id, assign_id=assign_id, step='TWO')
+
+def AddClassroomAssignment(request, user_id=None, week_of=None, class_id=None, worksheet_id=None, lesson_id=None, assign_id=None, step=None):
+    user_profile = User.objects.get(id=user_id)
+    worksheet_match = worksheetClassAssignment.objects.get(id=assign_id)
+
+    classroom_match = classroom.objects.get(id=class_id)
+
+    worksheet_match.assigned_classrooms.add(classroom_match)
+    return redirect('create_classroom_assignment', user_id=user_profile.id, week_of=week_of, class_id=classroom_match.id, worksheet_id=worksheet_id, lesson_id=lesson_id, assign_id=assign_id, step='THREE')
+
 
 ############################################
 #Student Functions

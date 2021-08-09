@@ -227,6 +227,18 @@ urlpatterns = [
         name='digital_activities'),
 
 
+    url(r'^create-classroom-assignment/(?P<user_id>[\w-]+)/(?P<week_of>[\w-]+)/(?P<class_id>[\w-]+)/(?P<worksheet_id>[\w-]+)/(?P<lesson_id>[\w-]+)/(?P<assign_id>[\w-]+)/(?P<step>[\w-]+)/$',
+        view=CreateClassroomAssignment,
+        name='create_classroom_assignment'),
+
+    url(r'^add-theme-assignment/(?P<user_id>[\w-]+)/(?P<week_of>[\w-]+)/(?P<class_id>[\w-]+)/(?P<worksheet_id>[\w-]+)/(?P<lesson_id>[\w-]+)/(?P<assign_id>[\w-]+)/(?P<step>[\w-]+)/(?P<theme_id>[\w-]+)/$',
+        view=AddThemeAssignment,
+        name='add_theme_assignment'),
+
+    url(r'^add-classroom-assignment/(?P<user_id>[\w-]+)/(?P<week_of>[\w-]+)/(?P<class_id>[\w-]+)/(?P<worksheet_id>[\w-]+)/(?P<lesson_id>[\w-]+)/(?P<assign_id>[\w-]+)/(?P<step>[\w-]+)/$',
+        view=AddClassroomAssignment,
+        name='add_classroom_assignment'),
+
     url(r'^new-worksheet-builder/(?P<user_id>[\w-]+)/(?P<worksheet_id>[\w-]+)/(?P<question_id>[\w-]+)/$',
         view=NewDigitalActivities,
         name='new_digital_activities'),

@@ -17,6 +17,10 @@ class teacherSubjectForm(forms.Form):
     subject_title = forms.CharField()
 
 
+class classroomAssignmentForm(forms.Form):
+    worksheet_title = forms.CharField(max_length=150, required=False,)
+    worksheet_description = forms.CharField(max_length=150, required=False,)
+    worksheet_date = forms.CharField(max_length=150, required=False,)
 
 class UserSearchForm(forms.Form):
     search_item = forms.CharField()
@@ -52,7 +56,7 @@ class  teacherInvitationsForm(forms.ModelForm):
         fields = '__all__'
 
 
-class  topicQuestionForm(forms.ModelForm):
+class  topicQuestionitemForm(forms.ModelForm):
 
     class Meta:
         model = topicQuestionitem

@@ -1538,6 +1538,9 @@ class worksheetTheme(models.Model):
                                blank=True,
                                null=True,
                                related_name='background_image')
+    title = models.CharField(max_length=50,
+                        blank=True,
+                        null=True)
     icon_image = models.ManyToManyField(userImageUpload,
                                      blank=True,
                                      related_name='icon_image')
@@ -1550,12 +1553,21 @@ class worksheetTheme(models.Model):
     primary	= models.CharField(max_length=12,
                         blank=True,
                         null=True)
+    background_color = models.CharField(max_length=12,
+                        blank=True,
+                        null=True)
     secondary = models.CharField(max_length=12,
                         blank=True,
                         null=True)
     link = models.CharField(max_length=12,
                         blank=True,
                         null=True)
+    is_admin = models.BooleanField(default=False)
+    is_seasonal = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=False)
+
+    def __str__(self):
+        return "%s" % (self.title)
 
 class worksheetFull(models.Model):
     created_by = models.ForeignKey(User,
@@ -1572,6 +1584,7 @@ class worksheetFull(models.Model):
                                null=True)
     is_admin = models.BooleanField(default=False)
     is_complete = models.BooleanField(default=False)
+    is_assigned = models.BooleanField(default=False)
     title	= models.CharField(max_length=200,
                         blank=True,
                         null=True)
@@ -1600,6 +1613,8 @@ class worksheetFull(models.Model):
                                on_delete=models.SET_NULL,
                                blank=True,
                                null=True)
+
+                                
 
     def __str__(self):
         return "%s" % (self.title)
@@ -1646,6 +1661,7 @@ class studentQuestionAnswer(models.Model):
                         null=True)
     is_graded = models.BooleanField(default=False)
     is_correct = models.BooleanField(default=False)
+    
 
     def __str__(self):
         return "%s" % (self.id)
@@ -1660,6 +1676,7 @@ class studentWorksheetAnswerFull(models.Model):
                                null=True)
     student = models.ForeignKey(User,
                                on_delete=models.CASCADE,
+                               related_name='student_info',
                                blank=True,
                                null=True)
     nickname = models.CharField(max_length=200,
@@ -1685,6 +1702,15 @@ class studentWorksheetAnswerFull(models.Model):
                                blank=True,
                                null=True)
     completion_date = models.DateField(blank=True,
+                                   null=True)
+    assigned_by = models.ForeignKey(User,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               related_name='assigned_by',
+                               null=True)
+    assigned_date = models.DateField(blank=True,
+                                   null=True)
+    due_date = models.DateField(blank=True,
                                    null=True)
     
     def __str__(self):
@@ -1720,6 +1746,10 @@ class worksheetClassAssignment(models.Model):
                                      blank=True)
     due_date = models.DateField(blank=True,
                                    null=True)
+    academic_year = models.ForeignKey(academicYear,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
     
     def __str__(self):
         return "%s" % (self.id)
