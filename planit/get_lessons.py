@@ -526,7 +526,6 @@ def build_activity_list(soup, user_profile, class_objectives, lesson_id):
                 if find_topics:
                     for item in find_topics:
                         match_topic = topicInformation.objects.filter(id=item).first()
-                        update_matches = create_topic_matches.objectives_topics.add(match_topic)
                         update_activity = new_activity.objectives_topics.add(match_topic)
 
 
