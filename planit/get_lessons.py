@@ -504,7 +504,6 @@ def retention_activities_analytics(lesson_id):
     return(results)
 
 
-
 def build_activity_list(soup, user_profile, class_objectives, lesson_id):
     #this function pulls in beautiful soup and pulls out the activities that will be used to create analytics and demonstrations of knowledge
     activities_list =  soup.find('ul', {"id": "activity-div"})
@@ -526,6 +525,21 @@ def build_activity_list(soup, user_profile, class_objectives, lesson_id):
                 update_matches = create_topic_matches.objectives_topics.add(match_topic)
                 update_activity = new_activity.objectives_topics.add(match_topic)
 
+
+
+
+def save_big_questions_list(soup, user_profile, class_objectives, lesson_id):
+    lesson_match = lessonObjective.objects.get(id=lesson_id) 
+    #this function pulls in beautiful soup and pulls out the activities that will be used to create analytics and demonstrations of knowledge
+    current_questions = googleRelatedQuestions.objects.filter(lesson_plan=lesson_match, is_selected=True).delete()
+    questions = []
+    for row in soup.findAll('li', {"id": "full_question"}):
+        question = row.find('h6').contents
+        answer = row.find('p').contents
+
+        if len(question[0]) > 5:
+            match_question = googleRelatedQuestions.objects.create(question=question[0], snippet=answer[0], is_selected=True, lesson_plan=lesson_match)
+ 
 def build_key_terms_list(soup, user_profile, class_objectives, lesson_id, matched_grade, standard_set):
     #this takes the beautiful soup and pulls out key terms to save for changes and create more connections. 
     term_sets = []
@@ -584,6 +598,8 @@ def get_lesson_sections(text_overview, class_id, lesson_id, user_id):
         build_activities = build_activity_list(soup, user_profile, class_objectives, lesson_id)
 
         build_key_terms = build_key_terms_list(soup, user_profile, class_objectives, lesson_id, matched_grade, standard_set)
+
+        save_big_questions = save_big_questions_list(soup, user_profile, class_objectives, lesson_id)
 
     return('Done')
 

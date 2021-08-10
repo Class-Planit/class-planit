@@ -703,6 +703,7 @@ class singleRec(models.Model):
                                        null=True)
     is_displayed = models.BooleanField(default=False)
 
+
     def __str__(self):
         return "%s-%s" % (self.single_rec_topics, self.sim_score)
 
@@ -919,7 +920,7 @@ class googleRelatedQuestions(models.Model):
     relevance = models.IntegerField(default = 0,
                                blank=True,
                                null=True)
-    is_selected = models.BooleanField(default=False)
+
 
 
 class weeklyObjectives(models.Model):

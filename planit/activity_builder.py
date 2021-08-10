@@ -747,9 +747,7 @@ def build_term_description(wiki_result, user_profile, is_secondary, lesson_objec
     description = wiki_result[1]
     sim_score = wiki_result[2]
     init_topic = wiki_result[3]
-    print('--------------')
-    print('build_term_description', description)
-    print('------------')
+
     if len(description) > 5:
         
         is_annual_year = term.isdecimal()
@@ -913,7 +911,7 @@ def generate_term_recs(teacher_input, class_id, lesson_id, user_id):
                 not_selected_topics.append(result)
 
 
-        if word_count < 3:
+        if word_count < 10:
 
 
             get_objective_matches = get_topic_matches(class_objectives, topic_count, grade_list, subject, standard_set, lesson_id, user_id)
@@ -932,46 +930,48 @@ def generate_term_recs(teacher_input, class_id, lesson_id, user_id):
             
             
             for item in matched_topics:  
-                word_count = word_count + 1
+                
                 if item[0] in removed_t:
                     pass
                 else:      
                     if item[0] not in not_selected_topics:
+                        word_count = word_count + 1
                         not_selected_topics.append(item)
 
 
-
+        if word_count < 10:
             get_more_topics = build_wiki_topic_list(topics, lesson_id, user_profile, standards_nouns)
 
             for topic_item in get_more_topics:
-                word_count = word_count + 1
+                
                 if topic_item in removed_t:
+                    word_count = word_count + 1
                     not_selected_topics.remove(topic_item)
                 else:
-                    
+                    word_count = word_count + 1
                     not_selected_topics.append(topic_item)
 
 
 
-            not_selected_topics.sort(key=lambda x: x[1], reverse=True)
-            
+        not_selected_topics.sort(key=lambda x: x[1], reverse=True)
+        
 
-            for top in not_selected_topics:
-                top_id = top[0]
-                sim_score = top[1]
-                top_match = topicInformation.objects.get(id=top_id)
-                create_rec, created = singleRec.objects.get_or_create(single_rec_topics_id=top_id)
-                create_rec.sim_score = sim_score
-                create_rec.save()
-                current_rec_list.rec_topics.add(top_match)
-                current_rec_list.single_score.add(create_rec)
+        for top in not_selected_topics:
+            top_id = top[0]
+            sim_score = top[1]
+            top_match = topicInformation.objects.get(id=top_id)
+            create_rec, created = singleRec.objects.get_or_create(single_rec_topics_id=top_id)
+            create_rec.sim_score = sim_score
+            create_rec.save()
+            current_rec_list.rec_topics.add(top_match)
+            current_rec_list.single_score.add(create_rec)
 
-            for term in current_rec_list.single_score.all():
-                rec_id = term.id
-                topic_id = term.single_rec_topics_id
-                score = term.sim_score
-                result = topic_id, score, rec_id
-                final_list.append(result)
+        for term in current_rec_list.single_score.all():
+            rec_id = term.id
+            topic_id = term.single_rec_topics_id
+            score = term.sim_score
+            result = topic_id, score, rec_id
+            final_list.append(result)
 
     else:
         for term in current_rec_list.rec_topics.all():

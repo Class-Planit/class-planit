@@ -780,6 +780,8 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
 
     new_text, created = lessonText.objects.get_or_create(matched_lesson=lesson_match)
     
+
+    big_questions = googleRelatedQuestions.objects.filter(lesson_plan=lesson_match, is_selected=True)
     youtube_search = youtube_results(lesson_match.teacher_objective, lesson_id)
     
     youtube_list = []
@@ -794,8 +796,9 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
             youtube_create, created = youtubeSearchResult.objects.get_or_create(lesson_plan=lesson_match, title=result['title'], link=link, vid_id=vid_id)
             vid_id_list.append(youtube_create)
 
+
     form = UserSearchForm()
-    context = {'user_profile': user_profile, 'form': form, 'new_text': new_text, 'vid_id_list': vid_id_list, 'classroom_profile': classroom_profile, 'lesson_match': lesson_match}
+    context = {'user_profile': user_profile, 'video_match': vid_id_list, 'lesson_topics': lesson_topics, 'form': form, 'new_text': new_text, 'big_questions': big_questions, 'vid_id_list': vid_id_list, 'classroom_profile': classroom_profile, 'lesson_match': lesson_match}
     return render(request, 'dashboard/activity_builder.html', context)
 
 
@@ -1755,10 +1758,10 @@ def SelectTopic(request):
                     description_list.append(result)
         description_list = ' '.join(description_list)
         final = "<ul>%s</ul>" % (description_list)
-        message = '<strong>%s</strong> has been added!' % (topic_match.item)
-        context = {'term': topic_match.item, 'description': final, 'message': message}
-
-        return JsonResponse(context)
+        if final:
+            message = '<strong>%s</strong> has been added!' % (topic_match.item)
+            context = {'term': topic_match.item, 'description': final, 'message': message}
+            return JsonResponse(context)
     else:
         return HttpResponse("Request method is not a GET")
 
@@ -1831,6 +1834,7 @@ def RemoveKeyTerms(request, lesson_id, class_id):
         teacher_input = lesson_match.teacher_objective
         match_recs = reccomendedTopics.objects.filter(matched_lesson=lesson_match).first()
         match_score = match_recs.single_score.all()
+        sr_full = singleRec.objects.filter(id__in=match_score)
         top_ids = []
         for item in match_score:
             match_recs.single_score.remove(item)
@@ -1842,7 +1846,9 @@ def RemoveKeyTerms(request, lesson_id, class_id):
         if top_ids:
             matched_rt = topicInformation.objects.filter(id__in=top_ids)
             for top in matched_rt:
-                rec_rec = match_recs.single_score.remove(top)
+                sr_match = sr_full.filter(single_rec_topics=top)
+                for sr in sr_match:
+                    rec_rec = match_recs.single_score.remove(sr)
                 add_remove = match_recs.removed_topics.add(top)
                 remove_rec = match_recs.rec_topics.remove(top)
         
@@ -2088,7 +2094,7 @@ def SearchKeyTerm(request, lesson_id):
 
 
 def AddQuestionImage(request, class_id=None, lesson_id=None, subject=None, worksheet_id=None, question_id=None):
-    print('Starting')
+
     current_date = datetime.datetime.now()
     worksheet_match = worksheetFull.objects.get(id=worksheet_id)
     user_profile = User.objects.filter(username=request.user.username).first()

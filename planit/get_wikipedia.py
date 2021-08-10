@@ -465,9 +465,7 @@ def wiki_results(lesson_id, user_id, standards_nouns):
 
                                     if len(test_summary) > 4:
                                         sim_score = check_topic_relevance(test_summary, lesson_id)
-                                        print('---------')
-                                        print(sim_score)
-                                        print('---------')
+                                     
                                         if sim_score >= .10:
                                             
                                             results = word.header, test_summary, sim_score, matched_topic.id

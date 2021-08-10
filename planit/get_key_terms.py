@@ -58,6 +58,38 @@ stop_words = ['i', "'", "'" '!', '.', ':', ',', '[', ']', '(', ')', '?', "'see",
 TAG_RE = re.compile(r'<[^>]+>')
 
 
+def combine_topics(matched_topics):
+    
+    for one in matched_topics:
+        if one.id:
+            desc_full = []
+            term_one = one.item
+            one_desc_matches = one.description.all()
+            one_Topics = topicDescription.objects.filter(id__in=one_desc_matches)
+            for oi in one_Topics:
+                if oi.id not in desc_full:
+                    desc_full.append(oi.id)
+            for two in matched_topics:
+                term_two = two.item
+                if term_one.lower() == term_two.lower():
+                    if one.id != two.id: 
+                        desc_matches = two.description.all()
+                        for desc in desc_matches:
+                            if desc.id not in desc_full:
+                                desc_full.append(desc.id)
+
+                            desc.delete()
+                            two.delete()
+
+            one_desc_matches = one.description.clear()
+            for item in desc_full:
+                one_desc = topicDescription.objects.filter(id=item)
+                for desc in one_desc:
+                    one_desc_matches = one.description.add(desc)
+            
+
+
+
 
 def create_terms(key_term_list, lesson_id, matched_grade, user_id, standard_set):
    
@@ -73,20 +105,34 @@ def create_terms(key_term_list, lesson_id, matched_grade, user_id, standard_set)
         if len(item[0]) >= 3:
             topic_term = topicInformation.objects.filter(subject=subject, standard_set=standard_set, grade_level=matched_grade, item=item[0]).first()
             if topic_term:
-                pass
+                desc_m = topic_term.description.all()
+                for desc in desc_m:
+                    if desc.is_admin:
+                        topic_term.description.remove(desc)
+                    else:
+                        topic_term.description.remove(desc)
+                        desc.delete()
+                        
             else:
                 topic_term = topicInformation.objects.create(subject=subject, standard_set=standard_set, grade_level=matched_grade, item=item[0])
                 topic_term.created_by = user_profile
                 topic_term.save()
 
-
-            description_create, created = topicDescription.objects.get_or_create(description=item[1], topic_id=topic_term.id,  is_admin = False, created_by = user_profile)
+            desc_check = topicDescription.objects.filter(description=item[1], topic_id=topic_term.id,  is_admin = False, created_by = user_profile)
+            if desc_check:
+                description_create = topicDescription.objects.filter(description=item[1], topic_id=topic_term.id,  is_admin = False, created_by = user_profile).first()
+                other_desc = desc_check.exclude(id=description_create.id)
+                other_desc.delete()
+            else:
+                description_create, created = topicDescription.objects.get_or_create(description=item[1], topic_id=topic_term.id,  is_admin = False, created_by = user_profile)
+            
             topic_term.description.add(description_create)
             list_one = []
             list_two = []
             for desc in topic_term.description.all():
                 list_one.append(desc)
                 list_two.append(desc)
+
 
 
             for desc1 in list_one:
@@ -96,7 +142,6 @@ def create_terms(key_term_list, lesson_id, matched_grade, user_id, standard_set)
                     else:
                         
                         is_dup = check_duplicate_strings(desc1.description, desc2.description)
-                   
                         if is_dup:
                             topic_term.description.remove(desc2)
                             desc2.delete()
@@ -118,6 +163,7 @@ def create_terms(key_term_list, lesson_id, matched_grade, user_id, standard_set)
 
             lesson_match.objectives_topics.add(topic_term)
 
+    combine_terms = combine_topics(matched_topics)
     print('done')
 
 def string_word_count(string):

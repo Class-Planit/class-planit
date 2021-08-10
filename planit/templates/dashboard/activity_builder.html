@@ -200,7 +200,7 @@
                 <form  method="POST">
                     {% csrf_token %}
                     
-                    {% if new_text.is_initial %}
+                   
                     <div class='demo-dfree myDivToPrint' id='demo-dfree'>
                         
                         <h2 class="dfree-header mce-content-body" id='objective' contenteditable="true" style="position: relative;" spellcheck="false">
@@ -240,8 +240,16 @@
                         
                         </div>
                         <div id="big_questions_selected">
-                            <h6>Q: </h6>
-                            <h6>A: </h6>
+                            <li id='full_question'>
+                                <h6 id='single_question'>Q: <h6>
+                                <p id='single_answer'>A: </p>
+                                </li>
+                            {% for quest in big_questions %}
+                            <li id='full_question'>
+                            <h6 id='single_question'>{{ quest.question }}<h6>
+                            <p id='single_answer'>{{ quest.snippet }}</p>
+                            </li>
+                            {% endfor %}
                         </div>
                         <br>
                         <div class="showhim"><h2>Digital Resources:</h2>
@@ -250,6 +258,9 @@
                         </div>
                         <div id="youtube_links">
 
+                            {% for vid in video_match %}
+                            <li>{{vid.title}}<br>: <a href="{{vid.link}}">{{vid.link}}</a></li>
+                            {% endfor %}
                         </div>
                         
                         <hr>
@@ -299,13 +310,7 @@
 
                     </div>
                     <div id='key_term_bottom'></div>
-                    {% else %}
-                    <div class='demo-dfree myDivToPrint' id='demo-dfree'>
-                        
-                       {{ new_text.overview|safe }}
-                    </div>
-                    <div id='key_term_bottom'></div>
-                    {% endif %}
+                  
                 </form>
                 
             </div>
@@ -905,7 +910,7 @@
         },
         success: function(response) {
         $("#big_questions_selected").append(
-            "<h6>Q: " + response['question'] + " </h6><p>A: " + response['answer'] + "</p><br>"
+            "<li id='full_question'><h6>" + response['question'] + " </h6><p>" + response['answer'] + "</p></li>"
             
         );
             
