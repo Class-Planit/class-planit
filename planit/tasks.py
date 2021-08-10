@@ -328,7 +328,8 @@ def match_standard(self, teacher_input, standard_set, subject, grade_list):
    
     standards_list = []
 
-    obj = singleStandard.objects.filter(subject=subject, standards_set=standard_set, grade_level=grade_list)        
+    obj = singleStandard.objects.filter(subject=subject, standards_set=standard_set, grade_level=grade_list, is_admin=True)   
+         
     for standard in obj:
         objective = str(standard.standard_objective) +  str(standard.competency)
         result = standard.id, objective

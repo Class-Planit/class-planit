@@ -203,7 +203,54 @@ def label_activities(activity, lesson_id):
     final = mi, blooms, verbs_list, work_list
     return(final)
 
-   
+
+def  get_standards_analytics(lesson_id):
+    result = 5
+    class_objectives = lessonObjective.objects.get(id=lesson_id)
+
+    matched_activities = selectedActivity.objects.filter(lesson_overview=class_objectives, is_selected=True)
+    class_standards = class_objectives.objectives_standards.all()
+    matched_standards = singleStandard.objects.filter(id__in=class_standards)
+
+    stan_list = []
+    for stan in matched_standards:
+        stan_text = stan.standard_objective
+        stan_list.append(stan_text)
+
+    if stan_list:
+        pass
+    else:
+    #if there are no standards selected the teaching objective will act as the standard for tracking purpose
+        stan_list.append(class_objectives.teacher_objective)
+
+    if matched_activities:
+        activity_list = []
+        for activity in matched_activities:
+            if len(activity.lesson_text) >= 4:
+                activity_text = activity.lesson_text
+                #multiple inteligence level that is assigned when the activity is created 
+                
+                activity_list.append(activity_text)
+
+        
+
+
+            Document1 = ''.join([str(i) for i in activity_list])
+            Document2 = ''.join([str(i) for i in stan_list])
+
+            #checks if there are more than 4 letters in the standards list as well as the activity
+            #this function uses cosine similarity to chekc how close the activities are to the declared objective or selected standard
+            if len(Document2) and len(Document1) >= 4:
+                corpus = [Document1,Document2]
+
+                X_train_counts = count_vect.fit_transform(corpus)
+                vectorizer = TfidfVectorizer()
+                trsfm=vectorizer.fit_transform(corpus)
+                result = cosine_similarity(trsfm[0:1], trsfm)
+                result = result[0][1] * 100
+    
+
+    return(result)
 
 def label_activities_analytics_small(lesson_id):
     #returns a dict of values and labels for the progress bars on activity_builder.html
@@ -274,6 +321,8 @@ def label_activities_analytics_small(lesson_id):
             #gets retention rate 
             retention_rate = retention_activities_analytics(lesson_id, matched_activities, matched_standards)
             ret_rate = retention_rate['avg']
+            if ret_rate == 0:
+                ret_rate = 5
 
 
             Document1 = ''.join([str(i) for i in activity_list])

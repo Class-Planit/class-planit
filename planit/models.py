@@ -482,6 +482,11 @@ class singleStandard(models.Model):
                                blank=True,
                                null=True)
     competency = models.TextField(max_length=1000)
+    is_admin = models.BooleanField(default=True)
+    created_by = models.ForeignKey(User,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True)
     
     def __str__(self):
         return "%s - %s" % (self.standard_objective, self.competency)

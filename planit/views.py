@@ -849,7 +849,7 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
 
     new_text, created = lessonText.objects.get_or_create(matched_lesson=lesson_match)
     
-
+    selected_activities = selectedActivity.objects.filter(lesson_overview=lesson_match, is_selected=True)
     big_questions = googleRelatedQuestions.objects.filter(lesson_plan=lesson_match, is_selected=True)
     youtube_search = youtube_results(lesson_match.teacher_objective, lesson_id)
     
@@ -871,7 +871,7 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     video_match = youtubeSearchResult.objects.filter(id__in=vi_list, is_selected=True)
 
     form = UserSearchForm()
-    context = {'user_profile': user_profile, 'video_match': video_match, 'lesson_topics': lesson_topics, 'form': form, 'new_text': new_text, 'big_questions': big_questions, 'vid_id_list': vid_id_list, 'classroom_profile': classroom_profile, 'lesson_match': lesson_match}
+    context = {'user_profile': user_profile, 'video_match': video_match, 'lesson_topics': lesson_topics, 'form': form, 'new_text': new_text, 'big_questions': big_questions, 'vid_id_list': vid_id_list, 'classroom_profile': classroom_profile, 'selected_activities': selected_activities, 'lesson_match': lesson_match}
     return render(request, 'dashboard/activity_builder.html', context)
 
 
@@ -1972,6 +1972,18 @@ def GetActivitySummary(request, lesson_id):
     else:
         return HttpResponse("Request method is not a GET")
 
+#this is the summary on dropdowns that covers diffrentiation, engagement, retention, and alignment
+def GetStandardsAnalytics(request, lesson_id):
+    if request.method == 'GET':
+        user_profile = User.objects.filter(id=request.user.id).first()
+        #goes to get_activities.py
+        stand_analytics = get_standards_analytics(lesson_id)
+        stand_analytics = int(math.ceil(stand_analytics))
+        print(stand_analytics)
+        context = {"data": stand_analytics}
+        return JsonResponse(context)
+    else:
+        return HttpResponse("Request method is not a GET")
 
 #this pulls blooms level for activity 
 #learn about blooms here : 
@@ -2003,6 +2015,17 @@ def GetMIAnalytics(request, lesson_id):
 #this pulls in Rention Rate Analytics for Activities 
 #https://www.educationcorner.com/the-learning-pyramid.html#:~:text=The%20%22learning%20pyramid%22%2C%20sometimes,they%20learn%20through%20teaching%20others.
 def GetRetentionAnalytics(request, lesson_id):
+    if request.method == 'GET':
+        user_profile = User.objects.filter(id=request.user.id).first()
+        get_retention_data = retention_activities_analytics(lesson_id)
+        context = {"data": get_retention_data, "message": "your message"}
+
+        return JsonResponse(context)
+    else:
+        return HttpResponse("Request method is not a GET")
+
+
+def GetSatndardsAnalytics(request, lesson_id):
     if request.method == 'GET':
         user_profile = User.objects.filter(id=request.user.id).first()
         get_retention_data = retention_activities_analytics(lesson_id)

@@ -508,22 +508,23 @@ def build_activity_list(soup, user_profile, class_objectives, lesson_id):
     #this function pulls in beautiful soup and pulls out the activities that will be used to create analytics and demonstrations of knowledge
     activities_list =  soup.find('ul', {"id": "activity-div"})
     activities = [x.get_text() for x in activities_list.findAll('li')]
-    for activity in activities:
-        l_act = label_activities(activity, lesson_id)
-        new_activity, created = selectedActivity.objects.get_or_create(created_by=user_profile, lesson_overview=class_objectives, lesson_text=activity)
-        if created:
-            new_activity.verb=l_act[2]
-            new_activity.work_product=l_act[3]
-            new_activity.bloom=l_act[1]
-            new_activity.mi=l_act[0]
-        new_activity.is_selected=True
-        new_activity.save()
-        find_topics = identify_topic(activity, lesson_id)
-        if find_topics:
-            for item in find_topics:
-                match_topic = topicInformation.objects.filter(id=item).first()
-                update_matches = create_topic_matches.objectives_topics.add(match_topic)
-                update_activity = new_activity.objectives_topics.add(match_topic)
+    if len(activities) > 4:
+        for activity in activities:
+            l_act = label_activities(activity, lesson_id)
+            new_activity, created = selectedActivity.objects.get_or_create(created_by=user_profile, lesson_overview=class_objectives, lesson_text=activity)
+            if created:
+                new_activity.verb=l_act[2]
+                new_activity.work_product=l_act[3]
+                new_activity.bloom=l_act[1]
+                new_activity.mi=l_act[0]
+            new_activity.is_selected=True
+            new_activity.save()
+            find_topics = identify_topic(activity, lesson_id)
+            if find_topics:
+                for item in find_topics:
+                    match_topic = topicInformation.objects.filter(id=item).first()
+                    update_matches = create_topic_matches.objectives_topics.add(match_topic)
+                    update_activity = new_activity.objectives_topics.add(match_topic)
 
 
 

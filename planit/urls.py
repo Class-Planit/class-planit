@@ -217,6 +217,10 @@ urlpatterns = [
         view=GetActivitySummary,
         name='get_activity_summary'),
 
+    url(r'^get-standards_analytics/(?P<lesson_id>[\w-]+)/$',
+        view=GetStandardsAnalytics,
+        name='get_standards_analytics'),
+
     url(r'^get-standard-recs/(?P<lesson_id>[\w-]+)/(?P<class_id>[\w-]+)/$',
         view=UpdateStandards,
         name='get_standard'),
