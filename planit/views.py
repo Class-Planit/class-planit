@@ -841,38 +841,43 @@ def CreateObjective(request, user_id=None, week_of=None):
 # This page has the tinymce editor as well as the analytics and activity recommendations
 def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_id=None, page=None):
     user_profile = User.objects.get(id=user_id)
-    
-    classroom_profile = classroom.objects.get(id=class_id)
-    lesson_match = lessonObjective.objects.get(id=lesson_id)
+    week_of = current_week = date.today().isocalendar()[1]
 
-    lesson_topics = topicInformation.objects.filter(id__in=lesson_match.objectives_topics.all())
+    lesson_id = int(lesson_id)
+    if lesson_id == 0:
+        return redirect('create_objective', user_id=user_profile.id, week_of=week_of)
+    else:
+        classroom_profile = classroom.objects.get(id=class_id)
+        lesson_match = lessonObjective.objects.get(id=lesson_id)
 
-    new_text, created = lessonText.objects.get_or_create(matched_lesson=lesson_match)
-    
-    selected_activities = selectedActivity.objects.filter(lesson_overview=lesson_match, is_selected=True)
-    big_questions = googleRelatedQuestions.objects.filter(lesson_plan=lesson_match, is_selected=True)
-    youtube_search = youtube_results(lesson_match.teacher_objective, lesson_id)
-    
-    youtube_list = []
-    if youtube_search:
-        youtube_list = youtube_search[:3]
-    
-    vid_id_list = []
-    vi_list = []
-    for result in youtube_list:
-        link = result['link']
-        if link:
-            vid_id = video_id(link)
-            youtube_create, created = youtubeSearchResult.objects.get_or_create(lesson_plan=lesson_match, title=result['title'], link=link, vid_id=vid_id)
-            vi_list.append(youtube_create.id)
-            vid_id_list.append(youtube_create)
+        lesson_topics = topicInformation.objects.filter(id__in=lesson_match.objectives_topics.all())
+
+        new_text, created = lessonText.objects.get_or_create(matched_lesson=lesson_match)
+        
+        selected_activities = selectedActivity.objects.filter(lesson_overview=lesson_match, is_selected=True)
+        big_questions = googleRelatedQuestions.objects.filter(lesson_plan=lesson_match, is_selected=True)
+        youtube_search = youtube_results(lesson_match.teacher_objective, lesson_id)
+        
+        youtube_list = []
+        if youtube_search:
+            youtube_list = youtube_search[:3]
+        
+        vid_id_list = []
+        vi_list = []
+        for result in youtube_list:
+            link = result['link']
+            if link:
+                vid_id = video_id(link)
+                youtube_create, created = youtubeSearchResult.objects.get_or_create(lesson_plan=lesson_match, title=result['title'], link=link, vid_id=vid_id)
+                vi_list.append(youtube_create.id)
+                vid_id_list.append(youtube_create)
 
 
-    video_match = youtubeSearchResult.objects.filter(id__in=vi_list, is_selected=True)
+        video_match = youtubeSearchResult.objects.filter(id__in=vi_list, is_selected=True)
 
-    form = UserSearchForm()
-    context = {'user_profile': user_profile, 'video_match': video_match, 'lesson_topics': lesson_topics, 'form': form, 'new_text': new_text, 'big_questions': big_questions, 'vid_id_list': vid_id_list, 'classroom_profile': classroom_profile, 'selected_activities': selected_activities, 'lesson_match': lesson_match}
-    return render(request, 'dashboard/activity_builder.html', context)
+        form = UserSearchForm()
+        context = {'user_profile': user_profile, 'video_match': video_match, 'lesson_topics': lesson_topics, 'form': form, 'new_text': new_text, 'big_questions': big_questions, 'vid_id_list': vid_id_list, 'classroom_profile': classroom_profile, 'selected_activities': selected_activities, 'lesson_match': lesson_match}
+        return render(request, 'dashboard/activity_builder.html', context)
 
 
 #Adds or Removes Selected Standards
@@ -1448,6 +1453,11 @@ def StudentPerformance(request, user_id, class_id, week_of):
         start = 1
     
     teacher_classes = classroom.objects.filter(main_teacher=user_profile)
+    teacher_class_id = classroom.objects.filter(main_teacher=user_profile).values_list('id', flat=True)
+    lesson_match = lessonObjective.objects.filter(lesson_classroom__in=teacher_classes, week_of__range=[start, current_week])
+    worksheet_matches = worksheetFull.objects.filter(lesson_overview__in=lesson_match)
+
+    worksheet_assignments = worksheetClassAssignment.objects.filter(worksheet_full__in=worksheet_matches)
     all_grades = []
     all_subjects = []
 
@@ -1467,9 +1477,13 @@ def StudentPerformance(request, user_id, class_id, week_of):
 
     
     week_breakdown = get_weekly_brackets(user_id, start, current_week, current_year)
-    week_breakdown['low'] =  [ 2, 1, 2, 1, 2, 3, 4, 4, 2, 4, 3, 3]
-    week_breakdown['mid'] =  [14,12,11,14,10,12,14,13,13,14,13,15]
-    week_breakdown['high'] = [ 4, 7, 7, 5, 8, 5, 2, 3, 5, 2, 4, 2]
+    if week_breakdown:
+        pass
+    else:
+        week_breakdown['low'] =  [ 2, 1, 2, 1, 2, 3, 4, 4, 2, 4, 3, 3]
+        week_breakdown['mid'] =  [14,12,11,14,10,12,14,13,13,14,13,15]
+        week_breakdown['high'] = [ 4, 7, 7, 5, 8, 5, 2, 3, 5, 2, 4, 2]
+    
     top_lessons = get_demo_ks_brackets(user_id, start, current_week, current_year)
     student_results = get_student_results(user_id, start, current_week, current_year)
 
@@ -1487,7 +1501,7 @@ def StudentPerformance(request, user_id, class_id, week_of):
             return redirect('new_digital_activities', user_id=user_id, worksheet_id=prev.id, question_id=0)
     else:
         form = worksheetFullForm()
-    return render(request, 'dashboard/assignments.html', {'user_profile': user_profile, 'form': form, 'subject_options': subject_options, 'grade_options': grade_options, 'all_themes': all_themes, 'week_breakdown': week_breakdown, 'top_lessons': top_lessons, 'student_results': student_results})
+    return render(request, 'dashboard/assignments.html', {'user_profile': user_profile, 'worksheet_matches': worksheet_matches, 'form': form, 'subject_options': subject_options, 'grade_options': grade_options, 'all_themes': all_themes, 'week_breakdown': week_breakdown, 'top_lessons': top_lessons, 'student_results': student_results})
 
 
 ####### these functions handle the students answers as they go through the digital worksheet #########
