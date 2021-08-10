@@ -26,7 +26,28 @@ def get_week_info(week_of):
     week_info = {'current_week': current_week, 'active_week': active_week, 'previous_week': previous_week, 'next_week': next_week}
     return(week_info)
 
-def get_subject_and_classroom(objective_matches):
+def get_subject_and_classroom(objective_matches, user_id):
+    user_profile = User.objects.get(id=user_id)
+
+    subject_results = []
+    for objective in objective_matches:
+        subject_match = objective.subject_id
+        subject_title = objective.subject 
+        results = subject_match,subject_title
+        if results not in subject_results:
+            subject_results.append(results)
+    classroom_results = []
+
+    all_classrooms = classroom.objects.filter(main_teacher=user_profile)
+    for each_classroom in all_classrooms:
+        classroom_match = each_classroom.id
+        classroom_title = each_classroom.classroom_title
+        results = classroom_match,classroom_title
+        if results not in classroom_results:
+            classroom_results.append(results)
+    return subject_results, classroom_results
+
+def get_subject_and_classroom_dashboard(objective_matches):
     subject_results = []
     for objective in objective_matches:
         subject_match = objective.subject_id

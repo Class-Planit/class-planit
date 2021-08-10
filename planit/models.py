@@ -450,6 +450,15 @@ class textBookBackground(models.Model):
         return "%s" % (self.line_counter)
 
 
+class standardsTrackingInfo(models.Model):
+    track_subject = models.ForeignKey(standardSubjects,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    track_classroom = models.ForeignKey(classroom,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
 
 
 class singleStandard(models.Model):

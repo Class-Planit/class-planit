@@ -578,18 +578,21 @@ def ClassroomDashboard(request, user_id=None, class_id=None):
 
     #get all students in classroom and info
     student_list, no_students = get_student_list(user_id, class_id)
-    student_info = get_student_info(student_list)
+    student_info = get_student_info(student_list, user_id)
     
     understanding_breakdown = get_levels_of_understanding(class_id, current_academic_year, current_week, user_profile)
     #gets the classrooms teachers are main teacher on 
     classroom_profiles = classroom.objects.filter(main_teacher=user_profile)
     objective_matches = lessonObjective.objects.filter(lesson_classroom__in=classroom_profiles)
     # gets the subjects and classrooms for the dropdown options and subjects display
-    subject_results, classroom_results = get_subject_and_classroom(objective_matches)
+    subject_results, classroom_results = get_subject_and_classroom(objective_matches, user_id)
+    num_classrooms = len(classroom_results)
+    print(classroom_results)
+    print(num_classrooms)
 
     context = { 'user_profile': user_profile, 'student_summary': student_summary, 'class_profile': class_profile,\
                 'subject_results': subject_results, 'classroom_results': classroom_results, 'student_list': student_list,\
-                'student_info': student_info, 'no_students': no_students}
+                'student_info': student_info, 'no_students': no_students, 'num_classrooms': num_classrooms}
 
     return render(request, 'dashboard/classrooms.html', context)
 
@@ -623,7 +626,8 @@ def ClassroomSettingsView(request, user_id=None, classroom_id=None, view_ref=Non
     # the lessonObjective is a single lesson plan for one subject, one grade, in one classroom
     objective_matches = lessonObjective.objects.filter(lesson_classroom__in=classroom_profiles)
     # gets the subjects and classrooms for the dropdown options and subjects display
-    subject_results, classroom_results = get_subject_and_classroom(objective_matches)
+    subject_results, classroom_results = get_subject_and_classroom(objective_matches, user_id)
+    num_classrooms = len(classroom_results)
     confirmation = int(confirmation)
 
     if request.method == "POST":
@@ -652,18 +656,83 @@ def ClassroomSettingsView(request, user_id=None, classroom_id=None, view_ref=Non
     context = {'user_profile': user_profile, 'form_subject': form_subject, 'form_class_title': form_class_title, 'view_ref': view_ref,\
                'student_summary': student_summary, 'class_profile': class_profile, 'subject_results': subject_results, 'classroom_results': classroom_results,\
                'confirmation': confirmation, 'subject_list': subject_list, 'current_subjects': current_subjects, 'grade_list': grade_list,\
-               'current_grade_levels': current_grade_levels, 'student_list': student_list, 'teacher_list': teacher_list}
+               'current_grade_levels': current_grade_levels, 'student_list': student_list, 'teacher_list': teacher_list, 'num_classrooms': num_classrooms}
     return render(request, 'dashboard/classrooms_settings.html', context)
 
 
 
 
 #view standards that have been addressed so far 
+#user starts narrowing down standards to view by selecting subject and classroom
 def StandardsTracking(request, user_id=None):
     current_year = datetime.datetime.now().year
     user_profile = User.objects.filter(username=request.user.username).first()
     
-    return render(request, 'dashboard/app-analysis.html', {'user_profile': user_profile,})
+    user_classrooms = classroom.objects.filter(main_teacher=user_profile)
+    subjects = []
+    classroom_results = []
+    if user_classrooms:
+        for classroom_m in user_classrooms:
+            c_result = classroom_m.id, classroom_m.classroom_title
+            classroom_results.append(c_result)
+            s_match = classroom_m.subjects.all()
+            subject_match = standardSubjects.objects.filter(id__in=s_match)
+            for subject in subject_match:
+                subject_id = subject.id
+                subject_title = subject.subject_title
+                result = subject_id, subject_title
+                if result not in subjects:
+                    subjects.append(result)
+    subject_results = subjects
+
+    if request.method == "POST":
+        form = standardsTrackingInfoForm(request.POST, request.FILES)
+        if form.is_valid():
+            prev = form.save(commit=False)
+            use_subject = prev.track_subject
+            use_subject_id = use_subject.id
+            use_classroom = prev.track_classroom
+            use_classroom_id = use_classroom.id
+            prev.save()
+            
+            return redirect('narrow_standard_tracker', subject_id=use_subject_id, classroom_id=use_classroom_id)
+    else:
+        form = standardsTrackingInfoForm()
+
+
+    print(subject_results)
+    print(classroom_results)
+    
+    return render(request, 'dashboard/app-analysis.html', {'user_profile': user_profile, 'subject_results': subject_results, 'classroom_results': classroom_results})
+
+
+#After narrowing down the standards tracking with subject and classroom
+#displays the skill topics that are linked to multiple standards (has clickable standards)
+def NarrowStandardsTracking(request, user_id=None, classroom_id=None, subject_id=None):
+    user_profile = User.objects.filter(username=request.user.username).first()
+    tracking_subject = standardSubjects.objects.filter(id=subject_id).first()
+    tracking_classroom = classroom.objects.filter(id=classroom_id).first()
+
+
+    standards_set_match = user_profile.standards_set
+    grade_level_match = tracking_classroom.single_grade
+    #filter for all standards related to the subject and grade level of the classroom
+    all_standards = singleStandard.objects.filter(standards_set= standards_set_match, subject=tracking_subject, grade_level= grade_level_match)
+
+    context = {'user_profile': user_profile, 'tracking_subject': tracking_subject.subject_title, 'tracking_classroom': tracking_classroom.classroom_title, \
+               'all_standards': all_standards}
+
+    return render(request, 'dashboard/app-analysis-skills.html', context)
+
+
+#After selecting one specific standard, subject and classroom
+#displays the standard and respective info about the standard to user
+def SingleStandardsTracking(request, user_id=None, subject_id=None, classroom_id=None):
+    user_profile = User.objects.filter(username=request.user.username).first()
+
+
+    return render(request, 'dashboard/app-analysis-single.html', {'user_profile': user_profile, 'subject_results': subject_results, 'classroom_results': classroom_results})
+
 
 
 #Update the week_of to reflect a different active week
@@ -711,7 +780,7 @@ def Dashboard(request, week_of, subject_id, classroom_id):
                 active_lessons = objective_matches.filter(subject_id=subject_id, lesson_classroom_id=classroom_id)
 
         # gets the subjects and classrooms for the dropdown options
-        subject_results, classroom_results = get_subject_and_classroom(objective_matches)
+        subject_results, classroom_results = get_subject_and_classroom_dashboard(objective_matches)
         
         context = {'user_profile': user_profile, 'current_week': week_info['current_week'], 'active_week': week_info['active_week'], 'objective_matches': objective_matches,\
                     'previous_week': week_info['previous_week'], 'next_week': week_info['next_week'], 'subject_results': subject_results, 'classroom_results': classroom_results, \
