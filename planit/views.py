@@ -858,16 +858,20 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
         youtube_list = youtube_search[:3]
     
     vid_id_list = []
+    vi_list = []
     for result in youtube_list:
         link = result['link']
         if link:
             vid_id = video_id(link)
             youtube_create, created = youtubeSearchResult.objects.get_or_create(lesson_plan=lesson_match, title=result['title'], link=link, vid_id=vid_id)
+            vi_list.append(youtube_create.id)
             vid_id_list.append(youtube_create)
 
 
+    video_match = youtubeSearchResult.objects.filter(id__in=vi_list, is_selected=True)
+
     form = UserSearchForm()
-    context = {'user_profile': user_profile, 'video_match': vid_id_list, 'lesson_topics': lesson_topics, 'form': form, 'new_text': new_text, 'big_questions': big_questions, 'vid_id_list': vid_id_list, 'classroom_profile': classroom_profile, 'lesson_match': lesson_match}
+    context = {'user_profile': user_profile, 'video_match': video_match, 'lesson_topics': lesson_topics, 'form': form, 'new_text': new_text, 'big_questions': big_questions, 'vid_id_list': vid_id_list, 'classroom_profile': classroom_profile, 'lesson_match': lesson_match}
     return render(request, 'dashboard/activity_builder.html', context)
 
 
@@ -1034,6 +1038,7 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
             question_match = current_question =  topicQuestionitem.objects.create(created_by=user_profile, subject=subject_match_full, is_admin=False)
             get_worksheet.questions.add(question_match)
             q = 0 
+            next_q = 1
         else:
             if matched_questions:
                 q = int(question_id)
@@ -1042,6 +1047,7 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
             elif 'New' in question_id:
                 is_new = True
                 q = 0
+                next_q = 1
                 question_match = current_question =  topicQuestionitem.objects.create(created_by=user_profile, subject=subject_match_full, is_admin=False)
                 get_worksheet.questions.add(question_match)
             else:
@@ -2198,3 +2204,143 @@ def AddQuestionImage(request, class_id=None, lesson_id=None, subject=None, works
 #############################################################
 ######    End Data Analytics and Ai powered functions #######
 #############################################################
+
+
+
+def SupAdDash(request):
+    user_profile = User.objects.filter(username=request.user.username).first()
+
+    page = 'Dashboard'
+    return render(request, 'administrator/admin_dashboard.html', {'user_profile': user_profile, 'page': page})
+
+
+def AddDemoKSTemplate(request, act_id=None, act_type=None):
+    user_profile = User.objects.filter(username=request.user.username).first()
+    all_demos = LearningDemonstrationTemplate.objects.all().order_by('content')
+    page = 'Demo'
+    if 'Edit' in act_type:
+        act_match = LearningDemonstrationTemplate.objects.get(id=act_id)
+        if request.method == "POST":
+
+            form2 = LearningDemonstrationTemplateForm(request.POST, instance=act_match)
+            if form2.is_valid():
+                prev = form2.save()
+
+                return redirect('add_gs', act_id=prev.id, act_type='Demo')
+
+        else:
+
+            form2 = LearningDemonstrationTemplateForm(instance=act_match)
+        return render(request, 'administrator/admin_dashboard.html', {'user_profile': user_profile, 'form2': form2, 'page': page, 'all_demos': all_demos})
+
+    else:
+        if request.method == "POST":
+
+            form2 = LearningDemonstrationTemplateForm(request.POST)
+            if form2.is_valid():
+                prev = form2.save()
+
+                return redirect('add_gs', act_id=prev.id, act_type='Demo')
+
+        else:
+
+            form2 = LearningDemonstrationTemplateForm()
+        return render(request, 'administrator/admin_dashboard.html', {'user_profile': user_profile, 'form2': form2, 'page': page, 'all_demos': all_demos})
+
+def AddActivityTemplate(request, act_id=None, act_type=None):
+    user_profile = User.objects.filter(username=request.user.username).first()
+
+    all_lessons = lessonTemplates.objects.all().order_by('wording')
+    page = 'Activity'
+    if 'Edit' in act_type:
+        act_match = lessonTemplates.objects.get(id=act_id)
+        if request.method == "POST":
+
+            form = lessonTemplatesForm(request.POST, instance=act_match)
+            if form.is_valid():
+                prev = form.save()
+
+                return redirect('add_gs', act_id=prev.id, act_type='Activity')
+
+        else:
+
+            form = lessonTemplatesForm(instance=act_match)
+        return render(request, 'administrator/admin_dashboard.html', {'user_profile': user_profile, 'form': form, 'page': page})
+
+    else:
+        if request.method == "POST":
+
+            form = lessonTemplatesForm(request.POST)
+            if form.is_valid():
+                prev = form.save()
+
+                return redirect('add_gs', act_id=prev.id, act_type='Activity')
+
+        else:
+
+            form = lessonTemplatesForm()
+        return render(request, 'administrator/admin_dashboard.html', {'user_profile': user_profile, 'all_lessons': all_lessons, 'form': form, 'page': page})
+
+
+def SelectGradeSubjectAdmin(request, act_id=None, act_type=None):
+    user_profile = User.objects.filter(username=request.user.username).first()
+
+    page = 'GradeSubject'
+    if 'Demo' in act_type:
+        act_match = LearningDemonstrationTemplate.objects.get(id=act_id)
+        content_match = act_match.content
+        other_matches = LearningDemonstrationTemplate.objects.filter(content=content_match).exclude(id=act_id).delete()
+        t_types = act_match.topic_type.all()
+    else:
+        act_match = lessonTemplates.objects.get(id=act_id)
+        content_match = act_match.wording
+        other_matches = lessonTemplates.objects.filter(wording=content_match).exclude(id=act_id).delete()
+        t_types = act_match.components.all()
+
+    tt_list = topicTypes.objects.filter(id__in=t_types)
+    if request.method == "POST":
+
+        form3 = multiSelectGSForm(request.POST)
+        if form3.is_valid():
+            prev = form3.save()
+            subjects = prev.subject
+            grades = prev.grade_level
+            
+            for grd in grades.all():
+                for sub in subjects.all():
+                    current_act = act_match
+                    current_act.id = None
+                    current_act.save()
+                    current_act.grade_level = grd
+                    current_act.subject = sub
+                    current_act.save()
+                    for tt in tt_list:
+                        if 'Demo' in act_type: 
+                            current_act.topic_type.add(tt)
+                        else:
+                            current_act.components.add(tt)
+                    act_match.delete()
+            return redirect('sup_admin_dashboard')
+
+    else:
+
+        form3 = multiSelectGSForm()
+    return render(request, 'administrator/admin_dashboard.html', {'user_profile': user_profile, 'form3': form3, 'page': page})
+
+
+
+def DeleteAdminPlanning(request, act_id=None, act_type=None):
+    user_profile = User.objects.filter(username=request.user.username).first()
+
+
+    if 'Demo' in act_type:
+        act_match = LearningDemonstrationTemplate.objects.get(id=act_id)
+        content_match = act_match.content
+        other_matches = LearningDemonstrationTemplate.objects.filter(content=content_match).delete()
+
+    else:
+        act_match = lessonTemplates.objects.get(id=act_id)
+        content_match = act_match.wording
+        other_matches = lessonTemplates.objects.filter(wording=content_match).delete()
+
+    return redirect('sup_admin_dashboard')

@@ -488,11 +488,12 @@ def get_plural_types_activity(topic_list):
         t_type = []
         for item in d_matched:
             t_type.append(item.description)
-        full_desc = ' '.join(t_type)
-        result = topic.id, words.lower(), full_desc.lower()
-        word_list.append(result)
-        result = topic.id, words.lower()
-        compare_list.append(result)
+        if t_type:
+            full_desc = ' '.join(t_type)
+            result = topic.id, words.lower(), full_desc.lower()
+            word_list.append(result)
+            result = topic.id, words.lower()
+            compare_list.append(result)
 
     for term in word_list:
         for word in compare_list:
@@ -856,7 +857,7 @@ def generate_term_recs(teacher_input, class_id, lesson_id, user_id):
 
     word_count = 0
 
-
+    print(single_score_list_count)
     if single_score_list_count < 20:
         
         #demonstrations of knowledge are parts of an activity that says what we want students to know 
@@ -972,7 +973,7 @@ def generate_term_recs(teacher_input, class_id, lesson_id, user_id):
             score = term.sim_score
             result = topic_id, score, rec_id
             final_list.append(result)
-
+        print('final_list One', final_list)
     else:
         for term in current_rec_list.rec_topics.all():
             rec_id = term.id
@@ -981,7 +982,7 @@ def generate_term_recs(teacher_input, class_id, lesson_id, user_id):
             result = topic_id, score, rec_id
             final_list.append(result)
 
-
+        print('final_list Two', final_list)
     final_list.sort(key=lambda x: x[1], reverse=True)
 
 

@@ -374,7 +374,11 @@ def wiki_results(lesson_id, user_id, standards_nouns):
             if lesson_match:
                 link_list = []
                 
-                textbook_match, created = textBookTitle.objects.get_or_create(title=wiki_title[0], prim_topic_id=matched_topic.id)
+                check_textbook = textBookTitle.objects.filter(title=wiki_title[0], prim_topic_id=matched_topic.id).first()
+                if check_textbook:
+                    textbook_match, created = check_textbook, False
+                else:
+                    textbook_match, created = textBookTitle.objects.get_or_create(title=wiki_title[0], prim_topic_id=matched_topic.id)
  
                 if created:
                     #gets main item summary 
@@ -475,7 +479,7 @@ def wiki_results(lesson_id, user_id, standards_nouns):
                                             if results not in final_terms:
                                                 final_terms.append(results)
                                     else:
-                                        if len(secondary_term[1]) > 4:
+                                        if len(secondary_term) > 4:
                                             sim_score = check_topic_relevance(secondary_term, lesson_id)
                                           
                                             if sim_score >= .10:

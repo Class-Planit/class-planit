@@ -171,6 +171,28 @@ urlpatterns = [
         view=StandardsTracking,
         name='standard_tracker'),
 
+
+    url(r'^123admin8401/$',
+        view=SupAdDash,
+        name='sup_admin_dashboard'),
+
+    url(r'^demo-123admin8401/(?P<act_id>[\w-]+)/(?P<act_type>[\w-]+)/$',
+        view=AddDemoKSTemplate,
+        name='admin_demo_ks'),
+    
+    url(r'^act-123admin8401/(?P<act_id>[\w-]+)/(?P<act_type>[\w-]+)/$',
+        view=AddActivityTemplate,
+        name='admin_activity'),
+
+    url(r'^delete-123admin8401/(?P<act_id>[\w-]+)/(?P<act_type>[\w-]+)/$',
+        view=DeleteAdminPlanning,
+        name='delete_admin_info'),
+
+    url(r'^gs-123admin8401/(?P<act_id>[\w-]+)/(?P<act_type>[\w-]+)/$',
+        view=SelectGradeSubjectAdmin,
+        name='add_gs'),
+
+
     url(r'^narrow-standard-tracking/(?P<subject_id>[\w-]+)/(?P<classroom_id>[\w-]+)/',
         view=NarrowStandardsTracking,
         name='narrow_standard_tracker'),

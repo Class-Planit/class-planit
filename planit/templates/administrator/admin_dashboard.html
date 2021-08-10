@@ -1,0 +1,94 @@
+
+{% extends 'dashboard/base.html' %}
+{% load static %}
+{% block content %}
+
+                
+<main class="content">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+
+        <div class="btn-toolbar">
+            <button class="btn btn-primary btn-sm mr-2 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="fas fa-plus mr-2"></span>New Task
+            </button>
+            <div class="dropdown-menu dashboard-dropdown dropdown-menu-left mt-2">
+                <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-tasks mr-2"></span>New Task</a>
+                <a class="dropdown-item font-weight-bold" href="#">
+                    Upload Files</a>
+                <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-user-shield mr-2"></span>Preview Security</a>
+                <div role="separator" class="dropdown-divider"></div>
+                <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-rocket text-danger mr-2"></span>Upgrade to Pro</a>
+            </div>
+        </div>
+        <div class="btn-group mr-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+        </div>
+
+    </div>
+    <section class="section section-md ">
+        <div class="container">
+
+            <div class="row">
+                <div class="col-lg-1">
+                    
+                </div>
+                <div class="col-lg-6">
+                    <h2 class="h4 mb-4"><center>Your Classrooms:</center></h2>
+
+                    <a href="{% url 'admin_demo_ks' act_id=0 act_type='None' %}" type="button" class="btn btn-primary">Add Demo Template</a>
+                    <a href="{% url 'admin_activity' act_id=0 act_type='None'%}" type="button" class="btn btn-secondary">Add Activity Template</a>
+                    <hr>
+                    {% if form %}
+                    <h5>Add Demo KS</h5>
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <input type="submit" value="Add" class="btn btn-info">
+                    </form>
+                    {% endif %}
+                    {% if form2 %}
+                    <h5>Add Activity</h5>
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form2.as_p }}
+                        <input type="submit" value="Add" class="btn btn-info">
+                    </form>
+                    {% endif %}
+                    {% if form3 %}
+                    <h5>Select Grades and Subjects:</h5>
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form3.as_p }}
+                        <input type="submit" value="Add" class="btn btn-info">
+                    </form>
+                    {% endif %}
+                </div>
+                <div class="col-lg-3">
+
+                    {% if all_lessons %}
+                        {% for lesson in all_lessons %}
+                            {% ifchanged lesson.wording %}
+                            <li><a href="{% url 'admin_activity' act_id=lesson.id act_type='Edit' %}">{{ lesson }}</a> | 
+                                <a href="{% url 'delete_admin_info' act_id=lesson.id act_type='Activity' %}"><i class="fa fa-trash" style="color:lightgray;float: right" ></i> </a></li>
+                            {% endifchanged %}
+                        {% endfor %}
+
+                    {% endif %}
+                    {% if all_demos %}
+                        {% for demo in all_demos %}
+                            {% ifchanged demo.content %}
+                            <li><a href="{% url 'admin_demo_ks' act_id=demo.id act_type='Edit' %}">{{ demo }}</a>| 
+                                <a href="{% url 'delete_admin_info' act_id=demo.id act_type='Demo' %}"><i class="fa fa-trash" style="color:lightgray;float: right" ></i> </a></li>
+                            {% endifchanged %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+                
+            </div>
+        </div>
+    </section>
+</main>
+
+{% endblock %}
