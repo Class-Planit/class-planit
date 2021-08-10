@@ -2309,8 +2309,10 @@ def SelectGradeSubjectAdmin(request, act_id=None, act_type=None):
             for grd in grades.all():
                 for sub in subjects.all():
                     current_act = act_match
+                    print(current_act.id)
                     current_act.id = None
                     current_act.save()
+                    print(current_act.id)
                     current_act.grade_level = grd
                     current_act.subject = sub
                     current_act.save()
@@ -2319,7 +2321,8 @@ def SelectGradeSubjectAdmin(request, act_id=None, act_type=None):
                             current_act.topic_type.add(tt)
                         else:
                             current_act.components.add(tt)
-                    act_match.delete()
+            
+            
             return redirect('sup_admin_dashboard')
 
     else:
