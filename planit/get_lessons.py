@@ -507,23 +507,23 @@ def retention_activities_analytics(lesson_id):
 def build_activity_list(soup, user_profile, class_objectives, lesson_id):
     #this function pulls in beautiful soup and pulls out the activities that will be used to create analytics and demonstrations of knowledge
     activities_list =  soup.find('ul', {"id": "activity-div"})
-    print(activities_list)
+    
     if activities_list:
         activities = [x.get_text() for x in activities_list.findAll('li')]
         
         for activity in activities:
-            print('-------------')
-            print(activity)
-            print('-------------')
+            
             if len(activity) > 4:
                 l_act = label_activities(activity, lesson_id)
                 new_activity, created = selectedActivity.objects.get_or_create(created_by=user_profile, lesson_overview=class_objectives, lesson_text=activity)
+              
                 if created:
                     new_activity.verb=l_act[2]
                     new_activity.work_product=l_act[3]
                     new_activity.bloom=l_act[1]
                     new_activity.mi=l_act[0]
-                new_activity.is_selected=True
+
+                new_activity.is_selected = True
                 new_activity.save()
                 find_topics = identify_topic(activity, lesson_id)
                 if find_topics:

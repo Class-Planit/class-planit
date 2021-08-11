@@ -160,9 +160,7 @@
 </style>
 </head>
 <body>
-    {% if user.is_superuser %}
-    {{ selected_activities }}
-    {% endif %}
+   
     <div class="preloader bg-soft flex-column justify-content-center align-items-center">
         <img class="loader-element" src="{% static 'images/dashboard/circle_logo.svg' %}" height="50" alt="Rocket logo">
     </div>
@@ -716,7 +714,7 @@
         }
 
     })
-}, 40000);
+}, 8000);
 </script> 
 
 <!----| Select TinyMce Text |-->

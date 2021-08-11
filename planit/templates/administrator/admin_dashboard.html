@@ -30,11 +30,8 @@
         <div class="container">
 
             <div class="row">
-                <div class="col-lg-1">
-                    
-                </div>
                 <div class="col-lg-6">
-                    <h2 class="h4 mb-4"><center>Your Classrooms:</center></h2>
+                    <h2 class="h4 mb-4"><center>Admin Dashboards:</center></h2>
                     <a href="{% url 'standards_upload'  %}" type="button" class="btn btn-primary">Upload Standards</a>
                     <a href="{% url 'topic_upload' %}" type="button" class="btn btn-primary">Topic Upload</a>
                     <a href="{% url 'admin_demo_ks' act_id=0 act_type='None' %}" type="button" class="btn btn-primary">Add Demo Template</a>
@@ -64,6 +61,10 @@
                         <input type="submit" value="Add" class="btn btn-info">
                     </form>
                     {% endif %}
+                </div>
+                <div class="col-lg-3">
+                    <h6>Preview:</h6>
+                    
                 </div>
                 <div class="col-lg-3">
 
