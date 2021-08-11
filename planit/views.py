@@ -143,6 +143,11 @@ def FormFull(request, retry=None):
 
             school_user_match = school_user.objects.get(user=user_id)
             school_user_match.standards_set = standard_match
+            school_user_match.first_name = user.first_name
+            school_user_match.last_name = user.last_name
+            school_user_match.email = user.email
+            school_user_match.username = user.username
+            school_user_match.save()
 
             welcome_message = 'Welcome to Class Planit, %s! We will be in touch when your account is activated.' % (username)
         
