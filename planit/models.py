@@ -1320,7 +1320,7 @@ class selectedActivity(models.Model):
     
 
     def __str__(self):
-        return "%s - %s" % (self.verb, self.work_product)
+        return "%s" % (self.lesson_text)
 
 
 

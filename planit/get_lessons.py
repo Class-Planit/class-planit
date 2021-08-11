@@ -512,6 +512,9 @@ def build_activity_list(soup, user_profile, class_objectives, lesson_id):
         activities = [x.get_text() for x in activities_list.findAll('li')]
         
         for activity in activities:
+            print('-------------')
+            print(activity)
+            print('-------------')
             if len(activity) > 4:
                 l_act = label_activities(activity, lesson_id)
                 new_activity, created = selectedActivity.objects.get_or_create(created_by=user_profile, lesson_overview=class_objectives, lesson_text=activity)
