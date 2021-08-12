@@ -427,10 +427,10 @@ def wiki_results(lesson_id, user_id, standards_nouns):
                                             if word[0] in final_line:
                                                 if "^" not in final_line:
                                                     wiki_text = word[0], final_line
-                                                    
-                                                    new_text, created = textBookBackground.objects.get_or_create(textbook=textbook_match , header= word[0], section=word[1] ,page_counter=1, line_text=final_line[:999])
-                                                    new_text.line_counter= line_counter
-                                                    new_text.save()
+                                                    if len(final_line) <= 999:
+                                                        new_text, created = textBookBackground.objects.get_or_create(textbook=textbook_match , header= word[0], section=word[1] ,page_counter=1, line_text=final_line)
+                                                        new_text.line_counter= line_counter
+                                                        new_text.save()
                                            
 
                 else:
