@@ -30,11 +30,11 @@
     
         <div class="form-group mb-0 mr-3">
             {% if current_week == active_week %}
-                <a type="button" class="btn btn-primary" href="{% url 'Dashboard' week_of='Current' subject_id='All' classroom_id='All' %}" style="color: white">
+                <a type="button" class="btn btn-primary" href="{% url 'Dashboard' week_of='Current' subject_id='All' classroom_id='All' standard_id='All' %}" style="color: white">
                     Displaying Current Week
                 </a>
             {% else %}
-                <a type="button" class="btn btn-primary" href="{% url 'Dashboard' week_of='Current' subject_id='All' classroom_id='All' %}" style="color: white">
+                <a type="button" class="btn btn-primary" href="{% url 'Dashboard' week_of='Current' subject_id='All' classroom_id='All' standard_id='All' %}" style="color: white">
                     <i class="fas fa-angle-left lg"></i> Back to Current Week
                 </a>
             {% endif %}
@@ -76,12 +76,12 @@
                                     Dropdown
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                                    <li><a class="dropdown-item" href="{% url 'Dashboard' week_of=active_week subject_id='All' classroom_id=active_classroom_id %}">All subjects</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'Dashboard' week_of=active_week subject_id='All' classroom_id=active_classroom_id standard_id='All' %}">All subjects</a></li>
                                     {% for subject in subject_results %}
                                         {% if subject.id == active_subject_id %}
                                             <li><a class="dropdown-item active" href="#" aria-current="true">{{ subject.1 }}</a></li>
                                         {% else %}
-                                            <li><a class="dropdown-item" href="{% url 'Dashboard' week_of=active_week subject_id=subject.0 classroom_id=active_classroom_id %}">{{ subject.1 }}</a></li>
+                                            <li><a class="dropdown-item" href="{% url 'Dashboard' week_of=active_week subject_id=subject.0 classroom_id=active_classroom_id standard_id='All' %}">{{ subject.1 }}</a></li>
                                         {% endif %}
                                     {% endfor %}
                                 </ul>
@@ -91,12 +91,12 @@
                                   Subject
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <a class="dropdown-item" href="{% url 'Dashboard' week_of=active_week subject_id='All' classroom_id=active_classroom_id %}">All subjects</a>
+                                    <a class="dropdown-item" href="{% url 'Dashboard' week_of=active_week subject_id='All' classroom_id=active_classroom_id standard_id='All' %}">All subjects</a>
                                     {% for subject in subject_results %}
                                         {% if subject.0 == active_subject_id %}
                                             <a class="dropdown-item active" href="#" aria-current="true">{{ subject.1 }} (active)</a>
                                         {% else %}
-                                            <a class="dropdown-item" href="{% url 'Dashboard' week_of=active_week subject_id=subject.0 classroom_id=active_classroom_id %}">{{ subject.1 }}</a>
+                                            <a class="dropdown-item" href="{% url 'Dashboard' week_of=active_week subject_id=subject.0 classroom_id=active_classroom_id standard_id='All' %}">{{ subject.1 }}</a>
                                         {% endif %}
                                     {% endfor %}
                                 </div>
@@ -109,9 +109,9 @@
                                   Classroom
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <a class="dropdown-item" href="{% url 'Dashboard' week_of=active_week subject_id=active_subject_id classroom_id='All' %}">All classrooms</a>
+                                    <a class="dropdown-item" href="{% url 'Dashboard' week_of=active_week subject_id=active_subject_id classroom_id='All' standard_id='All' %}">All classrooms</a>
                                     {% for classroom in classroom_results %}
-                                    <a class="dropdown-item" href="{% url 'Dashboard' week_of=active_week subject_id=active_subject_id classroom_id=classroom.0 %}">{{ classroom.1 }}</a>
+                                    <a class="dropdown-item" href="{% url 'Dashboard' week_of=active_week subject_id=active_subject_id classroom_id=classroom.0 standard_id='All' %}">{{ classroom.1 }}</a>
                                     {% endfor %}
                                 </div>
                             </div>

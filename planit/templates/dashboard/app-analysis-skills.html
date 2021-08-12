@@ -7,10 +7,22 @@
                 
             </div>
         </div>
-        
-        <h2 class="h4 mb-4"><center>Standards Tracking</center></h2><br>
-        <h4 class="h5 mb-4"><center>Skill topics that fall under the subject, {{ tracking_subject }}, and classroom, {{ tracking_classroom }}...</center></h4>
-        
+        <div class="form-group mb-0 mr-3">
+            <a type="button" class="btn btn-primary" href="{% url 'standard_tracker' %}" style="color: white">
+                <i class="fas fa-angle-left lg"></i> Choose another subject or classroom
+            </a>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-12 mb-4">
+                <div class="card border-light shadow-sm">
+                    <div class="card-body">
+                        <h2 class="h4 mb-4"><center>Standards for {{ tracking_subject.subject_title }} in Grade {{ tracking_classroom.single_grade }}</center></h2><br>
+                        <h4 class="h5 mb-4"><center>Select a Standard Objective to view more information.</center></h4>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!--
         {% for each_standard in all_standards %}
             <h3>----------------------------------------------------</h3>
@@ -28,21 +40,25 @@
                             <table class="table table-centered table-nowrap mb-0 rounded">
                                 <thead class="thead-light">
                                     <tr>
-                                        <th class="border-0">Skill Topic</th>
+                                        <th class="border-0">Topic</th>
                                         <th class="border-0">Standard Objective</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for each_standard in all_standards %}
-                                        {% ifchanged each_standard.standard_objective %}
-                                        <tr>
-                                            <td>
-                                                {{ each_standard.skill_topic }}
-                                            </td>
-                                            <td>
-                                                {{ each_standard.standard_objective }}
-                                            </td>
-                                        </tr>
+                                    {% for each_standard in all_standards_info %}
+                                        {% ifchanged each_standard.2 %}
+                                            
+                                            <tr>
+                                                <td>
+                                                        {{ each_standard.1 }}
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <a href="{% url 'single_standard_tracker' subject_id=tracking_subject.id classroom_id=tracking_classroom.id standard_id=each_standard.3 %}">
+                                                        {{ each_standard.2 }}
+                                                    </a>
+                                                </td>
+                                            </tr>
                                         {% endifchanged %}
                                     {% endfor %}
                                 </tbody>

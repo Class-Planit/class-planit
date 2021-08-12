@@ -56,7 +56,7 @@
     </div>
     
             <nav class="navbar navbar-dark navbar-theme-primary col-12 d-md-none">
-                <a class="navbar-brand mr-lg-5" href="{% url 'Dashboard' week_of='Current' subject_id='All' classroom_id='All' %}">
+                <a class="navbar-brand mr-lg-5" href="{% url 'Dashboard' week_of='Current' subject_id='All' classroom_id='All' standard_id='All' %}">
                     <img class="navbar-brand-dark" src="{% static 'images/dashboard/circle_logo.svg' %}" alt="cp" /> <img class="navbar-brand-light" src="{% static 'images/dashboard/circle_logo.svg' %}" alt="cp" />
                 </a>
         <div class="d-flex align-items-center">
@@ -73,7 +73,7 @@
     <div class="bg-white">
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
             <div class="btn-toolbar">
-                <a href="{% url 'Dashboard' week_of='Current' subject_id='All' classroom_id='All'  %}" class="btn btn-sm btn-outline-secondary"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+                <a href="{% url 'Dashboard' week_of='Current' subject_id='All' classroom_id='All'  standard_id='All' %}" class="btn btn-sm btn-outline-secondary"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
     
     
             </div>

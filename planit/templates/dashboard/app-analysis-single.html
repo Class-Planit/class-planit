@@ -7,9 +7,27 @@
                 
             </div>
         </div>
+        <div class="form-group mb-0 mr-3">
+            <a type="button" class="btn btn-primary" href="{% url 'standard_tracker' %}" style="color: white">
+                <i class="fas fa-angle-left lg"></i> Choose another subject or classroom
+            </a>
+        </div>
+        <br>
+        <div class="form-group mb-0 mr-3">
+            <a type="button" class="btn btn-primary" href="{% url 'narrow_standard_tracker' subject_id=current_subject.id classroom_id=current_classroom.id %}" style="color: white">
+                <i class="fas fa-angle-left lg"></i> Back to all {{ current_subject }} standards
+            </a>
+        </div>
+        <br>
         <div class="row">
-            <h2 class="h4 mb-4"><center>Standards Tracking</center></h2><br>
-            <h4 class="h5 mb-4"><center>Single (1) standard tracking...</center></h4>
+            <div class="col-12 mb-4">
+                <div class="card border-light shadow-sm">
+                    <div class="card-body">
+                        <h2 class="h4 mb-4"><center>Viewing Standard:</center></h2><br>
+                        <h4 class="h5 mb-4"><center>{{ current_standard.standard_objective }}</center></h4>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="row">
             <div class="col-12 mb-4">
@@ -19,192 +37,30 @@
                             <table class="table table-centered table-nowrap mb-0 rounded">
                                 <thead class="thead-light">
                                     <tr>
-                                        <th class="border-0">Country</th>
-                                        <th class="border-0">All</th>
-                                        <th class="border-0">All Change</th>
-                                        <th class="border-0">Travel & Local</th>
-                                        <th class="border-0">Travel & Local Change</th>
-                                        <th class="border-0">Widgets</th>
-                                        <th class="border-0">Widgets Change</th>
+                                        <th class="border-0" style="width: 60%">Students are expected to:</th>
+                                        <th class="border-0" style="width: 14%">Lessons</th>
+                                        <th class="border-0" style="width: 14%">Worksheets</th>
+                                        <th class="border-0" style="width: 12%">Overall Performance</th>
+                                        
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- Item -->
+                                    {% for each_info in competency_info %}
                                     <tr>
-                                        <td class="border-0">                                             
-                                            <a href="#" class="d-flex align-items-center">
-                                                <img class="mr-2 image image-small rounded-circle" alt="Image placeholder" src="../../assets/img/flags/united-states-of-america.svg">
-                                                <div><span class="h6">United States</span></div>
-                                            </a>
+                                        <td>
+                                            <p>{{ each_info.0 }}</p>
                                         </td>
-                                        <td class="border-0 font-weight-bold">106</td>
-                                        <td class="border-0 text-danger">
-                                            <span class="fas fa-angle-down"></span>                                   
-                                            <span class="font-weight-bold">5</span>
+                                        <td>
+                                            <p><a href="{% url 'Dashboard' week_of='Current' subject_id=subject_id classroom_id=classroom_id standard_id=each_info.2 %}">{{ each_info.1 }}</a></p>
                                         </td>
-                                        <td class="border-0 font-weight-bold">
-                                            3 
+                                        <td>
+                                            <p></p> 
                                         </td>
-                                        <td class="border-0">
-                                            =
-                                        </td>
-                                        <td class="border-0 font-weight-bold">
-                                            32  
-                                        </td>
-                                        <td class="border-0 text-success">
-                                            <span class="fas fa-angle-up"></span>                                   
-                                            <span class="font-weight-bold">3</span>
+                                        <td>
+                                            <p></p>
                                         </td>
                                     </tr>
-                                    <!-- End of Item -->
-
-                                    <!-- Item -->
-                                    <tr>
-                                        <td class="border-0">                                             
-                                            <a href="#" class="d-flex align-items-center">
-                                                <img class="mr-2 image image-small rounded-circle" alt="Image placeholder" src="../../assets/img/flags/canada.svg">
-                                                <div><span class="h6">Canada</span></div>
-                                            </a>
-                                        </td>
-                                        <td class="border-0 font-weight-bold">76</td>
-                                        <td class="border-0 text-success">
-                                            <span class="fas fa-angle-up"></span>                                   
-                                            <span class="font-weight-bold">17</span>
-                                        </td>
-                                        <td class="border-0 font-weight-bold">
-                                        4 
-                                        </td>
-                                        <td class="border-0">
-                                        =
-                                        </td>
-                                        <td class="border-0 font-weight-bold">
-                                        30  
-                                        </td>
-                                        <td class="border-0 text-success">
-                                            <span class="fas fa-angle-up"></span>                                   
-                                            <span class="font-weight-bold">3</span>
-                                        </td>
-                                    </tr>
-                                    <!-- End of Item -->
-        
-                                    <!-- Item -->
-                                    <tr>
-                                        <td class="border-0">                                             
-                                            <a href="#" class="d-flex align-items-center">
-                                                <img class="mr-2 image image-small rounded-circle" alt="Image placeholder" src="../../assets/img/flags/united-kingdom.svg">
-                                                <div><span class="h6">United Kingdom</span></div>
-                                            </a>
-                                        </td>
-                                        <td class="border-0 font-weight-bold">147</td>
-                                        <td class="border-0 text-success">
-                                            <span class="fas fa-angle-up"></span>                                   
-                                            <span class="font-weight-bold">10</span>
-                                        </td>
-                                        <td class="border-0 font-weight-bold">
-                                        5 
-                                        </td>
-                                        <td class="border-0">
-                                        =
-                                        </td>
-                                        <td class="border-0 font-weight-bold">
-                                        34  
-                                        </td>
-                                        <td class="border-0 text-success">
-                                            <span class="fas fa-angle-up"></span>                                   
-                                            <span class="font-weight-bold">7</span>
-                                        </td>
-                                    </tr>
-                                    <!-- End of Item -->
-
-                                    <!-- Item -->
-                                    <tr>
-                                        <td class="border-0">                                             
-                                            <a href="#" class="d-flex align-items-center">
-                                                <img class="mr-2 image image-small rounded-circle" alt="Image placeholder" src="../../assets/img/flags/france.svg">
-                                                <div><span class="h6">France</span></div>
-                                            </a>
-                                        </td>
-                                        <td class="border-0 font-weight-bold">112</td>
-                                        <td class="border-0 text-success">
-                                            <span class="fas fa-angle-up"></span>                                   
-                                            <span class="font-weight-bold">3</span>
-                                        </td>
-                                        <td class="border-0 font-weight-bold">
-                                        5 
-                                        </td>
-                                        <td class="border-0 text-success">
-                                            <span class="fas fa-angle-up"></span>                                   
-                                            <span class="font-weight-bold">1</span>
-                                        </td>
-                                        <td class="border-0 font-weight-bold">
-                                        34  
-                                        </td>
-                                        <td class="border-0 text-danger">
-                                            <span class="fas fa-angle-down"></span>                                   
-                                            <span class="font-weight-bold">2</span>
-                                        </td>
-                                    </tr>
-                                    <!-- End of Item -->
-
-                                    <!-- Item -->
-                                    <tr>
-                                        <td class="border-0">                                             
-                                            <a href="#" class="d-flex align-items-center">
-                                                <img class="mr-2 image image-small rounded-circle" alt="Image placeholder" src="../../assets/img/flags/japan.svg">
-                                                <div><span class="h6">Japan</span></div>
-                                            </a>
-                                        </td>
-                                        <td class="border-0 font-weight-bold">115</td>
-                                        <td class="border-0 text-danger">
-                                            <span class="fas fa-angle-down"></span>                                   
-                                            <span class="font-weight-bold">12</span>
-                                        </td>
-                                        <td class="border-0 font-weight-bold">
-                                        6 
-                                        </td>
-                                        <td class="border-0 text-danger">
-                                            <span class="fas fa-angle-down"></span>                                   
-                                            <span class="font-weight-bold">1</span>
-                                        </td>
-                                        <td class="border-0 font-weight-bold">
-                                        37  
-                                        </td>
-                                        <td class="border-0 text-danger">
-                                            <span class="fas fa-angle-down"></span>                                   
-                                            <span class="font-weight-bold">5</span>
-                                        </td>
-                                    </tr>
-                                    <!-- End of Item -->
-
-                                    <!-- Item -->
-                                    <tr>
-                                        <td class="border-0">                                             
-                                            <a href="#" class="d-flex align-items-center">
-                                                <img class="mr-2 image image-small rounded-circle" alt="Image placeholder" src="../../assets/img/flags/germany.svg">
-                                                <div><span class="h6">Germany</span></div>
-                                            </a>
-                                        </td>
-                                        <td class="border-0 font-weight-bold">220</td>
-                                        <td class="border-0 text-danger">
-                                            <span class="fas fa-angle-down"></span>                                   
-                                            <span class="font-weight-bold">56</span>
-                                        </td>
-                                        <td class="border-0 font-weight-bold">
-                                            7 
-                                        </td>
-                                        <td class="border-0 text-danger">
-                                            <span class="fas fa-angle-down"></span>                                   
-                                            <span class="font-weight-bold">3</span>
-                                        </td>
-                                        <td class="border-0 font-weight-bold">
-                                            30  
-                                        </td>
-                                        <td class="border-0 text-success">
-                                            <span class="fas fa-angle-up"></span>                                   
-                                            <span class="font-weight-bold">2</span>
-                                        </td>
-                                    </tr>
-                                    <!-- End of Item -->
+                                    {% endfor %}
                                 </tbody>
                             </table>
                         </div>
