@@ -1061,14 +1061,14 @@ def get_big_ideas(teacher_input, class_id, lesson_id, user_id):
         
     
 
-        results = search.get_dict()
-        if results:
-            try:
-                related_question = results['related_questions']
-                for item in related_question:
-                    question_results.append(item)
-            except:
-                pass
+
+        try:
+            results = search.get_dict()
+            related_question = results['related_questions']
+            for item in related_question:
+                question_results.append(item)
+        except:
+            pass
 
 
     big_questions = []

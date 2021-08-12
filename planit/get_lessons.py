@@ -516,22 +516,25 @@ def build_activity_list(soup, user_profile, class_objectives, lesson_id):
         for activity in activities:
             
             if len(activity) > 4:
-                l_act = label_activities(activity, lesson_id)
-                new_activity, created = selectedActivity.objects.get_or_create(created_by=user_profile, lesson_overview=class_objectives, lesson_text=activity)
-              
-                if created:
-                    new_activity.verb=l_act[2]
-                    new_activity.work_product=l_act[3]
-                    new_activity.bloom=l_act[1]
-                    new_activity.mi=l_act[0]
+                try:
+                    l_act = label_activities(activity, lesson_id)
+                    new_activity, created = selectedActivity.objects.get_or_create(created_by=user_profile, lesson_overview=class_objectives, lesson_text=activity)
+                
+                    if created:
+                        new_activity.verb=l_act[2]
+                        new_activity.work_product=l_act[3]
+                        new_activity.bloom=l_act[1]
+                        new_activity.mi=l_act[0]
 
-                new_activity.is_selected = True
-                new_activity.save()
-                find_topics = identify_topic(activity, lesson_id)
-                if find_topics:
-                    for item in find_topics:
-                        match_topic = topicInformation.objects.filter(id=item).first()
-                        update_activity = new_activity.objectives_topics.add(match_topic)
+                    new_activity.is_selected = True
+                    new_activity.save()
+                    find_topics = identify_topic(activity, lesson_id)
+                    if find_topics:
+                        for item in find_topics:
+                            match_topic = topicInformation.objects.filter(id=item).first()
+                            update_activity = new_activity.objectives_topics.add(match_topic)
+                except:
+                    pass
 
 
 
@@ -546,7 +549,10 @@ def save_big_questions_list(soup, user_profile, class_objectives, lesson_id):
         answer = row.find('p').contents
 
         if len(question[0]) > 5:
-            match_question = googleRelatedQuestions.objects.create(question=question[0], snippet=answer[0], is_selected=True, lesson_plan=lesson_match)
+            try:
+                match_question = googleRelatedQuestions.objects.create(question=question[0], snippet=answer[0], is_selected=True, lesson_plan=lesson_match)
+            except:
+                pass
  
 def build_key_terms_list(soup, user_profile, class_objectives, lesson_id, matched_grade, standard_set):
     #this takes the beautiful soup and pulls out key terms to save for changes and create more connections. 
@@ -576,8 +582,10 @@ def build_key_terms_list(soup, user_profile, class_objectives, lesson_id, matche
         #build new terms with new descriptions 
         key_term_list = list(term_sets)
         #located at get_key_terms.py
-        term_pairs = create_terms(key_term_list, lesson_id, matched_grade, user_profile.id, standard_set)
-
+        try:
+            term_pairs = create_terms(key_term_list, lesson_id, matched_grade, user_profile.id, standard_set)
+        except:
+            pass
 
 
 def get_lesson_sections(text_overview, class_id, lesson_id, user_id):
@@ -602,6 +610,7 @@ def get_lesson_sections(text_overview, class_id, lesson_id, user_id):
     if text_overview:
 
         soup = BeautifulSoup(text_overview)
+
 
         build_activities = build_activity_list(soup, user_profile, class_objectives, lesson_id)
 

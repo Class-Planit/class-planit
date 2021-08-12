@@ -2073,11 +2073,13 @@ def UpdateKeyTerms(request, lesson_id, class_id):
         if match_score_count >= 10:
             for rec in single_recs[:15]:
                 single_rec = rec.single_rec_topics_id
-                match_topic = topicInformation.objects.get(id=single_rec)
-                descriptions = get_description_string(match_topic.id, user_profile.id)
-                result = {'id': match_topic.id, 'term': match_topic.item, 'descriptions': descriptions} 
-                if result not in update_term_list:
-                    update_term_list.append(result)
+                match_topic = topicInformation.objects.filter(id=single_rec).first()
+                if match_topic:
+                    descriptions = get_description_string(match_topic.id, user_profile.id)
+                    if descriptions:
+                        result = {'id': match_topic.id, 'term': match_topic.item, 'descriptions': descriptions} 
+                        if result not in update_term_list:
+                            update_term_list.append(result)
         else:
             #pulls from acivity_builder.py
             update_term_list = generate_term_recs(teacher_input, class_id, lesson_id, user_profile.id)
