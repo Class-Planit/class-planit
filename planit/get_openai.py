@@ -77,19 +77,22 @@ def clean_sentences(sent):
 def get_desciption_summary(item, full_desc):
     full_sentence = f'term: {item} description: {full_desc}'
     if len(full_sentence)  > 4:
-        response = openai.Completion.create(
-                    engine="curie",
-                    prompt=full_sentence,
-                    temperature=0.3,
-                    max_tokens=80,
-                    top_p=1,
-                    frequency_penalty=0,
-                    presence_penalty=0,
-                    stop=["\n"]
-                    )
-        results = response['choices'][0]
+        try:
+            response = openai.Completion.create(
+                        engine="curie",
+                        prompt=full_sentence,
+                        temperature=0.3,
+                        max_tokens=80,
+                        top_p=1,
+                        frequency_penalty=0,
+                        presence_penalty=0,
+                        stop=["\n"]
+                        )
+            results = response['choices'][0]
 
-        final = clean_sentences(results['text'])
+            final = clean_sentences(results['text'])
+        except:
+            final = None
         return(final)
 
 def get_description_string(topic_id, user_id):
@@ -159,10 +162,8 @@ def openai_term_labels(user_id, topic_term, subject, grade):
                         examples=examples,
                         query=wording,
                         labels=labels)
-            print('---------')
-            print('openai', response['label'].upper())
-            print('---------')
-            return(response['label'].upper())
+            
+        return(response['label'].upper())
     except:
         return('KT')
 
