@@ -2393,12 +2393,14 @@ def AddDemoKSTemplate(request, act_id=None, act_type=None):
     page = 'Demo'
     if 'Edit' in act_type:
         act_match = LearningDemonstrationTemplate.objects.get(id=act_id)
+        content_match = act_match.content
         if request.method == "POST":
 
             form2 = LearningDemonstrationTemplateForm(request.POST, instance=act_match)
             if form2.is_valid():
                 prev = form2.save()
-
+                
+                other_matches = LearningDemonstrationTemplate.objects.filter(content=content_match).exclude(id=act_id).delete()
                 return redirect('add_gs', act_id=prev.id, act_type='Demo')
 
         else:
@@ -2426,13 +2428,15 @@ def AddActivityTemplate(request, act_id=None, act_type=None):
     all_lessons = lessonTemplates.objects.all().order_by('wording')
     page = 'Activity'
     if 'Edit' in act_type:
-        act_match = lessonTemplates.objects.get(id=act_id)
+        act_match = lessonTemplates.objects.get(id=act_id)        
+        content_match = act_match.wording
+        
         if request.method == "POST":
 
             form = lessonTemplatesForm(request.POST, instance=act_match)
             if form.is_valid():
                 prev = form.save()
-
+                other_matches = lessonTemplates.objects.filter(wording=content_match).exclude(id=act_id).delete()
                 return redirect('add_gs', act_id=prev.id, act_type='Activity')
 
         else:
@@ -2462,7 +2466,6 @@ def SelectGradeSubjectAdmin(request, act_id=None, act_type=None):
     if 'Demo' in act_type:
         act_match = LearningDemonstrationTemplate.objects.get(id=act_id)
         content_match = act_match.content
-        other_matches = LearningDemonstrationTemplate.objects.filter(content=content_match).exclude(id=act_id).delete()
         t_types = act_match.topic_type.all()
     elif 'Topic' in act_type:
         act_match = topicInformation.objects.get(id=act_id)
@@ -2492,8 +2495,6 @@ def SelectGradeSubjectAdmin(request, act_id=None, act_type=None):
                 return redirect('sup_admin_dashboard')
     else:
         act_match = lessonTemplates.objects.get(id=act_id)
-        content_match = act_match.wording
-        other_matches = lessonTemplates.objects.filter(wording=content_match).exclude(id=act_id).delete()
         t_types = act_match.components.all()
 
     tt_list = topicTypes.objects.filter(id__in=t_types)
