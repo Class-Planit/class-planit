@@ -36,6 +36,11 @@ class lessonTemplatesAdmin(admin.ModelAdmin):
     list_filter = ['components']
 
 
+class selectedActivityAdmin(admin.ModelAdmin):
+    model = selectedActivity
+    search_fields = ['lesson_text']
+
+
 
 admin.site.register(singleRec)
 admin.site.register(reccomendedTopics)
@@ -81,7 +86,7 @@ admin.site.register(questionType)
 admin.site.register(topicQuestionitem, topicQuestionitemAdmin)
 admin.site.register(mainQuestion)
 admin.site.register(topicDescription, topicDescriptionAdmin)
-admin.site.register(selectedActivity)
+admin.site.register(selectedActivity, selectedActivityAdmin)
 admin.site.register(teacherQuestionnaire)
 admin.site.register(userNickname)
 admin.site.register(worksheetTheme)
