@@ -334,11 +334,12 @@ def get_lessons_ajax(lesson_id, user_id):
             first_word = wording_split[0]
             tokens = nlp(first_word)
             new_verb = tokens[0]._.inflect('VBG')
-            new_demo = sentence.replace(first_word, new_verb) 
+            if new_verb:
+                new_demo = sentence.replace(first_word, new_verb) 
 
-            lesson_full = get_new_lesson(new_demo, topic, d_type, t_type, lesson_id, user_profile.id, demo_id)
-            for item in lesson_full:
-                lesson_full_List.append(item)
+                lesson_full = get_new_lesson(new_demo, topic, d_type, t_type, lesson_id, user_profile.id, demo_id)
+                for item in lesson_full:
+                    lesson_full_List.append(item)
             random.shuffle(lesson_full_List)
     else:        
         lesson_full_List = rec_act_match[:5]
