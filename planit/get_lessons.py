@@ -424,6 +424,7 @@ def label_mi_activities_analytics(lesson_id):
 
         mi_length = len(set(str(mi_count)))
 
+
         #the mi number is used as an index to find the color and label in the progress bar 
         colors = ('bg-primary', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-warning')
         mi_names = ('Verbal',  'Visual', 'Musical', 'Movement', 'Logical')
