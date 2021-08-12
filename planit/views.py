@@ -2256,6 +2256,138 @@ def SupAdDash(request):
     return render(request, 'administrator/admin_dashboard.html', {'user_profile': user_profile, 'page': page})
 
 
+def AdminActivityPreview(request, act_temp=None, demo_type=None, topic_type=None, subject=None, grade=None):
+    user_profile = User.objects.filter(username=request.user.username).first()
+
+    demo_all = LearningDemonstrationTemplate.objects.all()
+    act_all = lessonTemplates.objects.all()
+
+    if 'All' in subject:
+        subject_match = standardSubjects.objects.all()
+    else:
+        subject_match = standardSubjects.objects.filter(id=subject)
+
+    if 'All' in grade:
+        grade_match = gradeLevel.objects.all()
+    else:
+        grade_match = gradeLevel.objects.filter(id=grade)
+
+
+    if 'All' in topic_type:
+        tt_match = topicTypes.objects.all()
+    else:
+        tt_match = topicTypes.objects.filter(id=topic_type)
+
+    if 'All' in demo_type:
+        demo_match = None
+        if 'All' in act_temp:
+            act_match = lessonTemplates.objects.filter(components__in=tt_match).order_by('?')
+            act_s = act_match.first()
+            if act_s:
+                topic_component = act_s.components.all()
+                single_topic_type = topicTypes.objects.filter(id__in=topic_component).first()
+                tt = single_topic_type.id
+                subject_m = act_s.subject
+                grade_m = act_s.grade_level
+                topic_match = topicInformation.objects.filter(topic_type=tt)
+                demo_match = LearningDemonstrationTemplate.objects.filter(topic_type=tt)
+         
+        else:
+            act_match = lessonTemplates.objects.filter(id=act_temp)
+            act_s = lessonTemplates.objects.get(id=act_temp)
+            if act_s:
+                topic_component = act_s.components.all()
+                single_topic_type = topicTypes.objects.filter(id__in=topic_component).first()
+                tt = single_topic_type.id
+                subject_m = act_s.subject
+                grade_m = act_s.grade_level
+                topic_match = topicInformation.objects.filter(topic_type=tt)
+                demo_match = LearningDemonstrationTemplate.objects.filter(topic_type=tt)
+
+    else:
+        demo_match = LearningDemonstrationTemplate.objects.filter(id=demo_type).order_by('?')
+        demo_m = demo_match.first()
+        topic_component = demo_m.topic_type.all()
+        single_topic_type = topicTypes.objects.filter(id__in=topic_component).first()
+        tt = single_topic_type.id
+        subject_m = demo_m.subject
+        grade_m = demo_m.grade_level
+        topic_match = topicInformation.objects.filter(topic_type=tt)
+        act_match = lessonTemplates.objects.filter(components=tt)
+
+    demo_string = None
+    act_string = None
+ 
+   
+    single_topic = None
+    single_demo = None
+    single_act = None
+
+    
+    if demo_match and topic_match:
+        
+        single_topic = topic_match.order_by('?')[0]
+        topic_string = single_topic.item
+        topic_component = single_topic.topic_type.all()
+        single_topic_type = topicTypes.objects.filter(id__in=topic_component).first()
+        tt_comp = single_topic_type.item
+        single_demo = demo_match.order_by('?')[0]
+        d_string = single_demo.content
+        demo_string = d_string.replace(tt_comp, topic_string)
+        wording_split = demo_string.split()
+        first_word = wording_split[0]
+        tokens = nlp(first_word)
+        new_verb = tokens[0]._.inflect('VBG')
+        demo_full = demo_string.replace(first_word, new_verb) 
+
+        if act_match:
+            single_act = act_match.order_by('?')[0]
+            sent_string = single_act.wording
+            act_string = sent_string.replace('DEMO_KS', demo_full)
+        else:
+            act_string = None
+
+
+
+    page = 'Preview'
+    return render(request, 'administrator/admin_dashboard.html', {'user_profile': user_profile, 'act_string': act_string, 'single_topic': single_topic, 'single_demo':single_demo, 'single_act':single_act, 'demo_string': demo_string,  'demo_all': demo_all, 'act_all': act_all,  'page': page, 'act_match': act_match, 'tt_match': tt_match, 'grade_match': grade_match, 'subject_match': subject_match})
+
+
+
+def AddSingleTopic(request, top_id=None, act_type=None):
+    user_profile = User.objects.filter(username=request.user.username).first()
+    page = 'Topic'
+    if 'Edit' in act_type:
+        top_match = topicInformation.objects.get(id=top_id)
+        if request.method == "POST":
+
+            form4 = topicInformationForm(request.POST, instance=top_match)
+            if form4.is_valid():
+                prev = form4.save()
+
+                return redirect('add_gs', act_id=prev.id, act_type='Topic')
+
+        else:
+
+            form4 = topicInformationForm(instance=top_match)
+        return render(request, 'administrator/admin_dashboard.html', {'user_profile': user_profile, 'form4': form4, 'page': page, 'top_match': top_match})
+
+    else:
+        if request.method == "POST":
+
+            form4 = topicInformationForm(request.POST)
+            if form4.is_valid():
+                prev = form4.save()
+
+                return redirect('add_gs', act_id=prev.id, act_type='Topic')
+
+        else:
+
+            form4 = topicInformationForm()
+        return render(request, 'administrator/admin_dashboard.html', {'user_profile': user_profile, 'form4': form4, 'page': page, 'all_demos': all_demos})
+
+
+
 def AddDemoKSTemplate(request, act_id=None, act_type=None):
     user_profile = User.objects.filter(username=request.user.username).first()
     all_demos = LearningDemonstrationTemplate.objects.all().order_by('content')
@@ -2333,6 +2465,32 @@ def SelectGradeSubjectAdmin(request, act_id=None, act_type=None):
         content_match = act_match.content
         other_matches = LearningDemonstrationTemplate.objects.filter(content=content_match).exclude(id=act_id).delete()
         t_types = act_match.topic_type.all()
+    elif 'Topic' in act_type:
+        act_match = topicInformation.objects.get(id=act_id)
+        t_types = act_match.topic_type.all()
+
+        tt_list = topicTypes.objects.filter(id__in=t_types)
+        if request.method == "POST":
+            
+            form3 = multiSelectGSForm(request.POST)
+            
+            if form3.is_valid():
+                prev = form3.save()
+                subjects = prev.subject
+                grades = prev.grade_level
+                
+                for grd in grades.all():
+                    for sub in subjects.all():
+                        act_match = act_match
+                        act_match.id = None
+                        act_match.save()
+                        act_match.grade_level = grd
+                        act_match.subject = sub
+                        act_match.save()
+                        for tt in tt_list:
+                            act_match.topic_type.add(tt)
+                            
+                return redirect('sup_admin_dashboard')
     else:
         act_match = lessonTemplates.objects.get(id=act_id)
         content_match = act_match.wording
@@ -2351,10 +2509,8 @@ def SelectGradeSubjectAdmin(request, act_id=None, act_type=None):
             for grd in grades.all():
                 for sub in subjects.all():
                     current_act = act_match
-                    print(current_act.id)
                     current_act.id = None
                     current_act.save()
-                    print(current_act.id)
                     current_act.grade_level = grd
                     current_act.subject = sub
                     current_act.save()

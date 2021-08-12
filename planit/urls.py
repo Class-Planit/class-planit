@@ -83,6 +83,11 @@ urlpatterns = [
         view=StudentMCSelect,
         name='student_mc_select'),
 
+
+    url(r'^activity-preview/(?P<act_temp>[\w\s]+)/(?P<demo_type>[\w\s]+)/(?P<topic_type>[\w\s]+)/(?P<subject>[\w\s]+)/(?P<grade>[\w\s]+)/',
+        view=AdminActivityPreview,
+        name='admin_activity_preview'),
+
     url(r'^fib-student-answer/(?P<user_id>[\w\s]+)/(?P<lesson_id>[\w\s]+)/(?P<worksheet_id>[\w\s]+)/(?P<question_id>[\w\s]+)/(?P<index_id>[\w\s]+)/',
         view=StudentFIBAnswer,
         name='student_fib_answer'),
@@ -111,6 +116,11 @@ urlpatterns = [
     url(r'^classrooms-all/',
         view=ClassroomLists,
         name='classroom_list'),
+
+
+    url(r'^add-single-topic/(?P<top_id>[\w-]+)/(?P<act_type>[\w-]+)/',
+        view=AddSingleTopic,
+        name='single_topic_upload'),
 
     url(r'^classroom-dashboard/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/',
         view=ClassroomDashboard,

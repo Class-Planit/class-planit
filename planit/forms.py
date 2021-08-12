@@ -46,6 +46,12 @@ class  LearningDemonstrationTemplateForm(forms.ModelForm):
         model = LearningDemonstrationTemplate
         fields = '__all__'
 
+class  topicInformationForm(forms.ModelForm):
+
+    class Meta:
+        model = topicInformation
+        fields = '__all__'
+
 
 class  lessonTemplatesForm(forms.ModelForm):
 
