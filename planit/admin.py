@@ -25,6 +25,16 @@ class topicDescriptionAdmin(admin.ModelAdmin):
     list_filter = ['is_admin']
 
 
+class LearningDemonstrationTemplateAdmin(admin.ModelAdmin):
+    model = LearningDemonstrationTemplate
+    search_fields = ['content']
+    list_filter = ['topic_type']
+
+class lessonTemplatesAdmin(admin.ModelAdmin):
+    model = lessonTemplates
+    search_fields = ['wording']
+    list_filter = ['components']
+
 
 
 admin.site.register(singleRec)
@@ -37,7 +47,7 @@ admin.site.register(lessonPDFText)
 admin.site.register(lessonPDFImage)
 admin.site.register(worksheetFull)
 admin.site.register(textBookTitle)
-admin.site.register(LearningDemonstrationTemplate)
+admin.site.register(LearningDemonstrationTemplate, LearningDemonstrationTemplateAdmin)
 admin.site.register(LearningDemonstration)
 admin.site.register(matchedTopics)
 admin.site.register(standardSet)
@@ -58,7 +68,7 @@ admin.site.register(googleSearchResult)
 admin.site.register(keywordResults)
 admin.site.register(wikiTopic, wikiTopicAdmin)
 admin.site.register(googleRelatedQuestions)
-admin.site.register(lessonTemplates)
+admin.site.register(lessonTemplates, lessonTemplatesAdmin)
 admin.site.register(lessonProduct)
 admin.site.register(topicInformation, topicInformationAdmin)
 admin.site.register(topicTypes)
