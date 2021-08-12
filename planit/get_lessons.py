@@ -536,6 +536,8 @@ def build_activity_list(soup, user_profile, class_objectives, lesson_id):
                 except:
                     pass
 
+    return('Complete')
+
 
 
 
@@ -553,6 +555,8 @@ def save_big_questions_list(soup, user_profile, class_objectives, lesson_id):
                 match_question = googleRelatedQuestions.objects.create(question=question[0], snippet=answer[0], is_selected=True, lesson_plan=lesson_match)
             except:
                 pass
+            
+    return('Complete')
  
 def build_key_terms_list(soup, user_profile, class_objectives, lesson_id, matched_grade, standard_set):
     #this takes the beautiful soup and pulls out key terms to save for changes and create more connections. 
@@ -587,6 +591,8 @@ def build_key_terms_list(soup, user_profile, class_objectives, lesson_id, matche
         except:
             pass
 
+    return('Complete')
+
 
 def get_lesson_sections(text_overview, class_id, lesson_id, user_id):
     #this is the main function that reads the tinymce editor information and breaks it into activities and key terms.
@@ -613,10 +619,11 @@ def get_lesson_sections(text_overview, class_id, lesson_id, user_id):
 
 
         build_activities = build_activity_list(soup, user_profile, class_objectives, lesson_id)
-
+        print(build_activities)
         build_key_terms = build_key_terms_list(soup, user_profile, class_objectives, lesson_id, matched_grade, standard_set)
-
+        print(build_key_terms)
         save_big_questions = save_big_questions_list(soup, user_profile, class_objectives, lesson_id)
+        print(save_big_questions)
 
     return('Done')
 

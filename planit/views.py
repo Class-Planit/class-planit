@@ -1758,9 +1758,15 @@ def SaveLessonText(request, lesson_id):
         new_text.is_initial = False
         new_text.save()
         #this function is at get_lessons.py
-        update_lesson_analytics = get_lesson_sections(overview, less_class, lesson_id, user.id)
+        try:
+            update_lesson_analytics = get_lesson_sections(overview, less_class, lesson_id, user.id)
+            message = 'Saved'
+        except:
+            message = 'Not Saved'
+
         now = datetime.datetime.now().strftime('%H:%M:%S')
-        context = {"data": now}
+        sent = ' %s: %s' % (message, now)
+        context = {"data": sent}
         return JsonResponse(context)
     else:
         return HttpResponse("Request method is not a GET")
