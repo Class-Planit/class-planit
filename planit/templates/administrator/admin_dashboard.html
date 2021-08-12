@@ -76,8 +76,17 @@
                     {% else %}
                     <p><a href="{% url 'single_topic_upload' top_id='None' act_type='Edit' %}">Edit Topic</a></p>
                     {% endif %}
+                    {% if single_demo.id %}
                   <p><a href="{% url 'admin_demo_ks' act_id=single_demo.id act_type='Edit' %}">Edit Demo Template</a></p>
+                  {% else %}
+                  <p><a href="{% url 'admin_demo_ks' act_id='None' act_type='Edit' %}">Edit Demo Template</a></p>
+                  {% endif %}
+
+                  {% if single_act.id %}
                   <p><a href="{% url 'admin_activity' act_id=single_act.id act_type='Edit' %}">Edit Activity Template</a></p>
+                  {% else %}
+                  <p><a href="{% url 'admin_activity' act_id='None' act_type='Edit' %}">Edit Activity Template</a></p>
+                  {% endif %}
 
                   
                 </div>
