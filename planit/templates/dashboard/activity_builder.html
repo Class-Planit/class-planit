@@ -201,11 +201,7 @@
                 <br>
                 <form  method="POST">
                     {% csrf_token %}
-                    
-                   
-                    <div class='demo-dfree myDivToPrint' id='demo-dfree'>
-                        
-                        <h2 class="dfree-header mce-content-body" id='objective' contenteditable="true" style="position: relative;" spellcheck="false">
+                    <h2 class="dfree-header mce-content-body" id='objective' contenteditable="true" style="position: relative;" spellcheck="false">
                         {{ lesson_match.subject }} | {{ user_profile.first_name }} {{ user_profile.last_name }}
                         </h2>
                         <br/>
@@ -221,6 +217,10 @@
                             <li id='standard-item'>{{ stand }}</li>
                             {% endfor %}
                         </p>
+                   
+                    <div class='demo-dfree myDivToPrint' id='demo-dfree'>
+                        
+                       
                     
                        
                         <div class="showhim"><h2>Activities:</h2>
@@ -312,7 +312,7 @@
                         </div>
 
                     </div>
-                    <div id='key_term_bottom'></div>
+                    
                   
                 </form>
                 
