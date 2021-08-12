@@ -555,7 +555,7 @@ def save_big_questions_list(soup, user_profile, class_objectives, lesson_id):
                 match_question = googleRelatedQuestions.objects.create(question=question[0], snippet=answer[0], is_selected=True, lesson_plan=lesson_match)
             except:
                 pass
-            
+
     return('Complete')
  
 def build_key_terms_list(soup, user_profile, class_objectives, lesson_id, matched_grade, standard_set):
@@ -619,11 +619,12 @@ def get_lesson_sections(text_overview, class_id, lesson_id, user_id):
 
 
         build_activities = build_activity_list(soup, user_profile, class_objectives, lesson_id)
-        print(build_activities)
-        build_key_terms = build_key_terms_list(soup, user_profile, class_objectives, lesson_id, matched_grade, standard_set)
-        print(build_key_terms)
-        save_big_questions = save_big_questions_list(soup, user_profile, class_objectives, lesson_id)
-        print(save_big_questions)
+    
+        
+        #build_key_terms = build_key_terms_list(soup, user_profile, class_objectives, lesson_id, matched_grade, standard_set)
+
+        #save_big_questions = save_big_questions_list(soup, user_profile, class_objectives, lesson_id)
+
 
     return('Done')
 
