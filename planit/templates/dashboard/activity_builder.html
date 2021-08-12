@@ -201,23 +201,32 @@
                 <br>
                 <form  method="POST">
                     {% csrf_token %}
-                    <h2 class="dfree-header mce-content-body" id='objective' contenteditable="true" style="position: relative;" spellcheck="false">
-                        {{ lesson_match.subject }} | {{ user_profile.first_name }} {{ user_profile.last_name }}
-                        </h2>
-                        <br/>
-
-                        <div class="dfree-body mce-content-body" contenteditable="true" style="position: relative;" spellcheck="false">
+                    <div class="dfree-header">
+                        <div class='row'>
+                            <div class="col-lg-1"></div>
+                            <div class="col-lg-10">
+                                <h3 class="dfree-header mce-content-body" id='header' contenteditable="true" style="position: relative;" spellcheck="false">
+                                    {{ lesson_match.subject }} | {{ user_profile.first_name }} {{ user_profile.last_name }}
+                                    </h3>
+                                    <br/>
+        
+                                    <div class="dfree-body mce-content-body" contenteditable="true" style="position: relative;" spellcheck="false">
+                                
+                                    <br/>
+                                    <h5>
+                                        {{ lesson_match.teacher_objective }}
+                                    </h5>
+                                    <p id="standard">
+                                        {% for stand in lesson_match.objectives_standards.all %}
+                                        <li id='standard-item'>{{ stand }}</li>
+                                        {% endfor %}
+                                    </p>
+                            </div>
+                            <div class="col-lg-1"></div>
+                        </div>
                        
-                        <br/>
-                        <h4>
-                            {{ lesson_match.teacher_objective }}
-                        </h4>
-                        <p id="standard">
-                            {% for stand in lesson_match.objectives_standards.all %}
-                            <li id='standard-item'>{{ stand }}</li>
-                            {% endfor %}
-                        </p>
-                   
+                       
+                    </div>
                     <div class='demo-dfree myDivToPrint' id='demo-dfree'>
                         
                        

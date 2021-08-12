@@ -105,7 +105,7 @@ def retention_activity(lesson_wording):
 
 def get_new_lesson(demo_wording, topic, d_type, t_type, lesson_id, user_id, demo_id):
 
-    mi_labels = [' ', 'Verbal', 'Visual', 'Musical', 'Movement', 'Logical', 'Intrapersonal', 'Interpersonal']
+    mi_labels = [' ', 'Verbal', 'Visual', 'Musical', 'Movement', 'Logical', 'Intra', 'Inter']
     bl_labels = [' ', 'Remember', 'Understand', 'Apply', 'Analyze', 'Evaluate', 'Create']
     colors = [' ', 'primary', 'secondary', 'success', 'danger', 'warning', 'light', 'info', 'dark']
     font_a  = [' ', 'microphone', 'eye', 'music', 'walking', 'puzzle-piece', 'user', 'users',]
