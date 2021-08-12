@@ -604,10 +604,8 @@ def get_lesson_sections(text_overview, class_id, lesson_id, user_id):
     subject = class_objectives.subject
     matched_grade = class_objectives.current_grade_level
 
-    all_selected = selectedActivity.objects.filter(lesson_overview=class_objectives, is_selected=True)
-    for item in all_selected:
-        is_selected = False
-        item.save()
+    all_selected = selectedActivity.objects.filter(lesson_overview=class_objectives, is_selected=True).delete()
+
     topic_matches = class_objectives.objectives_topics.all()
     topic_lists_selected = topicInformation.objects.filter(id__in=topic_matches).order_by('item')
 
@@ -621,9 +619,9 @@ def get_lesson_sections(text_overview, class_id, lesson_id, user_id):
         build_activities = build_activity_list(soup, user_profile, class_objectives, lesson_id)
     
         
-        #build_key_terms = build_key_terms_list(soup, user_profile, class_objectives, lesson_id, matched_grade, standard_set)
+        build_key_terms = build_key_terms_list(soup, user_profile, class_objectives, lesson_id, matched_grade, standard_set)
 
-        #save_big_questions = save_big_questions_list(soup, user_profile, class_objectives, lesson_id)
+        save_big_questions = save_big_questions_list(soup, user_profile, class_objectives, lesson_id)
 
 
     return('Done')
