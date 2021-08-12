@@ -71,7 +71,11 @@
                     <h5>{{demo_string}}</h5>
                 
 
+                    {% if single_topic.id %}
                   <p><a href="{% url 'single_topic_upload' top_id=single_topic.id act_type='Edit' %}">Edit Topic</a></p>
+                  {% else %}
+                  <p><a href="{% url 'admin_demo_ks' act_id='None' act_type='Edit' %}">Edit Demo Template</a></p>
+                  {% endif %}
                   <p><a href="{% url 'admin_demo_ks' act_id=single_demo.id act_type='Edit' %}">Edit Demo Template</a></p>
                   <p><a href="{% url 'admin_activity' act_id=single_act.id act_type='Edit' %}">Edit Activity Template</a></p>
 

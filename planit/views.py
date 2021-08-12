@@ -2319,13 +2319,12 @@ def AdminActivityPreview(request, act_temp=None, demo_type=None, topic_type=None
     act_string = None
  
    
-    single_topic = None
-    single_demo = None
-    single_act = None
+    single_topic = 'None'
+    single_demo = 'None'
+    single_act = 'None'
 
     
     if demo_match and topic_match:
-        
         single_topic = topic_match.order_by('?')[0]
         topic_string = single_topic.item
         topic_component = single_topic.topic_type.all()
