@@ -1812,6 +1812,24 @@ def SelectTopic(request):
         add_remove = match_recs.removed_topics.add(topic_match)
         remove_rec = match_recs.rec_topics.remove(topic_match)
         
+        list_one = []
+        list_two = []
+        for desc in topic_match.description.all():
+            list_one.append(desc)
+            list_two.append(desc)
+
+        for desc1 in list_one:
+            for desc2 in list_two:
+                if desc1.id == desc2.id:
+                    pass
+                else:
+                   
+                    is_dup = check_duplicate_strings(desc1.description, desc2.description)
+                    
+                    if is_dup:
+                        topic_match.description.remove(desc2)
+        
+
         description_list = []
         for desc in topic_match.description.all():
             if desc.created_by_id == user_id:
