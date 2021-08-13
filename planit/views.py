@@ -1857,11 +1857,12 @@ def SelectTopic(request):
                     result = "<li id='description'>%s</li>" % (desc.description)
                     description_list.append(result)
         description_list = ' '.join(description_list)
-        final = "<ul>%s</ul>" % (description_list)
-        if final:
-            message = '<strong>%s</strong> has been added!' % (topic_match.item)
-            context = {'term': topic_match.item, 'description': final, 'message': message}
-            return JsonResponse(context)
+        if description_list:
+            final = "<ul>%s</ul>" % (description_list)
+            if final:
+                message = '<strong>%s</strong> has been added!' % (topic_match.item)
+                context = {'term': topic_match.item, 'description': final, 'message': message}
+                return JsonResponse(context)
     else:
         return HttpResponse("Request method is not a GET")
 
