@@ -482,6 +482,11 @@ class singleStandard(models.Model):
                                blank=True,
                                null=True)
     competency = models.TextField(max_length=1000)
+    is_admin = models.BooleanField(default=True)
+    created_by = models.ForeignKey(User,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True)
     
     def __str__(self):
         return "%s - %s" % (self.standard_objective, self.competency)
@@ -490,6 +495,9 @@ class topicTypes(models.Model):
     item = models.CharField(max_length=200,
                                        blank=True,
                                        null=True)	
+    description = models.CharField(max_length=350,
+                                       blank=True,
+                                       null=True)
     
     def __str__(self):
         return "%s" % (self.item)
@@ -712,7 +720,7 @@ class singleRec(models.Model):
                                        null=True)
     is_displayed = models.BooleanField(default=False)
 
-
+                               
     def __str__(self):
         return "%s-%s" % (self.single_rec_topics, self.sim_score)
 
@@ -1237,6 +1245,15 @@ class lessonTemplates(models.Model):
         return "%s" % (self.wording)
 
 
+class multiSelectGS(models.Model):
+    grade_level = models.ManyToManyField(gradeLevel,
+                                     blank=True,
+                                     related_name='select_grades')
+    
+    subject = models.ManyToManyField(standardSubjects,
+                                     blank=True,
+                                     related_name='select_subjects')
+
 
 class selectedActivity(models.Model):
     created_by = models.ForeignKey(User,
@@ -1303,7 +1320,7 @@ class selectedActivity(models.Model):
     
 
     def __str__(self):
-        return "%s - %s" % (self.verb, self.work_product)
+        return "%s" % (self.lesson_text)
 
 
 

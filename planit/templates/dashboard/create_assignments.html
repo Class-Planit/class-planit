@@ -38,6 +38,7 @@
     
          <!-- Fontawesome -->
          <link type="text/css" href="{% static 'vendor/dashboard/fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
          
          <!-- Prism -->
          <link type="text/css" href="{% static 'vendor/dashboard/prismjs/themes/prism.css' %}" rel="stylesheet">
@@ -195,8 +196,8 @@
                            
                             <li><a href="{% url 'digital_activities' user_id=user_profile.id class_id=class_id lesson_id=lesson_id subject=subject page='Preview' worksheet_id=worksheet_match.id act_id='False' question_id=0 %}#heading" class="card-link">Digital Worksheet</a></li>
                         
-                            <li><a href="#" class="card-link">Student Performance</a></li>
-                            <li><a href="#" class="card-link">Standards Tracking</a></li>
+                            <li><a href="{% url 'student_performance' user_id=user_profile.id class_id=0 week_of='Current' %}" class="card-link">Student Performance</a></li>
+                            <li><a href="{% url 'standard_tracker' %}" class="card-link">Standards Tracking</a></li>
     
                     </div>
                     </div>

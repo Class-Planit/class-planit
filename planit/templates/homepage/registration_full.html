@@ -39,6 +39,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
         <link type="text/css" href="{% static 'vendor/dashboard/fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
             
         <link href="{% static 'css/homepage/responsive.css' %}" rel="stylesheet">
         <!--[if lt IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script><![endif]-->
@@ -131,6 +132,9 @@
                 <div class="text-column col-md-8 col-sm-12 col-xs-12">
                     <h1>Welcome to Class Planit! </h1>
                     <h3>Fill out the form below to be added to get started.</h3>
+                    <hr>
+                    <h5>If you have already registered, <a href="{% url 'login_user' %}">login here</a></h5>
+                 
                 	<div class="inner">
                         <h2>{{ message }}</h2>
                         {% if form.errors %}

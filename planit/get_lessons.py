@@ -334,11 +334,12 @@ def get_lessons_ajax(lesson_id, user_id):
             first_word = wording_split[0]
             tokens = nlp(first_word)
             new_verb = tokens[0]._.inflect('VBG')
-            new_demo = sentence.replace(first_word, new_verb) 
+            if new_verb:
+                new_demo = sentence.replace(first_word, new_verb) 
 
-            lesson_full = get_new_lesson(new_demo, topic, d_type, t_type, lesson_id, user_profile.id, demo_id)
-            for item in lesson_full:
-                lesson_full_List.append(item)
+                lesson_full = get_new_lesson(new_demo, topic, d_type, t_type, lesson_id, user_profile.id, demo_id)
+                for item in lesson_full:
+                    lesson_full_List.append(item)
             random.shuffle(lesson_full_List)
     else:        
         lesson_full_List = rec_act_match[:5]
@@ -424,6 +425,7 @@ def label_mi_activities_analytics(lesson_id):
 
         mi_length = len(set(str(mi_count)))
 
+
         #the mi number is used as an index to find the color and label in the progress bar 
         colors = ('bg-primary', 'bg-secondary', 'bg-success', 'bg-danger', 'bg-warning')
         mi_names = ('Verbal',  'Visual', 'Musical', 'Movement', 'Logical')
@@ -507,23 +509,34 @@ def retention_activities_analytics(lesson_id):
 def build_activity_list(soup, user_profile, class_objectives, lesson_id):
     #this function pulls in beautiful soup and pulls out the activities that will be used to create analytics and demonstrations of knowledge
     activities_list =  soup.find('ul', {"id": "activity-div"})
-    activities = [x.get_text() for x in activities_list.findAll('li')]
-    for activity in activities:
-        l_act = label_activities(activity, lesson_id)
-        new_activity, created = selectedActivity.objects.get_or_create(created_by=user_profile, lesson_overview=class_objectives, lesson_text=activity)
-        if created:
-            new_activity.verb=l_act[2]
-            new_activity.work_product=l_act[3]
-            new_activity.bloom=l_act[1]
-            new_activity.mi=l_act[0]
-        new_activity.is_selected=True
-        new_activity.save()
-        find_topics = identify_topic(activity, lesson_id)
-        if find_topics:
-            for item in find_topics:
-                match_topic = topicInformation.objects.filter(id=item).first()
-                update_matches = create_topic_matches.objectives_topics.add(match_topic)
-                update_activity = new_activity.objectives_topics.add(match_topic)
+    
+    if activities_list:
+        activities = [x.get_text() for x in activities_list.findAll('li')]
+        
+        for activity in activities:
+            
+            if len(activity) > 4:
+                try:
+                    l_act = label_activities(activity, lesson_id)
+                    new_activity, created = selectedActivity.objects.get_or_create(created_by=user_profile, lesson_overview=class_objectives, lesson_text=activity)
+                
+                    if created:
+                        new_activity.verb=l_act[2]
+                        new_activity.work_product=l_act[3]
+                        new_activity.bloom=l_act[1]
+                        new_activity.mi=l_act[0]
+
+                    new_activity.is_selected = True
+                    new_activity.save()
+                    find_topics = identify_topic(activity, lesson_id)
+                    if find_topics:
+                        for item in find_topics:
+                            match_topic = topicInformation.objects.filter(id=item).first()
+                            update_activity = new_activity.objectives_topics.add(match_topic)
+                except:
+                    pass
+
+    return('Complete')
 
 
 
@@ -538,7 +551,12 @@ def save_big_questions_list(soup, user_profile, class_objectives, lesson_id):
         answer = row.find('p').contents
 
         if len(question[0]) > 5:
-            match_question = googleRelatedQuestions.objects.create(question=question[0], snippet=answer[0], is_selected=True, lesson_plan=lesson_match)
+            try:
+                match_question = googleRelatedQuestions.objects.create(question=question[0], snippet=answer[0], is_selected=True, lesson_plan=lesson_match)
+            except:
+                pass
+
+    return('Complete')
  
 def build_key_terms_list(soup, user_profile, class_objectives, lesson_id, matched_grade, standard_set):
     #this takes the beautiful soup and pulls out key terms to save for changes and create more connections. 
@@ -568,8 +586,12 @@ def build_key_terms_list(soup, user_profile, class_objectives, lesson_id, matche
         #build new terms with new descriptions 
         key_term_list = list(term_sets)
         #located at get_key_terms.py
-        term_pairs = create_terms(key_term_list, lesson_id, matched_grade, user_profile.id, standard_set)
+        try:
+            term_pairs = create_terms(key_term_list, lesson_id, matched_grade, user_profile.id, standard_set)
+        except:
+            pass
 
+    return('Complete')
 
 
 def get_lesson_sections(text_overview, class_id, lesson_id, user_id):
@@ -582,10 +604,8 @@ def get_lesson_sections(text_overview, class_id, lesson_id, user_id):
     subject = class_objectives.subject
     matched_grade = class_objectives.current_grade_level
 
-    all_selected = selectedActivity.objects.filter(lesson_overview=class_objectives, is_selected=True)
-    for item in all_selected:
-        is_selected = False
-        item.save()
+    all_selected = selectedActivity.objects.filter(lesson_overview=class_objectives, is_selected=True).delete()
+
     topic_matches = class_objectives.objectives_topics.all()
     topic_lists_selected = topicInformation.objects.filter(id__in=topic_matches).order_by('item')
 
@@ -595,11 +615,14 @@ def get_lesson_sections(text_overview, class_id, lesson_id, user_id):
 
         soup = BeautifulSoup(text_overview)
 
-        build_activities = build_activity_list(soup, user_profile, class_objectives, lesson_id)
 
+        build_activities = build_activity_list(soup, user_profile, class_objectives, lesson_id)
+    
+        
         build_key_terms = build_key_terms_list(soup, user_profile, class_objectives, lesson_id, matched_grade, standard_set)
 
         save_big_questions = save_big_questions_list(soup, user_profile, class_objectives, lesson_id)
+
 
     return('Done')
 

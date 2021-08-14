@@ -40,6 +40,34 @@ class  lessonTextForm(forms.ModelForm):
         model = lessonText
         fields = '__all__'
 
+class  LearningDemonstrationTemplateForm(forms.ModelForm):
+
+    class Meta:
+        model = LearningDemonstrationTemplate
+        fields = '__all__'
+
+class  topicInformationForm(forms.ModelForm):
+
+    class Meta:
+        model = topicInformation
+        fields = '__all__'
+
+
+class  lessonTemplatesForm(forms.ModelForm):
+
+    class Meta:
+        model = lessonTemplates
+        fields = '__all__'
+
+class  multiSelectGSForm(forms.ModelForm):
+    grade_level = forms.ModelMultipleChoiceField(queryset = gradeLevel.objects.all(), required=False, widget=forms.CheckboxSelectMultiple)
+    subject = forms.ModelMultipleChoiceField(queryset = standardSubjects.objects.all(), required=False, widget=forms.CheckboxSelectMultiple)
+
+    class Meta:
+        model = multiSelectGS
+        fields = '__all__'
+
+
 
 class  studentProfilesForm(forms.ModelForm):
 
