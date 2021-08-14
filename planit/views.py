@@ -2256,8 +2256,8 @@ def SupAdDash(request):
 def AdminActivityPreview(request, act_temp=None, demo_type=None, topic_type=None, subject=None, grade=None):
     user_profile = User.objects.filter(username=request.user.username).first()
 
-    demo_all = LearningDemonstrationTemplate.objects.all()
-    act_all = lessonTemplates.objects.all()
+    demo_all = LearningDemonstrationTemplate.objects.all().order_by('content')
+    act_all = lessonTemplates.objects.all().order_by('wording')
 
     if 'All' in subject:
         subject_match = standardSubjects.objects.all()
