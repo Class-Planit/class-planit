@@ -77,7 +77,7 @@
 </div>
 
         <nav class="navbar navbar-dark navbar-theme-primary col-12 d-md-none">
-  <a class="navbar-brand mr-lg-5" href="{% url 'Dashboard' week_of='Current' subject_id='All' classroom_id='All' %}">
+  <a class="navbar-brand mr-lg-5" href="{% url 'Dashboard' week_of='Current' subject_id='All' classroom_id='All' standard_id='All' %}">
       <img class="navbar-brand-dark" src="{% static 'images/dashboard/circle_logo.svg' %}" alt="cp" /> <img class="navbar-brand-light" src="{% static 'images/dashboard/circle_logo.svg' %}" alt="cp" />
   </a>
     <div class="d-flex align-items-center">
@@ -111,7 +111,7 @@
                               </div>
                               <ul class="nav flex-column mt-4">
                                 <li class="nav-item">
-                                  <a href="{% url 'Dashboard' week_of='Current' subject_id='All' class_id='All' %}" class="nav-link">
+                                  <a href="{% url 'Dashboard' week_of='Current' subject_id='All' class_id='All' standard_id='All' %}" class="nav-link">
                                       <span class="sidebar-icon"><span class="fas fa-chart-pie"></span></span>
                                       <span>Overview</span>
                                   </a>

@@ -54,7 +54,7 @@ urlpatterns = [
        view=UpdateWeekOf,
        name='update_week_of'),
 
-    url(r'^dashboard/(?P<week_of>[\w\s]+)/(?P<subject_id>[\w\s]+)/(?P<classroom_id>[\w\s]+)/',
+    url(r'^dashboard/(?P<week_of>[\w\s]+)/(?P<subject_id>[\w\s]+)/(?P<classroom_id>[\w\s]+)/(?P<standard_id>[\w\s]+)/',
         view=Dashboard,
         name='Dashboard'),
 

@@ -723,20 +723,56 @@ def NarrowStandardsTracking(request, user_id=None, classroom_id=None, subject_id
     grade_level_match = tracking_classroom.single_grade
     #filter for all standards related to the subject and grade level of the classroom
     all_standards = singleStandard.objects.filter(standards_set= standards_set_match, subject=tracking_subject, grade_level= grade_level_match)
+    all_standards_info = []
+    for current_standard in all_standards:
+        skill_topic = current_standard.skill_topic
+        standard_objective = current_standard.standard_objective
+        found = standard_objective.find(".")
+        if found != -1:
+            topic = standard_objective[:found]
+            standard_objective = standard_objective[(found+2):-27]
+        else:
+            topic = ""
+            standard_objective = standard_objective[:-27]
+        standard_id = current_standard.id
+        standard_info = skill_topic, topic, standard_objective, standard_id
+        all_standards_info.append(standard_info)
 
-    context = {'user_profile': user_profile, 'tracking_subject': tracking_subject.subject_title, 'tracking_classroom': tracking_classroom.classroom_title, \
-               'all_standards': all_standards}
+    context = {'user_profile': user_profile, 'tracking_subject': tracking_subject, 'tracking_classroom': tracking_classroom, \
+               'all_standards_info': all_standards_info}
 
     return render(request, 'dashboard/app-analysis-skills.html', context)
 
 
 #After selecting one specific standard, subject and classroom
 #displays the standard and respective info about the standard to user
-def SingleStandardsTracking(request, user_id=None, subject_id=None, classroom_id=None):
+def SingleStandardsTracking(request, user_id=None, subject_id=None, classroom_id=None, standard_id=None):
     user_profile = User.objects.filter(username=request.user.username).first()
+    current_subject = standardSubjects.objects.filter(id=subject_id).first()
+    current_classroom = classroom.objects.filter(id=classroom_id).first()
+    current_standard = singleStandard.objects.filter(id=standard_id).first()
+    
+    standard_objective = current_standard.standard_objective
+    similar_standards = singleStandard.objects.filter(standard_objective=standard_objective)
+    competency_info = []
+    for each_standard in similar_standards:
+        #for each competency, find the lessons and worksheets associated
+        competency = each_standard.competency
+        all_lessons = lessonObjective.objects.filter(lesson_classroom=current_classroom, objectives_standards= each_standard)
+ 
+        related_lessons = len(all_lessons)
+        standard_id = each_standard.id
+
+        result = competency, related_lessons, standard_id
+        competency_info.append(result)
 
 
-    return render(request, 'dashboard/app-analysis-single.html', {'user_profile': user_profile, 'subject_results': subject_results, 'classroom_results': classroom_results})
+
+    context = {'user_profile': user_profile, 'current_subject': current_subject, 'current_classroom': current_classroom, \
+               'current_standard': current_standard, 'similar_standards': similar_standards, 'competency_info': competency_info, \
+               'subject_id': subject_id, 'classroom_id': classroom_id}
+
+    return render(request, 'dashboard/app-analysis-single.html', context)
 
 
 
@@ -755,7 +791,7 @@ def UpdateWeekOf(request, week_of, user_id=None, classroom_id=None, subject_id=N
 
 
 #Main Teacher Dashboard View labeled as 'Overview'
-def Dashboard(request, week_of, subject_id, classroom_id):
+def Dashboard(request, week_of, subject_id, classroom_id, standard_id=None):
     #run to fix the incorrect topic types
     fix_incorrect_types()
 
@@ -774,15 +810,26 @@ def Dashboard(request, week_of, subject_id, classroom_id):
         objective_matches = lessonObjective.objects.filter(week_of=week_info['active_week'], lesson_classroom__in=classroom_profiles)
         
         if subject_id == 'All':
+            #subject, class and standard are 'All'
             if classroom_id == 'All':
                 active_lessons = objective_matches
+            #subject and standard are 'All'
             else:
                 active_lessons = objective_matches.filter(lesson_classroom_id=classroom_id)
         else:
-            if classroom_id == 'All':
-                active_lessons = objective_matches.filter(subject_id=subject_id)
+            if standard_id == 'All':
+                #class and standard are 'All'
+                if classroom_id == 'All':
+                    active_lessons = objective_matches.filter(subject_id=subject_id)
+                #standard is 'All'
+                else:
+                    active_lessons = objective_matches.filter(subject_id=subject_id, lesson_classroom_id=classroom_id)
+            #subject, class and standard are specific (from Standards Tracking)
             else:
-                active_lessons = objective_matches.filter(subject_id=subject_id, lesson_classroom_id=classroom_id)
+                standard_match = singleStandard.objects.filter(id=standard_id).first()
+                active_lessons = objective_matches.filter(subject_id=subject_id, lesson_classroom_id=classroom_id, objectives_standards=standard_match)
+
+
 
         # gets the subjects and classrooms for the dropdown options
         subject_results, classroom_results = get_subject_and_classroom_dashboard(objective_matches)
