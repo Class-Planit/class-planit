@@ -756,7 +756,7 @@ def SingleStandardsTracking(request, user_id=None, subject_id=None, classroom_id
     current_classroom = classroom.objects.filter(id=classroom_id).first()
     current_standard = singleStandard.objects.filter(id=standard_id).first()
     current_grade = current_classroom.single_grade_id
-    print(current_grade)
+
     grade_match = gradeLevel.objects.filter(id=current_grade).first()
     standard_objective = current_standard.standard_objective
     similar_standards = singleStandard.objects.filter(standard_objective=standard_objective, grade_level=grade_match).order_by('competency')
@@ -779,7 +779,13 @@ def SingleStandardsTracking(request, user_id=None, subject_id=None, classroom_id
         related_lessons = len(all_lessons)
         standard_id = each_standard.id
 
-        result = competency, related_lessons, standard_id, worksheet_count, assignemnt_average
+        if all_lessons:
+            top_lesson = all_lessons[0]
+            lesson_week = top_lesson.week_of
+        else:
+            lesson_week = 'Current'
+
+        result = competency, related_lessons, standard_id, worksheet_count, assignemnt_average, lesson_week
         if result not in competency_info:
             competency_info.append(result)
 
@@ -1441,7 +1447,23 @@ def StudentMainDashboard(request, user_id=None, lesson_id=None, worksheet_id=Non
     worksheet_id = 0
     lesson_id = 0
     ref_id = 0
-    return render(request, 'dashboard/student_main.html', {'user_profile': user_profile, 'ref_id':ref_id, 'worksheet_id': worksheet_id, 'lesson_id':lesson_id, 'form': form, 'form2': form2 })
+
+    #alerts have the format: 
+    #<h6 class="card-title">Sticker recieved!</h6><h6 class="card-subtitle mb-2 text-muted"">From teacher A. Click <a href='#'>here</a> to view</h6>
+    #get all alerts for the student
+    all_alerts = alertMessage.objects.filter(sent_to=user_profile)
+    num_alerts = len(all_alerts)
+    if num_alerts > 3:
+        top_alerts = all_alerts[0:2]
+    else:
+        top_alerts = all_alerts
+
+
+
+    context = {'user_profile': user_profile, 'ref_id':ref_id, 'worksheet_id': worksheet_id, 'lesson_id':lesson_id, \
+               'form': form, 'form2': form2, 'all_alerts': all_alerts, 'top_alerts': top_alerts}
+
+    return render(request, 'dashboard/student_main.html', context)
 
 
 #student registration 

@@ -271,6 +271,28 @@ class classroom(models.Model):
         return "%s" % (self.classroom_title)
 
 
+class alertMessage(models.Model):
+    created_by = models.ForeignKey(User,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True,
+                               related_name='created_alert')
+    sent_to = models.ForeignKey(User,
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True,
+                               related_name='recieved_alert')
+    sent_date = models.DateField(blank=True,
+                                   null=True)
+    is_viewed = models.BooleanField(default=False)
+    html_message = models.CharField(max_length=255,
+                                  blank=True,
+                                  null=True)
+    
+    def __str__(self):
+        return "%s" % (self.html_message)
+
+
 class studentInvitation(models.Model):
     invite_ref = models.CharField(_('Student Reference'),
                                    max_length=255,

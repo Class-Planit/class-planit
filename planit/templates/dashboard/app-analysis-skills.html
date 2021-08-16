@@ -42,6 +42,7 @@
                                     <tr>
                                         <th class="border-0">Topic</th>
                                         <th class="border-0">Standard Objective</th>
+                                        <th class="border-0" data-toggle="tooltip" title="Number of times standard objective has been addressed in lessons">Addressed</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -50,13 +51,15 @@
                                             
                                             <tr>
                                                 <td>
-                                                        {{ each_standard.1 }}
-                                                    </a>
+                                                    {{ each_standard.1 }}
                                                 </td>
                                                 <td>
                                                     <a href="{% url 'single_standard_tracker' subject_id=tracking_subject.id classroom_id=tracking_classroom.id standard_id=each_standard.3 %}">
-                                                        {{ each_standard.2 }} ({{ each_standard.4 }})
+                                                        {{ each_standard.2 }}
                                                     </a>
+                                                </td>
+                                                <td style="text-align: center;">
+                                                    {{ each_standard.4 }}
                                                 </td>
                                             </tr>
                                         {% endifchanged %}
