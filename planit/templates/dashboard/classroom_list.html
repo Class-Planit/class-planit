@@ -134,7 +134,7 @@
             
                 {% for classroom in class_summary %}
                 <div class="col-12 col-lg-4 mb-3">
-                    <a href="{% url 'classroom_single' user_id=user_profile.id class_id=classroom.3 %}" class="card border-light animate-up-3 shadow-soft p-0 p-lg-4">     
+                    <a href="{% url 'classroom_single' user_id=user_profile.id class_id=classroom.3  standard_id='All' %}" class="card border-light animate-up-3 shadow-soft p-0 p-lg-4">     
                         <div class="card-body">
                             <h5 class="mb-4">{{ classroom.0 }}</h5>
                             <p class="text-gray mb-4">Students: {{ classroom.1 }}</p>

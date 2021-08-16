@@ -167,7 +167,50 @@
             </div>
         </div>
     </div>
-
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card border-light shadow-sm">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-centered table-nowrap mb-0 rounded">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th class="border-0" style="width: 60%">Worksheet Title:</th>
+                                    <th class="border-0" style="width: 14%">Due Date:</th>
+                                    <th class="border-0" style="width: 14%">Completion:</th>
+                                    <th class="border-0" style="width: 12%">Overall Performance:</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for each_info in worksheet_results %}
+                                <tr>
+                                    <td>
+                                        
+                                        <p>
+                                            <a href="{% url 'new_digital_activities' user_id=user_profile.id worksheet_id=each_info.worksheet_id question_id=0 page='Preview' %}">
+                                                {{ each_info.worksheet }}
+                                            </a>
+                                        </p>
+                                    </td>
+                                    <td>
+                                        <p>{{ each_info.due_date }}</p>
+                                    </td>
+                                    <td>
+                                        <p>{{ each_info.completion }}</p>
+                                    </td>
+                                    <td>
+                                        <p>{{ each_info.performance }}</p>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 </main>

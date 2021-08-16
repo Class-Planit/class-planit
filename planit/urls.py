@@ -122,7 +122,7 @@ urlpatterns = [
         view=AddSingleTopic,
         name='single_topic_upload'),
 
-    url(r'^classroom-dashboard/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/',
+    url(r'^classroom-dashboard/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<standard_id>[\w\s]+)/',
         view=ClassroomDashboard,
         name='classroom_single'),
 
@@ -150,7 +150,7 @@ urlpatterns = [
         view=CreateObjective,
         name='create_objective'),
 
-    url(r'^student-performance/(?P<user_id>[\w\s]+)/(?P<class_id>[\w\s]+)/(?P<week_of>[\w\s]+)/',
+    url(r'^student-performance/(?P<user_id>[\w\s]+)/(?P<class_id>[\w\s]+)/(?P<week_of>[\w\s]+)/(?P<standard_id>[\w\s]+)/',
         view=StudentPerformance,
         name='student_performance'),
 
@@ -282,8 +282,8 @@ urlpatterns = [
         view=AddClassroomAssignment,
         name='add_classroom_assignment'),
 
-    url(r'^new-worksheet-builder/(?P<user_id>[\w-]+)/(?P<worksheet_id>[\w-]+)/(?P<question_id>[\w-]+)/$',
-        view=NewDigitalActivities,
+    url(r'^new-worksheet-builder/(?P<user_id>[\w-]+)/(?P<worksheet_id>[\w-]+)/(?P<page>[\w-]+)/(?P<question_id>[\w-]+)/$',
+        view=BlankDigitalActivities,
         name='new_digital_activities'),
 
 

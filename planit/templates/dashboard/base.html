@@ -149,7 +149,7 @@
                                     {% else %}
                                     <li class="nav-item">
                                     {% endif %}
-                                  <a href="{% url 'student_performance' user_id=user_profile.id class_id=0 week_of='Current' %}" class="nav-link">
+                                  <a href="{% url 'student_performance' user_id=user_profile.id class_id=0 week_of='Current' standard_id='All' %}" class="nav-link">
                                       <span class="sidebar-icon"><span class="fas fa-clipboard-list"></span></span>
                                       <span>Assignments</span>
                                   </a>

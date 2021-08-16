@@ -321,7 +321,7 @@ def login_user(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('Dashboard', week_of='Current', subject_id='All', classroom_id='All')
+            return redirect('Dashboard', week_of='Current', subject_id='All', classroom_id='All', standard_id='All')
         else:
             pass
   
@@ -565,7 +565,7 @@ def JoinStudentToClassroom(request, invite_ref=None):
 
 
 #view information for a single classroom 
-def ClassroomDashboard(request, user_id=None, class_id=None):
+def ClassroomDashboard(request, user_id=None, class_id=None, standard_id=None):
     user_profile = User.objects.get(id=user_id)
     current_date = datetime.datetime.now()
     current_year = datetime.datetime.now().year
@@ -735,8 +735,12 @@ def NarrowStandardsTracking(request, user_id=None, classroom_id=None, subject_id
             topic = ""
             standard_objective = standard_objective[:-27]
         standard_id = current_standard.id
-        standard_info = skill_topic, topic, standard_objective, standard_id
+        lesson_matches = lessonObjective.objects.filter(objectives_standards=current_standard.id)
+        lesson_count = lesson_matches.count()
+        standard_info = skill_topic, topic, standard_objective, standard_id, lesson_count
         all_standards_info.append(standard_info)
+
+    all_standards_info.sort(key=lambda x: x[4], reverse=True)
 
     context = {'user_profile': user_profile, 'tracking_subject': tracking_subject, 'tracking_classroom': tracking_classroom, \
                'all_standards_info': all_standards_info}
@@ -751,20 +755,33 @@ def SingleStandardsTracking(request, user_id=None, subject_id=None, classroom_id
     current_subject = standardSubjects.objects.filter(id=subject_id).first()
     current_classroom = classroom.objects.filter(id=classroom_id).first()
     current_standard = singleStandard.objects.filter(id=standard_id).first()
-    
+    current_grade = current_classroom.single_grade_id
+    print(current_grade)
+    grade_match = gradeLevel.objects.filter(id=current_grade).first()
     standard_objective = current_standard.standard_objective
-    similar_standards = singleStandard.objects.filter(standard_objective=standard_objective)
+    similar_standards = singleStandard.objects.filter(standard_objective=standard_objective, grade_level=grade_match).order_by('competency')
     competency_info = []
+
     for each_standard in similar_standards:
         #for each competency, find the lessons and worksheets associated
         competency = each_standard.competency
         all_lessons = lessonObjective.objects.filter(lesson_classroom=current_classroom, objectives_standards= each_standard)
- 
+        worksheet_matches = worksheetFull.objects.filter(lesson_overview__in=all_lessons)
+        worksheet_count = worksheet_matches.count()
+        workseet_assignments = worksheetClassAssignment.objects.filter(lesson_overview__in=all_lessons)
+        if workseet_assignments:
+            assignemnt_average = 0
+            #assignemnt_average = get_assignment_average(workseet_assignments)
+        else:
+            assignemnt_average = 0
+        
+
         related_lessons = len(all_lessons)
         standard_id = each_standard.id
 
-        result = competency, related_lessons, standard_id
-        competency_info.append(result)
+        result = competency, related_lessons, standard_id, worksheet_count, assignemnt_average
+        if result not in competency_info:
+            competency_info.append(result)
 
 
 
@@ -787,7 +804,7 @@ def UpdateWeekOf(request, week_of, user_id=None, classroom_id=None, subject_id=N
     else:
         active_week = week_of + 1
     
-    return redirect('Dashboard', week_of= active_week, subject_id= subject_id, classroom_id= classroom_id )
+    return redirect('Dashboard', week_of= active_week, subject_id= subject_id, classroom_id=classroom_id, standard_id='All')
 
 
 #Main Teacher Dashboard View labeled as 'Overview'
@@ -849,7 +866,9 @@ def CreateObjective(request, user_id=None, week_of=None):
     if user_id is not None:
         user_profile = User.objects.filter(username=request.user.username).first()
         week_info = get_week_info(week_of)
-
+        print('------------')
+        print(week_info)
+        print('------------')
         user_classrooms = classroom.objects.filter(main_teacher=user_profile)
         subjects = []
         if user_classrooms:
@@ -981,136 +1000,78 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
                     get_worksheet.questions.remove(item) 
                     item.delete()
 
-    if lesson_id == 0:
-        
-        subject_match_full = standardSubjects.objects.get(id=get_worksheet.subject_id) 
+    classroom_profile = classroom.objects.get(id=class_id)
+    grade_list = classroom_profile.grade_level.all()
+    grade_match = gradeLevel.objects.filter(id__in=grade_list).first()
+    standard_match = standardSet.objects.get(id=classroom_profile.standards_set_id)
 
-        if get_worksheet:
-            question_matches = get_worksheet.questions.all()
+    lesson_match = lessonObjective.objects.get(id=lesson_id)
+    subject_match = lesson_match.subject_id
+    subject_match_full = standardSubjects.objects.get(id=subject_match) 
 
-            if question_matches:
-                m_questions = all_matched_questions = topicQuestionitem.objects.filter(id__in=question_matches)
-                matched_questions = []
-                for item in m_questions:
-                    matched_questions.append(item)
-            else:
-                new_question = topicQuestionitem.objects.create(created_by=user_profile, subject=subject_match_full, Question='Click Here to Add Question', is_admin=False)
-                get_worksheet.questions.add(new_question)
-        else:
-            worksheet_title = '%s: %s %s for week of %s' % (user_profile, subject_match_full, current_week)
-            get_worksheet = worksheetFull.objects.filter(created_by=user_profile, title=worksheet_title)
-            if get_worksheet:
-                worksheet_count = get_worksheet.count()
-                new_num = worksheet_count + 1 
-                worksheet_title = '%s: %s %s for week of %s - (%s)' % (user_profile, subject_match_full, current_week, new_num)
-            else:
-                get_worksheet = worksheetFull.objects.create(created_by=user_profile, title=worksheet_title)
-                
-            match_questions = get_worksheet.questions.all()
-            if matched_questions:
-                pass
-            else:
-                new_question = topicQuestionitem.objects.create(created_by=user_profile, subject=subject_match_full, Question='Click Here to Add Question', is_admin=False)
-                get_worksheet.questions.add(new_question)
-            all_matched_questions = []
-        
-        question_matches = get_worksheet.questions.all()
-        matched_questions = all_matched_questions = topicQuestionitem.objects.filter(id__in=question_matches)
+    worksheet_title = '%s: %s for week of %s' % (user_profile, subject_match_full, current_week)
+    get_worksheet, created = worksheetFull.objects.get_or_create(created_by=user_profile, lesson_overview=lesson_match, title=worksheet_title, subject=subject_match_full)
+    get_worksheet.lesson_overview = lesson_match
+    question_matches = get_worksheet.questions.all()
 
-        
+    check_lesson_questions = topicQuestionitem.objects.filter(id__in=question_matches)
 
-        if matched_questions:
-            if 'None' in question_id:
-                q = 0
-            elif 'New' in question_id:
-                is_new = True
-                q = 0 
-                question_match = current_question =  topicQuestionitem.objects.create(created_by=user_profile, subject=subject_match_full, is_admin=False)
-                get_worksheet.questions.add(question_match)
-            else:
-                q = int(question_id)
-                question_match = current_question = matched_questions[q]
-
-            next_q = q + 1
-            
-        else:
-            question_match = current_question = None
-            next_q = 1
-            question_id = 0
-
+    if check_lesson_questions:
+        all_matched_questions = topicQuestionitem.objects.filter(lesson_overview=lesson_match)
+        matched_questions = topicQuestionitem.objects.filter(id__in=question_matches)
     else:
-        classroom_profile = classroom.objects.get(id=class_id)
-        grade_list = classroom_profile.grade_level.all()
-        grade_match = gradeLevel.objects.filter(id__in=grade_list).first()
-        standard_match = standardSet.objects.get(id=classroom_profile.standards_set_id)
-
-        lesson_match = lessonObjective.objects.get(id=lesson_id)
-        subject_match = lesson_match.subject_id
-        subject_match_full = standardSubjects.objects.get(id=subject_match) 
-
-
-        worksheet_title = '%s: %s %s for week of %s' % (user_profile, classroom_profile, subject_match_full, current_week) 
-        get_worksheet, created = worksheetFull.objects.get_or_create(created_by=user_profile, title=worksheet_title, lesson_overview=lesson_match)
-        question_matches = get_worksheet.questions.all()
-
-        check_lesson_questions = topicQuestionitem.objects.filter(id__in=question_matches)
-
-        if check_lesson_questions:
-            all_matched_questions = topicQuestionitem.objects.filter(lesson_overview=lesson_match)
-            matched_questions = topicQuestionitem.objects.filter(id__in=question_matches)
-        else:
-            text_questions_one = get_question_text(lesson_id, user_profile)
-            matched_questions = topicQuestionitem.objects.filter(id__in=text_questions_one).order_by('?')[:10]
-            line_match = []
-            for quest in matched_questions:
-                l_text = quest.linked_text
-                l_topic = quest.linked_topic
-                if l_text:
-                    result = l_text
-                else:
-                    result = l_topic
-
-                if result not in line_match:
-                    line_match.append(result)
-                    get_worksheet.questions.add(quest)
-
-            all_matched_questions = topicQuestionitem.objects.filter(id__in=text_questions_one)
-    
-        lesson_standards = singleStandard.objects.filter(id__in=lesson_match.objectives_standards.all())
-        topic_matches = lesson_match.objectives_topics.all()
-        topic_lists_selected = topicInformation.objects.filter(id__in=topic_matches).order_by('item')
-        topic_images = []
-        for tp in topic_lists_selected:
-            if tp.image_url:
-                pass
+        text_questions_one = get_question_text(lesson_id, user_profile)
+        matched_questions = topicQuestionitem.objects.filter(id__in=text_questions_one).order_by('?')[:10]
+        line_match = []
+        for quest in matched_questions:
+            l_text = quest.linked_text
+            l_topic = quest.linked_topic
+            if l_text:
+                result = l_text
             else:
-                tp_image = get_possible_images(tp.item, tp.id)
-    
-        if 'None' in question_id:
-            question_match = current_question = None
-            next_q = 1
-            question_id = 0
+                result = l_topic
+
+            if result not in line_match:
+                line_match.append(result)
+                get_worksheet.questions.add(quest)
+
+        all_matched_questions = topicQuestionitem.objects.filter(id__in=text_questions_one)
+
+    lesson_standards = singleStandard.objects.filter(id__in=lesson_match.objectives_standards.all())
+    topic_matches = lesson_match.objectives_topics.all()
+    topic_lists_selected = topicInformation.objects.filter(id__in=topic_matches).order_by('item')
+    topic_images = []
+    for tp in topic_lists_selected:
+        if tp.image_url:
+            pass
+        else:
+            tp_image = get_possible_images(tp.item, tp.id)
+
+    if 'None' in question_id:
+        question_match = current_question = None
+        next_q = 1
+        question_id = 0
+    elif 'New' in question_id:
+        is_new = True
+        question_match = current_question =  topicQuestionitem.objects.create(created_by=user_profile, subject=subject_match_full, is_admin=False)
+        get_worksheet.questions.add(question_match)
+        q = 0 
+        next_q = 1
+    else:
+        if matched_questions:
+            q = int(question_id)
+            next_q = q + 1
+            question_match = current_question = matched_questions[q]
         elif 'New' in question_id:
             is_new = True
+            q = 0
+            next_q = 1
             question_match = current_question =  topicQuestionitem.objects.create(created_by=user_profile, subject=subject_match_full, is_admin=False)
             get_worksheet.questions.add(question_match)
-            q = 0 
-            next_q = 1
         else:
-            if matched_questions:
-                q = int(question_id)
-                next_q = q + 1
-                question_match = current_question = matched_questions[q]
-            elif 'New' in question_id:
-                is_new = True
-                q = 0
-                next_q = 1
-                question_match = current_question =  topicQuestionitem.objects.create(created_by=user_profile, subject=subject_match_full, is_admin=False)
-                get_worksheet.questions.add(question_match)
-            else:
-                question_match = current_question = None
-                next_q = 1
-                question_id = 0
+            question_match = current_question = None
+            next_q = 1
+            question_id = 0
 
     short_answer  = []
     fib = []
@@ -1160,14 +1121,62 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
                                                                   'short_answer': short_answer, 'fib':fib, 'multi_choice':multi_choice, 'unknown':unknown})
 
 
-def NewDigitalActivities(request, user_id=None, worksheet_id=None, question_id=None):
+def BlankDigitalActivities(request, user_id=None, worksheet_id=None, page=None, question_id=None):
+    page = 'Preview'
     current_week = date.today().isocalendar()[1] 
     user_profile = User.objects.filter(id=user_id).first()
+    week_of = current_week = date.today().isocalendar()[1] 
 
-    worksheet_match = worksheetFull.objects.get(id=worksheet_id)
-    
-    page = 'Preview'
-    return render(request, 'dashboard/new_worksheet_builder.html', {'page': page, 'worksheet_match': worksheet_match, 'user_profile': user_profile})
+    worksheet_match = worksheetFull.objects.filter(id=worksheet_id).first()
+
+
+    subject_match_full = standardSubjects.objects.get(id=worksheet_match.subject_id) 
+    matched_questions = []
+    if worksheet_match:
+        question_matches = worksheet_match.questions.all()
+
+        if question_matches:
+            m_questions = topicQuestionitem.objects.filter(id__in=question_matches)
+            for item in m_questions:
+                matched_questions.append(item)
+        else:
+            new_question = topicQuestionitem.objects.create(created_by=user_profile, subject=subject_match_full, Question='Click Here to Add Question', is_admin=False)
+            worksheet_match.questions.add(new_question)
+            matched_questions.append(new_question)
+    else:
+        worksheet_title = '%s: %s %s for week of %s' % (user_profile, subject_match_full, current_week)
+        worksheet_match = worksheetFull.objects.filter(created_by=user_profile, title=worksheet_title)
+        if worksheet_match:
+            worksheet_count = worksheet_match.count()
+            new_num = worksheet_count + 1 
+            worksheet_title = '%s: %s %s for week of %s - (%s)' % (user_profile, subject_match_full, current_week, new_num)
+        else:
+            worksheet_match = worksheetFull.objects.create(created_by=user_profile, title=worksheet_title, subject=subject_match_full)
+            
+
+        new_question = topicQuestionitem.objects.create(created_by=user_profile, subject=subject_match_full, Question='Click Here to Add Question', is_admin=False)
+        worksheet_match.questions.add(new_question)
+        matched_questions.append(new_question)
+
+
+    if matched_questions:
+        if 'None' in question_id:
+            q = 0
+        else:
+            q = int(question_id)
+            question_match = matched_questions[q]
+
+        next_q = q + 1
+        
+    else:
+        question_match = None
+
+    lesson_id = 0
+    class_id = 0
+    print('==============')
+    print(matched_questions)
+    print('==============')
+    return render(request, 'dashboard/new_worksheet_builder.html', {'page': page, 'week_of': week_of, 'class_id': class_id, 'lesson_id': lesson_id, 'subject_match_full': subject_match_full, 'matched_questions': matched_questions, 'worksheet_match': worksheet_match, 'user_profile': user_profile})
 
 #Edit already created or recommended Question
 def EditQuestions(request, user_id=None, class_id=None, subject=None, lesson_id=None, worksheet_id=None, page=None, act_id=None, question_id=None):
@@ -1244,14 +1253,25 @@ def CreateClassroomAssignment(request, user_id=None, week_of=None, class_id=None
 
     current_year = datetime.datetime.now().year
     current_academic_year = academicYear.objects.filter(planning_teacher=user_profile, is_active=True).first()
+
     if 'None' in class_id:
         classroom_profile = None
     else:
-        classroom_profile = classroom.objects.get(id=class_id)
+        class_id = int(class_id)
+        if class_id == 0:
+            classroom_profile = None
+        else:
+            classroom_profile = classroom.objects.get(id=class_id)
+
+    print(lesson_id, '=============')
     if 'None' in lesson_id:
         lesson_match = None
     else:
-        lesson_match = lessonObjective.objects.get(id=lesson_id)
+        lesson_id = int(lesson_id)
+        if lesson_id == 0:
+            lesson_match = None
+        else:
+            lesson_match = lessonObjective.objects.get(id=lesson_id)
 
     
     worksheet_themes = worksheetTheme.objects.filter(is_admin=True, is_active=True)
@@ -1418,7 +1438,10 @@ def StudentMainDashboard(request, user_id=None, lesson_id=None, worksheet_id=Non
     form = StudentForm()
     form2 = StudentForm()
     user_profile = User.objects.filter(id=user_id).first()
-    return render(request, 'dashboard/student_main.html', {'user_profile': user_profile, 'form': form, 'form2': form2 })
+    worksheet_id = 0
+    lesson_id = 0
+    ref_id = 0
+    return render(request, 'dashboard/student_main.html', {'user_profile': user_profile, 'ref_id':ref_id, 'worksheet_id': worksheet_id, 'lesson_id':lesson_id, 'form': form, 'form2': form2 })
 
 
 #student registration 
@@ -1494,7 +1517,7 @@ def StudentLogin(request, lesson_id=None, worksheet_id=None):
 
 
 #student analytics for parents and students
-def StudentPerformance(request, user_id, class_id, week_of):
+def StudentPerformance(request, user_id, class_id, week_of, standard_id):
     all_themes = studentPraiseTheme.objects.all()
     user_profile = User.objects.get(id=user_id)
     standard_set = user_profile.standards_set
@@ -1506,10 +1529,20 @@ def StudentPerformance(request, user_id, class_id, week_of):
     
     teacher_classes = classroom.objects.filter(main_teacher=user_profile)
     teacher_class_id = classroom.objects.filter(main_teacher=user_profile).values_list('id', flat=True)
-    lesson_match = lessonObjective.objects.filter(lesson_classroom__in=teacher_classes, week_of__range=[start, current_week])
-    worksheet_matches = worksheetFull.objects.filter(lesson_overview__in=lesson_match)
+    
+    if 'All' in standard_id:
+        worksheet_matches = worksheetFull.objects.filter(created_by=user_profile)
+    else:
+        lesson_match = lessonObjective.objects.filter(lesson_classroom__in=teacher_classes, objectives_standards=standard_id)
+        print(lesson_match)
+        worksheet_matches = worksheetFull.objects.filter(lesson_overview__in=lesson_match)
 
-    worksheet_assignments = worksheetClassAssignment.objects.filter(worksheet_full__in=worksheet_matches)
+
+    worksheet_results = []
+    for ws in worksheet_matches:
+        ws_info = get_worksheet_performance(ws)
+        worksheet_results.append(ws_info)
+
     all_grades = []
     all_subjects = []
 
@@ -1550,10 +1583,10 @@ def StudentPerformance(request, user_id, class_id, week_of):
             else:
                 prev.is_admin = False
             prev.save()
-            return redirect('new_digital_activities', user_id=user_id, worksheet_id=prev.id, question_id=0)
+            return redirect('new_digital_activities', user_id=user_id, worksheet_id=prev.id, question_id=0, page='Preview')
     else:
         form = worksheetFullForm()
-    return render(request, 'dashboard/assignments.html', {'user_profile': user_profile, 'worksheet_matches': worksheet_matches, 'form': form, 'subject_options': subject_options, 'grade_options': grade_options, 'all_themes': all_themes, 'week_breakdown': week_breakdown, 'top_lessons': top_lessons, 'student_results': student_results})
+    return render(request, 'dashboard/assignments.html', {'user_profile': user_profile, 'worksheet_results': worksheet_results, 'worksheet_matches': worksheet_matches, 'form': form, 'subject_options': subject_options, 'grade_options': grade_options, 'all_themes': all_themes, 'week_breakdown': week_breakdown, 'top_lessons': top_lessons, 'student_results': student_results})
 
 
 ####### these functions handle the students answers as they go through the digital worksheet #########

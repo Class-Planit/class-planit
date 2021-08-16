@@ -41,7 +41,7 @@
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             {% for classroom in classroom_results %}
-                            <a class="dropdown-item" href="{% url 'classroom_single' user_id=user_profile.id class_id=classroom.0%}">{{ classroom.1 }}</a>
+                            <a class="dropdown-item" href="{% url 'classroom_single' user_id=user_profile.id class_id=classroom.0 standard_id='All' %}">{{ classroom.1 }}</a>
                             {% endfor %}
                         </div>
                     </div>
