@@ -111,3 +111,51 @@ def get_student_results(user_id, week_of_start, week_of_finsih, year):
             student_totals.append(result)
     
     return(student_totals)
+
+
+
+def get_worksheet_performance(worksheet):
+
+    worksheet_assignments = worksheetClassAssignment.objects.filter(worksheet_full=worksheet)
+
+    if worksheet_assignments:
+        ws_count = worksheet_assignments.count()
+        student_count = 0
+        total_score = 0
+        submitted_count = 0
+        for assignment in worksheet_assignments:
+            assigned_classrooms = assignment.assigned_classrooms.all()
+            for classroom_match in assigned_classrooms:
+                students_match = classroom_match.student.all()
+                s_count = students_match.count()
+                student_count = student_count + s_count
+
+            student_matches = assignment.student_answers.all()
+            s_matches = studentWorksheetAnswerFull.objects.filter(id__in=student_matches, is_submitted=True)
+            new_count = s_matches.count()
+            submitted_count = submitted_count + new_count
+
+            for sm in s_matches:
+                s_score = sm.score
+                total_score = total_score + s_score
+            
+        if student_count != 0:
+            if submitted_count != 0:
+                performance_average = total_score / submitted_count
+                performance_average = int(math.ceil(performance_average))
+                submitted_percent = (submitted_count/student_count) * 100 
+                submitted_percent = int(math.ceil(submitted_percent))
+            else:
+                performance_average = 0 
+                submitted_percent = 0
+        else:
+                performance_average = 0 
+                submitted_percent = 0
+
+        due_date = assignment.due_date
+        results = {'worksheet_id': worksheet.id, 'worksheet': worksheet.title, 'due_date': due_date, 'completion': submitted_percent, 'performance': performance_average}
+
+    else:
+        results = {'worksheet_id': worksheet.id, 'worksheet': worksheet.title, 'due_date': 'Not Assigned', 'completion': 'None', 'performance': 'None'}
+
+    return(results)

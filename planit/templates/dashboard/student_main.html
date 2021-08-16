@@ -221,7 +221,7 @@
          </button>
          </div>
          <div class="modal-body">
-             <form action="{% url 'student_registration' lesson_id=lesson_id worksheet_id=worksheet_id %}" method="POST" enctype="multipart/form-data">
+             <form action="{% url 'student_registration' ref_id=ref_id lesson_id=lesson_id worksheet_id=worksheet_id %}" method="POST" enctype="multipart/form-data">
                  {% csrf_token %}
                  {% for field in form %}
                  {% for error in field.errors %}

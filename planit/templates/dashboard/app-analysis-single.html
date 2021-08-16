@@ -46,6 +46,7 @@
                                 </thead>
                                 <tbody>
                                     {% for each_info in competency_info %}
+                                    {% ifchanged each_info.0 %}
                                     <tr>
                                         <td>
                                             <p>{{ each_info.0 }}</p>
@@ -53,13 +54,16 @@
                                         <td>
                                             <p><a href="{% url 'Dashboard' week_of='Current' subject_id=subject_id classroom_id=classroom_id standard_id=each_info.2 %}">{{ each_info.1 }}</a></p>
                                         </td>
+                                        
                                         <td>
-                                            <p></p> 
+                                            <p><a href="{% url 'student_performance' user_id=user_profile.id class_id=current_classroom.id week_of='Current' standard_id=each_info.2 %}">{{ each_info.3 }}</a></p>  
                                         </td>
                                         <td>
-                                            <p></p>
+                                            <p><a href="{% url 'classroom_single' user_id=user_profile.id class_id=current_classroom.id standard_id=each_info.2 %}">{{ each_info.4 }}</a></p> 
+                                            
                                         </td>
                                     </tr>
+                                    {% endifchanged %}
                                     {% endfor %}
                                 </tbody>
                             </table>
@@ -68,33 +72,6 @@
                 </div>
             </div>
         </div>
-        <footer class="footer section py-5">
-<div class="container-fluid">
-<div class="row">
-<div class="col-12 col-lg-6 mb-4 mb-lg-0">
-<p class="mb-0 text-center text-xl-left">Copyright © 2019-<span class="current-year"></span> <a class="text-primary font-weight-normal" href="https://themesberg.com" target="_blank">Themesberg</a></p>
-</div>
-
-<div class="col-12 col-lg-6">
-<!-- List -->
-<ul class="list-inline list-group-flush list-group-borderless text-center text-xl-right mb-0">
-    <li class="list-inline-item px-0 px-sm-2">
-        <a href="https://themesberg.com/about">About</a>
-    </li>
-    <li class="list-inline-item px-0 px-sm-2">
-        <a href="https://themesberg.com/themes">Themes</a>
-    </li>
-    <li class="list-inline-item px-0 px-sm-2">
-        <a href="https://themesberg.com/blog">Blog</a>
-    </li>
-    <li class="list-inline-item px-0 px-sm-2">
-        <a href="https://themesberg.com/contact">Contact</a>
-    </li>
-</ul>
-<!-- End List -->
-</div>
-</div>
-</div>
-</footer>
+ 
     </main>
 {% endblock %}
