@@ -140,6 +140,8 @@
                         </div>
                      </div>
                 </div>
+                
+                
                 <div class="col-12 col-sm-6 mb-4 mb-md-0">
                     <div class="card border-light shadow-sm">
                         <div class="card-body">
@@ -166,125 +168,7 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-12 mb-4">
-            <div class="card border-light shadow-sm">
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-centered table-nowrap mb-0 rounded">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th class="border-0">Student</th>
-                                    <th class="border-0">Stickers</th>
-                                    <th class="border-0">Avg</th>
-                                    <th class="border-0">Trend</th>
-                                    <th class="border-0">Completed</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="border-0">                                             
-                                        <a href="#" class="d-flex align-items-center">
-                                            
-                                            <div><span class="h6">Bart Simpson</span></div>
-                                        </a>
-                                    </td>
-                                    <td class="border-0 font-weight-bold">
-                                        3 
-                                        </td>
-                                    <td class="border-0 font-weight-bold">
-                                        85%
-                                        </td>
-                                        <td class="border-0 text-success">
-                                            <span class="fas fa-angle-up"></span>                                   
-                                            <span class="font-weight-bold">30%</span>
-                                        </td>
-                                    <td class="border-0 font-weight-bold">
-                                        10/15  
-                                    </td>
-                                
-                                </tr>
-                                <!-- End of Item -->
-                                <!-- Item -->
-                                <tr>
-                                    <td class="border-0">                                             
-                                        <a href="#" class="d-flex align-items-center">
-                                            
-                                            <div><span class="h6">Ferris Bueller</span></div>
-                                        </a>
-                                    </td>
-                                    <td class="border-0 font-weight-bold">
-                                        1
-                                    </td>
-                                
-                                    <td class="border-0 font-weight-bold">
-                                        55%
-                                    </td>
-                                    <td class="border-0 text-danger">
-                                        <span class="fas fa-angle-down"></span>                                   
-                                        <span class="font-weight-bold">5%</span>
-                                    </td>
-                                    <td class="border-0 font-weight-bold">
-                                        6/15
-                                    </td>
-                                
-                                </tr>
-                                <!--
-                                {% for student in student_results %}
-                                    {% ifchanged student.student_id %}
-                                    
-                                    <tr>
-                                        <td class="border-0 font-weight-bold">{{ student.student_name }}</td>
-                                        <td class="border-0">   
-                                            <a href="#" class="d-flex align-items-center">      
-                                            {% for item in student.student_praise %}                                       
-                                                {% for theme in all_themes %}
-                                                {% if theme.id == item.theme_id %}
-                                                <img class="mr-2 image rounded-circle" alt="Image placeholder" src="{{ theme.user_image.url }}">
-                                                <div><span class="h6">{{ item.c }}</span></div>
-                                                {% endif %}
-                                                {% endfor %}
-                                            {% endfor %}
-                                        </a>
-                                        </td>
-                                        <td class="border-0 font-weight-bold">
-                                            {{ student.student_avg }}%
-                                        </td>
-                                        
-                                    
-                                            {% if student.student_trend > 0 %}
-                                            <td class="border-0 text-success">
-                                                <span class="fas fa-angle-up"></span>                                   
-                                                <span class="font-weight-bold">{{ student.student_trend}}</span>
-                                                </td>
-                                            {% elif student.student_trend < 0 %}
-                                            <td class="border-0 text-danger">
-                                            <span class="fas fa-angle-down"></span>                                   
-                                            <span class="font-weight-bold">{{ student.student_trend }}</span>
-                                            </td>
-                                            {% else %}
-                                            <td class="border-0 text-primary">
-                                                                                
-                                                <span class="font-weight-bold">{{ student.student_trend }}</span>
-                                                </td>
-                                            {% endif %}
-                                    
-                                    
-                                        <td class="border-0">
-                                            {{ student.as_complete }}/{{student.as_total}}
-                                        </td>
 
-                                    </tr>
-                                    {% endifchanged %}
-                                {% endfor %}
-                                -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
 </main>
      <!-- Modal -->

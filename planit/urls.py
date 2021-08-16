@@ -83,6 +83,11 @@ urlpatterns = [
         view=StudentMCSelect,
         name='student_mc_select'),
 
+
+    url(r'^activity-preview/(?P<act_temp>[\w\s]+)/(?P<demo_type>[\w\s]+)/(?P<topic_type>[\w\s]+)/(?P<subject>[\w\s]+)/(?P<grade>[\w\s]+)/',
+        view=AdminActivityPreview,
+        name='admin_activity_preview'),
+
     url(r'^fib-student-answer/(?P<user_id>[\w\s]+)/(?P<lesson_id>[\w\s]+)/(?P<worksheet_id>[\w\s]+)/(?P<question_id>[\w\s]+)/(?P<index_id>[\w\s]+)/',
         view=StudentFIBAnswer,
         name='student_fib_answer'),
@@ -111,6 +116,11 @@ urlpatterns = [
     url(r'^classrooms-all/',
         view=ClassroomLists,
         name='classroom_list'),
+
+
+    url(r'^add-single-topic/(?P<top_id>[\w-]+)/(?P<act_type>[\w-]+)/',
+        view=AddSingleTopic,
+        name='single_topic_upload'),
 
     url(r'^classroom-dashboard/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/',
         view=ClassroomDashboard,
@@ -171,6 +181,28 @@ urlpatterns = [
         view=StandardsTracking,
         name='standard_tracker'),
 
+
+    url(r'^123admin8401/$',
+        view=SupAdDash,
+        name='sup_admin_dashboard'),
+
+    url(r'^demo-123admin8401/(?P<act_id>[\w-]+)/(?P<act_type>[\w-]+)/$',
+        view=AddDemoKSTemplate,
+        name='admin_demo_ks'),
+    
+    url(r'^act-123admin8401/(?P<act_id>[\w-]+)/(?P<act_type>[\w-]+)/$',
+        view=AddActivityTemplate,
+        name='admin_activity'),
+
+    url(r'^delete-123admin8401/(?P<act_id>[\w-]+)/(?P<act_type>[\w-]+)/$',
+        view=DeleteAdminPlanning,
+        name='delete_admin_info'),
+
+    url(r'^gs-123admin8401/(?P<act_id>[\w-]+)/(?P<act_type>[\w-]+)/$',
+        view=SelectGradeSubjectAdmin,
+        name='add_gs'),
+
+
     url(r'^narrow-standard-tracking/(?P<subject_id>[\w-]+)/(?P<classroom_id>[\w-]+)/',
         view=NarrowStandardsTracking,
         name='narrow_standard_tracker'),
@@ -194,6 +226,10 @@ urlpatterns = [
     url(r'^get-activity-summary/(?P<lesson_id>[\w-]+)/$',
         view=GetActivitySummary,
         name='get_activity_summary'),
+
+    url(r'^get-standards_analytics/(?P<lesson_id>[\w-]+)/$',
+        view=GetStandardsAnalytics,
+        name='get_standards_analytics'),
 
     url(r'^get-standard-recs/(?P<lesson_id>[\w-]+)/(?P<class_id>[\w-]+)/$',
         view=UpdateStandards,

@@ -38,6 +38,7 @@
          
          <!-- Fontawesome -->
          <link type="text/css" href="{% static 'vendor/dashboard/fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
          <!-- Prism -->
          <link type="text/css" href="{% static 'vendor/dashboard/prismjs/themes/prism.css' %}" rel="stylesheet">
@@ -159,6 +160,7 @@
 </style>
 </head>
 <body>
+   
     <div class="preloader bg-soft flex-column justify-content-center align-items-center">
         <img class="loader-element" src="{% static 'images/dashboard/circle_logo.svg' %}" height="50" alt="Rocket logo">
     </div>
@@ -199,26 +201,35 @@
                 <br>
                 <form  method="POST">
                     {% csrf_token %}
-                    
-                   
+                    <div class="dfree-header">
+                        <div class='row'>
+                            <div class="col-lg-1"></div>
+                            <div class="col-lg-10">
+                                <h3 class="dfree-header mce-content-body" id='header' contenteditable="true" style="position: relative;" spellcheck="false">
+                                    {{ lesson_match.subject }} | {{ user_profile.first_name }} {{ user_profile.last_name }}
+                                    </h3>
+                                    <br/>
+        
+                                    <div class="dfree-body mce-content-body" contenteditable="true" style="position: relative;" spellcheck="false">
+                                
+                                    <br/>
+                                    <h5>
+                                        {{ lesson_match.teacher_objective }}
+                                    </h5>
+                                    <p id="standard">
+                                        {% for stand in lesson_match.objectives_standards.all %}
+                                        <li id='standard-item'>{{ stand }}</li>
+                                        {% endfor %}
+                                    </p>
+                            </div>
+                            <div class="col-lg-1"></div>
+                        </div>
+                       
+                       
+                    </div>
                     <div class='demo-dfree myDivToPrint' id='demo-dfree'>
                         
-                        <h2 class="dfree-header mce-content-body" id='objective' contenteditable="true" style="position: relative;" spellcheck="false">
-                        {{ lesson_match.subject }} | {{ user_profile.first_name }} {{ user_profile.last_name }}
-                        </h2>
-                        <br/>
-
-                        <div class="dfree-body mce-content-body" contenteditable="true" style="position: relative;" spellcheck="false">
                        
-                        <br/>
-                        <h4>
-                            {{ lesson_match.teacher_objective }}
-                        </h4>
-                        <p id="standard">
-                            {% for stand in lesson_match.objectives_standards.all %}
-                            <li id='standard-item'>{{ stand }}</li>
-                            {% endfor %}
-                        </p>
                     
                        
                         <div class="showhim"><h2>Activities:</h2>
@@ -229,6 +240,7 @@
                         <p></p>
                         <h5>
                             <ul id='activity-div'>
+                                
                                 <li id='activity'> </li>
                                 {% for act in selected_activities %}
                                 <li id='activity'> {{ act.lesson_text }}</li>
@@ -309,7 +321,7 @@
                         </div>
 
                     </div>
-                    <div id='key_term_bottom'></div>
+                    
                   
                 </form>
                 
@@ -330,31 +342,7 @@
                             </button>
                         </div>
                         <div class="card-body">
-                            {% if standards_matches %}
-                            <div class="row d-block d-xl-flex align-items-center">
-                                <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
-                                    <div class="icon icon-shape icon-lg icon-shape-primary rounded mr-4 mr-sm-0">20%</div>
-                                    <div class="d-sm-none">
-                                        <h2 class="h5">Standards Alignment</h2>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-xl-7 px-xl-0">
-                                 
-                                    <div class="d-none d-sm-block">
-                                        <h2 class="h5">Standards Alignment</h2>
-                                    </div>
-                                
-                                    <small>Feb 1 - Apr 1,  <span class="icon icon-small"></span> Last Addressed</small> 
-                                    <div class="small mt-2">                               
-                                        <span class="fas fa-angle-up text-success"></span>                                   
-                                        <span class="text-success font-weight-bold">18.2%</span> <br>previous student performance
-                                    </div>
-                                    
-                                   
-                                </div>
-                            </div>
-                         
-                        {% endif %}
+                            <div id='stand-summ'>....</div>
                         </div>
                     </div>
                 </div>
@@ -437,8 +425,8 @@
                            
                             <li><a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 page='Preview' worksheet_id=0 act_id='False' question_id=0 %}#heading" class="card-link">Digital Worksheet</a></li>
                            
-                            <li><a href="#" class="card-link">Student Performance</a></li>
-                            <li><a href="#" class="card-link">Standards Tracking</a></li>
+                            <li><a href="{% url 'student_performance' user_id=user_profile.id class_id=0 week_of='Current' %}" class="card-link">Student Performance</a></li>
+                            <li><a href="{% url 'standard_tracker' %}" class="card-link">Standards Tracking</a></li>
 
                     </div>
                     </div>
@@ -731,11 +719,11 @@
         },
         success: function (response) {
         $('#time-update').empty();
-        $("#time-update").append('<h6> Last Saved: ' + response.data + '</h6>');
+        $("#time-update").append('<h6>' + response.data + '</h6>');
         }
 
     })
-}, 40000);
+}, 8000);
 </script> 
 
 <!----| Select TinyMce Text |-->
@@ -752,7 +740,7 @@
         },
         success: function (response) {
         $('#time-update').empty();
-        $("#time-update").append('<h6> Last Saved: ' + response.data + '</h6>');
+        $("#time-update").append('<h6>' + response.data + '</h6>');
         }
 
     })
@@ -1017,7 +1005,7 @@ document.getElementById('big_questions_selected').scrollIntoView();
             + item.mi_icon +
             '"></span> ' 
             + item.mi_label +
-            '</span></h6></div><div class="col-6"><p class="font-weight-normal text-gray">Rentention: ' 
+            '</span></h6></div><div class="col-6"><p class="font-weight-normal text-gray">Retention: ' 
             + item.ret +
             '%</p></div></div></div></div></div></a>');
         });
@@ -1072,6 +1060,7 @@ document.getElementById('big_questions_selected').scrollIntoView();
             
             success: function(response) {
             $("#standard-list").empty(); 
+            $("#standard-list").append('<h5>Possible Standards:</h5><hr>');
             $.each(response.data, function (i, item) {
             
             $("#standard-list").append(
@@ -1122,6 +1111,46 @@ document.getElementById('big_questions_selected').scrollIntoView();
     })
 }, 8007);
 </script> 
+
+
+
+
+<!----| Update Standard Analytics |-->
+<script type="text/javascript">
+    setInterval(function(){
+    var overview = document.getElementById('stand-summ');
+    htmlContent = overview.innerHTML,
+    $.ajax(
+    {
+        type:"GET",
+        url: "/get-standards_analytics/{{ lesson_match.id}}",
+        
+        success: function(response) {
+        $("#stand-summ").empty(); 
+        $("#stand-summ").append(
+            '<div class="card-body"> \
+            <div class="row d-block d-xl-flex align-items-center"> \
+                <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center"> \
+                    <div class="icon icon-shape icon-lg icon-shape-primary rounded mr-4 mr-sm-0">'
+                        + response.data + '%</div> \
+                    <div class="d-sm-none"> \
+                        <h2 class="h5">Standards Alignment</h2> \
+                    </div> \
+                </div> \
+                <div class="col-12 col-xl-7 px-xl-0"> \
+                    <div class="d-none d-sm-block"> \
+                        <h2 class="h5">Standards Alignment</h2> \
+                    </div> \
+                    <p>Connect Activities to Standards</p></div> \
+            </div> \
+        </div>');
+
+    }
+
+    })
+}, 8010);
+</script> 
+
 
 <!----| Update Blooms |-->
 <script type="text/javascript">
