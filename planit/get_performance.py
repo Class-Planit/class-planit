@@ -137,13 +137,15 @@ def get_worksheet_performance(worksheet):
                 student_count = 0
                 total_score = 0
                 submitted_count = 0
-                students_match = classroom_match.student.all()
-                s_count = students_match.count()
+                student_classroom_matches = classroom_match.student.all()
+                s_count = student_classroom_matches.count()
                 student_count = student_count + s_count
 
-                student_matches = assignment.student_answers.all()
-                new_student_count = student_matches.count()
-                s_matches = studentWorksheetAnswerFull.objects.filter(id__in=student_matches, student_profile__in=students_match,  is_submitted=True)
+                student_answer_matches = assignment.student_answers.all()
+                new_student_count = student_answer_matches.count()
+                
+                s_matches = studentWorksheetAnswerFull.objects.filter(id__in=student_answer_matches, student_profile__in=student_classroom_matches,  is_submitted=True)
+                
                 new_count = s_matches.count()
                 student_count = student_count + new_student_count
                 submitted_count = submitted_count + new_count
