@@ -174,7 +174,7 @@ def get_worksheet_performance(worksheet):
         
         assignment_link = "www.app1-classplanit.co/student-dashboard/%s/%s/0/" % (lesson_match, worksheet.id)
 
-        results = {'worksheet_id': worksheet.id, 'lesson_match': lesson_id, 'classroom_id': classroom_id,  'worksheet_link': assignment_link, 'worksheet': worksheet.title, 'classroom_assignments': classroom_assignments}
+        results = {'worksheet_id': worksheet.id, 'lesson_id': lesson_id, 'lesson_match': lesson_full, 'classroom_id': classroom_id,  'worksheet_link': assignment_link, 'worksheet': worksheet.title, 'classroom_assignments': classroom_assignments}
 
     else:
         results = {'worksheet_id': worksheet.id, 'worksheet_link': None, 'worksheet': worksheet.title, 'due_date': 'Not Assigned', 'completion': 'None', 'performance': 'None'}

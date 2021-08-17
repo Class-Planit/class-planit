@@ -198,9 +198,13 @@
                                     <td>
                                         
                                         <p>
-                                            <a href="{% url 'activity_builder' user_id=user_profile.id class_id=0 lesson_id=each_info.lesson_match subject='All' page=0 %}#heading">
+                                            {% if each_info.lesson_match %}
+                                            <a href="{% url 'activity_builder' user_id=user_profile.id class_id=0 lesson_id=each_info.lesson_id subject='All' page=0 %}#heading">
                                                 {{ each_info.lesson_match.teacher_objective|slice:":40" }}...
                                             </a>
+                                            {% else %}
+                                            <p>No Lesson</p>
+                                            {% endif %}
                                         </p>
                                     </td>
                                     <td>
