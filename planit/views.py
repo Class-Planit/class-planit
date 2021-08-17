@@ -924,8 +924,10 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     if lesson_id == 0:
         return redirect('create_objective', user_id=user_profile.id, week_of=week_of)
     else:
-        classroom_profile = classroom.objects.get(id=class_id)
+        
         lesson_match = lessonObjective.objects.get(id=lesson_id)
+        classroom_match = lesson_match.lesson_classroom_id
+        classroom_profile = classroom.objects.filter(id=classroom_match).first()
 
         lesson_topics = topicInformation.objects.filter(id__in=lesson_match.objectives_topics.all())
 
