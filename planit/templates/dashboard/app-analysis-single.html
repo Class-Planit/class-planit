@@ -52,7 +52,7 @@
                                             <p>{{ each_info.0 }}</p>
                                         </td>
                                         <td>
-                                            <p><a href="{% url 'Dashboard' week_of='Current' subject_id=subject_id classroom_id=classroom_id standard_id=each_info.2 %}">{{ each_info.1 }}</a></p>
+                                            <p><a href="{% url 'Dashboard' week_of=each_info.5 subject_id=subject_id classroom_id=classroom_id standard_id=each_info.2 %}">{{ each_info.1 }}</a></p>
                                         </td>
                                         
                                         <td>

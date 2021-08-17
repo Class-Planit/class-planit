@@ -151,6 +151,26 @@
  
                      </div>
                  </div>
+                 <div class="col-12 px-0 mb-4">
+                    <div class="card border-light shadow-sm">
+                       
+                        <div class="card-body">
+                            <h2 class="h5">Alerts:</h2>
+  
+                            {% for one_alert in top_alerts %}
+                                <div class="card border-secondary">
+                                    <div class="card-body">
+                                            {{ one_alert.html_message|safe }}
+                                        
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            
+
+                        </div>
+                    </div>
+                   
+                </div>
                 
               
              </div>
