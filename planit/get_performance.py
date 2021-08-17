@@ -119,10 +119,12 @@ def get_worksheet_performance(worksheet):
     worksheet_assignments = worksheetClassAssignment.objects.filter(worksheet_full=worksheet)
     lesson_match = worksheet.lesson_overview_id
     if lesson_match:
+        lesson_id = worksheet.lesson_overview_id  
         lesson_full = lessonObjective.objects.get(id=lesson_match)
         classroom_id = lesson_full.lesson_classroom_id
     else:
-        lesson_match = 0      
+        lesson_match = 0 
+        lesson_id = 0     
         lesson_full = None    
         classroom_id = None
 
@@ -172,7 +174,7 @@ def get_worksheet_performance(worksheet):
         
         assignment_link = "www.app1-classplanit.co/student-dashboard/%s/%s/0/" % (lesson_match, worksheet.id)
 
-        results = {'worksheet_id': worksheet.id, 'lesson_match': lesson_full, 'classroom_id': classroom_id,  'worksheet_link': assignment_link, 'worksheet': worksheet.title, 'classroom_assignments': classroom_assignments}
+        results = {'worksheet_id': worksheet.id, 'lesson_match': lesson_id, 'classroom_id': classroom_id,  'worksheet_link': assignment_link, 'worksheet': worksheet.title, 'classroom_assignments': classroom_assignments}
 
     else:
         results = {'worksheet_id': worksheet.id, 'worksheet_link': None, 'worksheet': worksheet.title, 'due_date': 'Not Assigned', 'completion': 'None', 'performance': 'None'}

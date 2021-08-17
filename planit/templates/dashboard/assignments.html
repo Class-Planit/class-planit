@@ -198,7 +198,7 @@
                                     <td>
                                         
                                         <p>
-                                            <a href="{% url 'activity_builder' user_id=user_profile.id class_id=0 lesson_id=each_info.lesson_match.id subject='All' page=0 %}#heading">
+                                            <a href="{% url 'activity_builder' user_id=user_profile.id class_id=0 lesson_id=each_info.lesson_match subject='All' page=0 %}#heading">
                                                 {{ each_info.lesson_match.teacher_objective|slice:":40" }}...
                                             </a>
                                         </p>
