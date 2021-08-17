@@ -1342,7 +1342,8 @@ def StudentWorksheetStart(request, lesson_id=None, worksheet_id=None, question_i
     if user_profile:
         question_matches = worksheet_match.questions.all()
         matched_questions = topicQuestionitem.objects.filter(id__in=question_matches)
-        student_answer_sheet, created = studentWorksheetAnswerFull.objects.get_or_create(student=user_profile, worksheet_assignment=worksheet_match)
+        student_profile_match, created  = studentProfiles.objects.get_or_create(student_username=user_profile)
+        student_answer_sheet, created = studentWorksheetAnswerFull.objects.get_or_create(student=user_profile, student_profile=student_profile_match, worksheet_assignment=worksheet_match)
         s_answers = student_answer_sheet.student_answers.all()
         single_answers = studentQuestionAnswer.objects.filter(id__in=s_answers)
 
@@ -1588,6 +1589,11 @@ def StudentPerformance(request, user_id, class_id, week_of, standard_id):
         form = worksheetFullForm()
     return render(request, 'dashboard/assignments.html', {'user_profile': user_profile, 'worksheet_results': worksheet_results, 'worksheet_matches': worksheet_matches, 'form': form, 'subject_options': subject_options, 'grade_options': grade_options, 'all_themes': all_themes, 'week_breakdown': week_breakdown, 'top_lessons': top_lessons, 'student_results': student_results})
 
+def SingleAssignment(request, user_id=None, classroom_id=None, worksheet_id=None):
+    user_profile = User.objects.filter(username=request.user.username).first()
+    worksheet_match = worksheetFull.objects.get(id=worksheet_id)
+    classroom_match = classroom.objects.get(id=classroom_id)
+    
 
 ####### these functions handle the students answers as they go through the digital worksheet #########
 #selected the multiple choice answer in worksheet question
@@ -1596,8 +1602,10 @@ def StudentMCSelect(request, user_id=None, lesson_id=None, worksheet_id=None):
     if request.method == 'GET':
         user_profile = User.objects.filter(username=request.user.username).first()
         worksheet_match = worksheetFull.objects.get(id=worksheet_id)
-        student_answer_key, created  = studentWorksheetAnswerFull.objects.get_or_create(student=user_profile, worksheet_assignment=worksheet_match)
-
+        student_profile_match = studentProfiles.objects.get_or_create(student_username=user_profile)
+        student_answer_key, created = studentWorksheetAnswerFull.objects.get_or_create(student=user_profile, student_profile=student_profile_match, worksheet_assignment=worksheet_match)
+       
+       
         user_id = user_profile.id
         question_id = request.GET['question_id']
         question = request.GET['question']
@@ -1627,7 +1635,9 @@ def StudentFIBAnswer(request, user_id=None, lesson_id=None, worksheet_id=None, q
     if request.method == 'GET':
         user_profile = User.objects.filter(username=request.user.username).first()
         worksheet_match = worksheetFull.objects.get(id=worksheet_id)
-        student_answer_key, created  = studentWorksheetAnswerFull.objects.get_or_create(student=user_profile, worksheet_assignment=worksheet_match)
+        student_profile_match = studentProfiles.objects.get_or_create(student_username=user_profile)
+        student_answer_key, created = studentWorksheetAnswerFull.objects.get_or_create(student=user_profile, student_profile=student_profile_match, worksheet_assignment=worksheet_match)
+       
         match_question = topicQuestionitem.objects.get(id=question_id)
         correct_answer = match_question.Correct
         question = match_question.Question
@@ -1655,7 +1665,9 @@ def StudentSAAnswer(request, user_id=None, lesson_id=None, worksheet_id=None, qu
     if request.method == 'GET':
         user_profile = User.objects.filter(username=request.user.username).first()
         worksheet_match = worksheetFull.objects.get(id=worksheet_id)
-        student_answer_key, created  = studentWorksheetAnswerFull.objects.get_or_create(student=user_profile, worksheet_assignment=worksheet_match)
+        student_profile_match = studentProfiles.objects.get_or_create(student_username=user_profile)
+        student_answer_key, created = studentWorksheetAnswerFull.objects.get_or_create(student=user_profile, student_profile=student_profile_match, worksheet_assignment=worksheet_match)
+       
         match_question = topicQuestionitem.objects.get(id=question_id)
         question = match_question.Question
         answer = request.GET["saanswer"]

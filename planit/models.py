@@ -1706,6 +1706,11 @@ class studentWorksheetAnswerFull(models.Model):
                                related_name='student_info',
                                blank=True,
                                null=True)
+    student_profile = models.ForeignKey(studentProfiles,
+                               on_delete=models.CASCADE,
+                               related_name='student_info',
+                               blank=True,
+                               null=True)
     nickname = models.CharField(max_length=200,
                         blank=True,
                         null=True)

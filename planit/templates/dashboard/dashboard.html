@@ -192,7 +192,7 @@
             
                 {% for objective in active_lessons %}
                 <div class="col-12 col-lg-4 mb-3">
-                    <a href="{% url 'activity_builder' user_id=1 class_id=objective.lesson_classroom_id lesson_id=objective.id subject=objective.subject_id page=0 %}#heading" class="card border-light animate-up-3 shadow-soft p-0 p-lg-4">     
+                    <a href="{% url 'activity_builder' user_id=user_profile.id class_id=objective.lesson_classroom_id lesson_id=objective.id subject=objective.subject_id page=0 %}#heading" class="card border-light animate-up-3 shadow-soft p-0 p-lg-4">     
                         <div class="card-body">
                             <h5 class="mb-4">{{ objective.subject }} : {{ objective.lesson_classroom }}</h5>
                             <p class="text-gray mb-4">{{ objective.teacher_objective }}</p>

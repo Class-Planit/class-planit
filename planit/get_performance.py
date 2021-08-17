@@ -117,45 +117,62 @@ def get_student_results(user_id, week_of_start, week_of_finsih, year):
 def get_worksheet_performance(worksheet):
 
     worksheet_assignments = worksheetClassAssignment.objects.filter(worksheet_full=worksheet)
+    lesson_match = worksheet.lesson_overview_id
+    if lesson_match:
+        lesson_full = lessonObjective.objects.get(id=lesson_match)
+        classroom_id = lesson_full.lesson_classroom_id
+    else:
+        lesson_match = 0      
+        lesson_full = None    
+        classroom_id = None
 
     if worksheet_assignments:
         ws_count = worksheet_assignments.count()
-        student_count = 0
-        total_score = 0
-        submitted_count = 0
+        
         for assignment in worksheet_assignments:
+            due_date = assignment.due_date
             assigned_classrooms = assignment.assigned_classrooms.all()
+            classroom_assignments = []
             for classroom_match in assigned_classrooms:
+                student_count = 0
+                total_score = 0
+                submitted_count = 0
                 students_match = classroom_match.student.all()
                 s_count = students_match.count()
                 student_count = student_count + s_count
 
-            student_matches = assignment.student_answers.all()
-            s_matches = studentWorksheetAnswerFull.objects.filter(id__in=student_matches, is_submitted=True)
-            new_count = s_matches.count()
-            submitted_count = submitted_count + new_count
+                student_matches = assignment.student_answers.all()
+                new_student_count = student_matches.count()
+                s_matches = studentWorksheetAnswerFull.objects.filter(id__in=student_matches, student_profile__in=students_match,  is_submitted=True)
+                new_count = s_matches.count()
+                student_count = student_count + new_student_count
+                submitted_count = submitted_count + new_count
 
-            for sm in s_matches:
-                s_score = sm.score
-                total_score = total_score + s_score
-            
-        if student_count != 0:
-            if submitted_count != 0:
-                performance_average = total_score / submitted_count
-                performance_average = int(math.ceil(performance_average))
-                submitted_percent = (submitted_count/student_count) * 100 
-                submitted_percent = int(math.ceil(submitted_percent))
-            else:
-                performance_average = 0 
-                submitted_percent = 0
-        else:
-                performance_average = 0 
-                submitted_percent = 0
+                for sm in s_matches:
+                    s_score = sm.score
+                    total_score = total_score + s_score
+        
+                if student_count != 0:
+                    if submitted_count != 0:
+                        performance_average = total_score / submitted_count
+                        performance_average = int(math.ceil(performance_average))
+                        submitted_percent = (submitted_count/student_count) * 100 
+                        submitted_percent = int(math.ceil(submitted_percent))
+                    else:
+                        performance_average = 0 
+                        submitted_percent = 0
+                else:
+                        performance_average = 0 
+                        submitted_percent = 0
 
-        due_date = assignment.due_date
-        results = {'worksheet_id': worksheet.id, 'worksheet': worksheet.title, 'due_date': due_date, 'completion': submitted_percent, 'performance': performance_average}
+                assignment_results = {'classroom_match': classroom_match, 'due_date': due_date, 'completion': submitted_percent, 'performance': performance_average}
+                classroom_assignments.append(assignment_results)
+        
+        assignment_link = "www.app1-classplanit.co/student-dashboard/%s/%s/0/" % (lesson_match, worksheet.id)
+
+        results = {'worksheet_id': worksheet.id, 'lesson_match': lesson_full, 'classroom_id': classroom_id,  'worksheet_link': assignment_link, 'worksheet': worksheet.title, 'classroom_assignments': classroom_assignments}
 
     else:
-        results = {'worksheet_id': worksheet.id, 'worksheet': worksheet.title, 'due_date': 'Not Assigned', 'completion': 'None', 'performance': 'None'}
+        results = {'worksheet_id': worksheet.id, 'worksheet_link': None, 'worksheet': worksheet.title, 'due_date': 'Not Assigned', 'completion': 'None', 'performance': 'None'}
 
     return(results)

@@ -175,14 +175,16 @@
                         <table class="table table-centered table-nowrap mb-0 rounded">
                             <thead class="thead-light">
                                 <tr>
-                                    <th class="border-0" style="width: 60%">Worksheet Title:</th>
-                                    <th class="border-0" style="width: 14%">Due Date:</th>
-                                    <th class="border-0" style="width: 14%">Completion:</th>
-                                    <th class="border-0" style="width: 12%">Overall Performance:</th>
+                                    <th class="border-0" style="width: 33%">Worksheet Title:</th>
+                                    <th class="border-0" style="width: 33%">Lesson Plan:</th>
+                                    <th class="border-0" style="width: 33%">Assignment:</th>
+                                    
                                     
                                 </tr>
                             </thead>
                             <tbody>
+
+                              
                                 {% for each_info in worksheet_results %}
                                 <tr>
                                     <td>
@@ -194,14 +196,23 @@
                                         </p>
                                     </td>
                                     <td>
-                                        <p>{{ each_info.due_date }}</p>
+                                        
+                                        <p>
+                                            <a href="{% url 'activity_builder' user_id=user_profile.id class_id=each_info.classroom_id lesson_id=each_info.lesson_match.id subject='All' page=0 %}#heading">
+                                                {{ each_info.lesson_match.teacher_objective|slice:":40" }}...
+                                            </a>
+                                        </p>
                                     </td>
                                     <td>
-                                        <p>{{ each_info.completion }}</p>
+                                        {% for classroom_info in each_info.classroom_assignments %}
+                                        <p>{{ classroom_info.classroom_match }} <br><small>Due Date: {{ classroom_info.due_date }} | Completion: {{ classroom_info.completion }}% | Average: {{ classroom_info.performance }}%</small></p>
+                                        {% endfor %}
+                                        
+                                        {% if each_info.worksheet_link %}
+                                        <a href="{{ each_info.worksheet_link }}">Assignment Link: <br>{{each_info.worksheet_link}}</a>
+                                        {% endif %}
                                     </td>
-                                    <td>
-                                        <p>{{ each_info.performance }}</p>
-                                    </td>
+                                   
                                 </tr>
                                 {% endfor %}
                             </tbody>
