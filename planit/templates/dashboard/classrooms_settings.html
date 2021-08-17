@@ -448,6 +448,11 @@
                                     </thead>
                                     <tbody>
                                         {% for grade in grade_list %}
+                                            <tr>
+                                                <td>
+                                                    {{grade}}
+                                                </td>
+                                            </tr>
                                             {% if grade not in current_grade_levels.all and grade != class_profile.single_grade %}
                                                 <tr>
                                                     <td>{{ grade }}</td>

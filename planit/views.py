@@ -179,7 +179,7 @@ def FormFull(request, retry=None):
             except:
                 pass
 
-            return redirect('Dashboard', week_of='Current', subject_id='All', classroom_id='All')
+            return redirect('Dashboard', week_of='Current', subject_id='All', classroom_id='All', standard_id='All')
 
     else:
 
@@ -822,6 +822,7 @@ def Dashboard(request, week_of, subject_id, classroom_id, standard_id=None):
     week_info = get_week_info(week_of)
 
     user_profile = User.objects.filter(id=request.user.id).first()
+    user_id = user_profile.id
 
     if user_profile is not None:
         #gets the classrooms teachers are main teacher on 
@@ -855,7 +856,8 @@ def Dashboard(request, week_of, subject_id, classroom_id, standard_id=None):
 
 
         # gets the subjects and classrooms for the dropdown options
-        subject_results, classroom_results = get_subject_and_classroom_dashboard(objective_matches)
+        #subject_results, classroom_results = get_subject_and_classroom_dashboard(objective_matches)
+        subject_results, classroom_results = get_subject_and_classroom(objective_matches, user_id)
         
         context = {'user_profile': user_profile, 'current_week': week_info['current_week'], 'active_week': week_info['active_week'], 'objective_matches': objective_matches,\
                     'previous_week': week_info['previous_week'], 'next_week': week_info['next_week'], 'subject_results': subject_results, 'classroom_results': classroom_results, \

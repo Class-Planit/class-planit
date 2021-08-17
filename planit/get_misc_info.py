@@ -30,14 +30,15 @@ def get_subject_and_classroom(objective_matches, user_id):
     user_profile = User.objects.get(id=user_id)
 
     subject_results = []
-    for objective in objective_matches:
-        subject_match = objective.subject_id
-        subject_title = objective.subject 
-        results = subject_match,subject_title
-        if results not in subject_results:
-            subject_results.append(results)
-    classroom_results = []
 
+    #for objective in objective_matches:
+    #    subject_match = objective.subject_id
+    #    subject_title = objective.subject 
+    #    results = subject_match,subject_title
+    #    if results not in subject_results:
+    #        subject_results.append(results)
+
+    classroom_results = []
     all_classrooms = classroom.objects.filter(main_teacher=user_profile)
     for each_classroom in all_classrooms:
         classroom_match = each_classroom.id
@@ -45,6 +46,14 @@ def get_subject_and_classroom(objective_matches, user_id):
         results = classroom_match,classroom_title
         if results not in classroom_results:
             classroom_results.append(results)
+        class_subjects = each_classroom.subjects.all()
+        for each_subject in class_subjects:
+            subject_match = each_subject.id
+            subject_title = each_subject.subject_title
+            results1 = subject_match,subject_title
+            if results1 not in subject_results:
+                subject_results.append(results1)
+
     return subject_results, classroom_results
 
 def get_subject_and_classroom_dashboard(objective_matches):
