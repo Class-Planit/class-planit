@@ -179,7 +179,7 @@ def FormFull(request, retry=None):
             except:
                 pass
 
-            return redirect('Dashboard', week_of='Current', subject_id='All', classroom_id='All')
+            return redirect('Dashboard', week_of='Current', subject_id='All', classroom_id='All', standard_id='All')
 
     else:
 
