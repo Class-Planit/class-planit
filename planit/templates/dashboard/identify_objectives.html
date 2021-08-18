@@ -43,9 +43,12 @@
                     <div class="form-group">
                         <label for="subject">Select Your Subject:</label>
                         <select class="form-control" name='subject' id="subject">
+                            {% if lesson_subject != 'Any' %}
+                                <option selected value='{{ lesson_subject.id }}'>{{ lesson_subject.subject_title }}</option>
+                            {% endif %}
                             {% for sub in subjects %}
                                 {% ifchanged sub.0 %}
-                                <option value='{{ sub.0 }}'>{{ sub.1 }}</option>
+                                    <option value='{{ sub.0 }}'>{{ sub.1 }}</option>
                                 {% endifchanged %}
                             {% endfor %}
                             
@@ -54,8 +57,11 @@
                     <div class="form-group">
                         <label for="lesson_classroom">Select Your Classroom:</label>
                         <select class="form-control" name='lesson_classroom' id="lesson_classroom">
+                            {% if lesson_classroom != 'Any' %}
+                                <option selected value='{{ lesson_classroom.id }}'>{{ lesson_classroom.classroom_title }}</option>
+                            {% endif %}
                             {% for classroom in user_classrooms %}
-                        <option value='{{ classroom.id }}'>{{ classroom.classroom_title }}</option>
+                                <option value='{{ classroom.id }}'>{{ classroom.classroom_title }}</option>
                             {% endfor %}
                         </select>
                     </div>

@@ -146,9 +146,13 @@ urlpatterns = [
         view=EditClassroomGradeLevels,
         name='edit_classroom_grade_levels'),
 
-    url(r'^create_objective/(?P<user_id>[\w\s]+)/(?P<week_of>[\w\s]+)/',
+    url(r'^create_objective/(?P<user_id>[\w\s]+)/(?P<week_of>[\w\s]+)/(?P<classroom_id>[\w\s]+)/(?P<subject_id>[\w\s]+)/',
         view=CreateObjective,
         name='create_objective'),
+
+    url(r'^create_objective-with-standard/(?P<user_id>[\w\s]+)/(?P<week_of>[\w\s]+)/(?P<subject_id>[\w\s]+)/(?P<classroom_id>[\w\s]+)/(?P<standard_id>[\w\s]+)/',
+        view=CreateObjectiveWithStandard,
+        name='create_objective_with_standard'),
 
     url(r'^student-performance/(?P<user_id>[\w\s]+)/(?P<class_id>[\w\s]+)/(?P<week_of>[\w\s]+)/(?P<standard_id>[\w\s]+)/',
         view=StudentPerformance,
