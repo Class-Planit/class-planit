@@ -66,6 +66,10 @@ urlpatterns = [
         view=StudentMainDashboard,
         name='student_main'),
 
+    url(r'^student-alerts/(?P<user_id>[\w\s]+)/',
+        view=StudentAlertDashboard,
+        name='student_alerts'),
+
     url(r'^student-registration/(?P<ref_id>[\w\s]+)/(?P<lesson_id>[\w\s]+)/(?P<worksheet_id>[\w\s]+)/',
         view=StudentRegistration,
         name='student_registration'),
