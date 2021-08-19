@@ -71,24 +71,8 @@
                     <div class="col-12 col-md-6 col-lg-3 align-items-center d-none d-md-flex">
                         <div class="form-group mb-0 mr-3">
                             <div class="dropdown">
-                                <!--
-                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Dropdown
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                                    <li><a class="dropdown-item" href="{% url 'Dashboard' week_of=active_week subject_id='All' classroom_id=active_classroom_id standard_id='All' %}">All subjects</a></li>
-                                    {% for subject in subject_results %}
-                                        {% if subject.id == active_subject_id %}
-                                            <li><a class="dropdown-item active" href="#" aria-current="true">{{ subject.1 }}</a></li>
-                                        {% else %}
-                                            <li><a class="dropdown-item" href="{% url 'Dashboard' week_of=active_week subject_id=subject.0 classroom_id=active_classroom_id standard_id='All' %}">{{ subject.1 }}</a></li>
-                                        {% endif %}
-                                    {% endfor %}
-                                </ul>
-                            -->
-                                
                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                  Subject
+                                  Subject <i class="fas fa-caret-down"></i>
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                     <a class="dropdown-item" href="{% url 'Dashboard' week_of=active_week subject_id='All' classroom_id=active_classroom_id standard_id='All' %}">All subjects</a>
@@ -106,7 +90,7 @@
                         <div class="form-group mb-0 mr-3">
                             <div class="dropdown">
                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                  Classroom
+                                  Classroom <i class="fas fa-caret-down"></i>
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                     <a class="dropdown-item" href="{% url 'Dashboard' week_of=active_week subject_id=active_subject_id classroom_id='All' standard_id='All' %}">All classrooms</a>
@@ -117,6 +101,7 @@
                             </div>
                         </div>
                     </div>
+                    
                     <div class="col col-md-4 col-lg-3 col-xl-2 ml-auto">
                         <!--
                         <div class="input-group">
@@ -158,10 +143,29 @@
                     </div>
                 </div>
             </div>
+            <div class="row justify-content-left">
+                <div class="alert" role="alert">
+                    Filters:
+                </div>
+                {% if active_subject != "All" %}
+                    <div class="alert alert-light" role="alert">
+                        {{ active_subject.subject_title }} <a href="{% url 'Dashboard' week_of=active_week subject_id='All' classroom_id=active_classroom_id standard_id='All' %}"><strong>&nbsp;&nbsp;&nbsp;X</strong></a>
+                    </div>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;</p>
+                {% endif %}
+                {% if active_classroom != "All" %}
+                    <div class="alert alert-light" role="alert">
+                        {{ active_classroom.classroom_title }} <a href="{% url 'Dashboard' week_of=active_week subject_id=active_subject_id classroom_id='All' standard_id='All' %}"><strong>&nbsp;&nbsp;&nbsp;X</strong></a>
+                    </div>
+                {% endif %}
+                
+            </div>
             <div class="row justify-content-center">
              
                 <div class="col-12 col-sm-6 col-xl-4 mb-4">
-                    <a href="{% url 'create_objective' user_id=user_profile.id week_of=active_week %}" class="card border-light animate-up-3 shadow-soft p-0 p-lg-4">     
+                    <!-- Add if statement to see if subject and classroom is 'All' -->
+
+                    <a href="{% url 'create_objective' user_id=user_profile.id week_of=active_week subject_id=active_subject_id classroom_id=active_classroom_id %}" class="card border-light animate-up-3 shadow-soft p-0 p-lg-4">     
                         <div class="card-body">
                             <div class="row d-block d-xl-flex align-items-center">
                                 <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
@@ -170,21 +174,32 @@
                                     </div>
                                     <div class="d-sm-none">
                                         <h2 class="h5"> </h2>
-                                        <h5 class="mb-4">New Planner</h5>
+                                        {% if active_subject == 'All' and active_classroom == 'All' %}
+                                            <h5 class="mb-4">New Planner</h5>
+                                        {% elif active_subject != 'All' and active_classroom == 'All' %}
+                                            <h5 class="mb-4">New Planner for {{active_subject}}</h5>
+                                        {% elif active_subject == 'All' and active_classroom != 'All' %}
+                                            <h5 class="mb-4">New Planner for {{active_classroom}}</h5>
+                                        {% else %}
+                                            <h5 class="mb-4">New Planner for {{active_subject}} in {{active_classroom}}</h5>
+                                        {% endif %}
                                     </div>
                                 </div>
                                 <div class="col-12 col-xl-7 px-xl-0">
                                     <div class="d-none d-sm-block">
                                         <h2 class="h5"> </h2>
-                                        <h5 class="mb-4">New Planner</h5>
+                                        {% if active_subject == 'All' and active_classroom == 'All' %}
+                                            <h5 class="mb-4">New Planner</h5>
+                                        {% elif active_subject != 'All' and active_classroom == 'All' %}
+                                            <h5 class="mb-4">New Planner for {{active_subject}}</h5>
+                                        {% elif active_subject == 'All' and active_classroom != 'All' %}
+                                            <h5 class="mb-4">New Planner for {{active_classroom}}</h5>
+                                        {% else %}
+                                            <h5 class="mb-4">New Planner for {{active_subject}} in {{active_classroom}}</h5>
+                                        {% endif %}
                                     </div>
-                                    
-                                    
-                                    
                                 </div>
-                            
                             </div>
-                            
                         </div>
                     </a>
                 

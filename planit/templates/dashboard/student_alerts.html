@@ -93,7 +93,9 @@
      <div class="bg-white">
          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
              <div class="btn-toolbar">
-                 
+                <a type="button" class="btn btn-primary" href="{% url 'student_main' user_id=user_profile.id %}" style="color: white">
+                    <i class="fas fa-angle-left lg"></i> Back to Dashboard
+                </a>
              </div>
              <div class="btn-group mr-2">
                  
@@ -106,58 +108,62 @@
              </div>
          </div>
          <div class="row">
-        
-             <div class="col-lg-9">
- 
-              
-             <div class='container'>
-             <div class="row justify-content-between  align-items-center bg-white ">
-                 <div class="col-12">
-                  <h5>Main</h5>
-                 </div>
-                 
-             </div>
-             </div>  
+            <div class="col-lg-9">
+                <div class='container'>
+                    <div class="row justify-content-between  align-items-center bg-white ">
+                        <div class="col-12">
+                        <h5>Alerts</h5>
+                        <br>
+                        </div>
                         
-   
-             </div>
- 
-             <div class="col-lg-3">
-                 <div class="col-12 px-0 mb-4">
-                     <div class="card border-light shadow-sm">
-                        
-                         <div class="card-body">
-                             <h2 class="h5">Assignments:</h2>
-   
-                             <li><a href="#" class="card-link">Worksheet</a></li>
- 
-                         </div>
-                     </div>
-                    
-                 </div>
-                 <div class="col-12 px-0 mb-4">
-                     <div class="card border-light shadow-sm">
- 
-                             <div class="card border-light shadow-sm">
-                        
-                                 <div class="card-body">
-                                     <h2 class="h5">Study Guides:</h2>
-           
-                                     <li><a href="#" class="card-link">Flashcards</a></li>
-                                     <li><a href="#" class="card-link">Spelling Practice</a></li>
-             
-                                 </div>
-                             </div>
- 
-                     </div>
-                 </div>
-                 <div class="col-12 px-0 mb-4">
+                    </div>
+                    {% for one_alert in all_alerts %}
+                        <div class="card w-50 border-secondary">
+                            <div class="card-body">
+                                {{ one_alert.html_message|safe }}
+                            </div>
+                        </div>
+                        <br>
+                    {% endfor %} 
+                </div>  
+            </div>
+
+            <div class="col-lg-3">
+                <div class="col-12 px-0 mb-4">
                     <div class="card border-light shadow-sm">
-                       
+                    
+                        <div class="card-body">
+                            <h2 class="h5">Assignments:</h2>
+
+                            <li><a href="#" class="card-link">Worksheet</a></li>
+
+                        </div>
+                    </div>
+                
+                </div>
+                <div class="col-12 px-0 mb-4">
+                    <div class="card border-light shadow-sm">
+
+                            <div class="card border-light shadow-sm">
+                    
+                                <div class="card-body">
+                                    <h2 class="h5">Study Guides:</h2>
+        
+                                    <li><a href="#" class="card-link">Flashcards</a></li>
+                                    <li><a href="#" class="card-link">Spelling Practice</a></li>
+            
+                                </div>
+                            </div>
+
+                    </div>
+                </div>
+                <div class="col-12 px-0 mb-4">
+                    <div class="card border-light shadow-sm">
+                        <!--
                         <div class="card-body">
                             <div class="row justify-content-between align-items-center">
                                 <h2 class="h5">&nbsp;&nbsp;&nbsp;&nbsp;Alerts:</h2>
-                                <a href="{% url 'student_alerts' user_id=user_profile.id %}""><div class="alert alert-light" role="alert" style="color: black; background-color:rgba(243, 243, 243, 0.521);"><strong>View All</strong></div></a>
+                                <a href='#'><div class="alert alert-light" role="alert" style="color: black; background-color:rgba(243, 243, 243, 0.521);"><strong>View All</strong></div></a>
                             </div>
   
                             {% for one_alert in top_alerts %}
@@ -171,6 +177,7 @@
                             
 
                         </div>
+                        -->
                     </div>
                    
                 </div>

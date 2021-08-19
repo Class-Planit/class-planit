@@ -37,11 +37,11 @@
                             <table class="table table-centered table-nowrap mb-0 rounded">
                                 <thead class="thead-light">
                                     <tr>
-                                        <th class="border-0" style="width: 60%">Students are expected to:</th>
+                                        <th class="border-0" style="width: 48%">Students are expected to:</th>
                                         <th class="border-0" style="width: 14%">Lessons</th>
                                         <th class="border-0" style="width: 14%">Worksheets</th>
                                         <th class="border-0" style="width: 12%">Overall Performance</th>
-                                        
+                                        <th class="border-0" style="width: 12%">Create Planner</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -60,6 +60,10 @@
                                         </td>
                                         <td>
                                             <p><a href="{% url 'classroom_single' user_id=user_profile.id class_id=current_classroom.id standard_id=each_info.2 %}">{{ each_info.4 }}</a></p> 
+                                            
+                                        </td>
+                                        <td>
+                                            <p><a href="{% url 'create_objective_with_standard' user_id=user_profile.id week_of=week_of subject_id=current_subject.id classroom_id=current_classroom.id standard_id=each_info.2 %}"><i class="far fa-file-alt"></i></a></p> 
                                             
                                         </td>
                                     </tr>

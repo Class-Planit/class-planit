@@ -757,6 +757,8 @@ def SingleStandardsTracking(request, user_id=None, subject_id=None, classroom_id
     current_standard = singleStandard.objects.filter(id=standard_id).first()
     current_grade = current_classroom.single_grade_id
 
+    week_of = date.today().isocalendar()[1]
+
     grade_match = gradeLevel.objects.filter(id=current_grade).first()
     standard_objective = current_standard.standard_objective
     similar_standards = singleStandard.objects.filter(standard_objective=standard_objective, grade_level=grade_match).order_by('competency')
@@ -793,7 +795,7 @@ def SingleStandardsTracking(request, user_id=None, subject_id=None, classroom_id
 
     context = {'user_profile': user_profile, 'current_subject': current_subject, 'current_classroom': current_classroom, \
                'current_standard': current_standard, 'similar_standards': similar_standards, 'competency_info': competency_info, \
-               'subject_id': subject_id, 'classroom_id': classroom_id}
+               'subject_id': subject_id, 'classroom_id': classroom_id, 'week_of': week_of}
 
     return render(request, 'dashboard/app-analysis-single.html', context)
 
@@ -834,22 +836,29 @@ def Dashboard(request, week_of, subject_id, classroom_id, standard_id=None):
         objective_matches = lessonObjective.objects.filter(week_of=week_info['active_week'], lesson_classroom__in=classroom_profiles)
         
         if subject_id == 'All':
+            active_subject = 'All'
             #subject, class and standard are 'All'
             if classroom_id == 'All':
+                active_classroom = 'All'
                 active_lessons = objective_matches
             #subject and standard are 'All'
             else:
+                active_classroom = classroom.objects.filter(id=classroom_id).first()
                 active_lessons = objective_matches.filter(lesson_classroom_id=classroom_id)
         else:
+            active_subject = standardSubjects.objects.filter(id=subject_id).first()
             if standard_id == 'All':
                 #class and standard are 'All'
                 if classroom_id == 'All':
+                    active_classroom = 'All'
                     active_lessons = objective_matches.filter(subject_id=subject_id)
                 #standard is 'All'
                 else:
+                    active_classroom = classroom.objects.filter(id=classroom_id).first()
                     active_lessons = objective_matches.filter(subject_id=subject_id, lesson_classroom_id=classroom_id)
             #subject, class and standard are specific (from Standards Tracking)
             else:
+                active_classroom = classroom.objects.filter(id=classroom_id).first()
                 standard_match = singleStandard.objects.filter(id=standard_id).first()
                 active_lessons = objective_matches.filter(subject_id=subject_id, lesson_classroom_id=classroom_id, objectives_standards=standard_match)
 
@@ -861,16 +870,32 @@ def Dashboard(request, week_of, subject_id, classroom_id, standard_id=None):
         
         context = {'user_profile': user_profile, 'current_week': week_info['current_week'], 'active_week': week_info['active_week'], 'objective_matches': objective_matches,\
                     'previous_week': week_info['previous_week'], 'next_week': week_info['next_week'], 'subject_results': subject_results, 'classroom_results': classroom_results, \
-                    'active_lessons': active_lessons, 'active_subject_id': subject_id, 'active_classroom_id': classroom_id}
+                    'active_lessons': active_lessons, 'active_subject_id': subject_id, 'active_classroom_id': classroom_id, 'active_classroom': active_classroom, 'active_subject': active_subject}
         return render(request, 'dashboard/dashboard.html', context)
     else:
         
         return redirect('login_user')
 
 
+def CreateObjectiveWithStandard(request, user_id=None, week_of=None, subject_id=None, classroom_id=None, standard_id=None):
+    user_profile = User.objects.filter(username=request.user.username).first()
+    week_info = get_week_info(week_of)
+    classroom_match = classroom.objects.filter(id=classroom_id).first()
+    user_standard_set = user_profile.standards_set
+    subject_match = standardSubjects.objects.filter(id=subject_id).first()
+    standard_match = singleStandard.objects.filter(id=standard_id).first()
+    competency = standard_match.competency
+    competency_string = "The students will " + competency
+
+    new_lesson = lessonObjective.objects.create(lesson_classroom=classroom_match, subject=subject_match, teacher_objective=competency_string, standard_set=user_standard_set)
+    new_lesson.objectives_standards.add(standard_match)
+
+    return redirect('activity_builder', user_id=user_profile.id, class_id=classroom_match.id, subject=subject_match.id, lesson_id=new_lesson.id, page=0)
+
+
 #This is the form where teachers create a new lessonObjective. 
 #The teacher puts in their objective (what they want to teach the students)
-def CreateObjective(request, user_id=None, week_of=None):
+def CreateObjective(request, user_id=None, week_of=None, subject_id=None, classroom_id=None):
     if user_id is not None:
         user_profile = User.objects.filter(username=request.user.username).first()
         week_info = get_week_info(week_of)
@@ -882,12 +907,23 @@ def CreateObjective(request, user_id=None, week_of=None):
                 s_match = classroom_m.subjects.all()
                 subject_match = standardSubjects.objects.filter(id__in=s_match)
                 for subject in subject_match:
-                    subject_id = subject.id
-                    subject_title = subject.subject_title
-                    result = subject_id, subject_title
+                    subject_match_id = subject.id
+                    subject_match_title = subject.subject_title
+                    result = subject_match_id, subject_match_title
                     if result not in subjects:
                         subjects.append(result)
 
+        if subject_id != None:
+            lesson_subject = standardSubjects.objects.filter(id=subject_id).first()
+        else:
+            lesson_subject = 'Any'
+        if classroom_id != None:
+            lesson_classroom = classroom.objects.filter(id=classroom_id).first()
+        else:
+            lesson_classroom = 'Any'
+        print(subject_id)
+        print(lesson_subject)
+        print(lesson_classroom)
 
         if request.method == "POST":
             form = lessonObjectiveForm(request.POST, request.FILES)
@@ -907,7 +943,8 @@ def CreateObjective(request, user_id=None, week_of=None):
         else:
             form = lessonObjectiveForm()
     
-        context = {'form': form, 'step': 1, 'user_profile': user_profile, 'user_classrooms': user_classrooms, 'subjects': subjects  }
+        context = {'form': form, 'step': 1, 'user_profile': user_profile, 'user_classrooms': user_classrooms, 'subjects': subjects, \
+                   'lesson_subject': lesson_subject, 'lesson_classroom': lesson_classroom}
         return render(request, 'dashboard/identify_objectives.html', context)
     else:
         message = 'Sorry, Please login'
@@ -1451,17 +1488,101 @@ def StudentMainDashboard(request, user_id=None, lesson_id=None, worksheet_id=Non
     form = StudentForm()
     form2 = StudentForm()
     user_profile = User.objects.filter(id=user_id).first()
+    student_profile = studentProfiles.objects.filter(student_username=user_profile).first()
+    #all classrooms the student is in
+    student_classrooms = classroom.objects.filter(student=student_profile)
+
     worksheet_id = 0
     lesson_id = 0
     ref_id = 0
 
+    #filter for the last month/ last 4 weeks (I don't know how to filter over a time frame) ????
+
+    #temp filter to create all assignments for student
+    all_alerts = []
+    for each_classroom in student_classrooms:
+        class_teacher = each_classroom.main_teacher
+        class_assignments = worksheetClassAssignment.objects.filter(assigned_classrooms=each_classroom)
+        print(class_assignments)
+        for each_assignment in class_assignments:
+            current_week = date.today().isocalendar()[1]
+            assign_week = each_assignment.week_of
+            #only use assignments from last 4 weeks
+            if (assign_week == (current_week-3)) or (assign_week == (current_week-2)) or (assign_week == (current_week-1)) or (assign_week == current_week):
+                #alerts have the format: 
+                #<h6 class='card-title'>Sticker recieved!</h6><h6 class='card-subtitle mb-2 text-muted'>From teacher A. Click <a href='#'>here</a> to view</h6>
+                t_first = str(class_teacher.first_name)
+                t_last = str(class_teacher.last_name)
+                teacher_str = t_first[0] + ". " + t_last
+                assign_num = each_assignment.id
+                assign_message = "<h6 class='card-title'><i class='far fa-file-alt'></i>&nbsp;&nbsp;&nbsp;New Assignment!</h6><h6 class='card-subtitle mb-2' style='color:black;'> From " + teacher_str + " Click <a href=" + '#' + ">here</a> to view</h6>"
+
+                assign_alert = alertMessage.objects.filter(created_by=class_teacher, sent_to=user_profile, html_message=assign_message, assignment_number=assign_num).first()
+                #alert doesn't exist, create one
+                if assign_alert == None:
+                    assign_alert = alertMessage.objects.create(created_by=class_teacher, sent_to=user_profile, html_message=assign_message, assignment_number=assign_num)
+                    all_alerts.append(assign_alert)
+
+                    assign_due_date = each_assignment.due_date
+                    #check due date and completion for reminder alert
+                    if assign_due_date == date.today():
+                        new_assign_message = "<h6 class='card-title'><i class='far fa-file-alt'></i>&nbsp;&nbsp;&nbsp;Assignment due Today!</h6><h6 class='card-subtitle mb-2' style='color:black;'> Click <a href=" + '#' + ">here</a> to view</h6>"
+                        assign_alert.html_message = new_assign_message
+                        assign_alert.save()
+                        all_alerts.append(assign_alert)
+                #alert already exists
+                else:
+                    assign_alert = alertMessage.objects.filter(created_by=class_teacher, sent_to=user_profile, html_message=assign_message, assignment_number=assign_num).first()
+
+                    if assign_alert.is_viewed == False:
+                        all_alerts.append(assign_alert)
+                    else:
+                        pass
+                    assign_due_date = each_assignment.due_date
+                    #if alert already exists, check due date and completion for reminder alert
+                    if assign_due_date == date.today():
+                        student_ws = studentWorksheetAnswerFull.objects.filter(assignment_num=assign_num)
+                        if student_ws:
+                            if student_ws.is_submitted == False:
+                                new_assign_message = "<h6 class='card-title'><i class='far fa-file-alt'></i>&nbsp;&nbsp;&nbsp;Assignment due Today!</h6><h6 class='card-subtitle mb-2' style='color:black;'> Click <a href=" + '#' + ">here</a> to view</h6>"
+                                assign_alert.html_message = new_assign_message
+                                assign_alert.save()
+                                all_alerts.append(assign_alert)
+                        #student never opened assignment
+                        else:
+                            new_assign_message = "<h6 class='card-title'><i class='far fa-file-alt'></i>&nbsp;&nbsp;&nbsp;Assignment due Today!</h6><h6 class='card-subtitle mb-2' style='color:black;'> Click <a href=" + '#' + ">here</a> to view</h6>"
+                            assign_alert.html_message = new_assign_message
+                            assign_alert.save()
+                            all_alerts.append(assign_alert)
+
+    all_praises = studentPraise.objects.filter(student=user_profile)
+    for each_praise in all_praises:
+        current_week = date.today().isocalendar()[1]
+        praise_week = each_praise.week_of
+        #only use praise from last 4 weeks
+        if (praise_week == (current_week-3)) or (praise_week == (current_week-2)) or (praise_week == (current_week-1)) or (praise_week == current_week):
+            class_teacher_id = each_praise.created_by
+            class_teacher = User.objects.filter(id=class_teacher_id).first()
+            t_first = str(class_teacher.first_name)
+            t_last = str(class_teacher.last_name)
+            teacher_str = t_first[0] + ". " + t_last
+            praise_num = each_praise.id
+            praise_message = "<h6 class='card-title'><i class='far fa-star'></i>&nbsp;&nbsp;&nbsp;New Sticker!</h6><h6 class='card-subtitle mb-2' style='color:black;'> From " + teacher_str + " Click <a href=" + '#' + ">here</a> to view</h6>"
+
+            assign_alert = alertMessage.objects.filter(created_by=class_teacher, sent_to=user_profile, html_message=praise_message, praise_number=praise_num).first()
+
+            if assign_alert == None:
+                assign_alert = alertMessage.objects.create(created_by=class_teacher, sent_to=user_profile, html_message=praise_message, praise_number=praise_num)
+            all_alerts.append(assign_alert)
+
     #alerts have the format: 
-    #<h6 class="card-title">Sticker recieved!</h6><h6 class="card-subtitle mb-2 text-muted"">From teacher A. Click <a href='#'>here</a> to view</h6>
+    #<h6 class='card-title'>Sticker recieved!</h6><h6 class='card-subtitle mb-2 text-muted'>From teacher A. Click <a href='#'>here</a> to view</h6>
+    
     #get all alerts for the student
-    all_alerts = alertMessage.objects.filter(sent_to=user_profile)
+    #all_alerts = alertMessage.objects.filter(sent_to=user_profile)
     num_alerts = len(all_alerts)
     if num_alerts > 3:
-        top_alerts = all_alerts[0:2]
+        top_alerts = all_alerts[0:3]
     else:
         top_alerts = all_alerts
 
@@ -1471,6 +1592,116 @@ def StudentMainDashboard(request, user_id=None, lesson_id=None, worksheet_id=Non
                'form': form, 'form2': form2, 'all_alerts': all_alerts, 'top_alerts': top_alerts}
 
     return render(request, 'dashboard/student_main.html', context)
+
+#student dashboard 
+def StudentAlertDashboard(request, user_id=None, lesson_id=None, worksheet_id=None, submit=None):
+    form = StudentForm()
+    form2 = StudentForm()
+    user_profile = User.objects.filter(id=user_id).first()
+    student_profile = studentProfiles.objects.filter(student_username=user_profile).first()
+    #all classrooms the student is in
+    student_classrooms = classroom.objects.filter(student=student_profile)
+
+    worksheet_id = 0
+    lesson_id = 0
+    ref_id = 0
+
+    #filter for the last month/ last 4 weeks (I don't know how to filter over a time frame) ????
+
+    #temp filter to create all assignments for student
+    all_alerts = []
+    for each_classroom in student_classrooms:
+        class_teacher = each_classroom.main_teacher
+        class_assignments = worksheetClassAssignment.objects.filter(assigned_classrooms=each_classroom)
+        print(class_assignments)
+        for each_assignment in class_assignments:
+            current_week = date.today().isocalendar()[1]
+            assign_week = each_assignment.week_of
+            #only use assignments from last 4 weeks
+            if (assign_week == (current_week-3)) or (assign_week == (current_week-2)) or (assign_week == (current_week-1)) or (assign_week == current_week):
+                #alerts have the format: 
+                #<h6 class='card-title'>Sticker recieved!</h6><h6 class='card-subtitle mb-2 text-muted'>From teacher A. Click <a href='#'>here</a> to view</h6>
+                t_first = str(class_teacher.first_name)
+                t_last = str(class_teacher.last_name)
+                teacher_str = t_first[0] + ". " + t_last
+                assign_num = each_assignment.id
+                assign_message = "<h6 class='card-title'><i class='far fa-file-alt'></i>&nbsp;&nbsp;&nbsp;New Assignment!</h6><h6 class='card-subtitle mb-2' style='color:black;'> From " + teacher_str + " Click <a href=" + '#' + ">here</a> to view</h6>"
+
+                assign_alert = alertMessage.objects.filter(created_by=class_teacher, sent_to=user_profile, html_message=assign_message, assignment_number=assign_num).first()
+                #alert doesn't exist, create one
+                if assign_alert == None:
+                    assign_alert = alertMessage.objects.create(created_by=class_teacher, sent_to=user_profile, html_message=assign_message, assignment_number=assign_num)
+                    all_alerts.append(assign_alert)
+
+                    assign_due_date = each_assignment.due_date
+                    #check due date and completion for reminder alert
+                    if assign_due_date == date.today():
+                        new_assign_message = "<h6 class='card-title'><i class='far fa-file-alt'></i>&nbsp;&nbsp;&nbsp;Assignment due Today!</h6><h6 class='card-subtitle mb-2' style='color:black;'> Click <a href=" + '#' + ">here</a> to view</h6>"
+                        assign_alert.html_message = new_assign_message
+                        assign_alert.save()
+                        all_alerts.append(assign_alert)
+                #alert already exists
+                else:
+                    assign_alert = alertMessage.objects.filter(created_by=class_teacher, sent_to=user_profile, html_message=assign_message, assignment_number=assign_num).first()
+
+                    if assign_alert.is_viewed == False:
+                        all_alerts.append(assign_alert)
+                    else:
+                        pass
+                    assign_due_date = each_assignment.due_date
+                    #if alert already exists, check due date and completion for reminder alert
+                    if assign_due_date == date.today():
+                        student_ws = studentWorksheetAnswerFull.objects.filter(assignment_num=assign_num)
+                        if student_ws:
+                            if student_ws.is_submitted == False:
+                                new_assign_message = "<h6 class='card-title'><i class='far fa-file-alt'></i>&nbsp;&nbsp;&nbsp;Assignment due Today!</h6><h6 class='card-subtitle mb-2' style='color:black;'> Click <a href=" + '#' + ">here</a> to view</h6>"
+                                assign_alert.html_message = new_assign_message
+                                assign_alert.save()
+                                all_alerts.append(assign_alert)
+                        #student never opened assignment
+                        else:
+                            new_assign_message = "<h6 class='card-title'><i class='far fa-file-alt'></i>&nbsp;&nbsp;&nbsp;Assignment due Today!</h6><h6 class='card-subtitle mb-2' style='color:black;'> Click <a href=" + '#' + ">here</a> to view</h6>"
+                            assign_alert.html_message = new_assign_message
+                            assign_alert.save()
+                            all_alerts.append(assign_alert)
+
+    all_praises = studentPraise.objects.filter(student=user_profile)
+    for each_praise in all_praises:
+        current_week = date.today().isocalendar()[1]
+        praise_week = each_praise.week_of
+        #only use praise from last 4 weeks
+        if (praise_week == (current_week-3)) or (praise_week == (current_week-2)) or (praise_week == (current_week-1)) or (praise_week == current_week):
+            class_teacher_id = each_praise.created_by
+            class_teacher = User.objects.filter(id=class_teacher_id).first()
+            t_first = str(class_teacher.first_name)
+            t_last = str(class_teacher.last_name)
+            teacher_str = t_first[0] + ". " + t_last
+            praise_num = each_praise.id
+            praise_message = "<h6 class='card-title'><i class='far fa-star'></i>&nbsp;&nbsp;&nbsp;New Sticker!</h6><h6 class='card-subtitle mb-2' style='color:black;'> From " + teacher_str + " Click <a href=" + '#' + ">here</a> to view</h6>"
+
+            assign_alert = alertMessage.objects.filter(created_by=class_teacher, sent_to=user_profile, html_message=praise_message, praise_number=praise_num).first()
+
+            if assign_alert == None:
+                assign_alert = alertMessage.objects.create(created_by=class_teacher, sent_to=user_profile, html_message=praise_message, praise_number=praise_num)
+            all_alerts.append(assign_alert)
+
+    #alerts have the format: 
+    #<h6 class='card-title'>Sticker recieved!</h6><h6 class='card-subtitle mb-2 text-muted'>From teacher A. Click <a href='#'>here</a> to view</h6>
+    
+    #get all alerts for the student
+    #all_alerts = alertMessage.objects.filter(sent_to=user_profile)
+    num_alerts = len(all_alerts)
+    if num_alerts > 3:
+        top_alerts = all_alerts[0:3]
+    else:
+        top_alerts = all_alerts
+
+
+
+    context = {'user_profile': user_profile, 'ref_id':ref_id, 'worksheet_id': worksheet_id, 'lesson_id':lesson_id, \
+               'form': form, 'form2': form2, 'all_alerts': all_alerts, 'top_alerts': top_alerts}
+
+    return render(request, 'dashboard/student_alerts.html', context)
 
 
 #student registration 
