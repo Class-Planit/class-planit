@@ -673,6 +673,10 @@ class lessonObjective(models.Model):
                                on_delete=models.SET_NULL,
                                blank=True,
                                null=True)
+    shared_classroom = models.ManyToManyField(classroom,
+                                     blank=True,
+                                     related_name='shared_classroom',
+                               null=True)
     subject = models.ForeignKey(standardSubjects,
                                on_delete=models.SET_NULL,
                                blank=True,

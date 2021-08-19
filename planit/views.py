@@ -874,9 +874,7 @@ def CreateObjective(request, user_id=None, week_of=None):
     if user_id is not None:
         user_profile = User.objects.filter(username=request.user.username).first()
         week_info = get_week_info(week_of)
-        print('------------')
-        print(week_info)
-        print('------------')
+
         user_classrooms = classroom.objects.filter(main_teacher=user_profile)
         subjects = []
         if user_classrooms:
@@ -1183,9 +1181,7 @@ def BlankDigitalActivities(request, user_id=None, worksheet_id=None, page=None, 
 
     lesson_id = 0
     class_id = 0
-    print('==============')
-    print(matched_questions)
-    print('==============')
+   
     return render(request, 'dashboard/new_worksheet_builder.html', {'page': page, 'week_of': week_of, 'class_id': class_id, 'lesson_id': lesson_id, 'subject_match_full': subject_match_full, 'matched_questions': matched_questions, 'worksheet_match': worksheet_match, 'user_profile': user_profile})
 
 #Edit already created or recommended Question
@@ -1273,7 +1269,7 @@ def CreateClassroomAssignment(request, user_id=None, week_of=None, class_id=None
         else:
             classroom_profile = classroom.objects.get(id=class_id)
 
-    print(lesson_id, '=============')
+    
     if 'None' in lesson_id:
         lesson_match = None
     else:
@@ -1333,11 +1329,17 @@ def AddThemeAssignment(request, user_id=None, week_of=None, class_id=None, works
 def AddClassroomAssignment(request, user_id=None, week_of=None, class_id=None, worksheet_id=None, lesson_id=None, assign_id=None, step=None):
     user_profile = User.objects.get(id=user_id)
     worksheet_match = worksheetClassAssignment.objects.get(id=assign_id)
-
+    lesson_m = worksheet_match.lesson_overview_id
     classroom_match = classroom.objects.get(id=class_id)
+    if lesson_m:
+        lesson_match = lessonObjective.objects.get(id=lesson_m)
+        add_classroom = lesson_match.shared_classroom.add(classroom_match)
+    
 
     worksheet_match.assigned_classrooms.add(classroom_match)
     return redirect('create_classroom_assignment', user_id=user_profile.id, week_of=week_of, class_id=classroom_match.id, worksheet_id=worksheet_id, lesson_id=lesson_id, assign_id=assign_id, step='THREE')
+
+
 
 
 ############################################
@@ -1553,6 +1555,7 @@ def StudentPerformance(request, user_id, class_id, week_of, standard_id):
     start = current_week - 12
     if start < 1:
         start = 1
+    end = current_week + 1
     
     teacher_classes = classroom.objects.filter(main_teacher=user_profile)
     teacher_class_id = classroom.objects.filter(main_teacher=user_profile).values_list('id', flat=True)
@@ -1561,14 +1564,15 @@ def StudentPerformance(request, user_id, class_id, week_of, standard_id):
         worksheet_matches = worksheetFull.objects.filter(created_by=user_profile)
     else:
         lesson_match = lessonObjective.objects.filter(lesson_classroom__in=teacher_classes, objectives_standards=standard_id)
-        print(lesson_match)
+
         worksheet_matches = worksheetFull.objects.filter(lesson_overview__in=lesson_match)
 
 
     worksheet_results = []
     for ws in worksheet_matches:
         ws_info = get_worksheet_performance(ws)
-        worksheet_results.append(ws_info)
+        for item in ws_info:
+            worksheet_results.append(item)
 
     all_grades = []
     all_subjects = []
@@ -1588,15 +1592,8 @@ def StudentPerformance(request, user_id, class_id, week_of, standard_id):
     grade_options = gradeLevel.objects.filter(id__in=all_grades).order_by('grade')
 
     
-    week_breakdown = get_weekly_brackets(user_id, start, current_week, current_year)
-    if week_breakdown:
-        pass
-    else:
-        week_breakdown['low'] =  [ 2, 1, 2, 1, 2, 3, 4, 4, 2, 4, 3, 3]
-        week_breakdown['mid'] =  [14,12,11,14,10,12,14,13,13,14,13,15]
-        week_breakdown['high'] = [ 4, 7, 7, 5, 8, 5, 2, 3, 5, 2, 4, 2]
-    
-    top_lessons = get_demo_ks_brackets(user_id, start, current_week, current_year)
+    week_breakdown = get_weekly_brackets(user_id, start, end, current_year)
+
     student_results = get_student_results(user_id, start, current_week, current_year)
 
     if request.method == "POST":
@@ -1613,7 +1610,7 @@ def StudentPerformance(request, user_id, class_id, week_of, standard_id):
             return redirect('new_digital_activities', user_id=user_id, worksheet_id=prev.id, question_id=0, page='Preview')
     else:
         form = worksheetFullForm()
-    return render(request, 'dashboard/assignments.html', {'user_profile': user_profile, 'worksheet_results': worksheet_results, 'worksheet_matches': worksheet_matches, 'form': form, 'subject_options': subject_options, 'grade_options': grade_options, 'all_themes': all_themes, 'week_breakdown': week_breakdown, 'top_lessons': top_lessons, 'student_results': student_results})
+    return render(request, 'dashboard/assignments.html', {'user_profile': user_profile, 'worksheet_results': worksheet_results, 'worksheet_matches': worksheet_matches, 'form': form, 'subject_options': subject_options, 'grade_options': grade_options, 'all_themes': all_themes, 'week_breakdown': week_breakdown, 'student_results': student_results})
 
 def SingleAssignment(request, user_id=None, classroom_id=None, worksheet_id=None):
     user_profile = User.objects.filter(username=request.user.username).first()

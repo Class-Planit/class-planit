@@ -55,7 +55,7 @@
                                                 </td>
                                                 <td>
                                                     <a href="{% url 'single_standard_tracker' subject_id=tracking_subject.id classroom_id=tracking_classroom.id standard_id=each_standard.3 %}">
-                                                        {{ each_standard.2 }}
+                                                        {% if each_standard.2 %}{{ each_standard.2 }}{% else %} View {% endif %}
                                                     </a>
                                                 </td>
                                                 <td style="text-align: center;">

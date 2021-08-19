@@ -8,7 +8,22 @@ def get_weekly_brackets(user_id, week_of_start, week_of_finsih, year):
     user_profile = User.objects.get(id=user_id)
     classroom_profiles = classroom.objects.filter(main_teacher=user_profile)
     assignment_matches = worksheetClassAssignment.objects.filter(week_of__range=[week_of_start, week_of_finsih], assigned_classrooms__in=classroom_profiles).order_by('week_of').values_list('id', flat=True)
- 
+
+    total_students = 0
+    for class_list in classroom_profiles:
+        s_count = class_list.student.all()
+        student_count = s_count.count()
+        total_students = total_students + student_count
+
+    student_answers = studentWorksheetAnswerFull.objects.filter(week_of__range=[week_of_start, week_of_finsih], assignment_num__in=assignment_matches)
+    total_answers = student_answers.count()
+    completion_rate = 0 
+    if total_answers != 0:
+        if total_students != 0:
+            completion_rate = (total_answers/total_students) * 100 
+
+    performance_average = student_answers.aggregate(Avg('score'))
+
     week_list = []
     low = []
     mid = []
@@ -21,6 +36,7 @@ def get_weekly_brackets(user_id, week_of_start, week_of_finsih, year):
         student_high = studentWorksheetAnswerFull.objects.filter(week_of=week, score__range=[67, 101], assignment_num__in=assignment_matches).count()
         student_mid = studentWorksheetAnswerFull.objects.filter(week_of=week, score__range=[33, 67], assignment_num__in=assignment_matches).count()
         student_low = studentWorksheetAnswerFull.objects.filter(week_of=week, score__range=[0, 33], assignment_num__in=assignment_matches).count()
+        total_answers = total_answers + student_high + student_mid + student_low
         low.append(student_low)
         mid.append(student_mid)
         high.append(student_high)
@@ -28,7 +44,9 @@ def get_weekly_brackets(user_id, week_of_start, week_of_finsih, year):
     low.reverse()
     mid.reverse()
     high.reverse()
-    result = {'weeks': week_list, 'low': low, 'mid': mid, 'high': high}
+
+    
+    result = {'weeks': week_list, 'low': low, 'mid': mid, 'high': high, 'performance_average': performance_average, 'completion_rate': completion_rate}
     return(result)
 
 
@@ -127,15 +145,17 @@ def get_worksheet_performance(worksheet):
         lesson_id = 0     
         lesson_full = None    
         classroom_id = None
-
+    classroom_assignments = []
     if worksheet_assignments:
         ws_count = worksheet_assignments.count()
-        
+       
         for assignment in worksheet_assignments:
+
             due_date = assignment.due_date
             assigned_classrooms = assignment.assigned_classrooms.all()
-            classroom_assignments = []
+            
             for classroom_match in assigned_classrooms:
+              
                 student_count = 0
                 total_score = 0
                 submitted_count = 0
@@ -169,14 +189,13 @@ def get_worksheet_performance(worksheet):
                         performance_average = 0 
                         submitted_percent = 0
 
-                assignment_results = {'classroom_match': classroom_match, 'due_date': due_date, 'completion': submitted_percent, 'performance': performance_average}
+                assignment_link = "https://www.app1-classplanit.co/student-dashboard/%s/%s/0/" % (lesson_match, worksheet.id)
+
+                assignment_results = {'worksheet_id': worksheet.id, 'lesson_id': lesson_id, 'lesson_match': lesson_full, 'classroom_id': classroom_match.id,  'worksheet_link': assignment_link, 'worksheet': worksheet.title, 'classroom_match': classroom_match, 'due_date': due_date, 'completion': submitted_percent, 'performance': performance_average}
+               
                 classroom_assignments.append(assignment_results)
-        
-        assignment_link = "www.app1-classplanit.co/student-dashboard/%s/%s/0/" % (lesson_match, worksheet.id)
 
-        results = {'worksheet_id': worksheet.id, 'lesson_id': lesson_id, 'lesson_match': lesson_full, 'classroom_id': classroom_id,  'worksheet_link': assignment_link, 'worksheet': worksheet.title, 'classroom_assignments': classroom_assignments}
-
+    if classroom_assignments:  
+        return(classroom_assignments)
     else:
-        results = {'worksheet_id': worksheet.id, 'worksheet_link': None, 'worksheet': worksheet.title, 'due_date': 'Not Assigned', 'completion': 'None', 'performance': 'None'}
-
-    return(results)
+        return(None)

@@ -31,13 +31,8 @@ def get_classroom_summary(user_id, date, current_date):
         student_count = len(student_list)
         shared_list = single_classroom.support_teachers.all()
         s_match = User.objects.filter(id__in=shared_list)
-        shared_m = []
-        for item in s_match:
-            first_name = item.first_name
-            last_name = item.last_name
-            last_initial = last_name[0]
-            s_name = '%s %s.' % (first_name, last_initial)
-            shared_m.append(s_name)
+        shared_m = s_match.count()
+        shared_m = shared_m + 1
 
         result = class_name, student_count, shared_m, single_classroom.id
         final_list.append(result)

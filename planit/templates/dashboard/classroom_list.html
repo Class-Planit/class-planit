@@ -137,15 +137,18 @@
                     <a href="{% url 'classroom_single' user_id=user_profile.id class_id=classroom.3  standard_id='All' %}" class="card border-light animate-up-3 shadow-soft p-0 p-lg-4">     
                         <div class="card-body">
                             <h5 class="mb-4">{{ classroom.0 }}</h5>
-                            <p class="text-gray mb-4">Students: {{ classroom.1 }}</p>
+                            <p class="text-gray mb-4">Students: {{ classroom.1 }} |
                                                             
-                                <div class="ml-sm-3">
-                                {% if classroom.2 %}
-                                    Shared with: {{ classroom.2.0 }} {{ classroom.2.1 }}
-                                {% else %}
-                                    Only you can view
-                                {% endif %}
-                                </div>
+                               
+                              
+                                
+                                    Teachers: 
+                                    {% if classroom.2 %}
+                                    {{ classroom.2 }} 
+                                    {% else %}
+                                    1
+                                    {% endif %}
+                                </p>
                         </div>
                     </a>
                 </div>

@@ -2,7 +2,7 @@
 {% extends 'dashboard/base.html' %}
 {% load static %}
 {% block content %}
-            
+    
 <main class="content">
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
   
@@ -70,78 +70,119 @@
                 </div>
             </div>
         </div>
+        
         <div class="col-12 col-xl-6 mb-4">
             <div class="row">
-                <div class="col-12 mb-4">
-                    <div class="card border-light shadow-sm">
-                        <div class="card-body">
-                             <div class="row d-block d-md-flex align-items-center">
+             
+                   
+                          
+                <div class="col-12 col-sm-6 mb-4 mb-md-0" class="container" style="max-height: 500px">
+                              
+                    <div id="container-3"></div>
+                    <script src="https://code.highcharts.com/highcharts.src.js"></script>
+                    <script>
+                        Highcharts.chart('container-3', {
+                            chart: {
+                                plotBackgroundColor: null,
+                                plotBorderWidth: null,
+                                plotShadow: false,
+                                type: 'pie'
+                            },
+                            title: {
+                                text: 'Overall Student Performance:'
+                            },
+                            tooltip: {
+                                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                            },
+                            accessibility: {
+                                point: {
+                                    valueSuffix: '%'
+                                }
+                            },
+                            plotOptions: {
+                                pie: {
+                                    allowPointSelect: true,
+                                    cursor: 'pointer',
+                                    dataLabels: {
+                                        enabled: false,
+                                        format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                                    }
+                                }
+                            },
+                            series: [{
+                                name: 'Performance',
+                                colorByPoint: true,
+                                data: [{
+                                    name: 'Lower',
+                                    y: 10.85,
+                                    color: "#ED561B",
+                                }, {
+                                    name: 'Mid',
+                                    y: 4.67,
+                                    color: "#50B432",
+                                }, {
+                                    name: 'High',
+                                    y: 4.18,
+                                    color: "#058DC7"
+                                }]
+                            }]
+                        });
+                    </script>
 
-                                    <div class="col-12">
-                                        <h5>Completion Level for Worksheets</h5>
-                                        <div class="row d-flex align-items-center mb-1">
-                                            <div class="col-4 text-gray font-weight-bold px-0 small">
-                                                Social Studies Week 26
-                                            </div>
-                                            <div class="col-8 px-0">
-                                                <div class="progress progress-lg rounded mb-0">
-                                                    <div class="progress-bar bg-success rounded" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100" style="width: 85%;"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row d-flex align-items-center mb-1">
-                                            <div class="col-4 text-gray font-weight-bold px-0 small">
-                                                English Week 26
-                                            </div>
-                                            <div class="col-8 px-0">
-                                                <div class="progress progress-lg rounded mb-0">
-                                                    <div class="progress-bar bg-success rounded" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%;"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row d-flex align-items-center mb-1">
-                                            <div class="col-4 text-gray font-weight-bold px-0 small">
-                                                Social Studies Week 27
-                                            </div>
-                                            <div class="col-8 px-0">
-                                                <div class="progress progress-lg rounded mb-0">
-                                                    <div class="progress-bar bg-success rounded" role="progressbar" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100" style="width: 65%;"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row d-flex align-items-center mb-1">
-                                            <div class="col-4 text-gray font-weight-bold px-0 small">
-                                                English Week 27
-                                            </div>
-                                            <div class="col-8 px-0">
-                                                <div class="progress progress-lg rounded mb-0">
-                                                    <div class="progress-bar bg-success rounded" role="progressbar" aria-valuenow="73" aria-valuemin="0" aria-valuemax="100" style="width: 73%;"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!--
-                                        {% for item in top_lessons %}
-                                        <div class="row d-flex align-items-center mb-1">
-                                            <div class="col-4 text-gray font-weight-bold px-0 small">
-                                                {{ item.title }}
-                                            </div>
-                                            <div class="col-8 px-0">
-                                                <div class="progress progress-lg rounded mb-0">
-                                                    <div class="progress-bar bg-success rounded" role="progressbar" aria-valuenow="{{ item.avg }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ item.avg }}%;"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                      
-                                      {% endfor %%}
-                                        -->
-                                    </div>
-
-                             </div>
-                        </div>
-                     </div>
                 </div>
+                <div class="col-12 col-sm-6 mb-4 mb-md-0">
+                    <div id="container-4"></div>
+                    <script src="https://code.highcharts.com/highcharts.src.js"></script>
+                    <script>
+                        Highcharts.chart('container-4', {
+                            chart: {
+                                plotBackgroundColor: null,
+                                plotBorderWidth: null,
+                                plotShadow: false,
+                                type: 'pie'
+                            },
+                            title: {
+                                text: 'Overall Student Completion:'
+                            },
+                            tooltip: {
+                                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                            },
+                            accessibility: {
+                                point: {
+                                    valueSuffix: '%'
+                                }
+                            },
+                            plotOptions: {
+                                pie: {
+                                    allowPointSelect: true,
+                                    cursor: 'pointer',
+                                    dataLabels: {
+                                        enabled: false,
+                                        format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                                    }
+                                }
+                            },
+                            series: [{
+                                name: 'Student Completion',
+                                colorByPoint: true,
+                                data: [{
+                                    name: 'Completed',
+                                    y: 30
+                                }, {
+                                    name: 'Not Completed',
+                                    y: 70
+                                }]
+                            }]
+                        });
+                    </script>
+                   
                 
-                
+
+                </div>
+               </div>
+               </div>
+                <div class="col-12 col-xl-6 mb-4">
+                    <div class="row">
                 <div class="col-12 col-sm-6 mb-4 mb-md-0">
                     <div class="card border-light shadow-sm">
                         <div class="card-body">
@@ -175,25 +216,21 @@
                         <table class="table table-centered table-nowrap mb-0 rounded">
                             <thead class="thead-light">
                                 <tr>
-                                    <th class="border-0" style="width: 33%">Worksheet Title:</th>
-                                    <th class="border-0" style="width: 33%">Lesson Plan:</th>
-                                    <th class="border-0" style="width: 33%">Assignment:</th>
-                                    
-                                    
+                                    <th class="border-0" style="width: 20%">Classroom:</th>
+                                    <th class="border-0" style="width: 20%">Lesson Plan:</th>
+                                    <th class="border-0" style="width: 20%">Worksheet Title:</th>
+                                    <th class="border-0" style="width: 40%">Assignment:</th>
+
                                 </tr>
                             </thead>
                             <tbody>
 
                               
                                 {% for each_info in worksheet_results %}
+                              
                                 <tr>
                                     <td>
-                                        
-                                        <p>
-                                            <a href="{% url 'new_digital_activities' user_id=user_profile.id worksheet_id=each_info.worksheet_id question_id=0 page='Preview' %}">
-                                                {{ each_info.worksheet }}
-                                            </a>
-                                        </p>
+                                        {{ each_info.classroom_match }}
                                     </td>
                                     <td>
                                         
@@ -208,13 +245,24 @@
                                         </p>
                                     </td>
                                     <td>
-                                        {% for classroom_info in each_info.classroom_assignments %}
-                                        <p>{{ classroom_info.classroom_match }} <br><small>Due Date: {{ classroom_info.due_date }} | Completion: {{ classroom_info.completion }}% | Average: {{ classroom_info.performance }}%</small></p>
-                                        {% endfor %}
-                                        
-                                        {% if each_info.worksheet_link %}
-                                        <a href="{{ each_info.worksheet_link }}">Assignment Link: <br>{{each_info.worksheet_link}}</a>
+                                        {% if each_info.worksheet_id %}
+                                        <p>
+                                            <a href="{% url 'new_digital_activities' user_id=user_profile.id worksheet_id=each_info.worksheet_id question_id=0 page='Preview' %}">
+                                                {{ each_info.worksheet }}
+                                            </a>
+                                        </p>
+                                        {% else %}
                                         {% endif %}
+                                    </td>
+                                   
+                                    <td>
+                                       
+                                        <p>Due Date: {{ each_info.due_date }} | Completion: {{ each_info.completion }}% | Average: {{ each_info.performance }}%</p>
+                                    
+                                        
+                                       
+                                        <a href="{{ each_info.worksheet_link }}">Student Link: {{each_info.worksheet_link}}</a>
+                                        
                                     </td>
                                    
                                 </tr>
@@ -275,4 +323,6 @@
         </div>
         </div>
     </div>
+    <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="jQuery-plugin-progressbar.js"></script>
 {% endblock %}
