@@ -1802,8 +1802,9 @@ def StudentPerformance(request, user_id, class_id, week_of, standard_id):
     worksheet_results = []
     for ws in worksheet_matches:
         ws_info = get_worksheet_performance(ws)
-        for item in ws_info:
-            worksheet_results.append(item)
+        if ws_info:
+            for item in ws_info:
+                worksheet_results.append(item)
 
     all_grades = []
     all_subjects = []
