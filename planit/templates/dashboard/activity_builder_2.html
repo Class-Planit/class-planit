@@ -106,8 +106,8 @@
                           <img src="{{ background_img.uploaded_image.url }}" class="d-block w-100" alt="...">
                           <a href="{% url 'digital_activities' user_id=user_profile.id class_id=class_id lesson_id=lesson_id subject=subject_match_full.id page='AddQuestion' worksheet_id=get_worksheet.id act_id='False' question_id=question_id %}#heading">
                           <div class="carousel-caption d-none d-md-block" style='top: 30%;'>
-                            <h5>{{ current_question.Question }}</h5>
-                            <p>{{ current_question.Correct }}</p>
+                            <h5 style="color:{{ worksheet_theme.primary }}">{{ current_question.Question }}</h5>
+                            <p style="color:{{ worksheet_theme.primary }}">{{ current_question.Correct }}</p>
                           </div>
                         </a>
                         </div>

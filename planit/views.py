@@ -913,14 +913,16 @@ def CreateObjective(request, user_id=None, week_of=None, subject_id=None, classr
                     if result not in subjects:
                         subjects.append(result)
 
-        if subject_id != None:
+        if 'All' not in subject_id:
             lesson_subject = standardSubjects.objects.filter(id=subject_id).first()
         else:
             lesson_subject = 'Any'
-        if classroom_id != None:
+
+        if 'All' not in classroom_id:
             lesson_classroom = classroom.objects.filter(id=classroom_id).first()
         else:
             lesson_classroom = 'Any'
+
         print(subject_id)
         print(lesson_subject)
         print(lesson_classroom)
@@ -942,7 +944,7 @@ def CreateObjective(request, user_id=None, week_of=None, subject_id=None, classr
                 return redirect('activity_builder', user_id=user_profile.id, class_id=class_match.id, subject=prev.subject_id, lesson_id=prev.id, page=0)
         else:
             form = lessonObjectiveForm()
-    
+            #show Gabby how to create initial in form queryset
         context = {'form': form, 'step': 1, 'user_profile': user_profile, 'user_classrooms': user_classrooms, 'subjects': subjects, \
                    'lesson_subject': lesson_subject, 'lesson_classroom': lesson_classroom}
         return render(request, 'dashboard/identify_objectives.html', context)
@@ -1167,7 +1169,7 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
 
 
 def BlankDigitalActivities(request, user_id=None, worksheet_id=None, page=None, question_id=None):
-    page = 'Preview'
+   
     current_week = date.today().isocalendar()[1] 
     user_profile = User.objects.filter(id=user_id).first()
     week_of = current_week = date.today().isocalendar()[1] 
@@ -1203,23 +1205,53 @@ def BlankDigitalActivities(request, user_id=None, worksheet_id=None, page=None, 
         worksheet_match.questions.add(new_question)
         matched_questions.append(new_question)
 
-
-    if matched_questions:
-        if 'None' in question_id:
-            q = 0
-        else:
-            q = int(question_id)
-            question_match = matched_questions[q]
-
-        next_q = q + 1
-        
+    question_list = worksheet_match.questions.all()
+    question_count = question_list.count()
+    if question_count != 0:
+        question_count = question_count - 1 
+    if 'None' in question_id:
+        question_match = current_question = None
+        next_q = 1
+        question_id = 0
+    elif 'New' in question_id:
+        is_new = True
+        question_match = current_question =  topicQuestionitem.objects.create(created_by=user_profile, subject=subject_match_full, is_admin=False)
+        worksheet_match.questions.add(question_match)
+        q = 0 
+        next_q = 1
     else:
-        question_match = None
+        if matched_questions:
+            if 'Complete' in question_id:
+                question_id = 0
+
+            q = int(question_id)
+            print(question_count, q)
+            if q >= question_count:
+                next_q = 'Complete'
+                question_match = current_question = matched_questions[q]
+            else:
+                next_q = q + 1
+                question_match = current_question = matched_questions[q]
+        elif 'New' in question_id:
+            is_new = True
+            q = 0
+            next_q = 1
+            question_match = current_question =  topicQuestionitem.objects.create(created_by=user_profile, subject=subject_match_full, is_admin=False)
+            worksheet_match.questions.add(question_match)
+        else:
+            question_match = current_question = None
+            next_q = 1
+            question_id = 0
+
+
 
     lesson_id = 0
     class_id = 0
-   
-    return render(request, 'dashboard/new_worksheet_builder.html', {'page': page, 'week_of': week_of, 'class_id': class_id, 'lesson_id': lesson_id, 'subject_match_full': subject_match_full, 'matched_questions': matched_questions, 'worksheet_match': worksheet_match, 'user_profile': user_profile})
+
+    worksheet_theme = worksheetTheme.objects.get(id=1)
+    background_img = userImageUpload.objects.filter(id=worksheet_theme.background_image_id).first()
+
+    return render(request, 'dashboard/new_worksheet_builder.html', {'page': page, 'current_question': current_question, 'worksheet_theme': worksheet_theme, 'question_match': question_match, 'background_img': background_img, 'next_q': next_q, 'week_of': week_of, 'question_id': question_id, 'week_of': week_of, 'class_id': class_id, 'lesson_id': lesson_id, 'subject_match_full': subject_match_full, 'matched_questions': matched_questions, 'worksheet_match': worksheet_match, 'user_profile': user_profile})
 
 #Edit already created or recommended Question
 def EditQuestions(request, user_id=None, class_id=None, subject=None, lesson_id=None, worksheet_id=None, page=None, act_id=None, question_id=None):
