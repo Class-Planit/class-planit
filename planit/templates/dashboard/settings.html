@@ -14,21 +14,7 @@
       
         </div>
         <div>
-            <div class="btn-group">
-                <button type="button" data-toggle="tooltip" title="Calendar" class="btn btn-primary"><span class="fas fa-calendar-alt"></span></button>
-            </div>
-            <button class="btn btn-primary mr-2 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="fas fa-clipboard mr-2"></span>Reports
-                <span class="icon icon-small ml-1"><span class="fas fa-chevron-down"></span></span>
-            </button>
-            <div class="dropdown-menu dashboard-dropdown dropdown-menu-left mt-2">
-                <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-box-open mr-2"></span>Products</a>
-                <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-store mr-2"></span>Customers</a>
-                <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-cart-arrow-down mr-2"></span>Orders</a>
-                <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-chart-pie mr-2"></span>Console</a>
-                <div role="separator" class="dropdown-divider"></div>
-                <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-rocket text-success mr-2"></span>All Reports</a>
-            </div>
+           
         </div>
     </div>
     <div class="row">
@@ -428,8 +414,11 @@
                                                             
                         </div>
                         <a type="button" data-toggle="modal" data-target="#newProfileImage">Edit Image</a>
+                        {% if user_profile.is_demo %}
+                        <a href="{% url 'admin_change_password' user_id=user_profile.id %}" >Create Password</h2></a>  
+                        {% else %}
                         <a href="{% url 'admin_change_password' user_id=user_profile.id %}" >Change Password</h2></a>  
- 
+                        {% endif %}
                     </div>
                 </div>
               <!------

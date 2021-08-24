@@ -378,6 +378,13 @@ def login_user(request):
   
     return render(request, 'dashboard/sign-in.html', {})
 
+
+def logout_user(request):
+    logout(request)
+    return redirect('login_user')
+
+
+
 #How it works page to explain the product 
 class HowItWorks(TemplateView):
     template_name = 'homepage/how_it_works.html' 
@@ -655,7 +662,8 @@ def ClassroomDashboard(request, user_id=None, class_id=None, standard_id=None):
 def ClassroomSettingsView(request, user_id=None, classroom_id=None, view_ref=None, confirmation=None): 
     current_year = datetime.datetime.now().year
     user_profile = User.objects.filter(username=request.user.username).first()
-    school_user_match = school_user.objects.filter(user=user_profile.id).first()
+    school_user_match, created = school_user.objects.get_or_create(user=user_profile)
+
     if school_user_match.standards_set:
         standard_set_match = school_user_match.standards_set
     else:
@@ -1388,7 +1396,7 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
     recent_uploads = userImageUpload.objects.filter(created_by=user_profile).order_by('-uploaded_date')        
 
     recent_uploads = recent_uploads[:10]
-    worksheet_theme = worksheetTheme.objects.get(id=1)
+    worksheet_theme = worksheetTheme.objects.all()[0]
 
     img_id = worksheet_theme.background_image
 

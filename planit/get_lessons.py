@@ -508,6 +508,8 @@ def retention_activities_analytics(lesson_id):
 
 def build_activity_list(soup, user_profile, class_objectives, lesson_id):
     #this function pulls in beautiful soup and pulls out the activities that will be used to create analytics and demonstrations of knowledge
+    all_selected = selectedActivity.objects.filter(lesson_overview=class_objectives, is_selected=True)
+    new_list = []
     activities_list =  soup.find('ul', {"id": "activity-div"})
     
     if activities_list:
@@ -525,9 +527,10 @@ def build_activity_list(soup, user_profile, class_objectives, lesson_id):
                         new_activity.work_product=l_act[3]
                         new_activity.bloom=l_act[1]
                         new_activity.mi=l_act[0]
-
+                        
                     new_activity.is_selected = True
                     new_activity.save()
+                    new_list.append(new_activity.id)
                     find_topics = identify_topic(activity, lesson_id)
                     if find_topics:
                         for item in find_topics:
@@ -535,7 +538,12 @@ def build_activity_list(soup, user_profile, class_objectives, lesson_id):
                             update_activity = new_activity.objectives_topics.add(match_topic)
                 except:
                     pass
-
+    
+    for acty in all_selected:
+        old_id = acty.id
+        if old_id not in new_list:
+            acty.is_selected = False
+            acty.save()
     return('Complete')
 
 
@@ -604,7 +612,7 @@ def get_lesson_sections(text_overview, class_id, lesson_id, user_id):
     subject = class_objectives.subject
     matched_grade = class_objectives.current_grade_level
 
-    all_selected = selectedActivity.objects.filter(lesson_overview=class_objectives, is_selected=True).delete()
+    
 
     topic_matches = class_objectives.objectives_topics.all()
     topic_lists_selected = topicInformation.objects.filter(id__in=topic_matches).order_by('item')

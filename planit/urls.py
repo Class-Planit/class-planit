@@ -104,6 +104,10 @@ urlpatterns = [
         view=login_user,
         name='login_user'),
 
+    url(r'^log-out/$',
+        view=logout_user,
+        name='logout_user'),
+
     url(r'^how-it-works/',
         view=HowItWorks.as_view(),
         name='how_it_works'),
