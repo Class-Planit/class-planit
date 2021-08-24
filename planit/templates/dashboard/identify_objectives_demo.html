@@ -1,0 +1,117 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+{% block content %}
+<main class="content">
+
+ 
+   
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+        
+    </div>
+
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="card border-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title h6">Welcome to ClassPlanit!</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">This is the first step to creating a new planner.</h6>
+                    <p class="card-text">In the form to the right, you are prompted to:</p>
+                        <li style="list-style: none;"><i class="fas fa-circle" style="font-size: 7px;"></i> write a sentence explaining what the students will be doing for the lesson</li>
+                        <li style="list-style: none;"><i class="fas fa-circle" style="font-size: 7px;"></i> select the subject and classroom the lesson pertains to</li> 
+                    <br>
+                    <p>When you are done with that, click the button to move to the next stage!</p>
+                    
+                    <br> <hr>
+                    <p class="card-title h6"><strong>Here are some examples of planning topics:</strong></p>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Social Studies: The students will identify strengths and weaknesses of the Articles of Confederation.</li>
+                        <li class="list-group-item">Mathematics: The students will apply the Pythagorean Theorem to solve problems. </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <br>
+            <div class="card border-light shadow-sm">
+                    
+                <div class="card-body">
+                <h3 class="h5"><center>What are Students Learning This Week?</center></h3>
+                <hr>          
+                <form  method="POST"> 
+                    {% csrf_token %} 
+                    <textarea class="form-control border border-light-gray mb-4" id="teacher_objective" name='teacher_objective' placeholder="The students will..." rows="6" maxlength="1000" required></textarea>
+                    <div class="form-group">
+                        <label for="subject">Select Your Subject:</label>
+                        <select class="form-control" name='subject' id="subject">
+                         
+                            {% for sub in subjects %}
+                                {% ifchanged sub.0 %}
+                                    <option value='{{ sub.0 }}'>{{ sub.1 }}</option>
+                                {% endifchanged %}
+                            {% endfor %}
+                            
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="lesson_classroom">Select Grade Level:</label>
+                        <select class="form-control" name='current_grade_level' id="current_grade_level">
+                            {{ grades }}
+                            {% for grade in grades %}
+                                <option value='{{ grade.0 }}'>{{ grade.1 }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                
+                    <br>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        
+                        <div>
+                            <button type="submit" class="btn  btn-secondary btn-block">Lets Planit!</button>
+                        </div>
+                    </div>
+                </form>
+                </div>
+            </div>
+           
+            
+        </div>
+        <div class="col-lg-3">
+    
+          
+        </div>
+    </div>
+      <!-- Modal -->
+      <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Add New Lesson</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+            ...
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <footer class="footer section py-5">
+<div class="container-fluid">
+<div class="row">
+<div class="col-12 col-lg-6 mb-4 mb-lg-0">
+<p class="mb-0 text-center text-xl-left">Copyright © 2019-<span class="current-year"></span> <a class="text-primary font-weight-normal" href="https://www.classplanit.co">ClassPlanit</a></p>
+</div>
+
+ 
+</div>
+</div>
+</footer>
+</main>
+               
+{% endblock %}

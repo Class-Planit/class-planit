@@ -101,12 +101,15 @@
 
                     <!-- <nav id="sidebarMenu" class="sidebar col-md-4 col-lg-3 col-xl-2 d-md-block bg-primary text-white collapse"> -->
                         <nav id="sidebarMenu" class="sidebar d-md-block bg-primary text-white collapse px-4">
+                          {% if user_profile %}
                             <div class="sidebar-sticky pt-4 mx-auto">
                               <div class="user-card d-flex align-items-center justify-content-between justify-content-md-center pb-4">
                                 <div class="d-flex align-items-center">
+                                  <a href="{% url 'user_profile_view' user_id=user_profile.id message=None %}">
                                   <div class="user-avatar lg-avatar mr-4">
                                     <img src="{% static 'images/dashboard/user_default.png' %}" class="card-img-top rounded-circle border-white" alt="user">
                                   </div>
+                                </a>
                                   <div class="d-block">
                                     <h2 class="h6">Hi, {{ user_profile.first_name }}</h2>
                                     <a href="../sign-in.html" class="btn btn-secondary btn-xs"><span class="mr-2"><span class="fas fa-sign-out-alt"></span></span>Sign Out</a>
@@ -197,8 +200,39 @@
                               
                               </ul>
                             </div>
-                          </nav>
-                          
+                          {% else %}
+                          <div class="sidebar-sticky pt-4 mx-auto">
+                            <div class="user-card d-flex align-items-center justify-content-between justify-content-md-center pb-4">
+                             
+                            </div>
+                            <ul class="nav flex-column mt-4">
+                             
+
+                              <li role="separator" class="dropdown-divider mt-4 mb-3 border-blue"></li>
+                              <!--
+                              <li class="nav-item">
+                                <a href="https://themesberg.com/docs/rocket/getting-started/quick-start/" target="_blank" class="nav-link">
+                                  <span class="sidebar-icon"><span class="fas fa-book"></span></span>
+                                  <span>Tutorials</span>
+                                </a>
+                              </li>
+                              -->
+                              <li class="nav-item">
+                                <a href="mailto:audrey@classplanit.co" class="nav-link d-flex align-items-center">
+                                  <span class="sidebar-icon">
+                                    <img src="{% static 'images/dashboard/circle_logo.svg' %}" height="26" width="26" alt="Rocket Logo">
+                                  </span>
+                                  <span></span>
+                                </a>
+                              </li>
+                            
+                            </ul>
+                          </div>
+                          {% endif %}
+                        
+                      </nav>
+                        
+                      
 {% block content %}
 {% endblock %}
 </div>

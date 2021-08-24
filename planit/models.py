@@ -37,30 +37,6 @@ class User(AbstractUser):
                                null=True)
 
 
-
-class school_user(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, related_name='user_role')
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
-    username = models.CharField(max_length=30)
-    email = models.EmailField(blank=True,
-                              null=True)
-    phone_number = models.CharField(max_length=30,
-                                    blank=True,
-                                    null=True)
-    use_whatsapp = models.BooleanField(default=False)
-    user_image = models.ImageField(upload_to='images/',
-                                   blank=True,
-                                   null=True)
-    standards_set = models.ForeignKey(standardSet,
-                               on_delete=models.SET_NULL,
-                               blank=True,
-                               null=True)
-
-    def __str__(self):
-        return "%s" % (self.user)
-
- 
 class userImageUpload(models.Model):
     title	= models.CharField(max_length=20,
                         blank=True,
@@ -88,7 +64,48 @@ class userImageUpload(models.Model):
             self.save()
 
     def __str__(self):
-        return "%s" % (self.image_url)
+        return "%s" % (self.title)
+
+class school_user(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, related_name='user_role')
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30)
+    username = models.CharField(max_length=30)
+    email = models.EmailField(blank=True,
+                              null=True)
+    phone_number = models.CharField(max_length=30,
+                                    blank=True,
+                                    null=True)
+    use_whatsapp = models.BooleanField(default=False)
+    user_image = models.ImageField(upload_to='images/',
+                                   blank=True,
+                                   null=True)
+    user_upload = models.ForeignKey(userImageUpload,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    standards_set = models.ForeignKey(standardSet,
+                               on_delete=models.SET_NULL,
+                               blank=True,
+                               null=True)
+    teaching_experience = models.CharField(max_length=30,
+                                    blank=True,
+                                    null=True)
+    school_name = models.CharField(max_length=50,
+                                    blank=True,
+                                    null=True)
+    school_city = models.CharField(max_length=50,
+                                    blank=True,
+                                    null=True)
+    school_country = models.CharField(max_length=50,
+                                    blank=True,
+                                    null=True)            
+
+    def __str__(self):
+        return "%s" % (self.user)
+
+ 
+
 
 
 class gradeLevel(models.Model):

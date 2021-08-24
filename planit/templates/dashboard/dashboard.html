@@ -5,6 +5,7 @@
 {% block content %}
 
 <main class="content">
+    
     <div class="container">
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
             <!--
@@ -27,7 +28,14 @@
             </div>
             -->
         </div>
-    
+      {% if user_profile.is_demo %}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>Welcome to ClassPlanit!</strong><br><a href="{% url 'user_profile_view' user_id=user_profile.id message=None %}">Click Here to complete your profile and gain full access.</a>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+         {% endif %}                  
         <div class="form-group mb-0 mr-3">
             {% if current_week == active_week %}
                 <a type="button" class="btn btn-primary" href="{% url 'Dashboard' week_of='Current' subject_id='All' classroom_id='All' standard_id='All' %}" style="color: white">

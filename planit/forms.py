@@ -149,7 +149,11 @@ class lessonImageUploadForm(forms.ModelForm):
         model = lessonImageUpload
         fields = '__all__'
 
+class userImageUploadForm(forms.ModelForm):
 
+    class Meta:
+        model = userImageUpload
+        fields = '__all__'
 
 class selectedActivityForm(forms.ModelForm):
 
@@ -170,6 +174,13 @@ class waitlistUserInfoForm(forms.ModelForm):
         model = waitlistUserInfo
         fields = '__all__'
 
+class school_userForm(forms.ModelForm):
+
+    class Meta:
+        model = school_user
+        fields = '__all__'
+
+
 class TeacherForm(UserCreationForm):
     username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Username...'}))
     first_name = forms.CharField(max_length=30, required=False, widget=forms.TextInput(attrs={'placeholder': 'First Name...'}), help_text='Optional.')
@@ -189,6 +200,8 @@ class TeacherForm(UserCreationForm):
         user.save()
         teacher = school_user.objects.create(user=user)
         return user
+
+
 
 class StudentForm(UserCreationForm):
     username = forms.CharField()

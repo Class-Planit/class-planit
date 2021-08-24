@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View, FormView, TemplateView, DetailView, ListView
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm, AdminPasswordChangeForm
 from django.views.generic.edit import CreateView, UpdateView
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
@@ -44,9 +45,11 @@ from .get_wikipedia import *
 from .get_seach_results import *
 from .get_misc_info import *
 from .fix_types import *
+from .get_default_user import *
 from django.http import JsonResponse
 from django.core import serializers
 from .get_search import *
+
 ##################| Homepage Views |#####################
 #Homepage Landing Page
 def Homepage(request):
@@ -106,6 +109,54 @@ def Homepage(request):
         return render(request, 'dashboard/index3.html', {'form': form, 'standards_match': standards_match})
     else:
         return render(request, 'dashboard/index3.html', {'form': form, 'standards_match': standards_match})
+
+#Full Form Regstration if error on pop up modal
+def GuestFormFull(request, retry=None):
+    standards_match = standardSet.objects.all()
+    if retry != False and retry != "False":
+        message = 'Something Went Wrong! Please complete your registration again.'
+        error_messages = retry
+    else:
+        message = "Let's Get Started!"
+        error_messages = None
+
+        username = form.cleaned_data.get('username')
+        
+        user_email = form.cleaned_data.get('email')
+        my_number = form.cleaned_data.get('phone_number')
+        
+        if '+1' in my_number:
+            pass
+        else:
+            my_number = '+1', my_number
+        raw_password = form.cleaned_data.get('password1')
+        user = authenticate(username=username, password=raw_password)
+        user_id = user.id
+        standards_set = form.cleaned_data.get('standards_set')
+        if standards_set == 0:
+            user.standards_set = None
+        else:
+            standard_match = standardSet.objects.get(id=standards_set.id)
+            user.standards_set = standard_match
+            user.save()
+
+        school_user_match = school_user.objects.get(user=user_id)
+        school_user_match.standards_set = standard_match
+        school_user_match.first_name = user.first_name
+        school_user_match.last_name = user.last_name
+        school_user_match.email = user.email
+        school_user_match.username = user.username
+        school_user_match.save()
+
+        welcome_message = 'Welcome to Class Planit, %s! We will be in touch when your account is activated.' % (username)
+    
+        #create "empty" teacherInvitations (only created_by and is_waitlist)
+        user_match = User.objects.get(id=user_id)
+      
+        return redirect('Dashboard', week_of='Current', subject_id='All', classroom_id='All', standard_id='All')
+
+    return render(request, 'homepage/registration_full.html', {'form': form, 'message': message, 'error_messages': error_messages, 'standards_match': standards_match})
+
 
 #Full Form Regstration if error on pop up modal
 def FormFull(request, retry=None):
@@ -818,7 +869,6 @@ def UpdateWeekOf(request, week_of, user_id=None, classroom_id=None, subject_id=N
 #Main Teacher Dashboard View labeled as 'Overview'
 def Dashboard(request, week_of, subject_id, classroom_id, standard_id=None):
     #run to fix the incorrect topic types
-    fix_incorrect_types()
 
     #get active and current week number (active being the week the teacher is on and current meaning the actual week in the calendar)
     week_info = get_week_info(week_of)
@@ -877,6 +927,113 @@ def Dashboard(request, week_of, subject_id, classroom_id, standard_id=None):
         return redirect('login_user')
 
 
+
+#Main Teacher Dashboard View labeled as 'Overview'
+def UserProfileView(request, user_id=None, message=None):
+    user_profile = User.objects.filter(id=user_id).first()
+    current_date = datetime.datetime.now()
+    school_user_match, created = school_user.objects.get_or_create(user=user_profile)
+    school_user_match.first_name = user_profile.first_name
+    school_user_match.last_name = user_profile.last_name
+    school_user_match.username = user_profile.username
+    school_user_match.save()
+    user_profile_image = school_user_match.user_upload_id
+    if user_profile_image:
+        profile_match = userImageUpload.objects.get(id=user_profile_image)
+    else:
+        profile_match = None
+
+    s_match = school_user_match.standards_set_id
+    if s_match:
+        standard_match = standardSet.objects.get(id=s_match)
+    else:
+        standard_match = None
+    
+    all_standards = standardSet.objects.all()
+
+    
+    if request.method == "POST":
+        form = userImageUploadForm(request.POST, request.FILES)
+        form2 = school_userForm(request.POST, request.FILES, instance=school_user_match)
+        if form.is_valid():
+            prev = form.save(commit=False)
+            prev.created_by = user_profile
+            title = str(user_profile.username) + "profile image"
+            prev.title = title
+            prev.uploaded_date = current_date
+            prev.save()
+            school_user_match.user_upload = prev 
+            school_user_match.save()
+        if form2.is_valid():
+            form2.save()
+        return redirect('user_profile', user_id=user_id)
+    else:
+        form = userImageUploadForm()
+        form2 = school_userForm(instance=school_user_match)
+    context = {'user_profile': user_profile, 'message': message, 'profile_match': profile_match, 'standard_match': standard_match, 'all_standards': all_standards, 'form': form, 'school_user_match': school_user_match}
+    return render(request, 'dashboard/settings.html', context)
+
+def UpdateUserProfile(request, user_id=None):
+    user_profile = User.objects.filter(id=user_id).first()
+    current_date = datetime.datetime.now()
+    school_user_match, created = school_user.objects.get_or_create(user=user_profile)
+    school_user_match.first_name = user_profile.first_name
+    school_user_match.last_name = user_profile.last_name
+    school_user_match.username = user_profile.username
+    school_user_match.save()
+    user_profile_image = school_user_match.user_upload_id
+    if user_profile_image:
+        profile_match = userImageUpload.objects.get(id=user_profile_image)
+    else:
+        profile_match = None
+
+    s_match = school_user_match.standards_set_id
+    if s_match:
+        standard_match = standardSet.objects.get(id=s_match)
+    else:
+        standard_match = None
+    
+    all_standards = standardSet.objects.all()
+
+    if request.method == "POST":
+        form2 = school_userForm(request.POST, request.FILES, instance=school_user_match)
+        
+        if form2.is_valid():
+            prev = form2.save(commit=False)
+            user_name_one = prev.username
+            if User.objects.exclude(id=user_id).filter(username=user_name_one).exists():
+                user_name = str(user_name_one) + token_generator.make_token(3) 
+                user_message = '%s is already taken' % (user_name_one)
+                prev.username = user_name
+                user_profile.username = user_name
+            else:
+                user_profile.username = user_name_one
+                user_message = 'Username Saved'
+
+            
+            user_profile.first_name = school_user_match.first_name 
+            user_profile.last_name = school_user_match.last_name 
+            user_profile.is_demo = False
+            user_profile.save()
+            prev.save()
+            return redirect('user_profile_view', user_id=user_id, message=user_message)
+
+
+def admin_change_password(request, user_id=None):
+   
+    user_profile = user = User.objects.get(id=user_id)
+    user_password = user.password
+    if request.method == "POST":
+        form = AdminPasswordChangeForm(data=request.POST, user=user)
+        if form.is_valid():
+            prev = form.save()
+            user_profile.is_demo = False
+            user_profile.save()
+        return redirect('user_profile', user_id=user_id)
+    else:
+        form = AdminPasswordChangeForm(user=user)
+    return render(request,'administrator/change_password.html', {'form': form, 'user_profile': user_profile})
+
 def CreateObjectiveWithStandard(request, user_id=None, week_of=None, subject_id=None, classroom_id=None, standard_id=None):
     user_profile = User.objects.filter(username=request.user.username).first()
     week_info = get_week_info(week_of)
@@ -891,6 +1048,79 @@ def CreateObjectiveWithStandard(request, user_id=None, week_of=None, subject_id=
     new_lesson.objectives_standards.add(standard_match)
 
     return redirect('activity_builder', user_id=user_profile.id, class_id=classroom_match.id, subject=subject_match.id, lesson_id=new_lesson.id, page=0)
+
+#This is the form where teachers create a new lessonObjective. 
+#The teacher puts in their objective (what they want to teach the students)
+def StartPlanningDemo(request):
+    week_of = date.today().isocalendar()[1] 
+
+    standard_set = standardSet.objects.get(Location='Texas TEKS')
+  
+    subjects = []
+    subject_match = standardSubjects.objects.filter(standards_set=standard_set)
+    grade_match = gradeLevel.objects.filter(standards_set=standard_set)
+    for subject in subject_match:
+        subject_match_id = subject.id
+        subject_match_title = subject.subject_title
+        result = subject_match_id, subject_match_title
+        if result not in subjects:
+            subjects.append(result)
+
+    grades = []
+    for grade in grade_match:
+        grade_match_id = grade.id
+        grade_match_title = grade.grade_labels
+        grade_num = grade.grade
+        result = grade_match_id, grade_match_title, grade_num
+        if result not in grades:
+            grades.append(result)
+
+    grades.sort(key=lambda x: x[2], reverse=True)
+    if request.method == "POST":
+        form = lessonObjectiveForm(request.POST, request.FILES)
+        if form.is_valid():
+            prev = form.save(commit=False)
+            subject = prev.subject_id
+            subject_single = standardSubjects.objects.get(id=subject)
+            grade_level = prev.current_grade_level
+            create_demo_user = build_username()
+            user_name = create_demo_user['user_name']
+            raw_password = create_demo_user['raw_password']
+            new_user = User(username= user_name)
+            new_user.save()
+            new_user.set_password(raw_password)
+            new_user.save()
+            user = authenticate(username=user_name, password=raw_password)
+            
+            user.first_name = create_demo_user['first_name']
+            user.last_name = create_demo_user['last_name']
+            user.standards_set = standard_set
+            user.is_demo = True
+            user.save()
+           
+            if user is not None:
+                login(request, user)
+
+            class_match = classroom.objects.create(classroom_title='Demo Class', single_grade=grade_level, main_teacher=user, standards_set=standard_set)
+            class_match.subjects.add(subject_single)
+            prev.lesson_classroom = class_match
+
+            teacher_input = prev.teacher_objective
+            
+            prev.week_of = week_of
+ 
+            prev.standard_set = standard_set
+            #this is an overide - currently we want one grade per classroom but we will move to multiple grade levels like art which could have 9, 10, 11 grades
+            prev.save()
+            
+            return redirect('activity_builder',  user_id=user.id, class_id=class_match.id, subject=prev.subject_id, lesson_id=prev.id, page=0)
+    else:
+        form = lessonObjectiveForm()
+            
+    context = {'form': form, 'step': 1, 'subjects': subjects, 'grades': grades}
+    return render(request, 'dashboard/identify_objectives_demo.html', context)
+
+
 
 
 #This is the form where teachers create a new lessonObjective. 
@@ -923,9 +1153,6 @@ def CreateObjective(request, user_id=None, week_of=None, subject_id=None, classr
         else:
             lesson_classroom = 'Any'
 
-        print(subject_id)
-        print(lesson_subject)
-        print(lesson_classroom)
 
         if request.method == "POST":
             form = lessonObjectiveForm(request.POST, request.FILES)
@@ -943,8 +1170,9 @@ def CreateObjective(request, user_id=None, week_of=None, subject_id=None, classr
                 
                 return redirect('activity_builder', user_id=user_profile.id, class_id=class_match.id, subject=prev.subject_id, lesson_id=prev.id, page=0)
         else:
+            
             form = lessonObjectiveForm()
-            #show Gabby how to create initial in form queryset
+            
         context = {'form': form, 'step': 1, 'user_profile': user_profile, 'user_classrooms': user_classrooms, 'subjects': subjects, \
                    'lesson_subject': lesson_subject, 'lesson_classroom': lesson_classroom}
         return render(request, 'dashboard/identify_objectives.html', context)
@@ -958,7 +1186,8 @@ def CreateObjective(request, user_id=None, week_of=None, subject_id=None, classr
 def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_id=None, page=None):
     user_profile = User.objects.get(id=user_id)
     week_of = current_week = date.today().isocalendar()[1]
-
+    if user_profile.is_demo:
+        alerts = ['Demo',]
     lesson_id = int(lesson_id)
     if lesson_id == 0:
         return redirect('create_objective', user_id=user_profile.id, week_of=week_of)
@@ -994,7 +1223,7 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
         video_match = youtubeSearchResult.objects.filter(id__in=vi_list, is_selected=True)
 
         form = UserSearchForm()
-        context = {'user_profile': user_profile, 'video_match': video_match, 'lesson_topics': lesson_topics, 'form': form, 'new_text': new_text, 'big_questions': big_questions, 'vid_id_list': vid_id_list, 'classroom_profile': classroom_profile, 'selected_activities': selected_activities, 'lesson_match': lesson_match}
+        context = {'user_profile': user_profile, 'alerts': alerts, 'video_match': video_match, 'lesson_topics': lesson_topics, 'form': form, 'new_text': new_text, 'big_questions': big_questions, 'vid_id_list': vid_id_list, 'classroom_profile': classroom_profile, 'selected_activities': selected_activities, 'lesson_match': lesson_match}
         return render(request, 'dashboard/activity_builder.html', context)
 
 

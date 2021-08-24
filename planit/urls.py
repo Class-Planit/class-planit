@@ -154,6 +154,24 @@ urlpatterns = [
         view=CreateObjective,
         name='create_objective'),
 
+    url(r'^start-planning-demo/',
+        view=StartPlanningDemo,
+        name='start_planning_demo'),
+
+    url(r'^user-profile/(?P<user_id>[\w\s]+)/(?P<message>[\w\s]+)/',
+        view=UserProfileView,
+        name='user_profile_view'),
+
+
+    url(r'^update-user-profile/(?P<user_id>[\w\s]+)/',
+        view=UpdateUserProfile,
+        name='update_user_profile'),
+
+
+    url(r"^admin_change_password/(?P<user_id>[\w\d@\.-]+)/$",
+        view=admin_change_password,
+        name="admin_change_password"),
+
     url(r'^create_objective-with-standard/(?P<user_id>[\w\s]+)/(?P<week_of>[\w\s]+)/(?P<subject_id>[\w\s]+)/(?P<classroom_id>[\w\s]+)/(?P<standard_id>[\w\s]+)/',
         view=CreateObjectiveWithStandard,
         name='create_objective_with_standard'),

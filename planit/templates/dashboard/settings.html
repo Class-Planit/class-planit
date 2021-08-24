@@ -1,490 +1,500 @@
-<!--
+{% extends 'dashboard/base.html' %}
+{% load static %}
+{% block content %}
 
-=========================================================
-* Rocket - SaaS Bootstrap Template
-=========================================================
-
-* Product Page: https://themesberg.com/product/bootstrap-themes/rocket-saas-bootstrap-template
-* Copyright 2020 Themesberg (https://www.themesberg.com)
-* License (https://themesberg.com/licensing)
-
-* Coded by https://themesberg.com
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
--->
-<!DOCTYPE html>
-<html lang="en">
-
-<head> 
-    <!-- Primary Meta Tags -->
-<title>Rocket - Settings</title>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="title" content="Rocket - Settings">
-<meta name="author" content="Themesberg">
-<meta name="description" content="Rocket is a premium SaaS Bootstrap 4 Dashboard template featuring over 27 presentational and technical pages including pricing, support, team, careers and many more.">
-<meta name="keywords" content="bootstrap, bootstrap template, saas website template, saas bootstrap template, saas bootstrap 4 template, saas bootstrap theme, saas bootstrap 4 theme, dashboard, saas dashboard, themesberg" />
-<link rel="canonical" href="https://themesberg.com/product/bootstrap-themes/rocket-saas-bootstrap-template">
-
-<!-- Open Graph / Facebook -->
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://demo.themesberg.com/rocket">
-<meta property="og:title" content="Rocket - Settings">
-<meta property="og:description" content="Rocket is a premium SaaS Bootstrap 4 Dashboard template featuring over 27 presentational and technical pages including pricing, support, team, careers and many more.">
-<meta property="og:image" content="https://themesberg.s3.us-east-2.amazonaws.com/public/products/rocket/rocket-preview.jpg">
-
-<!-- Twitter -->
-<meta property="twitter:card" content="summary_large_image">
-<meta property="twitter:url" content="https://demo.themesberg.com/rocket">
-<meta property="twitter:title" content="Rocket - Settings">
-<meta property="twitter:description" content="Rocket is a premium SaaS Bootstrap 4 Dashboard template featuring over 27 presentational and technical pages including pricing, support, team, careers and many more.">
-<meta property="twitter:image" content="https://themesberg.s3.us-east-2.amazonaws.com/public/products/rocket/rocket-preview.jpg">
-
-<!-- Favicon -->
-<link rel="apple-touch-icon" sizes="120x120" href="../../assets/img/favicon/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="../../assets/img/favicon/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="../../assets/img/favicon/favicon-16x16.png">
-<link rel="manifest" href="../../assets/img/favicon/site.webmanifest">
-<link rel="mask-icon" href="../../assets/img/favicon/safari-pinned-tab.svg" color="#ffffff">
-<meta name="msapplication-TileColor" content="#ffffff">
-<meta name="theme-color" content="#ffffff">
-
-<!-- Fontawesome -->
-<link type="text/css" href="../../vendor/fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
-
-<!-- Prism -->
-<link type="text/css" href="../../vendor/prismjs/themes/prism.css" rel="stylesheet">
-
-<!-- VectorMap -->
-<link rel="stylesheet" href="../../vendor/jqvmap/dist/jqvmap.min.css">
-
-<!-- Rocket CSS -->
-<link type="text/css" href="../../css/rocket.css" rel="stylesheet">
-
-<!-- NOTICE: You can use the _analytics.html partial to include production code specific code & trackers -->
-
-</head>
-
-<body>
-
-        <div class="preloader bg-soft flex-column justify-content-center align-items-center">
-    <img class="loader-element" src="../../assets/img/brand/dark.svg" height="50" alt="Rocket logo">
-</div>
-
-        <nav class="navbar navbar-dark navbar-theme-primary col-12 d-md-none">
-  <a class="navbar-brand mr-lg-5" href="{% url 'Dashboard' week_of='Current' subject_id='All' classroom_id='All' standard_id='All' %}">
-      <img class="navbar-brand-dark" src="{% static 'images/dashboard/circle_logo.svg' %}" alt="cp" /> <img class="navbar-brand-light" src="{% static 'images/dashboard/circle_logo.svg' %}" alt="cp" />
-  </a>
-    <div class="d-flex align-items-center">
-        <button class="navbar-toggler d-md-none collapsed" type="button" data-toggle="collapse" data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
+<style>
+    img {
+        border-radius: 50%;
+        }
+</style>                
+<main class="content">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+        <div>
+            
+      
+        </div>
+        <div>
+            <div class="btn-group">
+                <button type="button" data-toggle="tooltip" title="Calendar" class="btn btn-primary"><span class="fas fa-calendar-alt"></span></button>
+            </div>
+            <button class="btn btn-primary mr-2 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="fas fa-clipboard mr-2"></span>Reports
+                <span class="icon icon-small ml-1"><span class="fas fa-chevron-down"></span></span>
+            </button>
+            <div class="dropdown-menu dashboard-dropdown dropdown-menu-left mt-2">
+                <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-box-open mr-2"></span>Products</a>
+                <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-store mr-2"></span>Customers</a>
+                <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-cart-arrow-down mr-2"></span>Orders</a>
+                <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-chart-pie mr-2"></span>Console</a>
+                <div role="separator" class="dropdown-divider"></div>
+                <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-rocket text-success mr-2"></span>All Reports</a>
+            </div>
+        </div>
     </div>
-</nav>
-        
-        <div class="container-fluid bg-soft">
-            <div class="row">
-                <div class="col-12">
-                    <!-- <nav id="sidebarMenu" class="sidebar col-md-4 col-lg-3 col-xl-2 d-md-block bg-primary text-white collapse"> -->
-<nav id="sidebarMenu" class="sidebar d-md-block bg-primary text-white collapse px-4">
-  <div class="sidebar-sticky pt-4 mx-auto">
-    <div class="user-card d-flex align-items-center justify-content-between justify-content-md-center pb-4">
-      <div class="d-flex align-items-center">
-        <div class="user-avatar lg-avatar mr-4">
-          <img src="../../assets/img/team/profile-picture-3.jpg" class="card-img-top rounded-circle border-white" alt="Bonnie Green">
-        </div>
-        <div class="d-block">
-          <h2 class="h6">Hi, Jane</h2>
-          <a href="../sign-in.html" class="btn btn-secondary btn-xs"><span class="mr-2"><span class="fas fa-sign-out-alt"></span></span>Sign Out</a>
-        </div>
-      </div>
-      <div class="collapse-close d-md-none">
-          <a href="#sidebarMenu" class="fas fa-times" data-toggle="collapse"
-              data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="true"
-              aria-label="Toggle navigation"></a>
-      </div>
-    </div>
-    <ul class="nav flex-column mt-4">
-      <li class="nav-item ">
-        <a href="../dashboard/dashboard.html" class="nav-link">
-            <span class="sidebar-icon"><span class="fas fa-chart-pie"></span></span>
-            <span>Overview</span>
-        </a>
-      </li>
-      <li class="nav-item ">
-        <a href="../dashboard/messages.html" class="nav-link d-flex align-items-center justify-content-between">
-            <span>
-              <span class="sidebar-icon"><span class="fas fa-inbox"></span></span>
-              Messages
-            </span>
-            <span class="badge badge-md badge-danger badge-pill">4</span>
-        </a>
-      </li>
-      <li class="nav-item ">
-        <a href="../dashboard/traffic-sources.html" class="nav-link">
-            <span class="sidebar-icon"><span class="fas fa-chart-line"></span></span>
-            <span>Traffic & Engagement</span>
-        </a>
-      </li>
-      <li class="nav-item ">
-        <a href="../dashboard/app-analysis.html" class="nav-link">
-            <span class="sidebar-icon"><span class="fas fa-tablet-alt"></span></span>
-            <span>App Analysis</span>
-        </a>
-      </li>
-      <li class="nav-item ">
-        <a href="../dashboard/users.html" class="nav-link">
-          <span class="sidebar-icon"><span class="fas fa-user-check"></span></span>
-            <span>Users List</span>
-        </a>
-      </li>
-      <li class="nav-item ">
-        <a href="../dashboard/transactions.html" class="nav-link">
-            <span class="sidebar-icon"><span class="fas fa-hand-holding-usd"></span></span>
-            <span>Transactions</span>
-        </a>
-      </li>
-      <li class="nav-item ">
-        <a href="../dashboard/tasks.html" class="nav-link">
-            <span class="sidebar-icon"><span class="fas fa-clipboard-list"></span></span>
-            <span>Task List</span>
-        </a>
-      </li>
-      <li class="nav-item  active ">
-        <a href="../dashboard/settings.html" class="nav-link">
-            <span class="sidebar-icon"><span class="fas fa-cog"></span></span>
-            <span>Settings</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link collapsed d-flex justify-content-between align-items-center" href="#submenu-app" data-toggle="collapse" data-target="#submenu-app">
-          <span>
-            <span class="sidebar-icon"><span class="fas fa-pager"></span></span> 
-            Dropdown
-          </span>
-          <span class="link-arrow"><span class="fas fa-chevron-right"></span></span> 
-        </a>
-        <div class="multi-level collapse" role="list" id="submenu-app" aria-expanded="false">
-            <ul class="flex-column nav">
-                <li class="nav-item"><a class="nav-link" href="#"><span>First Item</span></a></li>
-                <li class="nav-item"><a class="nav-link" href="#"><span>Second Item</span></a></li>
-                <li class="nav-item"><a class="nav-link" href="#"><span>Third Item</span></a></li>
-            </ul>
-        </div>
-      </li>
-      <li role="separator" class="dropdown-divider mt-4 mb-3 border-blue"></li>
-      <li class="nav-item">
-        <a href="../../index.html" class="nav-link d-flex align-items-center">
-          <span class="sidebar-icon">
-            <img src="../../assets/img/brand/light.svg" height="26" width="26" alt="Rocket Logo">
-          </span>
-          <span>Rocket Overview</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a href="https://themesberg.com/docs/rocket/getting-started/quick-start/" target="_blank" class="nav-link">
-          <span class="sidebar-icon"><span class="fas fa-book"></span></span>
-          <span>Documentation <span class="badge badge-md badge-secondary ml-2">v2.0</span></span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a href="https://themesberg.com" target="_blank" class="nav-link d-flex align-items-center">
-          <span class="sidebar-icon">
-            <img src="../../assets/img/themesberg.svg" height="20" width="20" class="mr-1" alt="Themesberg Logo">
-          </span>
-          <span>Themesberg</span>
-        </a>
-      </li>
-    </ul>
-  </div>
-</nav>
-
-
-
-
-
-
-
-
-
+    <div class="row">
+        <div class="col-12 col-xl-8">
+            <div class="card card-body bg-white border-light shadow-sm mb-4">
+               
+                <form action="{% url 'update_user_profile' user_id=user_profile.id %}" method="POST">
+                    {% csrf_token %}
+                    <input type="submit" value="Save and Update" class="btn btn-secondary mr-2">
+                   <hr>
+                   <input class="form-control" id="user" name="user" type="text" value='{{ school_user_match.user_id }}' hidden>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label for="first_name">First Name</label>
+                                <input class="form-control" id="first_name" name="first_name" type="text" value='{{ school_user_match.first_name }}' required>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label for="last_name">Last Name</label>
+                                <input class="form-control" id="last_name" name="last_name" type="text" value='{{ school_user_match.last_name }}' required>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-6">
+                       
+                            <div class="form-group">
+                                <label for="username">Username: {{ message }}</label>
+                                <input class="form-control" id="username" name="username" type="text" value='{{ school_user_match.username }}' required>
+                            </div>
+                        </div>
+                    </div>
+             
+                        
+                   
+                    <div class="row align-items-center">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label for="teaching_experience">Years Teaching:</label>
+                                <select class="custom-select" id="teaching_experience" name='teaching_experience'>
+                                    {% if school_user_match.teaching_experience %}
+                                    <option value='{{ school_user_match.teaching_experience }}'>{{ school_user_match.teaching_experience }}</option>
+                                    {% endif %}
+                                    <option value=None>----------</option>
+                                    <option value="I'm New to Teaching">I'm New to Teaching</option>
+                                    <option value="1 - 3 years">1 - 3 years</option>
+                                    <option value="3 - 5 years">3 - 5 years</option>
+                                    <option value="5 - 10 years">5 - 10 years</option>
+                                    <option value="10+ years">10+ years</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label for="standards_set">Standards Used:</label>
+                                <select class="custom-select"  id="standards_set" name='standards_set'>
+                                    {% if standard_match %}
+                                    <option value="{{standard_match.id }}">{{standard_match.Location }}</option>
+                                    {% endif %}
+                                    <option value=None>----------</option>
+                                    {% for stan in all_standards %}
+                                    <option value="{{ stan.id }}">{{ stan.Location }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label for="email">Email:</label>
+                                {% if school_user_match.email %}
+                                <input class="form-control" id="email" name='email' type="email" value='{{ school_user_match.email }}'>
+                                {% else %}
+                                <input class="form-control" id="email" name='email' type="email">
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label for="phone_number">Phone:</label>
+                                {% if school_user_match.phone_number %}
+                                <input class="form-control" id="phone_number" name="phone_number" type="text" value='{{ school_user_match.phone_number }}'>
+                                {% else %}
+                                <input class="form-control" id="phone_number" name="phone_number" type="text">
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <h2 class="h5 my-4">School Info</h2>
+                    <div class="row">
+                        <div class="col-sm-12 mb-3">
+                            <div class="form-group">
+                                <label for="school_name">School Name</label>
+                                {% if school_user_match.school_name %}
+                                <input class="form-control" id="school_name" name='school_name' type="text" value='{{ school_user_match.school_name }}' >
+                                {% else %}
+                                <input class="form-control" id="school_name" name='school_name' type="text"  >
+                                {% endif %}
+                            </div>
+                        </div>
+                       
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 mb-3">
+                            <div class="form-group">
+                                <label for="school_city">City</label>
+                                {% if school_user_match.school_city %}
+                                <input class="form-control" id="school_city" name='school_city' type="text" value='{{ school_user_match.school_city }}'>
+                                {% else %}
+                                <input class="form-control" id="school_city" name='school_city' type="text">
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <div class="form-group">
+                                <label for="school_country">Country</label>
+                                <select class="form-control select2-hidden-accessible" name='school_country' id="school_country" data-toggle="select" title="school_country" data-live-search="true" data-live-search-placeholder="Country" data-select2-id="1" tabindex="-1" aria-hidden="true">
+                                    {% if school_user_match.school_country %}
+                                    <option value="{{ school_user_match.school_country }}">{{ school_user_match.school_country }}</option>
+                                    {% endif %}
+                                    <option value="United States">United States</option>
+                                    <option value=None>------</option>
+                                <option value="Åland Islands">Åland Islands</option>
+                                <option value="Albania">Albania</option>
+                                <option value="Algeria">Algeria</option>
+                                <option value="American Samoa">American Samoa</option>
+                                <option value="Andorra">Andorra</option>
+                                <option value="Angola">Angola</option>
+                                <option value="Anguilla">Anguilla</option>
+                                <option value="Antarctica">Antarctica</option>
+                                <option value="Antigua and Barbuda">Antigua and Barbuda</option>
+                                <option value="Argentina">Argentina</option>
+                                <option value="Armenia">Armenia</option>
+                                <option value="Aruba">Aruba</option>
+                                <option value="Australia">Australia</option>
+                                <option value="Austria">Austria</option>
+                                <option value="Azerbaijan">Azerbaijan</option>
+                                <option value="Bahamas">Bahamas</option>
+                                <option value="Bahrain">Bahrain</option>
+                                <option value="Bangladesh">Bangladesh</option>
+                                <option value="Barbados">Barbados</option>
+                                <option value="Belarus">Belarus</option>
+                                <option value="Belgium">Belgium</option>
+                                <option value="Belize">Belize</option>
+                                <option value="Benin">Benin</option>
+                                <option value="Bermuda">Bermuda</option>
+                                <option value="Bhutan">Bhutan</option>
+                                <option value="Bolivia">Bolivia</option>
+                                <option value="Bosnia and Herzegovina">Bosnia and Herzegovina</option>
+                                <option value="Botswana">Botswana</option>
+                                <option value="Bouvet Island">Bouvet Island</option>
+                                <option value="Brazil">Brazil</option>
+                                <option value="British Indian Ocean Territory">British Indian Ocean Territory</option>
+                                <option value="Brunei Darussalam">Brunei Darussalam</option>
+                                <option value="Bulgaria">Bulgaria</option>
+                                <option value="Burkina Faso">Burkina Faso</option>
+                                <option value="Burundi">Burundi</option>
+                                <option value="Cambodia">Cambodia</option>
+                                <option value="Cameroon">Cameroon</option>
+                                <option value="Canada">Canada</option>
+                                <option value="Cape Verde">Cape Verde</option>
+                                <option value="Cayman Islands">Cayman Islands</option>
+                                <option value="Central African Republic">Central African Republic</option>
+                                <option value="Chad">Chad</option>
+                                <option value="Chile">Chile</option>
+                                <option value="China">China</option>
+                                <option value="Christmas Island">Christmas Island</option>
+                                <option value="Cocos (Keeling) Islands">Cocos (Keeling) Islands</option>
+                                <option value="Colombia">Colombia</option>
+                                <option value="Comoros">Comoros</option>
+                                <option value="Congo">Congo</option>
+                                <option value="Congo, The Democratic Republic of The">Congo, The Democratic Republic of The</option>
+                                <option value="Cook Islands">Cook Islands</option>
+                                <option value="Costa Rica">Costa Rica</option>
+                                <option value="Cote D'ivoire">Cote D'ivoire</option>
+                                <option value="Croatia">Croatia</option>
+                                <option value="Cuba">Cuba</option>
+                                <option value="Cyprus">Cyprus</option>
+                                <option value="Czech Republic">Czech Republic</option>
+                                <option value="Denmark">Denmark</option>
+                                <option value="Djibouti">Djibouti</option>
+                                <option value="Dominica">Dominica</option>
+                                <option value="Dominican Republic">Dominican Republic</option>
+                                <option value="Ecuador">Ecuador</option>
+                                <option value="Egypt">Egypt</option>
+                                <option value="El Salvador">El Salvador</option>
+                                <option value="Equatorial Guinea">Equatorial Guinea</option>
+                                <option value="Eritrea">Eritrea</option>
+                                <option value="Estonia">Estonia</option>
+                                <option value="Ethiopia">Ethiopia</option>
+                                <option value="Falkland Islands (Malvinas)">Falkland Islands (Malvinas)</option>
+                                <option value="Faroe Islands">Faroe Islands</option>
+                                <option value="Fiji">Fiji</option>
+                                <option value="Finland">Finland</option>
+                                <option value="France">France</option>
+                                <option value="French Guiana">French Guiana</option>
+                                <option value="French Polynesia">French Polynesia</option>
+                                <option value="French Southern Territories">French Southern Territories</option>
+                                <option value="Gabon">Gabon</option>
+                                <option value="Gambia">Gambia</option>
+                                <option value="Georgia">Georgia</option>
+                                <option value="Germany">Germany</option>
+                                <option value="Ghana">Ghana</option>
+                                <option value="Gibraltar">Gibraltar</option>
+                                <option value="Greece">Greece</option>
+                                <option value="Greenland">Greenland</option>
+                                <option value="Grenada">Grenada</option>
+                                <option value="Guadeloupe">Guadeloupe</option>
+                                <option value="Guam">Guam</option>
+                                <option value="Guatemala">Guatemala</option>
+                                <option value="Guernsey">Guernsey</option>
+                                <option value="Guinea">Guinea</option>
+                                <option value="Guinea-bissau">Guinea-bissau</option>
+                                <option value="Guyana">Guyana</option>
+                                <option value="Haiti">Haiti</option>
+                                <option value="Heard Island and Mcdonald Islands">Heard Island and Mcdonald Islands</option>
+                                <option value="Holy See (Vatican City State)">Holy See (Vatican City State)</option>
+                                <option value="Honduras">Honduras</option>
+                                <option value="Hong Kong">Hong Kong</option>
+                                <option value="Hungary">Hungary</option>
+                                <option value="Iceland">Iceland</option>
+                                <option value="India">India</option>
+                                <option value="Indonesia">Indonesia</option>
+                                <option value="Iran, Islamic Republic of">Iran, Islamic Republic of</option>
+                                <option value="Iraq">Iraq</option>
+                                <option value="Ireland">Ireland</option>
+                                <option value="Isle of Man">Isle of Man</option>
+                                <option value="Israel">Israel</option>
+                                <option value="Italy">Italy</option>
+                                <option value="Jamaica">Jamaica</option>
+                                <option value="Japan">Japan</option>
+                                <option value="Jersey">Jersey</option>
+                                <option value="Jordan">Jordan</option>
+                                <option value="Kazakhstan">Kazakhstan</option>
+                                <option value="Kenya">Kenya</option>
+                                <option value="Kiribati">Kiribati</option>
+                                <option value="Korea, Democratic People's Republic of">Korea, Democratic People's Republic of</option>
+                                <option value="Korea, Republic of">Korea, Republic of</option>
+                                <option value="Kuwait">Kuwait</option>
+                                <option value="Kyrgyzstan">Kyrgyzstan</option>
+                                <option value="Lao People's Democratic Republic">Lao People's Democratic Republic</option>
+                                <option value="Latvia">Latvia</option>
+                                <option value="Lebanon">Lebanon</option>
+                                <option value="Lesotho">Lesotho</option>
+                                <option value="Liberia">Liberia</option>
+                                <option value="Libyan Arab Jamahiriya">Libyan Arab Jamahiriya</option>
+                                <option value="Liechtenstein">Liechtenstein</option>
+                                <option value="Lithuania">Lithuania</option>
+                                <option value="Luxembourg">Luxembourg</option>
+                                <option value="Macao">Macao</option>
+                                <option value="Macedonia, The Former Yugoslav Republic of">Macedonia, The Former Yugoslav Republic of</option>
+                                <option value="Madagascar">Madagascar</option>
+                                <option value="Malawi">Malawi</option>
+                                <option value="Malaysia">Malaysia</option>
+                                <option value="Maldives">Maldives</option>
+                                <option value="Mali">Mali</option>
+                                <option value="Malta">Malta</option>
+                                <option value="Marshall Islands">Marshall Islands</option>
+                                <option value="Martinique">Martinique</option>
+                                <option value="Mauritania">Mauritania</option>
+                                <option value="Mauritius">Mauritius</option>
+                                <option value="Mayotte">Mayotte</option>
+                                <option value="Mexico">Mexico</option>
+                                <option value="Micronesia, Federated States of">Micronesia, Federated States of</option>
+                                <option value="Moldova, Republic of">Moldova, Republic of</option>
+                                <option value="Monaco">Monaco</option>
+                                <option value="Mongolia">Mongolia</option>
+                                <option value="Montenegro">Montenegro</option>
+                                <option value="Montserrat">Montserrat</option>
+                                <option value="Morocco">Morocco</option>
+                                <option value="Mozambique">Mozambique</option>
+                                <option value="Myanmar">Myanmar</option>
+                                <option value="Namibia">Namibia</option>
+                                <option value="Nauru">Nauru</option>
+                                <option value="Nepal">Nepal</option>
+                                <option value="Netherlands">Netherlands</option>
+                                <option value="Netherlands Antilles">Netherlands Antilles</option>
+                                <option value="New Caledonia">New Caledonia</option>
+                                <option value="New Zealand">New Zealand</option>
+                                <option value="Nicaragua">Nicaragua</option>
+                                <option value="Niger">Niger</option>
+                                <option value="Nigeria">Nigeria</option>
+                                <option value="Niue">Niue</option>
+                                <option value="Norfolk Island">Norfolk Island</option>
+                                <option value="Northern Mariana Islands">Northern Mariana Islands</option>
+                                <option value="Norway">Norway</option>
+                                <option value="Oman">Oman</option>
+                                <option value="Pakistan">Pakistan</option>
+                                <option value="Palau">Palau</option>
+                                <option value="Palestinian Territory, Occupied">Palestinian Territory, Occupied</option>
+                                <option value="Panama">Panama</option>
+                                <option value="Papua New Guinea">Papua New Guinea</option>
+                                <option value="Paraguay">Paraguay</option>
+                                <option value="Peru">Peru</option>
+                                <option value="Philippines">Philippines</option>
+                                <option value="Pitcairn">Pitcairn</option>
+                                <option value="Poland">Poland</option>
+                                <option value="Portugal">Portugal</option>
+                                <option value="Puerto Rico">Puerto Rico</option>
+                                <option value="Qatar">Qatar</option>
+                                <option value="Reunion">Reunion</option>
+                                <option value="Romania">Romania</option>
+                                <option value="Russian Federation">Russian Federation</option>
+                                <option value="Rwanda">Rwanda</option>
+                                <option value="Saint Helena">Saint Helena</option>
+                                <option value="Saint Kitts and Nevis">Saint Kitts and Nevis</option>
+                                <option value="Saint Lucia">Saint Lucia</option>
+                                <option value="Saint Pierre and Miquelon">Saint Pierre and Miquelon</option>
+                                <option value="Saint Vincent and The Grenadines">Saint Vincent and The Grenadines</option>
+                                <option value="Samoa">Samoa</option>
+                                <option value="San Marino">San Marino</option>
+                                <option value="Sao Tome and Principe">Sao Tome and Principe</option>
+                                <option value="Saudi Arabia">Saudi Arabia</option>
+                                <option value="Senegal">Senegal</option>
+                                <option value="Serbia">Serbia</option>
+                                <option value="Seychelles">Seychelles</option>
+                                <option value="Sierra Leone">Sierra Leone</option>
+                                <option value="Singapore">Singapore</option>
+                                <option value="Slovakia">Slovakia</option>
+                                <option value="Slovenia">Slovenia</option>
+                                <option value="Solomon Islands">Solomon Islands</option>
+                                <option value="Somalia">Somalia</option>
+                                <option value="South Africa">South Africa</option>
+                                <option value="South Georgia and The South Sandwich Islands">South Georgia and The South Sandwich Islands</option>
+                                <option value="Spain">Spain</option>
+                                <option value="Sri Lanka">Sri Lanka</option>
+                                <option value="Sudan">Sudan</option>
+                                <option value="Suriname">Suriname</option>
+                                <option value="Svalbard and Jan Mayen">Svalbard and Jan Mayen</option>
+                                <option value="Swaziland">Swaziland</option>
+                                <option value="Sweden">Sweden</option>
+                                <option value="Switzerland">Switzerland</option>
+                                <option value="Syrian Arab Republic">Syrian Arab Republic</option>
+                                <option value="Taiwan">Taiwan</option>
+                                <option value="Tajikistan">Tajikistan</option>
+                                <option value="Tanzania, United Republic of">Tanzania, United Republic of</option>
+                                <option value="Thailand">Thailand</option>
+                                <option value="Timor-leste">Timor-leste</option>
+                                <option value="Togo">Togo</option>
+                                <option value="Tokelau">Tokelau</option>
+                                <option value="Tonga">Tonga</option>
+                                <option value="Trinidad and Tobago">Trinidad and Tobago</option>
+                                <option value="Tunisia">Tunisia</option>
+                                <option value="Turkey">Turkey</option>
+                                <option value="Turkmenistan">Turkmenistan</option>
+                                <option value="Turks and Caicos Islands">Turks and Caicos Islands</option>
+                                <option value="Tuvalu">Tuvalu</option>
+                                <option value="Uganda">Uganda</option>
+                                <option value="Ukraine">Ukraine</option>
+                                <option value="United Arab Emirates">United Arab Emirates</option>
+                                <option value="United Kingdom">United Kingdom</option>
+                                <option value="United States">United States</option>
+                                <option value="United States Minor Outlying Islands">United States Minor Outlying Islands</option>
+                                <option value="Uruguay">Uruguay</option>
+                                <option value="Uzbekistan">Uzbekistan</option>
+                                <option value="Vanuatu">Vanuatu</option>
+                                <option value="Venezuela">Venezuela</option>
+                                <option value="Viet Nam">Viet Nam</option>
+                                <option value="Virgin Islands, British">Virgin Islands, British</option>
+                                <option value="Virgin Islands, U.S.">Virgin Islands, U.S.</option>
+                                <option value="Wallis and Futuna">Wallis and Futuna</option>
+                                <option value="Western Sahara">Western Sahara</option>
+                                <option value="Yemen">Yemen</option>
+                                <option value="Zambia">Zambia</option>
+                                <option value="Zimbabwe">Zimbabwe</option>
+                                </select>
+                            </div>
+                        </div>
                 
-                    <main class="content">
-                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
-                            <div>
-                                <button class="btn btn-secondary mr-2 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <span class="fas fa-plus mr-2"></span>New
-                                </button>
-                                <div class="dropdown-menu dashboard-dropdown dropdown-menu-left mt-2">
-                                    <a class="dropdown-item font-weight-bold" href="#"><span class="far fa-file-alt mr-2"></span>Document</a>
-                                    <a class="dropdown-item font-weight-bold" href="#"><span class="far fa-comment-dots mr-2"></span>Message</a>
-                                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-box-open mr-2"></span>Product</a>
-                                    <div role="separator" class="dropdown-divider"></div>
-                                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-rocket text-danger mr-2"></span>Subscription Plan</a>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="btn-group">
-                                    <button type="button" data-toggle="tooltip" title="Calendar" class="btn btn-primary"><span class="fas fa-calendar-alt"></span></button>
-                                </div>
-                                <button class="btn btn-primary mr-2 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <span class="fas fa-clipboard mr-2"></span>Reports
-                                    <span class="icon icon-small ml-1"><span class="fas fa-chevron-down"></span></span>
-                                </button>
-                                <div class="dropdown-menu dashboard-dropdown dropdown-menu-left mt-2">
-                                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-box-open mr-2"></span>Products</a>
-                                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-store mr-2"></span>Customers</a>
-                                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-cart-arrow-down mr-2"></span>Orders</a>
-                                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-chart-pie mr-2"></span>Console</a>
-                                    <div role="separator" class="dropdown-divider"></div>
-                                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-rocket text-success mr-2"></span>All Reports</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12 col-xl-8">
-                                <div class="card card-body bg-white border-light shadow-sm mb-4">
-                                    <h2 class="h5 mb-4">General information</h2>
-                                    <form>
-                                        <div class="row">
-                                            <div class="col-md-6 mb-3">
-                                                <div class="form-group">
-                                                    <label for="first_name">First Name</label>
-                                                    <input class="form-control" id="first_name" type="text" placeholder="Enter your first name" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 mb-3">
-                                                <div class="form-group">
-                                                    <label for="last_name">Last Name</label>
-                                                    <input class="form-control" id="last_name" type="text" placeholder="Also your last name" required>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row align-items-center">
-                                            <div class="col-md-6 mb-3">
-                                                <div class="form-group">
-                                                    <label for="birthday">Birthday</label>
-                                                    <input type="text" class="form-control flatpickr-input" id="birthday" data-toggle="date" placeholder="Select your birth date" required>
-                                                    </div>
-                                            </div>
-                                            <div class="col-md-6 mb-3">
-                                                <div class="form-group">
-                                                    <label for="gender">Gender</label>
-                                                    <select class="custom-select" id="gender">
-                                                        <option disabled="disabled" selected="selected">Select option</option>
-                                                        <option value="1">Female</option>
-                                                        <option value="2">Male</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6 mb-3">
-                                                <div class="form-group">
-                                                    <label for="email">Email</label>
-                                                    <input class="form-control" id="email" type="email" placeholder="name@company.com" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 mb-3">
-                                                <div class="form-group">
-                                                    <label for="phone">Phone</label>
-                                                    <input class="form-control" id="phone" type="number" placeholder="+12-345 678 910" required>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <h2 class="h5 my-4">Adress</h2>
-                                        <div class="row">
-                                            <div class="col-sm-9 mb-3">
-                                                <div class="form-group">
-                                                    <label for="address">Address</label>
-                                                    <input class="form-control" id="address" type="text" placeholder="Enter your home address" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-3 mb-3">
-                                                <div class="form-group">
-                                                    <label for="number">Number</label>
-                                                    <input class="form-control" id="number" type="number" placeholder="No." required>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-sm-4 mb-3">
-                                                <div class="form-group">
-                                                    <label for="city">City</label>
-                                                    <input class="form-control" id="city" type="text" placeholder="City" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-4 mb-3">
-                                                <div class="form-group">
-                                                    <label for="country">Country</label>
-                                                    <select class="form-control select2-hidden-accessible" id="country" data-toggle="select" title="Country" data-live-search="true" data-live-search-placeholder="Country" data-select2-id="1" tabindex="-1" aria-hidden="true">
-                                                        <option data-select2-id="3">United States</option>
-                                                        <option>Canada</option>
-                                                        <option>Germany</option>
-                                                        <option>Spain</option>
-                                                        <option>Italy</option>
-                                                        <option>UK</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <div class="form-group">
-                                                    <label for="zip">ZIP</label>
-                                                    <input class="form-control" id="zip" type="tel" placeholder="ZIP" required>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="mt-3">
-                                            <button type="submit" class="btn btn-primary">Save All</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                            <div class="col-12 col-xl-4">
-                                <div class="row">
-                                    <div class="col-12 col-sm-6 col-xl-12">
-                                        <div class="card card-body bg-white border-light shadow-sm mb-4">
-                                            <h2 class="h5 mb-4">Select profile photo</h2>
-                                            <div class="d-xl-flex align-items-center">
-                                                <div>
-                                                    <!-- Avatar -->
-                                                    <div class="user-avatar xl-avatar mb-3">
-                                                        <img class="rounded" src="../../assets/img/team/profile-picture-3.jpg" alt="change avatar">
-                                                    </div>
-                                                </div>
-                                                <div class="file-field">
-                                                    <div class="d-flex justify-content-xl-center ml-xl-3">
-                                                       <div class="d-flex">
-                                                          <span class="icon icon-md"><span class="fas fa-paperclip mr-3"></span></span> <input type="file">
-                                                          <div class="d-md-block text-left">
-                                                             <div class="font-weight-normal text-dark mb-1">Choose Image</div>
-                                                             <div class="text-gray small">JPG, GIF or PNG. Max size of 800K</div>
-                                                          </div>
-                                                       </div>
-                                                    </div>
-                                                 </div>                                        
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-12 col-sm-6 col-xl-12">
-                                        <div class="card card-body bg-white border-light shadow-sm mb-4">
-                                            <h2 class="h5 mb-4">Select cover photo</h2>
-                                            <div class="d-xl-flex align-items-center">
-                                                <div>
-                                                    <!-- Avatar -->
-                                                    <div class="user-avatar xl-avatar mb-3">
-                                                        <img class="rounded" src="../../assets/img/carousel/image-2.jpg" alt="change avatar">
-                                                    </div>
-                                                </div>
-                                                <div class="file-field">
-                                                    <div class="d-flex justify-content-xl-center ml-xl-3">
-                                                       <div class="d-flex">
-                                                          <span class="icon icon-md"><span class="fas fa-paperclip mr-3"></span></span> <input type="file">
-                                                          <div class="d-md-block text-left">
-                                                             <div class="font-weight-normal text-dark mb-1">Choose Image</div>
-                                                             <div class="text-gray small">JPG, GIF or PNG. Max size of 800K</div>
-                                                          </div>
-                                                       </div>
-                                                    </div>
-                                                 </div>                                        
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-12 mb-4 mb-xl-0">
-                                        <div class="card card-body bg-white border-light">
-                                            <h2 class="h5 mb-4">Alerts & Notifications</h2>
-                                            <ul class="list-group list-group-flush">
-                                                <li class="list-group-item d-flex align-items-center justify-content-between px-0 border-bottom">
-                                                    <div>
-                                                        <h3 class="h6 mb-1">Company News</h3>
-                                                        <p class="small pr-4">Get Rocket news, announcements, and product updates</p>
-                                                    </div>
-                                                    <div>
-                                                        <div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="user-notification-1" checked="checked"> <label class="custom-control-label" for="user-notification-1"></label></div>
-                                                    </div>
-                                                </li>
-                                                <li class="list-group-item d-flex align-items-center justify-content-between px-0 border-bottom">
-                                                    <div>
-                                                        <h3 class="h6 mb-1">Account Activity</h3>
-                                                        <p class="small pr-4">Get important notifications about you or activity you've missed</p>
-                                                    </div>
-                                                    <div>
-                                                        <div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="user-notification-2"> <label class="custom-control-label" for="user-notification-2"></label></div>
-                                                    </div>
-                                                </li>
-                                                <li class="list-group-item d-flex align-items-center justify-content-between px-0">
-                                                    <div>
-                                                        <h3 class="h6 mb-1">Meetups Near You</h3>
-                                                        <p class="small pr-4">Get an email when a Dribbble Meetup is posted close to my location</p>
-                                                    </div>
-                                                    <div>
-                                                        <div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="user-notification-3" checked="checked"> <label class="custom-control-label" for="user-notification-3"></label></div>
-                                                    </div>
-                                                </li>
-                                            </ul>
-                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <footer class="footer section py-5">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-12 col-lg-6 mb-4 mb-lg-0">
-                <p class="mb-0 text-center text-xl-left">Copyright © 2019-<span class="current-year"></span> <a class="text-primary font-weight-normal" href="https://www.classplanit.co">ClassPlanit</a></p>
+                    </div>
+                   
+                </form>
             </div>
-
-            <div class="col-12 col-lg-6">
-                <!-- List -->
-                <ul class="list-inline list-group-flush list-group-borderless text-center text-xl-right mb-0">
-                    <li class="list-inline-item px-0 px-sm-2">
-                        <a href="https://themesberg.com/about">About</a>
-                    </li>
-                    <li class="list-inline-item px-0 px-sm-2">
-                        <a href="https://themesberg.com/themes">Themes</a>
-                    </li>
-                    <li class="list-inline-item px-0 px-sm-2">
-                        <a href="https://themesberg.com/blog">Blog</a>
-                    </li>
-                    <li class="list-inline-item px-0 px-sm-2">
-                        <a href="https://themesberg.com/contact">Contact</a>
-                    </li>
-                </ul>
-                <!-- End List -->
+        </div>
+        <div class="col-12 col-xl-4">
+            <div class="row">
+                <div class="col-12 col-sm-6 col-xl-12">
+                    <div class="card card-body bg-white border-light shadow-sm mb-4">
+                        <h2 class="h5 mb-4">Edit User Information:</h2>
+                        <div class="d-xl-flex align-items-center">
+                            <div>
+                                {% if profile_match.uploaded_image %}
+                                <!-- Avatar -->
+                                <div class="user-avatar xl-avatar mb-3">
+                                    <img class="rounded" src="{{ profile_match.uploaded_image.url }}" alt="change avatar">
+                                </div>
+                                {% else %}
+                                <div class="user-avatar xl-avatar mb-3">
+                                    <img class="rounded" src="{% static 'images/dashboard/icon_120.png' %}" alt="change avatar">
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                           
+                                                     
+                                                            
+                        </div>
+                        <a type="button" data-toggle="modal" data-target="#newProfileImage">Edit Image</a>
+                        <a href="{% url 'admin_change_password' user_id=user_profile.id %}" >Change Password</h2></a>  
+ 
+                    </div>
+                </div>
+              <!------
+                <div class="col-12 mb-4 mb-xl-0">
+                    <div class="card card-body bg-white border-light">
+                        <h2 class="h5 mb-4">Alerts & Notifications</h2>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex align-items-center justify-content-between px-0 border-bottom">
+                                <div>
+                                    <h3 class="h6 mb-1">Company News</h3>
+                                    <p class="small pr-4">Get Rocket news, announcements, and product updates</p>
+                                </div>
+                                <div>
+                                    <div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="user-notification-1" checked="checked"> <label class="custom-control-label" for="user-notification-1"></label></div>
+                                </div>
+                            </li>
+                            <li class="list-group-item d-flex align-items-center justify-content-between px-0 border-bottom">
+                                <div>
+                                    <h3 class="h6 mb-1">Account Activity</h3>
+                                    <p class="small pr-4">Get important notifications about you or activity you've missed</p>
+                                </div>
+                                <div>
+                                    <div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="user-notification-2"> <label class="custom-control-label" for="user-notification-2"></label></div>
+                                </div>
+                            </li>
+                            <li class="list-group-item d-flex align-items-center justify-content-between px-0">
+                                <div>
+                                    <h3 class="h6 mb-1">Meetups Near You</h3>
+                                    <p class="small pr-4">Get an email when a Dribbble Meetup is posted close to my location</p>
+                                </div>
+                                <div>
+                                    <div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="user-notification-3" checked="checked"> <label class="custom-control-label" for="user-notification-3"></label></div>
+                                </div>
+                            </li>
+                        </ul>
+                        </div>
+                </div>
+                ----->
             </div>
         </div>
     </div>
-</footer>
-                    </main>
-                </div>
-            </div>
+
+</main>
+<div class="modal fade" id="newProfileImage" tabindex="-1" role="dialog" aria-labelledby="newProfileImageLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="newClassroomLabel">Upload Profile Image</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
-
-    <!-- Core -->
-<script src="../../vendor/jquery/dist/jquery.min.js"></script>
-<script src="../../vendor/popper.js/dist/umd/popper.min.js"></script>
-<script src="../../vendor/bootstrap/dist/js/bootstrap.min.js"></script>
-<script src="../../vendor/headroom.js/dist/headroom.min.js"></script>
-
-<!-- Vendor JS -->
-<script src="../../vendor/countup.js/dist/countUp.min.js"></script>
-<script src="../../vendor/jquery-countdown/dist/jquery.countdown.min.js"></script>
-<script src="../../vendor/smooth-scroll/dist/smooth-scroll.polyfills.min.js"></script>
-<script src="../../vendor/prismjs/prism.js"></script>
-
-<!-- Chartist -->
-<script src="../../vendor/chartist/dist/chartist.min.js"></script>
-<script src="../../vendor/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js"></script>
-
-<!-- Vector Maps -->
-<script src="../../vendor/jqvmap/dist/jquery.vmap.min.js"></script>
-<script src="../../vendor/jqvmap/dist/maps/jquery.vmap.world.js"></script>
-
-<!-- Rocket JS -->
-<script src="../../assets/js/rocket.js"></script>
-    
-</body>
-
-</html>
+        <div class="modal-body">
+          <form  method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.uploaded_image.errors }}
+            {{ form.uploaded_image }}
+          
+           <hr>
+            <!----------- | End Incorrect Three Answer | -->
+            <!-------------------------------------->
+            <button type="submit" class="btn btn-primary btn-block">Add Image </button>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
