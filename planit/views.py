@@ -1188,6 +1188,8 @@ def ActivityBuilder(request, user_id=None, class_id=None, subject=None, lesson_i
     week_of = current_week = date.today().isocalendar()[1]
     if user_profile.is_demo:
         alerts = ['Demo',]
+    else:
+        alerts = None
     lesson_id = int(lesson_id)
     if lesson_id == 0:
         return redirect('create_objective', user_id=user_profile.id, week_of=week_of)
