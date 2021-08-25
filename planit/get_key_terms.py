@@ -57,6 +57,37 @@ stop_words = ['i', "'", "'" '!', '.', ':', ',', '[', ']', '(', ')', '?', "'see",
 
 TAG_RE = re.compile(r'<[^>]+>')
 
+def build_standard_list(lesson_id):
+    lesson_match = lessonObjective.objects.get(id=lesson_id)
+    a_matches = lesson_match.objectives_standards.all()
+    obj_matches = singleStandard.objects.filter(id__in=a_matches)
+    o_list = []
+    for item in obj_matches:
+        result = str(item)
+        o_list.append(result)
+
+    obj_full = ', '.join(o_list)
+    return(obj_full)
+
+
+    
+def build_term_list(lesson_id):
+    lesson_match = lessonObjective.objects.get(id=lesson_id)
+    a_matches = lesson_match.objectives_topics.all()
+    act_matches = topicInformation.objects.filter(id__in=a_matches)
+    
+    term_list = []
+    for item in act_matches:
+        desc_list = item.description.all()
+        d_list = []
+        for desp in desc_list:
+            desc = desp.description
+            d_list.append(desc)
+        d_results = ', '.join(d_list)
+        result = (item.item, str(d_results))
+        term_list.append(result)
+    
+    return(term_list)
 
 def combine_topics(matched_topics):
     

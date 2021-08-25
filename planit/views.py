@@ -29,7 +29,10 @@ from sendgrid.helpers.mail import *
 from twilio.rest import Client
 from twilio.rest import TwilioRestClient
 from pytesseract import image_to_string
-
+from docx import Document
+from docx.shared import Inches
+from django.http import HttpResponse
+import io
 from .forms import *
 from .models import *
 import random
@@ -49,7 +52,8 @@ from .get_default_user import *
 from django.http import JsonResponse
 from django.core import serializers
 from .get_search import *
-
+from .get_doc_export import *
+from docx.shared import Cm, Inches
 ##################| Homepage Views |#####################
 #Homepage Landing Page
 def Homepage(request):
@@ -874,6 +878,128 @@ def UpdateWeekOf(request, week_of, user_id=None, classroom_id=None, subject_id=N
     return redirect('Dashboard', week_of= active_week, subject_id= subject_id, classroom_id=classroom_id, standard_id='All')
 
 
+def build_lesson_doc(request, user_id, lesson_id):
+    user_profile = User.objects.get(id=user_id)
+    lesson_match = lessonObjective.objects.filter(id=lesson_id).first()
+    title = 'Week Of: ' + str(lesson_match.week_of) + ' | ' + str(user_profile.first_name) + str(user_profile.last_name)[0] 
+    activity_matches = selectedActivity.objects.filter(lesson_overview=lesson_match, is_selected=True)
+
+    standard_list = build_standard_list(lesson_id)
+    terms_list = build_term_list(lesson_id)
+
+
+    document = Document()
+
+    document.add_heading(title, 0)
+
+    p = document.add_paragraph(standard_list)
+    document.add_heading(lesson_match.teacher_objective, level=1)
+    document.add_paragraph('Intense quote', style='Intense Quote')
+
+    document.add_heading('Activities', 2)
+    for item in activity_matches:
+        document.add_paragraph(
+            item.lesson_text, style='List Bullet'
+        )
+    
+    document.add_heading('Big Question', 2)
+    document.add_paragraph(
+        'first item in ordered list', style='List Number'
+    )
+
+    document.add_page_break()
+    
+    records = terms_list
+
+    table = document.add_table(rows=1, cols=2)
+    table.allow_autofit = True
+    table.columns[0].width = Cm(3.5)
+    table.columns[1].width = Cm(13)
+    hdr_cells = table.rows[0].cells
+    hdr_cells[0].text = 'Term'
+    hdr_cells[1].text = 'Description'
+    for term, desc in records:
+        row_cells = table.add_row().cells
+        row_cells[0].text = term
+        row_cells[1].text = desc
+
+
+    
+
+    document.save('demo.docx')
+    
+    bio = io.BytesIO()
+    document.save(bio)  # save to memory stream
+    bio.seek(0)  # rewind the stream
+    response = HttpResponse(
+        bio.getvalue(),  # use the stream's contents
+        content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    )
+    response["Content-Disposition"] = 'attachment; filename = "Reporte.docx"'
+    response["Content-Encoding"] = "UTF-8"
+    return response
+
+
+def build_lesson_pdf(request, user_id, lesson_id):
+    user_profile = User.objects.get(id=user_id)
+    lesson_match = lessonObjective.objects.filter(id=lesson_id).first()
+    title = 'Week Of: ' + str(lesson_match.week_of) + ' | ' + str(user_profile.first_name) + str(user_profile.last_name)[0] 
+    activity_matches = selectedActivity.objects.filter(lesson_overview=lesson_match, is_selected=True)
+
+    standard_list = build_standard_list(lesson_id)
+    terms_list = build_term_list(lesson_id)
+
+
+    document = Document()
+
+    document.add_heading(title, 0)
+
+    p = document.add_paragraph(standard_list)
+    document.add_heading(lesson_match.teacher_objective, level=1)
+    document.add_paragraph('Intense quote', style='Intense Quote')
+
+    document.add_heading('Activities', 2)
+    for item in activity_matches:
+        document.add_paragraph(
+            item.lesson_text, style='List Bullet'
+        )
+    
+    document.add_heading('Big Question', 2)
+    document.add_paragraph(
+        'first item in ordered list', style='List Number'
+    )
+
+    document.add_page_break()
+    
+    records = terms_list
+
+    table = document.add_table(rows=1, cols=2)
+    table.allow_autofit = True
+    table.columns[0].width = Cm(3.5)
+    table.columns[1].width = Cm(13)
+    hdr_cells = table.rows[0].cells
+    hdr_cells[0].text = 'Term'
+    hdr_cells[1].text = 'Description'
+    for term, desc in records:
+        row_cells = table.add_row().cells
+        row_cells[0].text = term
+        row_cells[1].text = desc
+
+
+    
+
+    
+    bio = io.BytesIO()
+    document.save(bio)  # save to memory stream
+    bio.seek(0)  # rewind the stream
+    response = HttpResponse(
+        bio.getvalue(),  # use the stream's contents
+        content_type="application/pdf",
+    )
+    response["Content-Disposition"] = 'attachment; filename = "Reporte.pdf"'
+
+    return response
+
 #Main Teacher Dashboard View labeled as 'Overview'
 def Dashboard(request, week_of, subject_id, classroom_id, standard_id=None):
     #run to fix the incorrect topic types
@@ -1002,7 +1128,7 @@ def UpdateUserProfile(request, user_id=None):
         standard_match = None
     
     all_standards = standardSet.objects.all()
-
+    user_message = None
     if request.method == "POST":
         form2 = school_userForm(request.POST, request.FILES, instance=school_user_match)
         
@@ -1024,7 +1150,8 @@ def UpdateUserProfile(request, user_id=None):
             user_profile.is_demo = False
             user_profile.save()
             prev.save()
-            return redirect('user_profile_view', user_id=user_id, message=user_message)
+    
+    return redirect('user_profile_view', user_id=user_id, message=user_message)
 
 
 def admin_change_password(request, user_id=None):
@@ -3160,3 +3287,5 @@ def DeleteAdminPlanning(request, act_id=None, act_type=None):
         other_matches = lessonTemplates.objects.filter(wording=content_match).delete()
 
     return redirect('sup_admin_dashboard')
+
+
