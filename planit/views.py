@@ -883,7 +883,7 @@ def UpdateWeekOf(request, week_of, user_id=None, classroom_id=None, subject_id=N
 def build_lesson_doc(request, user_id, lesson_id):
     user_profile = User.objects.get(id=user_id)
     lesson_match = lessonObjective.objects.filter(id=lesson_id).first()
-    title = 'Week Of: ' + str(lesson_match.week_of) + ' | ' + str(user_profile.first_name) + str(user_profile.last_name)[0] 
+    title = 'Week Of: ' + str(lesson_match.week_of) + ' | ' + str(user_profile.first_name) + str(user_profile.last_name) 
     activity_matches = selectedActivity.objects.filter(lesson_overview=lesson_match, is_selected=True)
     question_match = googleRelatedQuestions.objects.filter(lesson_plan=lesson_match, is_selected=True)
     standard_list = build_standard_list(lesson_id)
@@ -948,7 +948,7 @@ def build_lesson_doc(request, user_id, lesson_id):
 def build_lesson_pdf(request, user_id, lesson_id):
     user_profile = User.objects.get(id=user_id)
     lesson_match = lessonObjective.objects.filter(id=lesson_id).first()
-    title = 'Week Of: ' + str(lesson_match.week_of) + ' | ' + str(user_profile.first_name) + str(user_profile.last_name)[0] 
+    title = 'Week Of: ' + str(lesson_match.week_of) + ' | ' + str(user_profile.first_name) + str(user_profile.last_name)
     activity_matches = selectedActivity.objects.filter(lesson_overview=lesson_match, is_selected=True)
 
     standard_list = build_standard_list(lesson_id)
