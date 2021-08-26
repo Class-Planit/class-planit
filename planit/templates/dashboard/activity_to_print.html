@@ -1,0 +1,181 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+    <head>
+        <title>Title</title>
+        <style type="text/css">
+         @font-face {
+
+            font-family: "code2000";
+
+            src: url("/home/user/static/fonts/code2000.ttf");
+
+            }
+
+            body {
+
+            font-family: "code2000";
+
+            }
+            @page {
+                size: A4;
+                margin: 1cm;
+            }
+            .table {
+                width: 100%;
+                max-width: 100%;
+                margin-bottom: 5px;
+                background-color: #fff;
+            }
+            th.term  {
+                width: 30%
+                }
+            th.description {
+            width: 70%; /* Not necessary, since only 70% width remains */
+            }
+            tr.spaceUnder>td {
+                padding-top: .8em;
+                }
+            tr.border_bottom td {
+                border-top: 1px solid black;
+                border-bottom: 1px solid black;
+                }
+            .table th,
+            .table td {
+                padding: 20px;
+                vertical-align: top;
+                text-align: center;
+            }
+            .table thead th {
+                vertical-align: bottom;
+                border-bottom: 1px solid #000;
+            }
+            .table tbody + tbody {
+                border-top: 1px solid #000;
+            }
+            .table .table {
+                background-color: #fff;
+            }
+            .list-group {
+                display: block;
+                width: 100%;
+                list-style: none;
+                margin-top: 15px;
+                margin-bottom: 15px;
+            }
+            .list-group p {
+                width: 100%;
+                height: 20px;
+                line-height: 20px;
+                list-style: none;
+                font-size: 1.1em;
+            }
+            body {
+                  line-height: 25px;
+                  font-size: 12px;
+                  font-family: "Roboto", sans-serif;
+                  font-weight: 400;
+                  color: #34888C; }
+      
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+      font-family: "Rubik", sans-serif;
+      font-weight: 500;
+      color: #D46C34; }
+      
+      .list {
+      list-style: none;
+      margin: 0px;
+      padding: 0px; }
+      
+      a {
+      text-decoration: none;
+      transition: all 0.3s ease-in-out; }
+      
+      a:hover, a:focus {
+        text-decoration: none;
+        outline: none; }
+      
+      .row.m0 {
+      margin: 0px; }
+      
+      button:focus {
+      outline: none;
+      box-shadow: none; }
+      
+      .mb-15 {
+      margin-bottom: 15px; }
+      
+      .mt-10 {
+      margin-top: 10px; }
+      
+      .mt-20 {
+      margin-top: 20px; }
+      
+      .mt-25 {
+      margin-top: 25px; }
+      
+      .white_bg {
+      background: #fff !important; }
+      
+      .column {
+        float: left;
+        width: 33.33%;
+      }
+      
+      /* Clear floats after the columns */
+      .row:after {
+        content: "";
+        display: table;
+        clear: both;
+      }
+      
+        </style>
+ 
+    </head>
+    <body>
+        {{ context }}
+        <div class='wrapper'>
+            <div class='header'>
+                <p class='title'>-- {{lesson_match}} </p>
+            </div>
+        <div>
+            <div>
+                <pdf:nextpage /> 
+            </div> 
+        <div class='details'>
+            Bill to: {{ customer_name }}<br/>
+            Amount:  {{ amount }} <br/>
+            Date: 
+            <hr class='hrItem' />
+         
+            <table>
+                <thead>
+                    <tr>
+                      <th class="term">Term:</th>
+                      <th class="description">Description:</th>
+
+                    </tr>
+                  </thead>
+                <tbody>
+                {% for row in terms_list %}
+                <tr class="border_bottom spaceUnder">
+                <td>
+                    {{ row.item }}
+                </td>
+                <td>
+                    {{ row.Description }}
+                </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+        </div>
+    </div>
+    </body>
+</html>

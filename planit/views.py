@@ -54,6 +54,8 @@ from django.core import serializers
 from .get_search import *
 from .get_doc_export import *
 from docx.shared import Cm, Inches
+from xhtml2pdf import pisa
+from .utils import render_to_pdf
 ##################| Homepage Views |#####################
 #Homepage Landing Page
 def Homepage(request):
@@ -883,7 +885,7 @@ def build_lesson_doc(request, user_id, lesson_id):
     lesson_match = lessonObjective.objects.filter(id=lesson_id).first()
     title = 'Week Of: ' + str(lesson_match.week_of) + ' | ' + str(user_profile.first_name) + str(user_profile.last_name)[0] 
     activity_matches = selectedActivity.objects.filter(lesson_overview=lesson_match, is_selected=True)
-
+    question_match = googleRelatedQuestions.objects.filter(lesson_plan=lesson_match, is_selected=True)
     standard_list = build_standard_list(lesson_id)
     terms_list = build_term_list(lesson_id)
 
@@ -894,7 +896,7 @@ def build_lesson_doc(request, user_id, lesson_id):
 
     p = document.add_paragraph(standard_list)
     document.add_heading(lesson_match.teacher_objective, level=1)
-    document.add_paragraph('Intense quote', style='Intense Quote')
+    
 
     document.add_heading('Activities', 2)
     for item in activity_matches:
@@ -903,9 +905,11 @@ def build_lesson_doc(request, user_id, lesson_id):
         )
     
     document.add_heading('Big Question', 2)
-    document.add_paragraph(
-        'first item in ordered list', style='List Number'
-    )
+    for quest in question_match:
+        result = '%s: %s' % (quest.question, quest.snippet)
+        document.add_paragraph(
+            result, style='List Number'
+        )
 
     document.add_page_break()
     
@@ -938,6 +942,7 @@ def build_lesson_doc(request, user_id, lesson_id):
     response["Content-Disposition"] = 'attachment; filename = "Reporte.docx"'
     response["Content-Encoding"] = "UTF-8"
     return response
+    return redirect('login_user')
 
 
 def build_lesson_pdf(request, user_id, lesson_id):
@@ -947,58 +952,19 @@ def build_lesson_pdf(request, user_id, lesson_id):
     activity_matches = selectedActivity.objects.filter(lesson_overview=lesson_match, is_selected=True)
 
     standard_list = build_standard_list(lesson_id)
-    terms_list = build_term_list(lesson_id)
+    terms_list = build_term_list_pdf(lesson_id)
 
 
-    document = Document()
 
-    document.add_heading(title, 0)
-
-    p = document.add_paragraph(standard_list)
-    document.add_heading(lesson_match.teacher_objective, level=1)
-    document.add_paragraph('Intense quote', style='Intense Quote')
-
-    document.add_heading('Activities', 2)
-    for item in activity_matches:
-        document.add_paragraph(
-            item.lesson_text, style='List Bullet'
-        )
+    context = {
+        "invoice_id": 123,
+        "customer_name": "John Cooper",
+        "terms_list": terms_list,
+        "lesson_match": str(lesson_match.teacher_objective),
+    }
     
-    document.add_heading('Big Question', 2)
-    document.add_paragraph(
-        'first item in ordered list', style='List Number'
-    )
-
-    document.add_page_break()
-    
-    records = terms_list
-
-    table = document.add_table(rows=1, cols=2)
-    table.allow_autofit = True
-    table.columns[0].width = Cm(3.5)
-    table.columns[1].width = Cm(13)
-    hdr_cells = table.rows[0].cells
-    hdr_cells[0].text = 'Term'
-    hdr_cells[1].text = 'Description'
-    for term, desc in records:
-        row_cells = table.add_row().cells
-        row_cells[0].text = term
-        row_cells[1].text = desc
-
-
-    
-
-    
-    bio = io.BytesIO()
-    document.save(bio)  # save to memory stream
-    bio.seek(0)  # rewind the stream
-    response = HttpResponse(
-        bio.getvalue(),  # use the stream's contents
-        content_type="application/pdf",
-    )
-    response["Content-Disposition"] = 'attachment; filename = "Reporte.pdf"'
-
-    return response
+    pdf = render_to_pdf('dashboard/activity_to_print.html', context)
+    return HttpResponse(pdf, content_type='application/pdf')
 
 #Main Teacher Dashboard View labeled as 'Overview'
 def Dashboard(request, week_of, subject_id, classroom_id, standard_id=None):

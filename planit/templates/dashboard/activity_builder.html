@@ -195,7 +195,17 @@
                 <div id="time-update"></div>
                 <div class="btn-group float-right" role="group" aria-label="Basic example">
                     <button type="button" class="btn btn-warning btn-sm savetext"><i class="material-icons" style="color:white">save</i></button>
-                    <button type="button" class="btn btn-warning btn-sm"><i class="material-icons" style="color:white">print</i></button>
+                    <div class="dropdown">
+                        <button class="btn btn-warning btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="material-icons" style="color:white">print</i>
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                           
+                            <a class="dropdown-item" href="{% url 'build_doc' user_id=user_profile.id lesson_id=lesson_match.id %}">To Doc</a>
+                            <a class="dropdown-item" href="{% url 'build_pdf' user_id=user_profile.id lesson_id=lesson_match.id %}">To Pdf</a>
+                           
+                        </div>
+                    </div>
                   </div>
                 
                 <br>
@@ -424,9 +434,6 @@
                             <li><a href="{% url 'activity_builder' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 page=0 %}#heading" class="card-link">Lesson Plan</a></li>
                            
                             <li><a href="{% url 'digital_activities' user_id=user_profile.id class_id=classroom_profile.id lesson_id=lesson_match.id subject=1 page='Preview' worksheet_id=0 act_id='False' question_id=0 %}#heading" class="card-link">Digital Worksheet</a></li>
-                           
-                            <li><a href="{% url 'build_doc' user_id=user_profile.id lesson_id=lesson_match.id %}" class="card-link">Print Lesson Doc</a></li>
-                            <li><a href="{% url 'build_pdf' user_id=user_profile.id lesson_id=lesson_match.id %}" class="card-link">Print Lesson Pdf</a></li>
 
                             <li><a href="{% url 'student_performance' user_id=user_profile.id class_id=0 week_of='Current' standard_id='All' %}" class="card-link">Student Performance</a></li>
                             <li><a href="{% url 'standard_tracker' %}" class="card-link">Standards Tracking</a></li>
