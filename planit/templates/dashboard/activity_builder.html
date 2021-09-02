@@ -1070,7 +1070,7 @@ document.getElementById('big_questions_selected').scrollIntoView();
             
             success: function(response) {
             $("#standard-list").empty(); 
-            $("#standard-list").append('<h5>Possible Standards:</h5><hr>');
+            $("#standard-list").append('<h5>' + response.header + '</h5><hr>');
             $.each(response.data, function (i, item) {
             
             $("#standard-list").append(

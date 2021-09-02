@@ -974,9 +974,10 @@ def Dashboard(request, week_of, subject_id, classroom_id, standard_id=None):
     week_info = get_week_info(week_of)
 
     user_profile = User.objects.filter(id=request.user.id).first()
-    user_id = user_profile.id
+    
 
     if user_profile is not None:
+        user_id = user_profile.id
         #gets the classrooms teachers are main teacher on 
         classroom_profiles = classroom.objects.filter(main_teacher=user_profile)
 
@@ -1489,8 +1490,8 @@ def DigitalActivities(request, user_id=None, class_id=None, subject=None, lesson
     recent_uploads = userImageUpload.objects.filter(created_by=user_profile).order_by('-uploaded_date')        
 
     recent_uploads = recent_uploads[:10]
-    worksheet_theme = worksheetTheme.objects.all()[0]
-
+    worksheet_theme = worksheetTheme.objects.filter(is_admin=True).first()
+    print(worksheet_theme)
     img_id = worksheet_theme.background_image
 
     background_img = userImageUpload.objects.filter(id=worksheet_theme.background_image_id).first()
@@ -1815,7 +1816,7 @@ def StudentWorksheetStart(request, lesson_id=None, worksheet_id=None, question_i
             
         current_per = (q/question_count) * 100
 
-        worksheet_theme = worksheetTheme.objects.get(id=1)
+        worksheet_theme = worksheetTheme.objects.filter(is_admin=True).first()
 
         img_id = worksheet_theme.background_image
 
@@ -2818,7 +2819,7 @@ def UpdateStandards(request, lesson_id, class_id):
         standards_now = lesson_match.objectives_standards.all()
         
         if standards_now:
-            context = {}
+            context = {'header': ''}
             return JsonResponse(context)
         else:
             
@@ -2838,7 +2839,7 @@ def UpdateStandards(request, lesson_id, class_id):
             
 
             if standard_list:
-                context = {"data": standard_list, "message": "your message"}
+                context = {"data": standard_list, 'header': 'Possible Standards:', "message": "your message"}
                 return JsonResponse(context)
             else:
                 context = {}

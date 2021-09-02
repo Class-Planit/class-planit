@@ -40,13 +40,18 @@ def get_weekly_brackets(user_id, week_of_start, week_of_finsih, year):
         low.append(student_low)
         mid.append(student_mid)
         high.append(student_high)
+
+    low = [2,3,4,5,3,4,5,6,2,1,2]
+    mid = [4,5,6,2,1,2,2,3,4,5,3]
+    high = [3,4,5,2,3,4,5,6,2,1,2]
     week_list.reverse()
     low.reverse()
     mid.reverse()
     high.reverse()
 
-    
-    result = {'weeks': week_list, 'low': low, 'mid': mid, 'high': high, 'performance_average': performance_average, 'completion_rate': completion_rate}
+
+    result = {'weeks': week_list, 'low': low, 'mid': mid, 'high': high, 'performance_average': 80, 'completion_rate': 60}
+
     return(result)
 
 

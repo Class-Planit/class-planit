@@ -167,6 +167,45 @@ def get_new_lesson(demo_wording, topic, d_type, t_type, lesson_id, user_id, demo
 
 
 
+def update_topic_activities(activity_list, lesson_id, user_id):
+
+    mi_labels = [' ', 'Verbal', 'Visual', 'Musical', 'Movement', 'Logical', 'Intra', 'Inter']
+    bl_labels = [' ', 'Remember', 'Understand', 'Apply', 'Analyze', 'Evaluate', 'Create']
+    colors = [' ', 'primary', 'secondary', 'success', 'danger', 'warning', 'light', 'info', 'dark']
+    font_a  = [' ', 'microphone', 'eye', 'music', 'walking', 'puzzle-piece', 'user', 'users',]
+
+
+    user_profile = User.objects.get(id=user_id)
+
+    lesson_match = lessonObjective.objects.get(id=lesson_id)
+    subject_match = lesson_match.subject_id
+    grade_match = lesson_match.current_grade_level_id
+
+    full_list = []
+    for act in activity_list:
+        template_id = act.id
+        if selectedActivity.objects.filter(created_by=user_profile, lesson_overview = lesson_match, lesson_text=act.lesson_text, is_admin=False ).exists():
+            pass
+        else:
+            act.id = None
+            act.save()
+            act.created_by=user_profile 
+            act.lesson_overview = lesson_match
+            bloom = act.bloom
+            mi = act.mi
+            act.is_admin = False
+            act.bl_color=colors[bloom]
+            act.bl_labels=bl_labels[bloom]
+            act.mi_color=colors[mi]
+            act.mi_labels=mi_labels[mi]
+            act.mi_icon=font_a[mi]
+            act.template_id = template_id
+            get_ret = retention_activity(str(act.lesson_text))
+            act.ret_rate = get_ret
+            act.save()
+            full_list.append(act)
+ 
+    return(full_list)
 
 
 

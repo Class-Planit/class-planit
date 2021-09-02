@@ -178,7 +178,7 @@ def youtube_results(text, lesson_id):
  
 #Show students examples of <<DEMONSTRATION>>. <<GROUPING>> Instruct students to <<VERB>> by <<DEMONSTRATION>> <<WORK_PRODUCT>>
 def get_lessons_ajax(lesson_id, user_id):
-    
+    lesson_full_List = []
     user_profile = User.objects.get(id=user_id)
     lesson_match = lessonObjective.objects.get(id=lesson_id)
     topic_matches = lesson_match.objectives_topics.all()
@@ -186,6 +186,8 @@ def get_lessons_ajax(lesson_id, user_id):
     grouping = 'in groups of two'
     act_match = selectedActivity.objects.filter(lesson_overview = lesson_match, is_selected=True)
     rec_act_match = selectedActivity.objects.filter(lesson_overview = lesson_match, is_selected=False)
+    for item in rec_act_match:
+        lesson_full_List.append(item)
 
     matched_activities = []
     temp_ids_list = []
@@ -198,8 +200,17 @@ def get_lessons_ajax(lesson_id, user_id):
 
 
     topic_list = topicInformation.objects.filter(id__in=topic_matches)
+    filtered_activities_topics = selectedActivity.objects.filter(is_admin=True, objectives_topics__in=topic_list)
+    updated_activities = update_topic_activities(filtered_activities_topics, lesson_id, user_id)
+    print('=============')
+    print(updated_activities)
+    print('=============')
+    for item in updated_activities:
+        lesson_full_List.append(item)
+
+
     activities_full = []
-    if rec_act_match.count() <= 5: 
+    if len(lesson_full_List) <= 5: 
         multi_activity = get_multiple_types_activity(topic_list)
         
         teacher_objective = lesson_match.teacher_objective
@@ -321,7 +332,7 @@ def get_lessons_ajax(lesson_id, user_id):
         
         demo_list_sect = []
 
-        lesson_full_List = []
+        
         random.shuffle(wording_list)
         for line in wording_list:
 
@@ -341,8 +352,8 @@ def get_lessons_ajax(lesson_id, user_id):
                 for item in lesson_full:
                     lesson_full_List.append(item)
             random.shuffle(lesson_full_List)
-    else:        
-        lesson_full_List = rec_act_match[:5]
+    else:
+        pass
 
     for item in lesson_full_List:
         temp_id = item.template_id
@@ -352,8 +363,13 @@ def get_lessons_ajax(lesson_id, user_id):
         mi = item.mi
         ret = item.ret_rate
         matching = item.template_id
-        if matching not in temp_ids_list:
-            temp_ids_list.append(matching)
+        print(matching)
+        if matching is not None:
+            if matching not in temp_ids_list:
+                temp_ids_list.append(matching)
+                activity = {'id': item.id, 'activity': item.lesson_text, 'bl_color': item.bl_color, 'bl_label': item.bl_labels, 'mi_color': item.mi_color, 'mi_label': item.mi_labels, 'mi_icon': item.mi_icon, 'ret':ret}
+                activities_full.append(activity)
+        else:
             activity = {'id': item.id, 'activity': item.lesson_text, 'bl_color': item.bl_color, 'bl_label': item.bl_labels, 'mi_color': item.mi_color, 'mi_label': item.mi_labels, 'mi_icon': item.mi_icon, 'ret':ret}
             activities_full.append(activity)
     

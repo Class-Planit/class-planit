@@ -871,7 +871,10 @@ def generate_term_recs(teacher_input, class_id, lesson_id, user_id):
 
         #creates a new model object where we will save the recomended topics so that we don't have to continously 
         #generate new key terms if some are already there
-        create_topic_matches, created = matchedTopics.objects.get_or_create(lesson_overview=class_objectives)
+        if matchedTopics.objects.filter(lesson_overview=class_objectives).exists():
+            create_topic_matches = matchedTopics.objects.filter(lesson_overview=class_objectives).first()
+        else:
+            create_topic_matches = matchedTopics.objects.create(lesson_overview=class_objectives)
 
         
         selected_standard = class_objectives.objectives_standards.all()
@@ -1095,9 +1098,13 @@ def get_big_ideas(teacher_input, class_id, lesson_id, user_id):
                         new_snippet = update_snippet
                     else:
                         new_snippet = snippet
-                    create_question, created = googleRelatedQuestions.objects.get_or_create(lesson_plan=class_objectives, question=item['question'], link=item['link'], snippet=new_snippet)
-                    if created:
+                    create_question = googleRelatedQuestions.objects.filter(lesson_plan=class_objectives, question=item['question'], link=item['link'], snippet=new_snippet).first()
+                    if create_question:
+                        pass
+                    else:
+                        create_question = googleRelatedQuestions.objects.create(lesson_plan=class_objectives, question=item['question'], link=item['link'], snippet=new_snippet)
                         create_question.is_selected = False
+                        
                     create_question.relevance = check_snippet
                     create_question.save()
                     if create_question.is_selected:

@@ -1344,6 +1344,9 @@ class selectedActivity(models.Model):
     demo_num = models.IntegerField(default = 0,
                                blank=True,
                                null=True)
+    standard_num = models.IntegerField(default = 0,
+                               blank=True,
+                               null=True)
     is_admin = models.BooleanField(default=False)
     is_selected = models.BooleanField(default=False)
     is_rejected = models.BooleanField(default=False)
