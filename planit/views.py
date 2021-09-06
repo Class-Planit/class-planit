@@ -1197,7 +1197,7 @@ def StartPlanningDemo(request, email):
             user.first_name = create_demo_user['first_name']
             user.last_name = create_demo_user['last_name']
             user.standards_set = standard_set
-            new_user.email = email
+            user.email = email
             user.is_demo = True
             user.save()
            
