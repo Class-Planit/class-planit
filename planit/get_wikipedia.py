@@ -326,7 +326,7 @@ def wiki_results(lesson_id, user_id, standards_nouns):
     final_terms = []
     wiki_titles = []
     wiki_initial = []
-    remove_list = ['cite', 'index', 'special', 'issn', 'ISSN', 'Special', 'Category:', '/', 'File', 'Wikipedia:', 'Main_Page', 'Help:', '#', 'United_States', 'Overweight', 'Talk:']
+    remove_list = ['cite', 'index', 'special', 'Sexual', 'sexual' 'List of', 'list of', 'issn', 'ISSN', 'Special', 'Category:', '/', 'File', 'Wikipedia:', 'Main_Page', 'Help:', '#', 'United_States', 'Overweight', 'Talk:']
     
     if word_counts <= 5:
         for search_item in standards_nouns:
@@ -448,47 +448,49 @@ def wiki_results(lesson_id, user_id, standards_nouns):
                     
                     
                     for word in word_full:
-                      
-                        if word_counts <= 3:
-                            textline_matches = textBookBackground.objects.filter(textbook=textbook_match, header=word.header)
-                            line_wording = []
-                            for line in textline_matches:
-                                desc = line.line_text
-                                line_wording.append(desc)
-                            line_wording = '; '.join(line_wording)
+                        if topicInformation.objects.filter(text_index=word).exists():
+                            pass
+                        else:
+                            if word_counts <= 3:
+                                textline_matches = textBookBackground.objects.filter(textbook=textbook_match, header=word.header)
+                                line_wording = []
+                                for line in textline_matches:
+                                    desc = line.line_text
+                                    line_wording.append(desc)
+                                line_wording = '; '.join(line_wording)
 
-                            if word.term_created == False:
-                                wiki_search = wiki_wiki.page(str(word.header))
-                                if wiki_search.exists():
-                                    r_search = wiki_search.fullurl
-                                    
-                                    secondary_term  = get_wiki_term_summary(word.header, wiki_search)
-                                    combined_wording = str(line_wording) + '; ' + str(secondary_term)
+                                if word.term_created == False:
+                                    wiki_search = wiki_wiki.page(str(word.header))
+                                    if wiki_search.exists():
+                                        r_search = wiki_search.fullurl
+                                        
+                                        secondary_term  = get_wiki_term_summary(word.header, wiki_search)
+                                        combined_wording = str(line_wording) + '; ' + str(secondary_term)
 
-                                    test_summary = text_summary_nltk(combined_wording, wiki_search, 3)
+                                        test_summary = text_summary_nltk(combined_wording, wiki_search, 3)
 
-                                    if len(test_summary) > 4:
-                                        sim_score = check_topic_relevance(test_summary, lesson_id)
-                                     
-                                        if sim_score >= .10:
-                                            
-                                            results = word.header, test_summary, sim_score, matched_topic.id
-                                            word_counts = word_counts + 1
-                                            word.term_created == True 
-                                            word.save()
-                                            if results not in final_terms:
-                                                final_terms.append(results)
-                                    else:
-                                        if len(secondary_term) > 4:
-                                            sim_score = check_topic_relevance(secondary_term, lesson_id)
-                                          
+                                        if len(test_summary) > 4:
+                                            sim_score = check_topic_relevance(test_summary, lesson_id)
+                                        
                                             if sim_score >= .10:
-                                                results = word.header, secondary_term, sim_score, matched_topic.id
+                                                
+                                                results = word.header, test_summary, sim_score, matched_topic.id
                                                 word_counts = word_counts + 1
                                                 word.term_created == True 
                                                 word.save()
                                                 if results not in final_terms:
                                                     final_terms.append(results)
+                                        else:
+                                            if len(secondary_term) > 4:
+                                                sim_score = check_topic_relevance(secondary_term, lesson_id)
+                                            
+                                                if sim_score >= .10:
+                                                    results = word.header, secondary_term, sim_score, matched_topic.id
+                                                    word_counts = word_counts + 1
+                                                    word.term_created == True 
+                                                    word.save()
+                                                    if results not in final_terms:
+                                                        final_terms.append(results)
                
  
     return(final_terms)

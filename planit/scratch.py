@@ -1,9 +1,14 @@
+current_word = topicInformation.objects.filter(linked_text=word).first()
+descriptions = current_word.description.all()
+line_wording = []
+for line in descriptions:
+    desc = line.Description
+    line_wording.append(desc)
 
-action_url = 'www.app-classplanit.co/student-dashboard/%s/%s/0' % (lesson_id, worksheet_id)
-message = 'You have a new Assignment'
-new_alert = "<h5>You have a new Assignment</h5><br><p><a href='%s'>Click Here to View</a>" % (alert.message, alert.date, action_url, alert.is_seen, )
+line_wording = '; '.join(line_wording)
+sim_score = check_topic_relevance(line_wording, lesson_id)
+results = current_word.item, line_wording, sim_score, current_word.id
+word_counts = word_counts + 1
 
-
-action_url = 'www.app-classplanit.co/student-stickers/%s/%s/' % (student_id, sticker_id)
-message = 'You have a new Sticker'
-new_alert = "<h5>%s</h5><br><p><a href='%s'>Click Here to View</a>" % (alert.message, alert.date, action_url, alert.is_seen )
+if results not in final_terms:
+    final_terms.append(results)

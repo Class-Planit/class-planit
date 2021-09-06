@@ -166,7 +166,7 @@ urlpatterns = [
         view=CreateObjective,
         name='create_objective'),
 
-    url(r'^start-planning-demo/',
+    url(r'^start-planning-demo/(?P<email>[\w\s]+)/(',
         view=StartPlanningDemo,
         name='start_planning_demo'),
 

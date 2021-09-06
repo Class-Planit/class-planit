@@ -1153,7 +1153,7 @@ def CreateObjectiveWithStandard(request, user_id=None, week_of=None, subject_id=
 
 #This is the form where teachers create a new lessonObjective. 
 #The teacher puts in their objective (what they want to teach the students)
-def StartPlanningDemo(request):
+def StartPlanningDemo(request, email):
     week_of = date.today().isocalendar()[1] 
 
     standard_set = standardSet.objects.get(Location='Texas TEKS')
@@ -1197,6 +1197,7 @@ def StartPlanningDemo(request):
             user.first_name = create_demo_user['first_name']
             user.last_name = create_demo_user['last_name']
             user.standards_set = standard_set
+            new_user.email = email
             user.is_demo = True
             user.save()
            
