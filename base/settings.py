@@ -41,8 +41,8 @@ STATICFILES_DIRS = (
 SECRET_KEY = config('SECRET_KEY') 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-SECURE_SSL_REDIRECT = True
+DEBUG = True
+SECURE_SSL_REDIRECT = False
 
 ALLOWED_HOSTS = ['www.classplanit.co', 'www.classplanit.herokuapp.com', 'http://127.0.0.1:8000']
 DATE_INPUT_FORMATS = ['%m/%d/%y']
@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     # Third-Party Apps
     'rest_framework',
     'rest_framework.authtoken',
+    'corsheaders',
 
     'planit',
     'storages',
@@ -89,6 +90,7 @@ REST_FRAMEWORK = {
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     # 'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -98,6 +100,8 @@ MIDDLEWARE = [
     'django.middleware.common.BrokenLinkEmailsMiddleware',
     
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'base.urls'
 
