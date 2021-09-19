@@ -12,6 +12,7 @@ else:
 from django.urls import path, include, re_path
 from django.conf.urls import url
 from django.urls import reverse_lazy
+from django.views.decorators.csrf import csrf_exempt
 from .views import *
 
 
@@ -23,7 +24,7 @@ urlpatterns = [
         name='homepage'),
 
     url(r'^hello/$',
-        view=HelloView.as_view(),
+        view=csrf_exempt(HelloView.as_view()),
         name='hello'),
 
     url(r'^full-form/(?P<retry>.+)/',
