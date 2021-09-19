@@ -16,6 +16,9 @@ from chartjs.views.lines import BaseLineChartView
 from django.forms import modelformset_factory, inlineformset_factory
 import random
 from django.http import JsonResponse
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from django.views.decorators.csrf import csrf_exempt
 import json
 try:
     from PIL import Image
@@ -56,7 +59,30 @@ from .get_doc_export import *
 from docx.shared import Cm, Inches
 from xhtml2pdf import pisa
 from .utils import render_to_pdf
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+from .get_api_data import *
 ##################| Homepage Views |#####################
+
+class HelloView(APIView):
+    #permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        #user_token = Token.objects.get(user=request.user)
+        content = {
+            'message': 'Hello, World!',
+            #'user': str(request.user),  # `django.contrib.auth.User` instance.
+            #'auth': str(user_token.key),  # None
+        }
+        now = datetime.datetime.now().strftime('%H:%M:%S')
+        sent = ' %s' % (now)
+        context = {"data": sent}
+        
+        return JsonResponse(context)
+
+
 #Homepage Landing Page
 def Homepage(request):
     
@@ -948,6 +974,7 @@ def build_lesson_doc(request, user_id, lesson_id):
 def build_lesson_pdf(request, user_id, lesson_id):
     user_profile = User.objects.get(id=user_id)
     lesson_match = lessonObjective.objects.filter(id=lesson_id).first()
+    lesson_text = lessonText.objects.filter(matched_lesson=lesson_match)
     title = 'Week Of: ' + str(lesson_match.week_of) + ' | ' + str(user_profile.first_name) + str(user_profile.last_name)
     activity_matches = selectedActivity.objects.filter(lesson_overview=lesson_match, is_selected=True)
 
@@ -960,6 +987,7 @@ def build_lesson_pdf(request, user_id, lesson_id):
         "invoice_id": 123,
         "customer_name": "John Cooper",
         "terms_list": terms_list,
+        'lesson_match': lesson_match,
         "lesson_match": str(lesson_match.teacher_objective),
     }
     
@@ -2467,7 +2495,11 @@ def SaveLessonText(request, lesson_id):
 
     if request.method == 'GET':
         overview = request.GET['overview']
+        activities = request.GET['activities']
+        #new_text.introduction = 
         new_text.overview = overview
+        new_text.activities = activities
+        #new_text.lesson_terms = 
         new_text.is_initial = False
         new_text.save()
         #this function is at get_lessons.py
@@ -2480,6 +2512,24 @@ def SaveLessonText(request, lesson_id):
         now = datetime.datetime.now().strftime('%H:%M:%S')
         sent = ' %s: %s' % (message, now)
         context = {"data": sent}
+        return JsonResponse(context)
+    else:
+        return HttpResponse("Request method is not a GET")
+
+#this is to save the tinymce editor 
+@csrf_exempt
+def SaveLessonTextAPI(request):
+    #this is a jquery function that's set on an interval. It pulls in the tinymce and analyzes the text
+    print('Its working starting')
+
+    if request.method == 'POST':
+        overview = request.POST.get('overview','')
+        analyze_overview = analyze_data(overview)
+        
+        now = datetime.datetime.now().strftime('%H:%M:%S')
+        sent = ' %s' % (now)
+        context = {"data": sent}
+        
         return JsonResponse(context)
     else:
         return HttpResponse("Request method is not a GET")

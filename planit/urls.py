@@ -22,6 +22,10 @@ urlpatterns = [
         view=Homepage,
         name='homepage'),
 
+    url(r'^hello/$',
+        view=HelloView.as_view(),
+        name='hello'),
+
     url(r'^full-form/(?P<retry>.+)/',
         view=FormFull,
         name='registration_full'),
@@ -256,6 +260,11 @@ urlpatterns = [
     url(r'^save-text/(?P<lesson_id>[\w-]+)/$',
         view=SaveLessonText,
         name='save_lesson_text'),
+
+    url(r'^save-text-api/$',
+        view=SaveLessonTextAPI,
+        name='save_lesson_text_api'),
+
 
     url(r'^get-blooms/(?P<lesson_id>[\w-]+)/$',
         view=GetBloomsAnalytics,

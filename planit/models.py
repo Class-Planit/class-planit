@@ -841,7 +841,7 @@ class lessonPDFText(models.Model):
                                        blank=True,
                                        null=True)
 
-
+ 
     def __str__(self):
         return "%s" % (self.id)
 

@@ -202,9 +202,7 @@ def get_lessons_ajax(lesson_id, user_id):
     topic_list = topicInformation.objects.filter(id__in=topic_matches)
     filtered_activities_topics = selectedActivity.objects.filter(is_admin=True, objectives_topics__in=topic_list)
     updated_activities = update_topic_activities(filtered_activities_topics, lesson_id, user_id)
-    print('=============')
-    print(updated_activities)
-    print('=============')
+
     for item in updated_activities:
         lesson_full_List.append(item)
 

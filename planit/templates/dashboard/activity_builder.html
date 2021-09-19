@@ -215,48 +215,53 @@
                         <div class='row'>
                             <div class="col-lg-1"></div>
                             <div class="col-lg-10">
-                                <h3 class="dfree-header mce-content-body" id='header' contenteditable="true" style="position: relative;" spellcheck="false">
-                                    {{ lesson_match.subject }} | {{ user_profile.first_name }} {{ user_profile.last_name }}
-                                    </h3>
+                                
                                     <br/>
         
                                     <div class="dfree-body mce-content-body" contenteditable="true" style="position: relative;" spellcheck="false">
                                 
                                     <br/>
-                                    <h5>
-                                        {{ lesson_match.teacher_objective }}
-                                    </h5>
-                                    <p id="standard">
-                                        {% for stand in lesson_match.objectives_standards.all %}
-                                        <li id='standard-item'>{{ stand }}</li>
-                                        {% endfor %}
-                                    </p>
+                                    
                             </div>
                             <div class="col-lg-1"></div>
                         </div>
                        
                        
                     </div>
+                   
                     <div class='demo-dfree myDivToPrint' id='demo-dfree'>
-                        
-                       
-                    
+                        <div class='overviewDiv' id='overviewDiv'>
+                            {% if new_text.is_initial %}
+                                <h3 class="dfree-header mce-content-body" id='header' contenteditable="true" style="position: relative;" spellcheck="false">
+                                    {{ lesson_match.subject }} | {{ user_profile.first_name }} {{ user_profile.last_name }}
+                                    </h3>
+                                <h5>
+                                    {{ lesson_match.teacher_objective }}
+                                </h5>
+                                
+                            {% else %}
+                                
+                                {{ new_text.overview|safe }}
+                                
+                            {% endif %}
+                            <p id="standard">
+                            </p>
+                        </div>
                        
                         <div class="showhim"><h2>Activities:</h2>
                             <div class="showme">Outline the activities student will complete in the classroom:</div>
                         
                         </div>
                         
-                        <p></p>
-                        <h5>
+                        <div class='activityDiv' id='activityDiv'>
                             <ul id='activity-div'>
-                                
-                                <li id='activity'> </li>
-                                {% for act in selected_activities %}
-                                <li id='activity'> {{ act.lesson_text }}</li>
-                                {% endfor %}    
-                            </ul>      
-                        </h5>
+                                {% if new_text.activities %} {{ new_text.activities|safe }}{% endif %}
+                                <div id='activity'>
+                                <p></p>
+                                </div>
+                            </ul>   
+                        </div>
+                       
                         <div class="showhim"><h2>The Big Questions:</h2>
                             <div class="showme">What are the main ideas you want students to understand?:</div>
                         
@@ -329,7 +334,7 @@
                             </div>
                         <hr>
                         </div>
-
+                
                     </div>
                     
                   
@@ -718,14 +723,18 @@
 <script type="text/javascript">
     setInterval(function(){
    
-    var overview = document.getElementById('demo-dfree');
-    htmlContent = overview.innerHTML,
+    var overview = document.getElementById('overviewDiv');
+    var activity = document.getElementById('activityDiv');
+    
+    overviewContent = overview.innerHTML,
+    activityContent = activity.innerHTML,
     $.ajax(
     {
         type:"GET",
         url: "/save-text/{{ lesson_match.id }}",
         data:{
-            overview: htmlContent,
+            overview: overviewContent,
+            activities: activityContent,
         },
         success: function (response) {
         $('#time-update').empty();
