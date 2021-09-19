@@ -66,10 +66,11 @@ from rest_framework.authtoken.models import Token
 from .get_api_data import *
 ##################| Homepage Views |#####################
 
-@csrf_exempt
+
 class HelloView(APIView):
     #permission_classes = (IsAuthenticated,)
 
+    @csrf_exempt
     def post(self, request):
         #user_token = Token.objects.get(user=request.user)
         content = {
