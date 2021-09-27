@@ -24,7 +24,7 @@ urlpatterns = [
         name='homepage'),
 
     url(r'^hello/$',
-        view=csrf_exempt(HelloView.as_view()),
+        view=HelloView.as_view(),
         name='hello'),
 
     url(r'^full-form/(?P<retry>.+)/',
@@ -262,7 +262,7 @@ urlpatterns = [
         view=SaveLessonText,
         name='save_lesson_text'),
 
-    url(r'^save-text-api/$',
+    url(r'^save-text-api/(?P<user_id>[\w-]+)/(?P<class_id>[\w-]+)/(?P<lesson_id>[\w-]+)/(?P<grade_id>[\w-]+)/(?P<subject_id>[\w-]+)/$',
         view=SaveLessonTextAPI,
         name='save_lesson_text_api'),
 

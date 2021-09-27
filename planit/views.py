@@ -73,16 +73,20 @@ class HelloView(APIView):
     @csrf_exempt
     def post(self, request):
         #user_token = Token.objects.get(user=request.user)
-        content = {
-            'message': 'Hello, World!',
-            #'user': str(request.user),  # `django.contrib.auth.User` instance.
-            #'auth': str(user_token.key),  # None
-        }
+        topic = request.POST.get('topic', None)
+
         now = datetime.datetime.now().strftime('%H:%M:%S')
         sent = ' %s' % (now)
-        context = {"data": sent}
+        data = {
+            'summary': sent,
+            'raw': 'Successful',
+        }
+
+        print('json-data to be sent: ', data)
+
+        return JsonResponse(data)
         
-        return JsonResponse(context)
+
 
 
 #Homepage Landing Page
@@ -2520,18 +2524,44 @@ def SaveLessonText(request, lesson_id):
 
 #this is to save the tinymce editor 
 @csrf_exempt
-def SaveLessonTextAPI(request):
+def SaveLessonTextAPI(request, user_id, class_id, lesson_id, grade_id, subject_id):
+    user_profile = User.objects.filter(id=user_id).first()
+    classroom_match = classroom.objects.filter(id=class_id).first()
+    lesson_match = lessonObjective.objects.filter(id=lesson_id).first()
     #this is a jquery function that's set on an interval. It pulls in the tinymce and analyzes the text
-    print('Its working starting')
 
     if request.method == 'POST':
+
         overview = request.POST.get('overview','')
+        #standards_matches = get_api_standard_matches(overview, grade_id, subject_id)
         analyze_overview = analyze_data(overview)
-        
+        results = {'name': 'Remember', 'count': '60', 'color': 'bg-secondary'}
         now = datetime.datetime.now().strftime('%H:%M:%S')
-        sent = ' %s' % (now)
-        context = {"data": sent}
-        
+
+        bloom_result = '<h6>' + results['name'] + '</h6> \
+            <div class="progress"> \
+                <div \
+                    class="progress-bar ' + results['color'] + \
+                    ' role="progressbar" \
+                    style="width: ' + results['count'] + '%" \
+                    aria-valuenow="' + results['count'] + '" \
+                    aria-valuemin="0" \
+                    aria-valuemax="100" \
+                ></div> \
+                </div>'
+        diff_result = '<h6>' + results['name'] + '</h6> \
+            <div class="progress"> \
+                <div \
+                    class="progress-bar ' + results['color'] + \
+                    ' role="progressbar" \
+                    style="width: ' + results['count'] + '%" \
+                    aria-valuenow="' + results['count'] + '" \
+                    aria-valuemin="0" \
+                    aria-valuemax="100" \
+                ></div> \
+                </div>'
+        context = {"bloom_result": bloom_result, 'diff_result': diff_result, 'terms': analyze_overview}
+    
         return JsonResponse(context)
     else:
         return HttpResponse("Request method is not a GET")
