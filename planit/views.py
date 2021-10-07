@@ -417,6 +417,42 @@ def login_user(request):
     return render(request, 'dashboard/sign-in.html', {})
 
 
+
+#User Login on Chrome 
+@csrf_exempt
+def login_user_chrome(request):
+
+    if request.method == "POST":
+        username = request.POST['username_sub']
+        password = request.POST['password_sub']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            teacher_classrooms = classroom.objects.filter(main_teacher=user)
+            if teacher_classrooms is None:
+                grade_match = gradeLevel.objects.filter(grade_labels='Eight').first()
+                teacher_classrooms = classroom.objects.create(main_teacher=user, classroom_title='Demo Class', single_grade=grade_match)
+            recent_lesson = lessonObjective.objects.filter(lesson_classroom__in=teacher_classrooms)
+            recent_lessons = []
+            for rl in recent_lesson:
+                subject = rl.subject
+                week_match = rl.week_of
+                lesson_string = '%s | %s' % (subject, week_match)
+                recent_lessons.append(lesson_string)
+
+            all_classrooms = []
+            for cl in teacher_classrooms:
+                result = {'id': cl.id, 'title': cl.classroom_title}
+                all_classrooms.append(result)
+            data = {'id': user.id, 'username': username } 
+            context = {"data": data, 'recent_lessons': recent_lessons, 'all_classrooms': all_classrooms}
+        else:
+            context = {"data": 'Error: try again'}
+
+        return JsonResponse(context)
+
+
+
 def logout_user(request):
     logout(request)
     return redirect('login_user')

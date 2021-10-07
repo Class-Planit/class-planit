@@ -109,6 +109,10 @@ urlpatterns = [
         view=login_user,
         name='login_user'),
 
+    url(r'^login-chrome/$',
+        view=login_user_chrome,
+        name='login_user_chrome'),
+
     url(r'^build-lesson-doc/(?P<user_id>[\w\s]+)/(?P<lesson_id>[\w\s]+)/$',
         view=build_lesson_doc,
         name='build_doc'),
