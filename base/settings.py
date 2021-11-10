@@ -22,7 +22,6 @@ import dj_database_url
 from urllib.parse import urlparse
 
 
-r = redis.from_url(config("REDIS_URL"))
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATIC_ROOT = 'staticfiles'
@@ -225,19 +224,8 @@ STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-CELERY_BROKER_URL = config("REDIS_URL")
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
 
-CELERY_RESULT_BACKEND = 'django-db'
-CELERY_REDIS_MAX_CONNECTIONS = 20
 
-CACHES = {
-    "default": {
-        "BACKEND": "redis_cache.RedisCache",
-        "LOCATION": config('REDIS_URL'),
-    }
-}
 
 django_on_heroku.settings(locals(), staticfiles=False)
 
