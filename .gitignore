@@ -134,3 +134,4 @@ dmypy.json
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
 sendgrid.env
+sendgrid.env
